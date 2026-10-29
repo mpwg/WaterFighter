@@ -16,7 +16,7 @@ Der 20-m-Schutzdamm der getrennten Grabenvariante wurde jeweils um eine Zelle in
 
 Die getrennte Westgrabenvariante mit 20-m-Schutzdamm wurde in einer [vollständigen Produktionsrunde](geodaten-voruntersuchung.md#produktionsrunde-mit-spätem-westgraben-und-längerem-schutzdamm) bei 03:05 in Pause gebaut und erreichte das Ziel; die Auswahl nutzte Testkoordinaten. Echte Geräte und menschliches Auffinden bleiben offen.
 
-Eine [schematische dunkle Grabenlinie](landgraben-live.md#schematische-grabentrasse-über-wasser-und-gebäuden) bleibt über Wasser und Gebäuden sichtbar und ist nicht auswählbar; sie ersetzt keine Strömungsanzeige. Produktionsbuild, 72 Modelltests, sieben gezielte Chromium-Prüfungen und eine instrumentierte Live-Sichtprobe bestanden; ein Bildvergleich mit künstlich erhöhtem Wasser scheitert auf dem vorherigen Build. Vollständige Browser-Suite, menschliche Verständlichkeit und echte Geräte bleiben offen.
+Eine [schematische dunkle Grabenlinie](landgraben-live.md#schematische-grabentrasse-über-wasser-und-gebäuden) bleibt über Wasser und Gebäuden sichtbar und ist nicht auswählbar; sie ersetzt keine Strömungsanzeige. Produktionsbuild, 72 Modelltests, sieben gezielte Chromium-Prüfungen und eine instrumentierte Live-Sichtprobe bestanden; ein Bildvergleich mit künstlich erhöhtem Wasser scheitert auf dem vorherigen Build. Anschließend bestanden auf `d38c0ca` alle 85 Chromium-Prüfungen; menschliche Verständlichkeit und echte Geräte bleiben offen.
 
 Auf dem isolierten Produktionsbuild `cdf3873` bestanden [alle 84 Chromium-Fälle](browser-pruefung.md#gesamtsuite-nach-kompaktem-status). Spätere Darstellungsänderungen, menschliche Bedienung und echte Geräte bleiben separat zu prüfen.
 

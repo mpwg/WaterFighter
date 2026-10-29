@@ -20,7 +20,7 @@ import { groundRoads, terrainHeight } from './roads';
 import { buildingCondition } from './building-status';
 import { boundaryArrowLines, boundaryArrows } from './boundary-arrows';
 import { MAX_TRENCH_FLOW_SAMPLES, trenchFlowCells } from './trench-flow';
-import { writeFlowArrow } from './flow-arrow';
+import { flowArrowLength, writeFlowArrow } from './flow-arrow';
 import { FlowClock } from './flow-clock';
 import type { Scenario } from '../scenario';
 import type { Action, BuildingStatus, Face } from '../simulation/game';
@@ -265,13 +265,14 @@ export class World {
   private animateFlow(now:number):void {
     const positions=this.flowPositions;positions.fill(0);
     const regularCount=Math.ceil(this.width/12)*Math.ceil(this.height/12);
+    const length=flowArrowLength(this.zoom,this.canvas.clientHeight);
     for(let i=0;i<this.flowSamples.length;i++) {
       const a=this.flowSamples[i],speed=Math.hypot(a.vx,a.vy);
       if(speed<0.01)continue;
       // Keep trench markers near their narrow sampled cell instead of drifting onto dry land.
       const ux=a.vx/speed,uy=a.vy/speed,phase=((now*Math.min(speed,3)/5+i*.37)%1-.5)*this.cell*(i<regularCount?5:0.75);
       const x=a.x+ux*phase,y=a.y+uy*phase;
-      writeFlowArrow(positions,i*18,x,y,a.height,ux,uy);
+      writeFlowArrow(positions,i*18,x,y,a.height,ux,uy,i<regularCount?length:Math.min(length,this.cell*1.5));
     }
     this.flowLines.updateVerticesData(VertexBuffer.PositionKind,positions);
   }

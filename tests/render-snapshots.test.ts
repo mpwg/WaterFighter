@@ -57,7 +57,7 @@ it('zeichnet nur bestätigte Grabenzellen und entfernt die Markierung beim Neust
 });
 
 it('zeigt Strömung in bestätigten Grabenzellen und entfernt ihre Marker nach Neustart',()=>{
-  const world={width:2,height:2,cell:4,bed:[0,0,0,0],currentDepth:new Float32Array(4),flowSamples:[],flowTrenchCells:[1],
+  const world={width:2,height:2,cell:4,zoom:180,canvas:{clientHeight:800},bed:[0,0,0,0],currentDepth:new Float32Array(4),flowSamples:[],flowTrenchCells:[1],
     wetVertices:new Uint8Array(9),waterIndexBuffer:new Uint16Array(24),wetTopologyReady:false,waterPositions:new Float32Array(27),waterColors:new Float32Array(36),
     flowPositions:new Float32Array(36),flowLines:{updateVerticesData:vi.fn()},water:{setIndices:vi.fn(),updateVerticesData:vi.fn()}} as any;
   const depth=new Float32Array([0,1,0,0]),qx=new Float32Array([0,-2,0,0]),qy=new Float32Array(4);
@@ -72,4 +72,13 @@ it('zeigt Strömung in bestätigten Grabenzellen und entfernt ihre Marker nach N
   world.flowTrenchCells=[];World.prototype.updateWater.call(world,depth,qx,qy);
   expect(world.flowSamples).toHaveLength(1);
   (World.prototype as any).animateFlow.call(world,1);expect([...world.flowPositions.slice(18)]).toEqual(Array(18).fill(0));
+});
+
+it('enlarges overview flow arrows while keeping trench markers close to their cells',()=>{
+  const world={width:2,height:2,cell:4,zoom:560,canvas:{clientHeight:320},
+    flowSamples:[{x:0,y:0,height:1,vx:1,vy:0},{x:10,y:10,height:1,vx:1,vy:0}],
+    flowPositions:new Float32Array(36),flowLines:{updateVerticesData:vi.fn()}} as any;
+  (World.prototype as any).animateFlow.call(world,0);
+  expect(world.flowPositions[3]-world.flowPositions[0]).toBe(24);
+  expect(world.flowPositions[21]-world.flowPositions[18]).toBeCloseTo(6,5);
 });

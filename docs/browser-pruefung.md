@@ -73,3 +73,9 @@ Der Seiten-Heap nach den Runden betrug 43.397.662 / 39.169.718 / 55.474.138 Byte
 ## Aktualisierte Abhängigkeiten
 
 Am 29. Oktober 2026 wurde TypeScript auf die stabile Version 7.0.2 aktualisiert. `npm outdated` meldete anschließend keine veralteten direkten npm-Pakete; die festgelegten Python-Geodaten- und Plot-Pakete entsprachen den aktuellen stabilen Versionen laut Paketindex. Indirekte npm-Abhängigkeiten können aufgrund der Versionsvorgaben ihrer Elternpakete hinter deren neuesten Hauptversionen liegen. `npm ci` und `npm audit` meldeten keine bekannten Sicherheitslücken. Der Build, 31 Vitest-Tests, zwei Python-Tests, 16 Chrome-156-Browsertests und der statische Unterpfadtest bestanden. npm meldete ein blockiertes esbuild-Installationsskript; die installierte plattformspezifische Binärdatei funktionierte bei den ausgeführten Prüfungen. Der Drei-Runden-Lauf und die vollständige Strategie oben wurden vor dem Compilerwechsel durchgeführt.
+
+## Drei Runden mit TypeScript 7
+
+Am 29. Oktober 2026 wurden auf dem mit TypeScript 7.0.2 erzeugten Produktionsbuild von Commit `4251f2e`, Szenario `1.2-draft`, erneut drei ungeschützte 2×-Runden mit `tools/observe-three-rounds.mjs` in Chrome 156.0.8078.73 unter Linux mit Softwaregrafik durchgeführt. Pause, Zoom und Fortsetzen bei 00:02 sowie die regulären Neustarts funktionierten. Die Runden dauerten einschließlich Bedienung 154,041 / 154,138 / 154,118 s und meldeten jeweils 322.752 Schaden und 10.000 Budgetrest. Seitenfehler wurden nicht protokolliert.
+
+Der Seiten-Heap nach den Runden betrug 43.773.390 / 44.551.226 / 43.024.046 Bytes, die Prozessbaum-RSS-Summe 1.400.586.240 / 1.413.263.360 / 1.422.331.904 Bytes bei jeweils zehn Prozessen. Der Heap steigt nicht durchgehend; der RSS-Anstieg und die früheren Untersuchungen lassen langsame Speicherprobleme weiterhin nicht ausschließen. Diese Desktopprüfung ersetzt keine echte Geräteabnahme und prüft nicht jede Bedienung während der gesamten Runde.

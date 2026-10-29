@@ -326,3 +326,9 @@ In derselben 320 × 480-Ansicht ragten die Beschriftungen Damm, Graben und Abris
 ### Gezogene Berührungen im Baumodus
 
 Eine gezogene Berührung zählt im Baumodus nicht mehr als ausgewählter Punkt; eine Rückmeldung fordert zum Antippen auf. Ein bereits gewählter Anfang bleibt erhalten, wenn die nächste Berührung versehentlich gezogen wird. Ein Chromium-Touchtest prüfte unter anderem eine Bewegung weg vom Anfang und wieder zurück, die anschließende gültige Dammvorschau und den Abrissmodus. Die bestehenden Tests für Moduswechsel während einer Berührung und einen zweiten Finger bestanden ebenfalls. Build und 53 Vitest-Tests bestanden; der Touchtest ist emuliert und ersetzt keine menschliche Geräteprüfung.
+
+### Gestaffelte Eingriffe in einer Produktionsrunde
+
+Am 29. Oktober 2026 spielte `bun tools/observe-staged-production.mjs` auf einem isolierten Produktionsbuild `7aae072` mit Szenario `1.4-draft` in Chrome 156.0.8078.73 unter Linux und Softwaregrafik. Testseitig berechnete Bildschirmkoordinaten setzten zwei Dämme in der Vorbereitung. Bei 02:03 wurde pausiert, das Gebäude für 1.602 abgerissen und der Graben für 600 bestätigt; während beider Eingriffe blieb die Uhr bei 02:03. Nach Fortsetzen endete die 2×-Runde mit 17.625 Flutschaden, 16.017 Abrissverlust, 33.642 Gesamtschaden und 6.598 Budgetrest; das Ziel war erreicht. Die Laufzeit betrug 170,184 s einschließlich Pause und Bedienung. Es wurden keine Seitenfehler gemeldet; nach Neustart standen Zeit, Budget und Schaden wieder bei 00:00, 10.000 und 0.
+
+Dieser automatisierte Ablauf nutzt bekannte Koordinaten und bestätigt die Wirkung einer Pause auf dem getesteten Desktop-Build. Er belegt weder selbstständige menschliche Platzierung noch Echtzeitfähigkeit oder Aktionslatenz auf echten Mobilgeräten. Die Maßnahmenwerte im aufgezeichneten Bericht wurden zusätzlich mit den erwarteten Vorschaukosten verglichen; das Skript prüft sie nun unmittelbar.

@@ -1,6 +1,6 @@
 # WaterFighter – verbindlicher Spielplan
 
-Stand: 29. Oktober 2026. Status: beschlossenes Konzept, noch nicht implementiert.
+Stand: 29. Oktober 2026. Dieses Dokument beschreibt das verbindliche Konzept; Implementierungsstand und offene Abnahme stehen in [status.md](status.md).
 
 ## 1. Ziel
 
@@ -24,7 +24,7 @@ Die Geografie ist real; Flutereignis, Baukosten und Schäden sind für das Spiel
 
 ## 3. Szenario und Daten
 
-Ein Wiener Ausschnitt am Donauufer wird nach Datenprüfung ausgewählt. Er muss Bebauung, einen möglichen Wasserzufluss und mindestens zwei alternative Wasserwege enthalten. Der genaue Ausschnitt ist noch nicht bestimmt; seine Auswahl gehört zu AP 2.
+Ein Wiener Ausschnitt am Donauufer wird nach Datenprüfung ausgewählt. Er muss Bebauung, einen möglichen Wasserzufluss und mindestens zwei alternative Wasserwege enthalten. Die Auswahl gehört zu AP 2; der aktuelle Entwurf und seine offenen Prüfungen sind in der [Geodaten-Voruntersuchung](geodaten-voruntersuchung.md) dokumentiert.
 
 OSM liefert Grundrisse und Kartenobjekte. Das Wiener DGM liefert die Geländeform. Fehlende Gebäudehöhen dürfen für die Darstellung durch dokumentierte Standardwerte ersetzt werden. Änderungen am Gewässerbett, an Durchlässen oder anderen Teilen der Simulationsgeometrie werden als separate Szenarioanpassungen erfasst. Reale Geografie darf nicht stillschweigend durch eine Fantasiekarte ersetzt werden.
 

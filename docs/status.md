@@ -22,6 +22,8 @@ Bestätigte Gräben werden nun anhand der Worker-Zellen braun auf dem Gelände m
 
 Zusätzliche, auf 200 begrenzte Strömungsmarker tasten bestätigte Grabenzellen anhand der Worker-Impulswerte ab; beim Neustart werden sie entfernt. Eine [Sichtprobe numerischer Landgrabenzustände](review-gebaeudevergleich.md#sichtprobe-gespeicherter-zustände) zeigt nach Korrektur der Animationsweite und des Ausblendens bei Kameraverschiebung Strömungsstriche am Graben. In der [Produktionsrunde](browser-pruefung.md#referenzrunde-mit-strömungsmarkern) bleibt der Weg in der Gesamtansicht sehr klein; menschliche Verständlichkeit und mobile Leistung bleiben zu prüfen.
 
+Ein ergänzender [Live-Browserlauf mit Landgraben](landgraben-live.md) zeigt die Marker bei laufendem Worker zu zwei Zeitpunkten und erreicht nach drei Dämmen und Graben das Schadensziel. Kamera und Klickpunkte wurden testseitig gesetzt; menschliche Verständlichkeit und mobile Leistung bleiben offen.
+
 Eine vollständige experimentelle 2×-Runde mit Grabenmarkierung bestand anschließend im Entwicklungsbrowser. Schematische Pfeile und eine Legende kennzeichnen inzwischen Zufluss und offene Modellränder; die experimentelle Referenzrunde wurde vor dieser Änderung gespielt: [Browserprüfung](browser-pruefung.md#flutrunde-mit-grabenmarkierung-und-modellrand-hinweise).
 
 Nach der Pfeiländerung bestanden Produktionsbuild, 49 Vitest-Tests und 33 Chrome-Browserprüfungen. Die Tests der Pfeilpositionen prüfen gruppierte Zuflusszellen, konfigurierte Modellränder und Richtung; sie ersetzen keine vollständige Runde oder Geräteprüfung.

@@ -6,7 +6,7 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
-Ein neuer Kartentipp während einer unbestätigten Maßnahmenvorschau verwirft diese und beginnt die nächste Auswahl; damit bleiben Startmarkierung und bestätigbare Maßnahme konsistent. Produktionsbuild, 68 Modelltests und drei gezielte Chromium-Fälle für Vorschau und Touch-Verschiebung bestanden. Die vollständige Browser-Suite für diese Änderung und echte Geräte bleiben offen.
+Ein neuer Kartentipp während einer unbestätigten Maßnahmenvorschau verwirft diese und beginnt die nächste Auswahl; damit bleiben Startmarkierung und bestätigbare Maßnahme konsistent. Produktionsbuild, 68 Modelltests und gezielte Chromium-Fälle für Vorschau, emulierten Touch und Touch-Verschiebung bestanden. Die vollständige Browser-Suite für diese Änderung und echte Geräte bleiben offen.
 
 Eine [aktuelle Live-Runde mit direkter Dammführung](landgraben-live.md#live-runde-mit-direkter-dammführung) zeigt Strömungsmarker am Graben bei 03:01 und 04:00 und endet mit 863 Schaden. Die Kamera war testseitig fokussiert; durchgehende Sichtbarkeit, menschliche Bedienung und echte Geräte bleiben offen.
 

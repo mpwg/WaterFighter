@@ -22,6 +22,8 @@ const gates=gateSpecs.map(spec=>{
 });
 if(mode!=='baseline'){const {axis,index}=gates[Number(mode)];const action=game.apply('probe',{kind:'dam',faces:[{axis,index}]});if(!action.ok)throw Error(action.reason);}
 const trenchArg=process.argv.find(a=>a.startsWith('--trench='));
+const routeArg=process.argv.find(a=>a.startsWith('--route-file='));
+if(trenchArg&&routeArg)throw Error('Nur einen Graben angeben');
 if(trenchArg){
  const raw=trenchArg.slice(9).split(',');
  if(raw.some(v=>!/^\d+$/.test(v)))throw Error('Graben: --trench=X0,Y0,X1,Y1');
@@ -29,6 +31,15 @@ if(trenchArg){
  if(parts.length!==4||parts.some((v,i)=>!Number.isInteger(v)||v<0||v>=(i%2===0?w:h)))throw Error('Graben: --trench=X0,Y0,X1,Y1');
  const result=game.apply('trench',{kind:'trench',cells:trenchPath([parts[0],parts[1]],[parts[2],parts[3]],w)});
  if(!result.ok)throw Error(result.reason);
+}
+if(routeArg){
+ const route=JSON.parse(readFileSync(routeArg.slice(13),'utf8')) as {scenario:string;path:number[][]};
+ if(route.scenario!==scenario.version||!Array.isArray(route.path)||route.path.length===0||route.path.some(p=>!Array.isArray(p)||p.length!==2||p.some((n,i)=>!Number.isInteger(n)||n<0||n>=(i===0?w:h))))throw Error('Ungültiger Korridor');
+ if(route.path.some((p,i)=>i>0&&Math.abs(p[0]-route.path[i-1][0])+Math.abs(p[1]-route.path[i-1][1])!==1))throw Error('Korridor ist nicht zusammenhängend');
+ const path=route.path;let start=0,segment=0;
+ while(start<path.length){let end=start;if(start+1<path.length){const dx=path[start+1][0]-path[start][0],dy=path[start+1][1]-path[start][1];end++;while(end+1<path.length&&path[end+1][0]-path[end][0]===dx&&path[end+1][1]-path[end][1]===dy)end++;}
+  const cells=path.slice(start,end+1).map(([x,y])=>y*w+x),result=game.apply(`route-${segment++}`,{kind:'trench',cells});if(!result.ok)throw Error(result.reason);start=end+1;
+ }
 }
 const dye=[new Float64Array(n),new Float64Array(n)],change=[new Float64Array(n),new Float64Array(n)];
 const tagged=[0,0],exited=[0,0],returned=[0,0],peakLand=[0,0];
@@ -87,4 +98,4 @@ while(s.time<scenario.parameters.duration-1e-9){
  for(let k=0;k<2;k++){peakLand[k]=Math.max(peakLand[k],land[k]);for(let j=0;j<distances.length;j++)peakBeyond[k][j]=Math.max(peakBeyond[k][j],beyond[k][j]);}
 }
 const markers=gates.map((gate,k)=>{const remaining=dye[k].reduce((a,b)=>a+b,0);return {gate,tagged:tagged[k],exited:exited[k],returned:returned[k],remaining,peakLand:peakLand[k],peakBeyond:distances.map((metres,j)=>({metres,volume:peakBeyond[k][j]})),farthestCellAtLeastPoint1M3:farthest[k],balanceError:remaining+exited[k]+returned[k]-tagged[k]};});
-console.log(JSON.stringify({scenario:scenario.version,mode,trench:trenchArg??null,time:s.time,budget:game.budget,...game.totals(),markers,maxBoundError,waterBalance:Math.abs(s.volume()-initialVolume-s.inflow+s.outflow-s.roundoffVolume)/(initialVolume+s.inflow)},null,2));
+console.log(JSON.stringify({scenario:scenario.version,mode,trench:trenchArg??null,route:routeArg??null,time:s.time,budget:game.budget,...game.totals(),markers,maxBoundError,waterBalance:Math.abs(s.volume()-initialVolume-s.inflow+s.outflow-s.roundoffVolume)/(initialVolume+s.inflow)},null,2));

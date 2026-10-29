@@ -1,5 +1,5 @@
 /** Compare water-level differences across the reference dam faces with and without dams. */
-import {readFileSync} from 'node:fs';
+import {readFileSync,writeFileSync} from 'node:fs';
 import {Game} from '../src/simulation/game';
 import {damPath} from '../src/simulation/path';
 import {validateScenario} from '../src/scenario';
@@ -20,11 +20,15 @@ function difference(game:Game,key:string){
  const left=s.bed[a]+s.h[a],right=s.bed[b]+s.h[b];return {left,right,difference:left-right};
 }
 const rows=[];
+const capture=process.argv.includes('--capture');
+const snapshots:unknown[]=[];
 for(const time of [60,90,120,150,180,210,240,270,300]){
  advance(shield,time);advance(baseline,time);
  const comparisons=[...shield.damFaces.keys()].map(key=>{const withDam=difference(shield,key),without=difference(baseline,key);return {key,withDam,without,contrast:Math.abs(withDam.difference)-Math.abs(without.difference)};});
  const peak=comparisons.reduce((a,b)=>a.contrast>b.contrast?a:b);
  rows.push({time,peak,shieldDamage:shield.totals().totalDamage,baselineDamage:baseline.totals().totalDamage});
+ if(capture && (time===120||time===150))for(const [name,game] of [['baseline',baseline],['shield',shield]] as const){const s=game.solver;snapshots.push({name,time,bed:Array.from(s.bed),depth:Array.from(s.h),qx:Array.from(s.qx),qy:Array.from(s.qy),buildings:game.status(),dams:[...game.damFaces]});}
 }
 const balance=(g:Game)=>{const s=g.solver;return Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow);};
+if(capture)writeFileSync('/tmp/waterfighter-backwater-states.json',JSON.stringify({scenario:scenario.version,snapshots}));
 console.log(JSON.stringify({scenario:scenario.version,rows,shieldBalance:balance(shield),baselineBalance:balance(baseline)},null,2));

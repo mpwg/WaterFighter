@@ -45,7 +45,7 @@ Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet di
 | Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: 16 Headless-Abläufe; Firefox 159: virtuelle Desktop-Abläufe und vollständige 2×-Runde; Safari und manuelle Abnahme offen |
 | Echte iPhone-/Android-Abnahme | nicht prüfbar | Lokal kein Smartphone sichtbar und `adb`/`idevice_id` fehlen; Zugang zu echten Geräten bereitstellen |
 | Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Messskript und [Verfahren](mobil-messung.md) vorhanden; keine echten Smartphones lokal erreichbar |
-| Drei stabile aufeinanderfolgende Runden | offen | Drei 2×-Runden auf Anwendungscode `48d5e8d` bestanden; Speicherstichproben steigen, vollständige Bedienung und Langzeit-Lecks bleiben offen: [Browserprüfung](browser-pruefung.md) |
+| Drei stabile aufeinanderfolgende Runden | offen | Drei 2×-Runden auf Anwendungscode `48d5e8d` bestanden; Speicherstichproben steigen; zwölf kurze Neustarts mit Seiten-Garbage-Collection untersucht, Ursachen und Langzeitverhalten bleiben offen: [Browserprüfung](browser-pruefung.md) |
 | Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Produktionsbuild unter Unterpfad einschließlich Worker und Szenario geprüft; vollständige Lizenzprüfung fehlt |
 
 „Offen“ bedeutet hier, dass die Arbeit noch auszuführen ist. „Nicht prüfbar“ darf erst eingetragen werden, wenn ein konkretes Hindernis ermittelt und beschrieben wurde. Die lokale Gerätesuche ist unten dokumentiert; ein entfernter Gerätezugang wurde nicht ausgeschlossen.

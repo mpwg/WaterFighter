@@ -37,7 +37,9 @@ if(rawSections&&(!rawSections.length||rawSections.some(v=>!/^\d+$/.test(v))))thr
 const sections=rawSections?rawSections.map(Number):[30,20,10,5].filter(x=>x<=entryMin);
 if(!sections.length||sections.some((x,i)=>x<1||x>entryMin||(i>0&&x>=sections[i-1])||!cells.some(c=>c%w===x&&route.has(c-1))))throw Error('Querschnitte müssen absteigend und auf der Trasse liegen');
 const stages=Array.from({length:sections.length+1},()=>new Float64Array(n)),changes=stages.map(()=>new Float64Array(n));
-let tagged=0,returned=0,otherExit=0,orderedWest=0,maxBound=0;
+const stayOnRoute=process.argv.includes('--stay-on-route');
+let tagged=0,returned=0,leftRoute=0,otherExit=0,orderedWest=0,maxBound=0;
+const westExitRows=new Map<number,number>();
 function flux(a:number,b:number,axis:'x'|'y',crest:number){
  const ha=s.h[a],hb=s.h[b],z=Math.max(s.bed[a],s.bed[b],crest),aa=Math.max(0,ha+s.bed[a]-z),ab=Math.max(0,hb+s.bed[b]-z),q=axis==='x'?s.qx:s.qy;
  const na=ha>1e-10?q[a]*aa/ha:0,nb=hb>1e-10?q[b]*ab/hb:0,ua=aa>1e-10?na/aa:0,ub=ab>1e-10?nb/ab:0;
@@ -50,7 +52,7 @@ function transfer(a:number,b:number,rate:number,dt:number,section:number|null){
   const fraction=cellVolume>1e-10?stages[k][donor]/cellVolume:0;total+=fraction;
   const moved=volume*fraction,next=section!==null&&rate<0&&route.has(a)&&route.has(b)&&k<sections.length&&section===sections[k]?k+1:k;
   changes[k][donor]-=moved;
-  if(scenario.waterMask[receiver])returned+=moved;else changes[next][receiver]+=moved;
+  if(scenario.waterMask[receiver])returned+=moved;else if(stayOnRoute&&!route.has(receiver))leftRoute+=moved;else changes[next][receiver]+=moved;
  }
  // Mark previously unmarked inflow into the specified route section from non-route cells.
  if(!route.has(donor)&&route.has(receiver)&&receiver%w>=entryMin&&receiver%w<=entryMax&&!scenario.waterMask[receiver]){
@@ -59,7 +61,7 @@ function transfer(a:number,b:number,rate:number,dt:number,section:number|null){
 }
 function exit(cell:number,rate:number,dt:number,west:boolean){
  if(rate<=0)return;const volume=s.h[cell]*area;
- for(let k=0;k<stages.length;k++){const moved=volume>1e-10?rate*dt*stages[k][cell]/volume:0;changes[k][cell]-=moved;if(west&&k===sections.length)orderedWest+=moved;else otherExit+=moved;}
+ for(let k=0;k<stages.length;k++){const moved=volume>1e-10?rate*dt*stages[k][cell]/volume:0;changes[k][cell]-=moved;if(west&&k===sections.length){orderedWest+=moved;if(moved>0){const row=Math.floor(cell/w);westExitRows.set(row,(westExitRows.get(row)??0)+moved);}}else otherExit+=moved;}
 }
 while(s.time<scenario.parameters.duration-1e-9){
  const t=s.time,maxDt=Math.min(1,scenario.parameters.duration-t),dt=s.stableStep(maxDt);for(const c of changes)c.fill(0);
@@ -68,7 +70,7 @@ while(s.time<scenario.parameters.duration-1e-9){
  for(let y=0;y<h;y++){const l=y*w,r=l+w-1;if(s.openBoundary.left)exit(l,Math.max(0,-s.qx[l])*s.cellSize,dt,true);if(s.openBoundary.right)exit(r,Math.max(0,s.qx[r])*s.cellSize,dt,false);}
  for(let x=0;x<w;x++){const top=x,bottom=(h-1)*w+x;if(s.openBoundary.top)exit(top,Math.max(0,-s.qy[top])*s.cellSize,dt,false);if(s.openBoundary.bottom)exit(bottom,Math.max(0,s.qy[bottom])*s.cellSize,dt,false);}
  if(s.step(maxDt)!==dt)throw Error('Zeitschritt stimmt nicht');game.addInflow(t,dt);game.updateDamage(dt);
- for(let i=0;i<n;i++){let total=0;for(let k=0;k<stages.length;k++){stages[k][i]+=changes[k][i];total+=stages[k][i];maxBound=Math.max(maxBound,-stages[k][i]);}maxBound=Math.max(maxBound,total-s.h[i]*area);if(maxBound>1e-7)throw Error(`Markierung außerhalb Wasserbilanz ${i}: ${maxBound}`);}
+ for(let i=0;i<n;i++){let total=0;for(let k=0;k<stages.length;k++){stages[k][i]+=changes[k][i];total+=stages[k][i];maxBound=Math.max(maxBound,-stages[k][i]);}maxBound=Math.max(maxBound,total-s.h[i]*area);if(stayOnRoute&&!route.has(i)&&total>1e-7)throw Error(`Markierung außerhalb der Trasse ${i}: ${total}`);if(maxBound>1e-7)throw Error(`Markierung außerhalb Wasserbilanz ${i}: ${maxBound}`);}
 }
 const remaining=stages.map(stage=>stage.reduce((a,b)=>a+b,0));
-console.log(JSON.stringify({scenario:scenario.version,mode,dams,tip,route:coordinates,entry:[entryMin,entryMax],sections,tagged,orderedWest,returned,otherExit,remaining,balanceError:orderedWest+returned+otherExit+remaining.reduce((a,b)=>a+b,0)-tagged,maxBound,budget:game.budget,...game.totals(),waterBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow)},null,2));
+console.log(JSON.stringify({scenario:scenario.version,mode,dams,tip,stayOnRoute,route:coordinates,entry:[entryMin,entryMax],sections,tagged,orderedWest,westExitRows:[...westExitRows].sort((a,b)=>a[0]-b[0]),returned,leftRoute,otherExit,remaining,balanceError:orderedWest+returned+leftRoute+otherExit+remaining.reduce((a,b)=>a+b,0)-tagged,maxBound,budget:game.budget,...game.totals(),waterBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow)},null,2));

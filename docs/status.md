@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Die neue Werkzeugverschiebung wurde zusätzlich in [Firefox 159](browser-pruefung.md#werkzeugverschiebung-in-firefox) mit Maus und emuliertem Touch geprüft; dabei blieb der erste Grabenpunkt erhalten. Der Lauf verwendete einen virtuellen Linux-Desktop und ersetzt keine Geräteabnahme.
+
 Ein [gezielter Produktionsbrowsertest](browser-pruefung.md#referenzgraben-nach-verschieben-und-vergrößern) setzt den Referenzgraben nach Verschieben und Vergrößern exakt über die 26 vorgesehenen Rasterzellen. Der Test verwendet projizierte Koordinaten; menschliche Platzierung und echte Geräte bleiben offen.
 
 [Strömungsmarker](browser-pruefung.md#zellnahe-strömungsmarker) bewegen ihre Mittelpunkte nun nahe der jeweils abgetasteten Zelle; ihre Höhe folgt der gerenderten Wasseroberfläche am Zellmittelpunkt. Modelltests und gezielte Browserprüfungen bestanden; ein vollständiger Browserlauf und echte Geräte bleiben offen.

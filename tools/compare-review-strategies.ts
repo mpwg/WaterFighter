@@ -19,6 +19,12 @@ const cases:Record<string,{left:boolean;depth:number;dams:number;trench?:[[numbe
  combined:{left:true,depth:3,dams:2,trench:[[0,10],[23,10]],demolish:'w33581744-0'},
 };
 const config=cases[mode];if(!config)throw Error(`Fall wählen: ${Object.keys(cases).join(', ')}`);
+const routeArg=process.argv.find(a=>a.startsWith('--route='));
+if(routeArg){
+ const raw=routeArg.slice(8).split(','),values=raw.map(Number);
+ if(!config.trench||values.length!==4||raw.some(n=>!/^\d+$/.test(n))||values.some(n=>!Number.isInteger(n)||n<0||n>=200)||trenchShift||trenchStart||trenchEnd)throw Error('Route: --route=X0,Y0,X1,Y1 für einen Grabenfall ohne zusätzliche Zeilenverschiebung');
+ config.trench=[[values[0],values[1]],[values[2],values[3]]];
+}
 const raw=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
 const scenario=validateScenario(raw);
 const fixture=JSON.parse(readFileSync('tests/fixtures/strategy.json','utf8'));

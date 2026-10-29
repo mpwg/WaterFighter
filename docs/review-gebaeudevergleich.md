@@ -37,6 +37,16 @@ Für eine numerische Zeitprüfung führt `bun tools/compare-review-strategies.ts
 
 Die getrennte Verschiebung eines Grabenendpunkts um eine Rasterzeile wurde mit `--trench-start-row=-1`, `--trench-start-row=1`, `--trench-end-row=-1` und `--trench-end-row=1` vor Beginn untersucht. Start −1 wird abgelehnt: „Ein Gebäude versperrt den Graben. Verlauf ändern oder Gebäude abreißen.“ Die übrigen drei Verläufe sind zulässig, kosten wegen einer zusätzlichen Zelle jeweils 675 und ergeben der Reihe nach 37.474,82, 21.552,70 und 21.622,17 Gesamtschaden. Ihre relativen Bilanzfehler liegen unter 1,44 × 10⁻¹⁴. Die getestete Ablehnung stammt aus der maßgeblichen Spielregel; diese numerische Prüfung belegt nicht, dass die Stelle und der Hinweis auf jedem Gerät leicht zu bedienen sind.
 
+Für eine räumlich getrennte zweite Ableitung wurden drei kurze, durch Gebäude nicht versperrte Westgräben weiter südlich geprüft. `bun tools/compare-review-strategies.ts dam3trench --route=X0,Y0,X1,Y1` setzt jeweils dieselben drei Dämme und anschließend den angegebenen Graben vor Flutbeginn. Alle Aktionen wurden angenommen:
+
+| Graben | Zusätzliche Kosten | Budgetrest | Gesamtschaden | Westlicher Modellabfluss |
+| --- | ---: | ---: | ---: | ---: |
+| (0,41) → (8,41) | 225 | 7.935 | 34.792,87 | 0,0071 m³ |
+| (0,42) → (17,42) | 450 | 7.710 | 34.792,87 | 0,0071 m³ |
+| (0,44) → (14,44) | 375 | 7.785 | 34.792,87 | 0,0071 m³ |
+
+Diese drei Werte für Schaden und Randabfluss stimmen in der Berechnung mit der Kontrolle aus drei Dämmen ohne Graben überein; die relativen Bilanzfehler liegen jeweils bei 1,58 × 10⁻¹³. Anders als der oben untersuchte Graben in Zeile 4 zeigen sie damit keine zusätzliche Schutzwirkung. Die gezielte Auswahl umfasst nur drei kurze gerade Strecken und schließt andere Platzierungen, Abrisse oder Kombinationen nicht aus. Ein zweiter wirksamer Wasserweg ist damit weiterhin nicht belegt.
+
 ### Markierter Verlauf des Landgrabens
 
 `bun tools/trace-review-diversion.ts dam3trench --ordered` und `dam3 --ordered` vergleichen dieselben Dämme mit und ohne Graben über 300 s. Das Diagnoseprogramm markiert bisher unmarkiertes Wasser beim Eintritt in Zeile 4 über deren Nord- und Südkanten von x = 0 bis 25. Fünf Markierungsstufen erfassen, welcher Anteil danach die Kanten bei x = 20, 15, 10 und 5 in dieser Reihenfolge westwärts passiert und anschließend den Westrand verlässt. Zwischen diesen Querschnitten darf sich die Markierung auch außerhalb der Grabenzeile bewegen. Der Solver selbst wird nicht verändert.

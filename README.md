@@ -4,7 +4,7 @@ WaterFighter ist ein browserbasierter Prototyp eines Hochwasserschutzspiels in e
 
 ## Einrichtung und Prüfung
 
-Voraussetzung: Node.js 24 und npm; für Browserprüfungen zusätzlich ein von Playwright unterstützter Browser mit seinen Systembibliotheken.
+Voraussetzung: Node.js 24 und npm; TypeScript 7 wird über die Lockdatei installiert; für Browserprüfungen zusätzlich ein von Playwright unterstützter Browser mit seinen Systembibliotheken.
 
 ```sh
 npm ci

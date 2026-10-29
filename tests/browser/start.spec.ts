@@ -200,3 +200,30 @@ for(const viewport of [{width:320,height:568},{width:390,height:844},{width:844,
   expect(box!.x).toBeGreaterThanOrEqual(0);expect(box!.x+box!.width).toBeLessThanOrEqual(viewport.width);
   await toggle.click();await expect(panel).toBeVisible();await expect(page.locator('#run')).toBeEnabled();
 });
+
+
+test('Ein blockierter Workerstart zeigt einen handlungsfähigen Fehler',async({page})=>{
+  await page.addInitScript(()=>{window.Worker=class {constructor(){throw new Error('Worker blockiert');}} as unknown as typeof Worker;});
+  await page.goto('/');
+  await expect(page.locator('#state')).toHaveText('Fehler');
+  await expect(page.locator('#message')).toContainText('Worker konnte nicht gestartet');
+  await expect(page.locator('#message')).toContainText('Seite neu laden');
+  await expect(page.locator('#run')).toBeDisabled();
+  await expect(page.locator('#panel-toggle')).toBeEnabled();
+});
+
+test('Eine unlesbare Worker-Nachricht stoppt die Berechnung sichtbar',async({page})=>{
+  await page.addInitScript(()=>{
+    const OriginalWorker=window.Worker;
+    window.Worker=class extends OriginalWorker {
+      constructor(url: string | URL,options?:WorkerOptions){super(url,options);(window as any).testWorker=this;}
+      override terminate(){(window as any).workerTerminated=true;super.terminate();}
+    };
+  });
+  await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.evaluate(()=>{const w=(window as any).testWorker;w.onmessageerror(new MessageEvent('messageerror'));});
+  await expect(page.locator('#state')).toHaveText('Fehler');
+  await expect(page.locator('#message')).toContainText('Seite neu laden');
+  await expect(page.locator('#run')).toBeDisabled();
+  expect(await page.evaluate(()=>(window as any).workerTerminated)).toBe(true);
+});

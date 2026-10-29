@@ -43,6 +43,8 @@ try {
   if(!sourceResponse.ok())throw Error(`Quellenhinweis: HTTP ${sourceResponse.status()}`);
   const link=(await sourceResponse.text()).match(/\[Szenariopaket\]\(([^)]+)\)/)?.[1];
   if(!link)throw Error('Szenariodownload fehlt im Quellenhinweis');
+  const directLink=await page.locator('a[download][href$="scenarios/brigittenau-v1.json.bin"]').getAttribute('href');
+  if(!directLink || new URL(directLink,page.url()).href!==new URL(link,sourceResponse.url()).href)throw Error('Direkter Szenariodownload verweist nicht auf das Build-Paket');
   const scenarioResponse=await page.request.get(new URL(link,sourceResponse.url()).href);
   if(!scenarioResponse.ok())throw Error(`Szenariodownload: HTTP ${scenarioResponse.status()}`);
   if(!gunzipSync(await scenarioResponse.body()).equals(await readFile('public/scenarios/brigittenau-v1.json')))throw Error('Szenariodownload stimmt nicht mit der Quelldatei überein');

@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Der getrennte Westgraben mit 20-m-Schutzdamm erreicht bei Bau vor Flutbeginn das Schadensziel und spart gegenüber denselben Dämmen mehr Schaden als seine Kosten. Ein markierter Modellanteil erreicht innerhalb der Trasse den westlichen Rand; die gesamte Schadensminderung lässt sich nicht allein durch den kleinen Randabfluss erklären: [Vergleich und Grenzen](geodaten-voruntersuchung.md#vorbereiteter-westgraben-mit-längerem-schutzdamm).
+
 Beim späten getrennten Westgraben ergaben offener und experimentell geschlossener Westrand exakt denselben Schaden; über den offenen Westrand wurde in diesen Läufen kein Abfluss erfasst. Der Nutzen ist für diese Kombination daher nicht als Ableitung über diesen Rand belegt: [Gegenversuch](geodaten-voruntersuchung.md#gegenversuch-mit-geschlossenem-westrand).
 
 Eine [Live-Sichtprobe des südlichen Grabens](landgraben-live.md#südlicher-graben-in-einer-live-runde) zeigt in einer erfolgreichen Runde Strömungsmarker an drei Zeitpunkten; Teile der Trasse sind durch Gebäude oder Wasser schwer zu verfolgen. Die Kamera war testseitig fokussiert, menschliche Bedienung und echte Geräte bleiben offen.

@@ -407,3 +407,20 @@ Der Westgraben `(0,46) → (47,26)` schneidet fünf modellierte Geländekanten. 
 Das Werkzeug erlaubt mit `--omit=0` bis `--omit=4` das Auslassen jeweils einer der fünf Kanten. Die fünf Ergebnisse liegen zwischen 25.428,61 und 28.287,81 Schaden, bei jeweils 6.940 Budgetrest. Der zusätzliche Versuch `--only=3` setzt ausschließlich die Dammkante `y:5643` bei `(43,28)`; mit zwei Referenzdämmen und Graben ergibt er 25.428,61 Schaden bei 7.060 Budgetrest. Der passende Kontrolllauf `--only=3 --no-trench` ergibt 25.822,68 Schaden bei 8.760 Budgetrest. Die Differenz von 394,07 ist kleiner als die Grabenkosten von 1.700; der Graben ist in dieser Kombination daher wirtschaftlich nicht vorteilhaft, auch wenn die Gesamtstrategie das Ziel erreicht.
 
 Ohne Referenzdämme ergibt derselbe Schutzdamm allein (`--only=3 --dams=0 --no-trench`) 138.857,31 Schaden und 9.960 Budgetrest; zusätzlich mit Graben (`--only=3 --dams=0`) sind es 120.309,09 und 8.260. Der Graben senkt den Schaden in diesem Vergleich um 18.548,22 und damit um mehr als seine Kosten, verfehlt aber das Schadensziel. Alle angegebenen Läufe umfassen 300 s; ihre relativen Wasserbilanzfehler liegen unter 1,88 × 10⁻¹³. Die Wirkung einzelner Dämme und des Grabens ist nicht allgemein auf andere Platzierungen übertragbar. Sichtbarkeit, menschliche Platzierung, durchgängiger Wasserweg und Folgen jenseits des Modellrands bleiben offen.
+
+### Getrennter Westgraben mit verkürztem Damm und späterem Eingriff
+
+`bun tools/compare-partial-diversion.ts 7 control` bereitet drei einzeln bestätigte Dämme vor: `(26,0) → (26,10)`, `(26,10) → (33,17)` und die einzelne Kante `y:5643` bei `(43,28)`. Sie kosten zusammen 1.000; ohne Graben endet die 300-s-Runde mit 47.412,15 Schaden und 9.000 Budgetrest. Der getrennte Westgraben `(0,46) → (47,26)` kostet zusätzlich 1.700 und ist über `Game.apply` zulässig. Die folgenden Läufe unterscheiden sich allein im Zeitpunkt seiner Bestätigung; `--at` setzt die Aktion idealisiert bei der angegebenen Simulationszeit.
+
+| Grabenaktion | Gesamtschaden | Budgetrest | Schadensminderung gegenüber Kontrolle |
+| --- | ---: | ---: | ---: |
+| Vor Beginn | 45.651,18 | 7.300 | 1.760,97 |
+| 150 s | 45.122,63 | 7.300 | 2.289,53 |
+| 170 s | 39.402,04 | 7.300 | 8.010,11 |
+| 180 s | 36.505,66 | 7.300 | 10.906,49 |
+| 190 s | 36.288,85 | 7.300 | 11.123,30 |
+| 200 s | 38.652,91 | 7.300 | 8.759,24 |
+
+Alle Varianten erreichen das Ziel von 50.000; jede Schadensminderung ist in diesem Vergleich größer als die Kosten des Grabens. Vor Beginn liegt der Überschuss allerdings nur bei 60,97. Wasserbestand vor und nach der Grabenaktion war in allen geprüften Grabenläufen gleich; die relativen Wasserbilanzfehler der Tabelle liegen unter 3,11 × 10⁻¹³. Beispiel: `bun tools/compare-partial-diversion.ts 7 trench --at=180`; ohne `--at` erfolgt der Graben vor Beginn.
+
+Die Platzierung ist empfindlich: Wird der Endpunkt des zweiten Damms um eine Zelle in beide Achsen nach `(34,18)` verschoben (`8` statt `7`), sinkt der Schaden durch den vorab angelegten Graben nur von 32.814,67 auf 32.638,62, also um weniger als seine Kosten. Die Werte sind idealisierte Modellvergleiche, keine nachgewiesene menschliche Bedienung. Eine Markierungsrechnung für genau diese Dammkombination und den späteren Graben fehlt; die frühere [Markierung ohne Dämme](#südlicher-westgraben-ohne-und-mit-referenzdämmen) belegt keine identische Wasserführung. Die einzelne Dammkante ist nur vier Meter lang und ihre Platzierung ohne Testkoordinaten unbestätigt. Folgen außerhalb des offenen Modellrands werden nicht berechnet.

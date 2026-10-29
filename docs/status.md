@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Eine [zweite, räumlich getrennte Grabenvariante](geodaten-voruntersuchung.md#getrennter-westgraben-mit-verkürztem-damm-und-späterem-eingriff) erreicht mit verkürztem Damm numerisch das Ziel und vermindert den Schaden auch bei Eingriff zwischen 170 und 200 s stärker als ihre Kosten. Die Platzierung ist empfindlich; Wasserweg unter genau dieser Kombination, menschliche Bedienung und Geräteabnahme bleiben offen.
+
 Ein getrennter Westgraben erreicht mit zwei Referenzdämmen und einem zusätzlichen Damm das Schadensziel, ist aber gegenüber denselben Dämmen ohne Graben nicht wirtschaftlich. Ohne Referenzdämme bringt die Kombination einen deutlichen Nutzen, verfehlt jedoch das Ziel: [Vergleich](geodaten-voruntersuchung.md#getrennter-westgraben-mit-baubarem-schutz-an-geländekanten). Menschliche Platzierung und eine wirtschaftlich nützliche zweite Erfolgsstrategie bleiben offen.
 
 Der [Grabenanschluss](browser-pruefung.md#grabenanschluss-per-emuliertem-touch) wurde mit festen Koordinaten und emuliertem Touch in beiden Ausrichtungen auf Vorschau, Kosten und Budget geprüft. Menschliche Platzierung und echte Geräte bleiben offen.

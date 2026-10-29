@@ -35,6 +35,7 @@ try {
   if(!found)throw Error(`Kartenabfrage für ${x},${y} nicht getroffen; erwartet ${expected}`);
   results.push(found);
  }
+ if(process.env.WATERFIGHTER_SCREENSHOT)await page.screenshot({path:process.env.WATERFIGHTER_SCREENSHOT});
  const separation=Math.hypot(results[0].screen[0]-results[1].screen[0],results[0].screen[1]-results[1].screen[1]);
  if(process.argv.includes('--close')&&separation<(mobile?10:20))throw Error(`Dammseiten trotz Vergrößerung nur ${separation.toFixed(2)} CSS-Pixel auseinander`);
  console.log(JSON.stringify({scenario,browser:browser.version(),time:state.time,close:process.argv.includes('--close'),mobile,separation,results},null,2));

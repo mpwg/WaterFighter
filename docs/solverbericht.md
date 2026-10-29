@@ -81,3 +81,16 @@ Nach der Worker-Fehlerkorrektur wurde die vollständige Browserstrategie auf dem
 Am 29. Oktober 2026 wurde `tools/observe-strategy-browser.mjs` nach der Optimierung der Wassergeometrie erneut auf Anwendungscode `d72a25e` ausgeführt: Chrome 156.0.8078.73, Vite-Entwicklungsserver unter Linux mit Softwaregrafik, Szenario `1.2-draft`. Elf über die Oberfläche bestätigte Dammabschnitte ließen 2.600 Budget übrig; die vollständige 2×-Runde dauerte 150,833 s und endete mit erreichtem Ziel und 0 Schaden. Seitenfehler wurden nicht protokolliert. Die Testprojektion liefert präzise Bildschirmkoordinaten; dies ist kein menschlicher Touch- oder Produktionsbuildtest.
 
 Ein zusätzlicher Controller-Integrationstest wendet Damm, Graben und Abriss bei laufender Uhr und bereits vorhandenem Wasser an. Für jede Maßnahme prüft er Vorschau, genau eine Budgetbelastung trotz doppelter Bestätigung, unverändertes Wasservolumen und den weiterhin laufenden Rundenzustand. Die Aktionen erfolgen in diesem Test zum selben Worker-Zeitpunkt, damit der Volumenvergleich nicht durch zwischenzeitliche Zuflüsse oder Abflüsse verfälscht wird. Zusammen mit den hydraulischen Werkzeugtests bestanden 33 Vitest-Tests; dieser künstliche Test ersetzt keine reale Gerätebedienung.
+
+## Empfindlichkeit gegenüber der Zuflussstärke
+
+`npx tsx tools/compare-flood-intensity.ts <Faktor>` skaliert ausschließlich für den jeweiligen Diagnoselauf die gesamte Zuflusskurve von `1.2-draft`; das ausgelieferte Szenario wird nicht verändert. Vier ungeschützte 300-s-Läufe auf Node.js 24.22.0 ergaben:
+
+| Faktor | Zugeführtes Volumen | Höchste Tiefe an Zuflusszellen | Höchste Tiefe außerhalb der Zuflusszellen | Höchste Tiefe an Gebäuderändern | Schaden |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 0,25 | 570.000 m³ | 7,52 m | 5,72 m | 0 m | 0 |
+| 0,50 | 1.140.000 m³ | 11,79 m | 8,88 m | 0 m | 0 |
+| 0,75 | 1.710.000 m³ | 15,41 m | 11,59 m | 0,037 m | 0,46 |
+| 1,00 | 2.280.000 m³ | 18,65 m | 14,01 m | 2,09 m | 322.771,10 |
+
+Alle relativen Bilanzfehler lagen unter 1,2 × 10⁻¹³. Die Spitzen treten zu unterschiedlichen Zeiten und Orten auf; „außerhalb der Zuflusszellen“ schließt andere Randzellen ein. Der Vergleich zeigt eine ausgeprägte spielerische Schwelle zwischen den getesteten Zuflüssen: Eine einfache Absenkung würde hier den zu schützenden Schaden nahezu beseitigen. Er belegt weder eine realistische Hochwasserkalibrierung noch, dass zwischen 0,75 und 1 keine besser geeigneten Parameter existieren. Die hohen Tiefen und die künstliche Randbedingung bleiben vor Szenarioabnahme zu beurteilen.

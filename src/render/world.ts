@@ -21,6 +21,7 @@ import { buildingCondition } from './building-status';
 import { boundaryArrowLines, boundaryArrows } from './boundary-arrows';
 import { MAX_TRENCH_FLOW_SAMPLES, trenchFlowCells } from './trench-flow';
 import { flowArrowLength, writeFlowArrow } from './flow-arrow';
+import { trenchRouteSegments } from './trench-route';
 import { FlowClock } from './flow-clock';
 import type { Scenario } from '../scenario';
 import type { Action, BuildingStatus, Face } from '../simulation/game';
@@ -49,6 +50,9 @@ export class World {
   private previewStart?: {x:number;y:number};
   private damMesh?: LinesMesh;
   private trenchMesh?: Mesh;
+  private trenchRouteMesh?: LinesMesh;
+  private trenchRoutePositions?: Float32Array;
+  private trenchRouteCells: number[] = [];
   private readonly trenchMaterial: StandardMaterial;
   private surveyMesh?: LinesMesh;
   private damSignature = '';
@@ -178,6 +182,7 @@ export class World {
   private updateTrenches(cells:number[]):void {
     this.flowTrenchCells=trenchFlowCells(cells);
     this.trenchMesh?.dispose();this.trenchMesh=undefined;
+    this.trenchRouteMesh?.dispose();this.trenchRouteMesh=undefined;this.trenchRoutePositions=undefined;this.trenchRouteCells=[];
     if(!cells.length)return;
     const positions:number[]=[],indices:number[]=[];
     for(const i of cells){
@@ -191,6 +196,18 @@ export class World {
     const mesh=new Mesh('confirmed-trenches',this.scene),data=new VertexData();data.positions=positions;data.indices=indices;
     const normals:number[]=[];VertexData.ComputeNormals(positions,indices,normals);data.normals=normals;data.applyToMesh(mesh);
     mesh.material=this.trenchMaterial;mesh.isPickable=false;this.trenchMesh=mesh;
+    // Schematic centreline stays visible above water and buildings, without affecting picking.
+    const segments=trenchRouteSegments(cells,this.width),lines=segments.map(([a,b])=>{
+      this.trenchRouteCells.push(a,b);
+      const point=(i:number)=>new Vector3(((i%this.width)+.5)*this.cell-this.width*this.cell/2,this.bed[i]+this.currentDepth[i]+.65,(Math.floor(i/this.width)+.5)*this.cell-this.height*this.cell/2);
+      const first=point(a),last=point(b);
+      if(a===b){first.x-=this.cell*.25;last.x+=this.cell*.25;}
+      return [first,last];
+    });
+    this.trenchRouteMesh=CreateLineSystem('trench-route-overlay',{lines,updatable:true},this.scene);
+    this.trenchRouteMesh.color=new Color3(0.27,0.13,0.04);this.trenchRouteMesh.isPickable=false;
+    this.trenchRouteMesh.renderingGroupId=1;this.trenchRouteMesh.alwaysSelectAsActiveMesh=true;
+    this.trenchRoutePositions=new Float32Array(this.trenchRouteMesh.getVerticesData(VertexBuffer.PositionKind)!);
   }
   private updateSurveyRidges():void {
     this.surveyMesh?.dispose();
@@ -315,6 +332,14 @@ export class World {
     if(topologyChanged){this.water.setIndices(visibleWaterIndices(this.width,this.height,this.wetVertices,this.waterIndexBuffer),undefined,true);this.wetTopologyReady=true;}
     this.water.updateVerticesData(VertexBuffer.PositionKind,this.waterPositions,true);
     this.water.updateVerticesData(VertexBuffer.ColorKind,this.waterColors);
+    if(this.trenchRouteMesh&&this.trenchRoutePositions){
+      for(let v=0;v<this.trenchRouteCells.length;v++){
+        const i=this.trenchRouteCells[v],x=i%this.width,y=Math.floor(i/this.width);
+        const east=y*this.width+Math.min(x+1,this.width-1),south=Math.min(y+1,this.height-1)*this.width+x;
+        this.trenchRoutePositions[v*3+1]=(this.bed[east]+depth[east]+this.bed[south]+depth[south])/2+.65;
+      }
+      this.trenchRouteMesh.updateVerticesData(VertexBuffer.PositionKind,this.trenchRoutePositions,true);
+    }
   }
   setFlowRunning(running:boolean,speed:1|2):void {this.flowClock.setRate(running?speed:0,performance.now()/1000);}
   resetView():void { this.flowClock.reset(performance.now()/1000);this.zoom=560; this.camera.setTarget(Vector3.Zero()); this.camera.alpha=INITIAL_ALPHA; this.camera.beta=INITIAL_BETA; this.camera.radius=INITIAL_RADIUS; this.resize(); }

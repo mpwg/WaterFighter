@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Eine [schematische dunkle Grabenlinie](landgraben-live.md#schematische-grabentrasse-über-wasser-und-gebäuden) bleibt über Wasser und Gebäuden sichtbar und ist nicht auswählbar; sie ersetzt keine Strömungsanzeige. Produktionsbuild, 72 Modelltests, sieben gezielte Chromium-Prüfungen und eine instrumentierte Live-Sichtprobe bestanden; ein Bildvergleich mit künstlich erhöhtem Wasser scheitert auf dem vorherigen Build. Vollständige Browser-Suite, menschliche Verständlichkeit und echte Geräte bleiben offen.
+
 Auf dem isolierten Produktionsbuild `cdf3873` bestanden [alle 84 Chromium-Fälle](browser-pruefung.md#gesamtsuite-nach-kompaktem-status). Spätere Darstellungsänderungen, menschliche Bedienung und echte Geräte bleiben separat zu prüfen.
 
 Der getrennte Westgraben mit 20-m-Schutzdamm erreicht bei Bau vor Flutbeginn das Schadensziel und spart gegenüber denselben Dämmen mehr Schaden als seine Kosten. Ein markierter Modellanteil erreicht innerhalb der Trasse den westlichen Rand; die gesamte Schadensminderung lässt sich nicht allein durch den kleinen Randabfluss erklären: [Vergleich und Grenzen](geodaten-voruntersuchung.md#vorbereiteter-westgraben-mit-längerem-schutzdamm).

@@ -32,7 +32,7 @@ Bei einem nicht behebbaren Grafik-, Lade- oder Workerfehler wird das Menü geöf
 
 Die Kopfzeile zeigt laufend Gesamtschaden, Ziel sowie Flut- und Abrissverluste, auch bei ausgeblendetem Menü. Gebäude werden nach Zustand eingefärbt; im Kartenmodus zeigt Antippen zusätzlich Zustand, Schaden und Wassertiefe am Gebäuderand als Text. Bei Wasser nennt die Kartenabfrage Tiefe und Wasserspiegel über Wiener Null; bei ausgeblendetem Menü erscheint sie mit dem Zeitpunkt der Abfrage. So lassen sich Wasserstände auf beiden Seiten eines Damms vergleichen.
 
-Bestätigte Dämme erscheinen als orange Linien und bestätigte Gräben als braune Geländeflächen. Schräge Gräben folgen rasterverbunden der Verbindung zwischen den beiden gewählten Punkten; die Vorschau zeigt den tatsächlichen Verlauf. Überflutetes Wasser kann die Grabenmarkierung verdecken.
+Bestätigte Dämme erscheinen als orange Linien und bestätigte Gräben als braune Geländeflächen. Eine schematische dunkelbraune Linie zeigt den Grabenverlauf auch über Wasser und Gebäuden; sie ist eine Kartenüberlagerung. Schräge Gräben folgen rasterverbunden der Verbindung zwischen den beiden gewählten Punkten; die Vorschau zeigt den tatsächlichen Verlauf.
 
 Weiße Strömungspfeile zeigen die berechnete Richtung nahe der jeweils abgetasteten Zelle und erscheinen auch entlang bestätigter Gräben, wenn dort genügend Wasser und Strömung vorhanden sind. Die Größe der regulären Pfeile passt sich begrenzt dem Zoom an; schmale Grabenmarker können in der Übersicht schwer erkennbar sein.
 

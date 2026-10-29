@@ -40,6 +40,8 @@ Der Szenarioentwurf `1.4-draft` verwendet einen offenen westlichen Modellrand un
 
 Wenn eine Bauvorschau nicht zulässig ist, erklärt sie den Grund, etwa einen Kartenrand, einen bereits vorhandenen Damm oder ein Gebäude im geplanten Graben.
 
+Bei Damm und Graben markiert ein Kreuz den ersten gewählten Punkt. Die Grabenvorschau weist zusätzlich darauf hin, wenn der geplante Verlauf modellierte Geländekanten absenkt und dadurch den Wasserverlauf verändern kann.
+
 ## Dokumentation
 
 - [Spielplan](docs/spielplan.md): Produktziel und Spielregeln.

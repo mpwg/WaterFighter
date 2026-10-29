@@ -34,6 +34,8 @@ Nach einer Bestätigung zeigt die Vorschau „Maßnahme wird ausgeführt“; Ver
 
 Bei Damm und Graben markiert ein Kreuz den gewählten Startpunkt; nach dem zweiten Punkt oder einem Werkzeugwechsel wird es durch die Verlaufsvorschau ersetzt beziehungsweise entfernt. Ein Chromium-Bildvergleich prüft die Markierung auf dem Szenario und auf einer künstlich gleichmäßig überfluteten Karte; ein weiterer Wechselvergleich prüft ihr Verschwinden. Produktionsbuild, 54 Vitest-Tests und fünf gezielte Chromium-Prüfungen bestanden. Sichtbarkeit während einer dynamischen Flut und auf echten Geräten bleibt zu prüfen.
 
+Die eingebaute Spielhilfe und die README erklären das Startkreuz und den Hinweis auf modellierte Geländekanten. Die Verständlichkeit für eine unabhängige Testperson ist noch nicht geprüft.
+
 Die Höhe des Startkreuzes folgt jetzt den Wasser-Snapshots, solange der zweite Punkt noch nicht gewählt ist. Ein Chromium-Bildvergleich setzt nach Auswahl testseitig den Wasserstand im Snapshot höher und prüft die Verschiebung des Kreuzes: Der alte Build `ccafdbb` verfehlt den Vergleich, der angepasste Produktionsbuild besteht ihn. Dies ist eine künstliche Snapshot-Änderung, keine durchgehend beobachtete Flut oder echte Geräteabnahme.
 
 Ein ergänzender Chromium-Test wählte den ersten Punkt auf dem ausgelieferten Szenario, ließ den echten Worker zehn simulierte Sekunden laufen und pausierte anschließend. Im Bildvergleich war die orange Markierung nach der Pause sichtbar und verschwand beim Werkzeugwechsel. Der Test betrachtet einen Zeitpunkt und eine automatisch gewählte Position; er belegt weder die Sichtbarkeit über eine ganze Flut noch echte Gerätebedienung.

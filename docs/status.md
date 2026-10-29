@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Firefox 159 bestand auf dem isolierten Build `c8b4b33` mit Babylon.js 9.33.1 einen automatisierten Werkzeugtest und eine vollständige unbehandelte 2×-Runde: [Prüfbeleg](browser-pruefung.md#firefox-runde-mit-babylonjs-9331). Menschliche Abnahme, tatsächliches Safari und echte Geräte bleiben offen.
+
 Babylon.js wurde am 30. Oktober 2026 auf 9.33.1 aktualisiert. Produktionsbuild, 72 Modelltests und sechs gezielte Chromium-Fälle bestanden; `bun outdated` meldet keine veralteten direkten Pakete und `bun audit` keine bekannten Schwachstellen. Die festgelegten Python-Pakete entsprechen den abgefragten stabilen PyPI-Versionen. Die vollständige Browser-Suite für diesen Abhängigkeitsstand bleibt offen: [Prüfbeleg](browser-pruefung.md#babylonjs-9331).
 
 Bei ausgeblendetem Menü bleiben nun auch Werkzeughinweise und Fehlermeldungen über der Karte sichtbar; während einer Vorschau werden sie ausgeblendet, damit deren Bedienelemente frei bleiben. Produktionsbuild, 72 Modelltests und 14 gezielte Chromium-Fälle bestanden: [Prüfbeleg](browser-pruefung.md#werkzeughinweise-bei-verborgenem-menü). Anschließend bestanden [alle 89 Chromium-Fälle](browser-pruefung.md#gesamte-chromium-suite-mit-werkzeughinweisen) auf `25d4151` mit Babylon.js 9.33.0. Menschliche Bedienung, echte Geräte und die vollständige Suite für Babylon.js 9.33.1 bleiben offen.

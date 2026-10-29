@@ -52,7 +52,7 @@ Der Produktionsbuild verwendet gezielte Babylon-Imports; Ausgangsansicht und Abr
 | Echte iPhone-/Android-Abnahme | nicht prüfbar | Lokal kein Smartphone sichtbar und `adb`/`idevice_id` fehlen; Zugang zu echten Geräten bereitstellen |
 | Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Messskript in vollständiger Desktop-1×-Runde mit Straßenlinien geprüft: Framezeit-Ziel mit Softwaregrafik verfehlt; keine echten Smartphones lokal erreichbar: [Verfahren](mobil-messung.md) |
 | Drei stabile aufeinanderfolgende Runden | offen | Drei 2×-Runden auf Produktionsbuild `c98eeb2` mit Szenario 1.3, Pause, Zoom und Neustart bestanden. Speicherstichproben steigen; zwölf kurze Neustarts mit Seiten- und Worker-Garbage-Collection sowie Prozessrollen untersucht; Ursachen und Langzeitverhalten bleiben offen: [Browserprüfung](browser-pruefung.md) |
-| Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Produktionsbuild unter Unterpfad einschließlich Worker und komprimiertem Szenario geprüft; direkte Links zu Aufbereitung und Quellen ergänzt, vollständige Lizenzprüfung fehlt |
+| Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Produktionsbuild unter Unterpfad einschließlich Worker und komprimiertem Szenario geprüft; Entwicklungscache bei Dateiersatz geprüft; direkte Links zu Aufbereitung und Quellen ergänzt, vollständige Lizenzprüfung fehlt |
 
 „Offen“ bedeutet hier, dass die Arbeit noch auszuführen ist. „Nicht prüfbar“ darf erst eingetragen werden, wenn ein konkretes Hindernis ermittelt und beschrieben wurde. Die lokale Gerätesuche ist unten dokumentiert; ein entfernter Gerätezugang wurde nicht ausgeschlossen.
 

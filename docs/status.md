@@ -6,11 +6,13 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Firefox 159 bestand auf dem isolierten Produktionsbuild `d38c0ca` einen automatisierten Werkzeugtest und eine unbehandelte vollständige 2×-Runde: [Prüfbeleg](browser-pruefung.md#firefox-runde-mit-schematischer-grabenlinie). Menschliche Abnahme, tatsächliches Safari und echte Geräte bleiben offen.
+
 Der aktuelle Anwendungscode wurde erneut als [statischer Unterpfad-Build](browser-pruefung.md#aktueller-produktionsbuild-unter-einem-unterpfad) einschließlich Worker, Aktionen, Neustart und Szenariodownload geprüft. Eine dauerhafte Bereitstellung und die Lizenzabnahme bleiben offen.
 
 Für den Einzelabriss nach 180 s zeigt eine [lokale Wasserbilanz](review-gebaeudevergleich.md#wasserbilanz-am-später-abgerissenen-gebäude) im Vergleich zur geschlossenen Kontrolle den geöffneten und durchströmten Gebäudegrundriss. Die Summen verfolgen keine einzelnen Wasserteilchen und beweisen keine reale Schutzwirkung.
 
-Auf dem isolierten Produktionsbuild `d38c0ca` mit schematischer Grabenlinie bestanden [alle 85 Chromium-Fälle](browser-pruefung.md#gesamtsuite-mit-schematischer-grabenlinie). Menschliche Bedienung, tatsächliches Safari und echte Geräte bleiben offen.
+Auf dem isolierten Produktionsbuild `d38c0ca` mit schematischer Grabenlinie bestanden [alle 85 Chromium-Fälle](browser-pruefung.md#gesamtsuite-mit-schematischer-grabenlinie). Menschliche Bedienung, tatsächliches Safari und echte Geräte bleiben offen. Eine [mobile Live-Sichtprobe](landgraben-live.md#linienüberlagerung-im-emulierten-hochformat) zeigt die Linie in einer emulierten Hochformatansicht; die Kamera war testseitig fokussiert.
 
 Ein [einzelner Abriss in einer erfolgreichen Dammstrategie](review-gebaeudevergleich.md#einzelabriss-in-einer-erfolgreichen-strategie) senkt den Gesamtschaden auch bei den geprüften Eingriffszeiten 120, 150 und 180 s stärker als seine Kosten; ein bereits beschädigtes Gebäude wird dabei nicht doppelt gewertet. Die Kombination mit dem späteren Westgraben ist für diesen Abriss dagegen ungünstig. Menschliche Bedienung und Geräteabnahme bleiben offen.
 
@@ -178,7 +180,7 @@ Die Bun-Migration wurde mit einer Neuinstallation und ohne Node im PATH geprüft
 
 Der Produktionsbuild verwendet gezielte Babylon-Imports; Ausgangsansicht und Abrissvorschau wurden mit dem vorigen Build verglichen: [Browserprüfung](browser-pruefung.md#gezielte-babylon-imports).
 
-Der [Gebäudevergleich](review-gebaeudevergleich.md) trennt aktuelle Zahlen und historische Vergleiche der früheren Dammführung. Der Landgraben senkt im aktuellen Vergleich gegenüber drei Dämmen den Schaden deutlich; die Kombination mit Abriss verschlechtert gegenüber zwei Dämmen die Wertung. Der Zehn-Minuten-Lauf auf dem ausgelieferten Szenario weist einen relativen Bilanzfehler von 8,42 × 10⁻¹⁴ aus. Ein einzelner Abriss zeigt inzwischen eine wirtschaftliche Verbesserung; menschliche Nutzbarkeit und eine erfolgreiche Strategie mit diesem Einzelabriss bleiben offen.
+Der [Gebäudevergleich](review-gebaeudevergleich.md) trennt aktuelle Zahlen und historische Vergleiche der früheren Dammführung. Der Landgraben senkt im aktuellen Vergleich gegenüber drei Dämmen den Schaden deutlich; die Kombination mit Abriss verschlechtert gegenüber zwei Dämmen die Wertung. Der Zehn-Minuten-Lauf auf dem ausgelieferten Szenario weist einen relativen Bilanzfehler von 8,42 × 10⁻¹⁴ aus. Ein einzelner Abriss zeigt inzwischen eine wirtschaftliche Verbesserung, auch in einer [erfolgreichen Dammstrategie](review-gebaeudevergleich.md#einzelabriss-in-einer-erfolgreichen-strategie); menschliche Nutzbarkeit und Geräteabnahme bleiben offen.
 
 Eine vollständige lokale Produktionsrunde mit einem während der laufenden Flut bestätigten Graben zeigte Schadensanzeige, Ergebnis und zurückgesetzte Werte nach Neustart. Der willkürlich platzierte Graben verfehlte das Ziel; die automatisierte Mausprüfung ersetzt keinen menschlichen Spieltest: [Browserprüfung](browser-pruefung.md#produktionsrunde-mit-laufendem-grabeneingriff).
 

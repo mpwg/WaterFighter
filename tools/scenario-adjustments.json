@@ -1,0 +1,6 @@
+{
+  "version": "1.3-draft",
+  "inflowMaxColumnExclusive": 150,
+  "inflowCurve": [[0, 0], [60, 3375], [140, 11250], [210, 7875], [300, 0]],
+  "inflowNote": "Der künstliche Zufluss wird auf 90 Gewässerzellen am oberen Rand verteilt; seine Kurve entspricht 75 % des Szenarioentwurfs 1.2. Dies sind Spielwerte und keine gemessene Hochwasserwelle."
+}

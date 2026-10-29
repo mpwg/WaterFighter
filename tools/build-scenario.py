@@ -196,19 +196,20 @@ with zipfile.ZipFile(RAW / '35_2_dgm_bk.zip') as archive:
 water_mask = rasterize([(mapping(g), 1) for _,g in water_geometries if not g.is_empty], out_shape=(N,N), transform=TRANSFORM, fill=0, dtype='uint8')
 # DGM liefert keine bathymetrische Aufnahme: synthetische Sohle und Anfangspegel
 # sind explizit spielerische Annahmen, die bei der Kalibrierung geändert werden können.
+adjustment = json.loads((ROOT / 'tools/scenario-adjustments.json').read_text(encoding='utf-8'))
 water_level = 2.0
 bed_depth = 2.0
 bed = terrain.copy()
 bed[water_mask == 1] = water_level-bed_depth
 initial = np.where(water_mask == 1, bed_depth, 0).astype(np.float32)
 scenario = {
- 'id':'brigittenau', 'version':'1.2-draft', 'name':'Brigittenau an der Donau',
+ 'id':'brigittenau', 'version':adjustment['version'], 'name':'Brigittenau an der Donau',
  'grid': {'width':N, 'height':N, 'cellSize':CELL, 'origin':[X,Y+SIZE], 'crs':'EPSG:31256', 'heightReference':'Wiener Null (EPSG:8881)', 'rowDirection':'south'},
  'terrain': np.round(terrain,3).ravel().tolist(), 'bed': np.round(bed,3).ravel().tolist(), 'initialDepth': initial.ravel().tolist(), 'waterMask':water_mask.ravel().tolist(),
  'buildings':buildings, 'roads':roads, 'barriers':barriers, 'crossings':crossings, 'breaklines':breaklines,
  'water': [{'id':ident, 'polygons':[local_polygon(p) for p in polygon_parts(g)]} for ident,g in water_geometries],
- 'parameters': {'duration':300, 'budget':10000, 'damageTarget':50000, 'waterLevel':water_level, 'manning':0.025, 'damHeight':4.0, 'damCostPerCell':40, 'trenchDepth':0.8, 'trenchCostPerCell':25, 'buildingValuePerSquareMetre':10, 'demolitionCostFraction':0.1, 'damageDepth':1, 'damageDuration':120, 'inflowCells':[x for x in range(60,100) if water_mask[0,x] == 1], 'inflowCurve':[[0,0],[60,4500],[140,15000],[210,10500],[300,0]], 'outflowEdges':['bottom','right']},
- 'adjustments': ['Typ-1-Bruchlinien werden mit einer 0,15-m-Schwelle auf Zellkanten gerastert; ihre Höhen dienen näherungsweise als überströmbare Kronen. Formlinien werden nicht als Barrieren behandelt. Durchlässe und die hydraulische Wirkung sind nicht vermessen.', 'OSM-Gewässerflächen erhalten eine künstliche, ebene Sohle bei 0 m Wiener Null und einen Anfangsspiegel bei 2 m Wiener Null. Dies ist keine gemessene Bathymetrie.', 'Gebäude ohne verwendbare Höhenangabe erhalten 12 m Darstellungshöhe.'],
+ 'parameters': {'duration':300, 'budget':10000, 'damageTarget':50000, 'waterLevel':water_level, 'manning':0.025, 'damHeight':4.0, 'damCostPerCell':40, 'trenchDepth':0.8, 'trenchCostPerCell':25, 'buildingValuePerSquareMetre':10, 'demolitionCostFraction':0.1, 'damageDepth':1, 'damageDuration':120, 'inflowCells':[x for x in range(min(N, adjustment['inflowMaxColumnExclusive'])) if water_mask[0,x] == 1], 'inflowCurve':adjustment['inflowCurve'], 'outflowEdges':['bottom','right']},
+ 'adjustments': [adjustment['inflowNote'], 'Typ-1-Bruchlinien werden mit einer 0,15-m-Schwelle auf Zellkanten gerastert; ihre Höhen dienen näherungsweise als überströmbare Kronen. Formlinien werden nicht als Barrieren behandelt. Durchlässe und die hydraulische Wirkung sind nicht vermessen.', 'OSM-Gewässerflächen erhalten eine künstliche, ebene Sohle bei 0 m Wiener Null und einen Anfangsspiegel bei 2 m Wiener Null. Dies ist keine gemessene Bathymetrie.', 'Gebäude ohne verwendbare Höhenangabe erhalten 12 m Darstellungshöhe.'],
  'sources': {'osm':'© OpenStreetMap-Mitwirkende, ODbL 1.0, https://www.openstreetmap.org/copyright und https://opendatacommons.org/licenses/odbl/1-0/', 'terrain':'Datenquelle: Stadt Wien - data.wien.gv.at, CC BY 4.0, https://creativecommons.org/licenses/by/4.0/', 'sha256':SOURCES},
 }
 scenario['surveyCrests'] = derive_faces(scenario)

@@ -11,6 +11,7 @@ const errors=[];page.on('pageerror',e=>errors.push(e.message));
 await page.route('**/src/main.ts*',async route=>{const response=await route.fetch();const body=await response.text();await route.fulfill({response,body:body+'\nexport { world };\n'});});
 if(candidate){
   const scenario=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
+  if(scenario.version!=='1.2-draft')throw Error('Kandidatenvergleich benötigt den historischen Szenarioentwurf 1.2');
   scenario.parameters.inflowCurve=scenario.parameters.inflowCurve.map(([t,q])=>[t,q*0.75]);
   scenario.parameters.inflowCells=Array.from({length:scenario.grid.width},(_,x)=>x).filter(x=>x<150&&scenario.waterMask[x]===1);
   await page.route('**/scenarios/brigittenau-v1.json',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(scenario)}));

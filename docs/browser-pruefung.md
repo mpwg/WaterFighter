@@ -553,3 +553,9 @@ Ein erster Versuch auf demselben Build endete vor dem Ergebnis mit `Target page,
 Ein lokaler Produktionsbuild mit Anwendungscode `4dfe2e7` und Szenario `1.4-draft` wurde mit Chrome 156.0.8078.73 unter Linux und Softwaregrafik geprüft. `bun tools/observe-three-rounds.mjs --close --rounds=1` pausierte bei 00:03, vergrößerte die Ansicht über die Zoom-Schaltfläche bis zum Anschlag und setzte die unbehandelte 2×-Runde fort. Nach 170,259 s erreichte sie das Ergebnis: 138.836 Flutschaden, kein Abrissverlust und 10.000 Budgetrest. Das Schadensziel wurde ohne Maßnahmen verfehlt; Seitenfehler wurden nicht protokolliert. Die Zeit umfasst die Bedienung und ist keine Leistungsabnahme.
 
 Der Versuch prüfte eine einzelne Runde ohne Baumaßnahmen bei fokussierter Karte, keine drei aufeinanderfolgenden Runden und keine echte Geräte- oder menschliche Bedienprüfung. Der Build der Anwendung war vor den späteren Dokumentations- und Diagnoseänderungen erstellt worden; diese änderten den Anwendungscode nicht.
+
+### Größenwechsel bei geöffneter Vorschau
+
+Am 30. Oktober 2026 bestanden nach `bun run build` zwei gezielte Fälle in `tests/browser/orientation-change.spec.ts` auf Anwendungscode `9461371` mit Chrome 156.0.8078.73 unter Linux und Softwaregrafik. In einer emulierten Touchansicht wurde jeweils eine Grabenmaßnahme ausgewählt und die gültige Vorschau geöffnet. Anschließend wechselte der Test die Viewportgröße von 390 × 844 auf 844 × 390 CSS-Pixel beziehungsweise umgekehrt. In beiden Fällen blieb der Vorschautext unverändert, die Bestätigung lag sichtbar und treffbar im Fenster, und nach dem Tippen sank das Budget genau um die angezeigten Kosten.
+
+Dies prüft die Reaktion auf eine Größenänderung bei offener Vorschau, keine physische Gerätedrehung, keine während der Drehung laufende Geste und keine menschliche Bedienung. Die Gesamtsuite auf diesem Anwendungsstand wurde zuvor ohne die beiden neuen Fälle ausgeführt.

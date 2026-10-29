@@ -115,3 +115,9 @@ Der Lauf verwendete einen virtuellen Linux-X-Desktop mit Mesa-Softwaregrafik und
 Die Darstellung kopiert Tiefen-Snapshots nun in einen bestehenden Puffer und aktualisiert vorhandene Strömungsmarker statt sie bei jedem Snapshot neu anzulegen. Ein Vitest prüft insbesondere, dass spätere Änderungen am zurückgegebenen Snapshot die gespeicherte Tiefenabfrage nicht verändern und dass die Marker aktualisiert werden. Produktionsbuild, 34 Vitest-Tests und 19 Chrome-Browserprüfungen bestanden.
 
 Ein erneuter Zwölf-Kurzrunden-Test mit Szenario `1.3-draft`, Chrome 156.0.8078.73 und erzwungener Seiten- und Worker-Garbage-Collection ergab für die Renderer-PSS-Summe nach Runde 1 und 12 236.818.432 beziehungsweise 229.062.656 Bytes und für den Seiten-Heap 20.237.404 beziehungsweise 20.815.248 Bytes; Seitenfehler wurden nicht protokolliert. Diese Stichproben ähneln dem vorigen GC-Lauf und belegen keine messbare Leistungsverbesserung oder das Fehlen langsamer Lecks. Vollständige Runden und echte Geräte müssen nach der Darstellungsänderung erneut geprüft werden.
+
+## Drei Runden nach Wiederverwendung der Darstellungsdaten
+
+Auf Produktionsbuild `9cd0aac`, Szenario `1.3-draft`, liefen am 29. Oktober 2026 drei ungeschützte 2×-Runden mit `tools/observe-three-rounds.mjs` in Chrome 156.0.8078.73 unter Linux/Playwright mit Softwaregrafik. Pause, Zoom, Fortsetzen und Neustarts funktionierten; Seitenfehler wurden nicht protokolliert. Die Runden dauerten 153,032 / 153,082 / 152,951 s und endeten jeweils mit 140.415 Schaden und 10.000 Budgetrest.
+
+Der Seiten-Heap nach den Runden betrug 54.573.088 / 78.735.526 / 56.626.986 Bytes, die RSS-Summe im Prozessbaum 1.445.580.800 / 1.458.442.240 / 1.459.986.432 Bytes bei je zehn Prozessen. Der Heap schwankt, die RSS-Summe steigt leicht; aus drei Stichproben lässt sich kein langsames Leck ausschließen. Die Messung ersetzt keine echte Geräteabnahme und prüft nicht jede Bedienung über die gesamte Flutphase.

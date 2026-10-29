@@ -6,7 +6,7 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
-Reguläre Strömungspfeile passen ihre Größe nun begrenzt an den Kartenmaßstab an; Pfeile im Graben bleiben zellnah. Eine [emulierte schmale Sichtprobe](browser-pruefung.md#strömungspfeile-in-schmaler-ansicht), Modelltests und gezielte Browserprüfungen bestehen; echte Geräte und ein vollständiger Browserlauf des neuen Stands bleiben offen.
+Reguläre Strömungspfeile passen ihre Größe nun begrenzt an den Kartenmaßstab an; Pfeile im Graben bleiben zellnah. Eine [emulierte schmale Sichtprobe](browser-pruefung.md#strömungspfeile-in-schmaler-ansicht), alle 67 Modelltests und 63 Chromium-Browserprüfungen auf `870f345` bestehen; echte Geräte und menschliche Lesbarkeit bleiben offen.
 
 [Strömungsmarker](browser-pruefung.md#strömungsrichtung-an-den-markern) zeigen ihre lokale Richtung nun mit Pfeilspitzen. Eine Sichtprobe und alle 63 Chromium-Prüfungen auf dem isolierten Stand `b44c067` bestehen; Lesbarkeit und Leistung auf echten Geräten bleiben offen.
 

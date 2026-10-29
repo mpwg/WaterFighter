@@ -46,9 +46,11 @@ export class Controller {
         case 'speed': if (message.speed === 1 || message.speed === 2) { this.speed = message.speed; this.dirty = true; this.snapshot(); } else throw new Error('Ungültige Geschwindigkeit'); break;
         case 'preview': case 'action': {
           if (!this.game) break;
+          const duplicate=message.type==='action' && this.game.hasProcessedAction(message.id);
           const result=this.completed ? {ok:false as const,reason:'Runde bereits beendet.',budget:this.game.budget} : message.type==='preview' ? this.game.preview(message.action) : this.game.apply(message.id,message.action);
-          this.emit({type:'action-result',round:this.round,id:message.id,preview:message.type==='preview',result});
-          if(message.type==='action' && result.ok) { this.revision++; this.dirty=true; this.snapshot(); }
+          if(message.type==='action' && result.ok && !duplicate) this.revision++;
+          this.emit({type:'action-result',round:this.round,id:message.id,preview:message.type==='preview',revision:this.revision,result});
+          if(message.type==='action' && result.ok) { this.dirty=true; this.snapshot(); }
           break;
         }
         case 'recycle': {

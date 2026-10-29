@@ -24,5 +24,6 @@ Der Entwicklungsserver nennt seine lokale Adresse. `npm run preview` liefert den
 - [Umsetzungsplan](docs/umsetzungsplan.md): Architektur, Arbeitspakete und Abnahmekriterien.
 - [Status und Kriterienmatrix](docs/status.md): Fortschritt und tatsächliche Nachweise.
 - [Browser- und Stabilitätsprüfung](docs/browser-pruefung.md): ausgeführte Browserläufe und ihre Grenzen.
+- [Mobil-Messverfahren](docs/mobil-messung.md): Vorbereitung der noch ausstehenden Geräteabnahme.
 - [Goal-Auftrag](docs/goal-auftrag.md): Implementierungsauftrag.
 - [Historischer 3D-Enginevergleich](docs/archiv/enginevergleich-3d.md): früherer Ansatz, keine Architekturvorgabe.

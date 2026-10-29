@@ -20,6 +20,7 @@ const run=app.querySelector<HTMLButtonElement>('#run')!, reset=app.querySelector
 const timeLabel=app.querySelector<HTMLElement>('#time')!, stateLabel=app.querySelector<HTMLElement>('#state')!;
 type Mode='camera'|'dam'|'trench'|'demolish';
 let world:World|undefined, scenario:Scenario|undefined, round=0, running=false, finished=false, fatalError=false, speed:1|2=1;
+const pendingPresentation=new Map<string,{round:number;confirmedAt:number;confirmedRunning:boolean;confirmedSpeed:1|2;confirmedVisible:boolean;revision?:number;scheduled?:boolean}>();
 let mode:Mode='camera', first:{x:number;y:number}|undefined, draft:Action|undefined, previewId='', serial=0, awaiting=false;
 const resultPanel=app.querySelector<HTMLElement>('#result')!, resultTitle=app.querySelector<HTMLElement>('#result-title')!, resultDetails=app.querySelector<HTMLElement>('#result-details')!;
 app.querySelector<HTMLButtonElement>('#again')!.onclick=()=>{if(round)worker.postMessage({type:'reset',round});};
@@ -28,7 +29,7 @@ function clearDraft() {first=undefined;draft=undefined;previewId='';awaiting=fal
 function chooseMode(next:Mode) { mode=next;clearDraft(); for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.setAttribute('aria-pressed',String(b.dataset.mode===mode)); message.textContent=mode==='camera'?'Karte verschieben und zoomen.':mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.'; }
 for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.onclick=()=>chooseMode(b.dataset.mode as Mode);
 app.querySelector<HTMLButtonElement>('#cancel')!.onclick=clearDraft;
-confirm.onclick=()=>{if(!draft||!round||awaiting)return;awaiting=true;confirm.disabled=true;worker.postMessage({type:'action',round,id:previewId,action:draft});};
+confirm.onclick=()=>{if(!draft||!round||awaiting)return;awaiting=true;confirm.disabled=true;pendingPresentation.set(previewId,{round,confirmedAt:performance.now(),confirmedRunning:running,confirmedSpeed:speed,confirmedVisible:document.visibilityState==='visible'});worker.postMessage({type:'action',round,id:previewId,action:draft});};
 function showDraft(action:Action) {if(!round)return; draft=action;previewId=`${round}-${++serial}`;preview.hidden=false;confirm.disabled=true;previewText.textContent='Kosten werden geprüft …';world?.showPreview(action);worker.postMessage({type:'preview',round,id:previewId,action});}
 function pathAction(a:{x:number;y:number},b:{x:number;y:number}):Action|undefined {
   if(!scenario)return; const {width:w,height:h,cellSize:c}=scenario.grid;
@@ -50,11 +51,11 @@ function selectAt(x:number,y:number) {
   const action=pathAction(first,hit);first=undefined;if(action)showDraft(action);else message.textContent='Bitte einen längeren Verlauf wählen.';
 }
 const worker=new Worker(new URL('./worker.ts',import.meta.url),{type:'module'});
-function fail(text:string) { fatalError=true; running=false; run.disabled=true; reset.disabled=true; speedButton.disabled=true; for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=true; clearDraft(); message.textContent=text; stateLabel.textContent='Fehler'; }
+function fail(text:string) { pendingPresentation.clear(); fatalError=true; running=false; run.disabled=true; reset.disabled=true; speedButton.disabled=true; for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=true; clearDraft(); message.textContent=text; stateLabel.textContent='Fehler'; }
 worker.onmessage=(event:MessageEvent<Response>)=>{
   const data=event.data;
   if(isReady(data) && !fatalError) {
-    round=data.round; running=false; finished=false; speed=1; clearDraft(); resultPanel.hidden=true; run.textContent='Simulation starten'; speedButton.textContent='1×';
+    round=data.round; pendingPresentation.clear(); running=false; finished=false; speed=1; clearDraft(); resultPanel.hidden=true; run.textContent='Simulation starten'; speedButton.textContent='1×';
     run.disabled=false; reset.disabled=false; speedButton.disabled=false;
     message.textContent='Wiener Szenario geladen. Die Wasserberechnung ist bereit.'; stateLabel.textContent='Vorbereitung'; timeLabel.textContent='00:00';
   } else if(data.type==='snapshot') {
@@ -63,10 +64,22 @@ worker.onmessage=(event:MessageEvent<Response>)=>{
       world.updateState(new Float32Array(data.buffer,n*12,n),data.buildings,data.dams,data.revision); world.updateWater(new Float32Array(data.buffer,0,n),new Float32Array(data.buffer,n*4,n),new Float32Array(data.buffer,n*8,n)); budgetLabel.textContent=Math.round(data.budget).toLocaleString('de-AT'); running=data.running;
       const seconds=Math.floor(data.time); timeLabel.textContent=`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;
       stateLabel.textContent=finished?'Beendet':running?'Läuft':data.time===0?'Vorbereitung':'Pausiert'; run.textContent=running?'Pause':data.time===0?'Simulation starten':'Fortsetzen';
+      window.dispatchEvent(new CustomEvent('waterfighter:diagnostics',{detail:{round:data.round,time:data.time,backlog:data.backlog,running:data.running,speed:data.speed}}));
+      for(const [id,pending] of pendingPresentation) if(pending.round===data.round && pending.revision!==undefined && data.revision>=pending.revision && !pending.scheduled) {
+        pending.scheduled=true;
+        world.scene.onAfterRenderObservable.addOnce(()=>{
+          if(pendingPresentation.get(id)!==pending || round!==pending.round || fatalError)return;
+          const presentedAt=performance.now();pendingPresentation.delete(id);
+          window.dispatchEvent(new CustomEvent('waterfighter:action-displayed',{detail:{id,round,confirmedAt:pending.confirmedAt,confirmedRunning:pending.confirmedRunning,confirmedSpeed:pending.confirmedSpeed,confirmedVisible:pending.confirmedVisible,presentedAt,latencyMs:presentedAt-pending.confirmedAt}}));
+        });
+      }
       if(data.backlog>2) message.textContent=`Simulation holt ${data.backlog.toFixed(1)} s Rückstand auf.`;
     }
     worker.postMessage({type:'recycle',round:data.round,buffer:data.buffer},[data.buffer]);
-  } else if(data.type==='action-result' && data.round===round && data.id===previewId) {
+  } else if(data.type==='action-result' && data.round===round) {
+    const pending=pendingPresentation.get(data.id);
+    if(!data.preview && pending) {if(data.result.ok) pending.revision=data.revision;else pendingPresentation.delete(data.id);}
+    if(data.id!==previewId) return;
     if(data.preview) {confirm.disabled=!data.result.ok;previewText.textContent=data.result.ok?`Kosten: ${data.result.cost} · Budget danach: ${data.result.budget}`:data.result.reason;}
     else {awaiting=false;if(data.result.ok){message.textContent=`Maßnahme bestätigt. Kosten: ${data.result.cost}.`;clearDraft();}else{previewText.textContent=data.result.reason;confirm.disabled=true;}}
   }

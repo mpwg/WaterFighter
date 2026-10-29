@@ -61,3 +61,12 @@ it('liefert zum Rundenende Ergebnis und lehnt spätere Aktionen ab',()=>{
   c.handle({type:'action',round:1,id:'late',action:{kind:'trench',cells:[0]}},10000);
   const reply=messages.find((m):m is Extract<Response,{type:'action-result'}>=>m.type==='action-result');expect(reply?.result.ok).toBe(false);
 });
+
+it('ordnet bestätigten und wiederholten Aktionen dieselbe Zustandsrevision zu',()=>{
+  const {c,messages}=setup();const action={kind:'trench' as const,cells:[0,1]};
+  c.handle({type:'action',round:1,id:'same',action},0);c.handle({type:'action',round:1,id:'same',action},0);
+  const replies=messages.filter((m):m is Extract<Response,{type:'action-result'}>=>m.type==='action-result');
+  expect(replies.map(r=>r.revision)).toEqual([1,1]);
+  c.handle({type:'recycle',round:1,buffer:snapshots(messages)[0].buffer},0);
+  expect(snapshots(messages).at(-1)!.revision).toBe(1);
+});

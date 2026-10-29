@@ -8,7 +8,7 @@ export type Request =
   | { type: 'recycle'; round: number; buffer: ArrayBuffer };
 export type Response =
   | { type: 'ready'; version: 1; scenarioId: string; round: number }
-  | { type: 'action-result'; round: number; id: string; preview: boolean; result: ActionResult }
+  | { type: 'action-result'; round: number; id: string; preview: boolean; revision: number; result: ActionResult }
   | { type: 'snapshot'; round: number; revision: number; budget: number; buildings: BuildingStatus[]; dams: [string, number][]; time: number; running: boolean; speed: 1 | 2; backlog: number; volume: number; inflow: number; outflow: number; roundoffVolume: number; buffer: ArrayBuffer }
   | { type: 'result'; round: number; time: number; floodDamage: number; demolitionLoss: number; totalDamage: number; budget: number; target: number; achieved: boolean }
   | { type: 'error'; round: number; message: string };

@@ -23,7 +23,7 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 - Node.js 24.22.0, npm 12.2.0; Vite 8.3.5, Babylon.js 9.33.0, Vitest 5.0.5 und Playwright 1.64.1 sind in der Lockdatei festgelegt.
 - `npm run build` und `npm test` bestanden (ein Protokolltest); `npm run dev` startete und lieferte HTML über HTTP.
 - `npm run test:browser` scheiterte zunächst an fehlenden Systembibliotheken. Nach temporärem Entpacken der Ubuntu-Bibliotheken unter `/tmp/waterfighter-libs` bestand `LD_LIBRARY_PATH=/tmp/waterfighter-libs/root/usr/lib/x86_64-linux-gnu npm run test:browser` in Playwright-Chromium; Worker-Meldung und Canvas waren sichtbar. Ein Screenshot der Entwickleransicht zeigte die grüne Fläche. Das ist keine Desktop-Browserabnahme.
-- `gdalinfo` ist auf diesem Rechner nicht vorhanden; Rasterio verwendet GDAL 3.12.2. Die Voruntersuchung dokumentiert Rohdatenprüfsummen und zwei bytegleiche Pipeline-Läufe. Build, 29 Vitest-Tests, zwei Python-Tests und elf Playwright-Chromium-Tests bestanden nach Einbindung des Szenarioladers und des Solvers. Geräteverfügbarkeit ist noch zu prüfen.
+- `gdalinfo` ist auf diesem Rechner nicht vorhanden; Rasterio verwendet GDAL 3.12.2. Die Voruntersuchung dokumentiert Rohdatenprüfsummen und zwei bytegleiche Pipeline-Läufe. Nach `npm ci` bestanden Build, 30 Vitest-Tests, zwei Python-Tests und 13 Chrome-Browserprüfungen auf dem aktuellen Stand nach Einbindung des Szenarioladers und des Solvers. Geräteverfügbarkeit ist noch zu prüfen.
 
 ## Kriterienmatrix
 
@@ -44,7 +44,7 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | Neustart und Schutz vor alten/doppelten Nachrichten | offen | Uhr, Raster und Aktionszustand sowie alte/doppelte Nachrichten in Tests geprüft; vollständige Runden fehlen |
 | Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: elf Headless-Abläufe; Firefox 159: virtuelle Desktop-Abläufe und vollständige 2×-Runde; Safari und manuelle Abnahme offen |
 | Echte iPhone-/Android-Abnahme | nicht prüfbar | Lokal kein Smartphone sichtbar und `adb`/`idevice_id` fehlen; Zugang zu echten Geräten bereitstellen |
-| Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Keine echten Smartphones lokal erreichbar; Messung auf beiden Geräten erforderlich |
+| Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Messskript und [Verfahren](mobil-messung.md) vorhanden; keine echten Smartphones lokal erreichbar |
 | Drei stabile aufeinanderfolgende Runden | offen | Drei 2×-Runden im vorigen Build bestanden; JS-Heap ohne fortlaufenden Anstieg, Prozessspeicher und endgültiger Build offen: [Browserprüfung](browser-pruefung.md) |
 | Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Build vorhanden; vollständige Quellen- und Lizenzprüfung fehlt |
 

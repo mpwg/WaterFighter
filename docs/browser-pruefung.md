@@ -15,3 +15,9 @@ Die erfassten JavaScript-Heaps vor/nach den Runden betrugen 60,4/42,9 MB, 43,6/4
 - Safari: in der vorliegenden Linux-Umgebung nicht verfügbar. Playwright-WebKit wurde nicht als Safari gewertet.
 
 Die Tests sind automatisiert. Es wurden keine vollständigen manuellen Desktop-Abnahmen oder echten iPhone-/Android-Tests durchgeführt. Die gemessenen Desktopwerte belegen keine mobilen Framezeiten, Aktionslatenzen oder mobile Echtzeitfähigkeit.
+
+## Künftige Prozessspeicher-Messung
+
+`tools/observe-three-rounds.mjs` erfasst jetzt auf Linux zusätzlich die Summe von `VmRSS` des Testprozesses und seiner Nachfahren vor und nach jeder Runde. Der Wert kann gemeinsam genutzte Seiten mehrfach zählen und umfasst nicht zuverlässig sämtliche GPU-Speicherzuweisungen; fehlender `/proc`-Zugriff ergibt `null`. Die oben protokollierte Drei-Runden-Messung erfolgte vor dieser Ergänzung und enthält deshalb nur den JavaScript-Heap.
+
+Nach Einführung der Messereignisse und einer sauberen `npm ci`-Installation bestanden auf dem aktuellen Arbeitsstand Build, 30 Vitest-Tests, zwei Python-Tests und 13 automatisierte Chrome-156-Browserprüfungen. Darunter prüfen zwei Tests die Korrelation einer bestätigten Aktion mit dem gerenderten Zustand und die Erfassung durch das Messskript. Die drei vollständigen Runden oben wurden vor dieser Änderung ausgeführt.

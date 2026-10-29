@@ -117,3 +117,26 @@ test('Verlust des Grafikkontexts pausiert und weist auf einen Neustart hin',asyn
   await expect(page.locator('#state')).toHaveText('Fehler');await expect(page.locator('#message')).toContainText('Bitte Seite neu laden');
   await expect(page.locator('#run')).toBeDisabled();
 });
+
+test('Aktionslatenz wird erst nach Darstellung des bestätigten Zustands gemeldet',async({page})=>{
+  await page.setViewportSize({width:1200,height:800});
+  await page.addInitScript(()=>{(window as any).wfPresented=[];window.addEventListener('waterfighter:action-displayed',(e:Event)=>(window as any).wfPresented.push((e as CustomEvent).detail));});
+  await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('[data-mode="trench"]').click();await page.mouse.click(800,360);await page.mouse.click(850,385);
+  await expect(page.locator('#confirm')).toBeEnabled();
+  expect(await page.evaluate(()=>(window as any).wfPresented.length)).toBe(0);
+  await page.locator('#confirm').click();
+  await page.waitForFunction(()=>(window as any).wfPresented.length===1);
+  const result=await page.evaluate(()=>(window as any).wfPresented[0]);
+  expect(result.round).toBe(1);expect(result.latencyMs).toBeGreaterThanOrEqual(0);expect(result.presentedAt).toBeGreaterThanOrEqual(result.confirmedAt);
+});
+
+test('Messskript erfasst 1×-Frames, Workerzeit und bestätigte Aktionen',async({page})=>{
+  await page.setViewportSize({width:1200,height:800});await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.addScriptTag({path:'tools/measure-session.js'});await page.locator('#run').click();await expect(page.locator('#state')).toHaveText('Läuft');
+  await page.locator('[data-mode="trench"]').click();await page.mouse.click(800,360);await page.mouse.click(850,385);await expect(page.locator('#confirm')).toBeEnabled();await page.locator('#confirm').click();
+  await page.waitForTimeout(1200);
+  const report=await page.evaluate(()=>(window as any).waterfighterMeasurement.stop());
+  expect(report.frameCount).toBeGreaterThan(0);expect(report.observedWallMs).toBeGreaterThan(0);expect(report.observedSimSeconds).toBeGreaterThan(0);
+  expect(report.actions).toHaveLength(1);expect(report.actions[0].latencyMs).toBeGreaterThanOrEqual(0);
+});

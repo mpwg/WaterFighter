@@ -143,6 +143,7 @@ export class Game {
     if(cost>this.budget) return {ok:false,reason:'Budget reicht nicht aus.',budget:this.budget};
     return {ok:true,cost,budget:this.budget-cost};
   }
+  hasProcessedAction(id:string):boolean { return this.actionResults.has(id); }
   apply(id:string,action:Action):ActionResult {
     if(typeof id!=='string'||id.length<1||id.length>100) return {ok:false,reason:'Ungültige Aktionskennung.',budget:this.budget};
     const prior=this.actionResults.get(id); if(prior) return prior;

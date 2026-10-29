@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Auch bei vier geprüften Einzelendpunkt-Abweichungen des 20-m-Schutzdamms erreicht der spätere getrennte Graben numerisch das Ziel und spart mehr Schaden als seine Kosten: [Vergleich](geodaten-voruntersuchung.md#einzelne-endpunktabweichungen-des-schutzdamms). Menschliche Platzierung und echte Geräte bleiben offen.
+
 Der 20-m-Schutzdamm der getrennten Grabenvariante wurde jeweils um eine Zelle in vier Richtungen verschoben. Alle vier Grabenrunden erreichen das Ziel; in einer ist die Schadensminderung kleiner als die Grabenkosten: [Vergleich](geodaten-voruntersuchung.md#platzierungsabweichungen-des-20-m-schutzdamms). Unabhängige Endpunktabweichungen und menschliche Bedienung bleiben offen.
 
 Die getrennte Westgrabenvariante mit 20-m-Schutzdamm wurde in einer [vollständigen Produktionsrunde](geodaten-voruntersuchung.md#produktionsrunde-mit-spätem-westgraben-und-längerem-schutzdamm) bei 03:05 in Pause gebaut und erreichte das Ziel; die Auswahl nutzte Testkoordinaten. Echte Geräte und menschliches Auffinden bleiben offen.

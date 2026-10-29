@@ -513,3 +513,16 @@ Der gesamte 20-m-Damm `(41,28) → (46,28)` wurde jeweils um eine Rasterzelle in
 | 0 / +1 | 47.820,20 | 36.206,75 | 11.613,45 |
 
 Alle Maßnahmen sind zulässig, alle Grabenrunden enden mit 7.140 Budgetrest und unter dem Schadensziel. In drei Verschiebungen ist die Schadensminderung größer als die Grabenkosten von 1.700; bei `0 / −1` ist sie kleiner. Die relativen Wasserbilanzfehler liegen unter 2,42 × 10⁻¹³. Die Untersuchung behandelt nur diese vier vollständigen Verschiebungen, nicht unabhängige Verschiebungen einzelner Endpunkte oder menschliche Auswahl; sie ersetzt keine Geräteprüfung und ist keine reale Schutzempfehlung.
+
+### Einzelne Endpunktabweichungen des Schutzdamms
+
+Ergänzend zur Verschiebung des ganzen Damms wurde jeweils nur sein Start- oder Endpunkt um eine Rasterzeile verschoben. Die übrigen Maßnahmen sind identisch; der Graben wird bei 180 s angelegt. Beispiel: `bun tools/compare-partial-diversion.ts 7 trench --guard-radius=2 --guard-start-row=-1 --at=180`; die Kontrollen verwenden `control` ohne `--at`. Die schrägen Schutzdämme umfassen jeweils sechs Kanten und kosten 240 statt 200.
+
+| Verschobener Endpunkt | Versatz y | Schaden ohne Graben | Schaden mit Graben | Schadensminderung |
+| --- | ---: | ---: | ---: | ---: |
+| Start | −1 | 47.875,07 | 36.388,20 | 11.486,87 |
+| Start | +1 | 48.485,06 | 36.235,51 | 12.249,55 |
+| Ende | −1 | 48.349,88 | 36.262,83 | 12.087,06 |
+| Ende | +1 | 47.716,77 | 36.207,05 | 11.509,72 |
+
+Alle vier Grabenrunden erreichen das Ziel mit 7.100 Budgetrest; die jeweilige Schadensminderung übersteigt die Grabenkosten von 1.700. Alle Aktionen sind zulässig, die relativen Wasserbilanzfehler liegen unter 1,19 × 10⁻¹³. Die Kontrolle hat jeweils 8.800 Budgetrest. Diese vier Fälle prüfen nur den vertikalen Versatz eines einzelnen Endpunkts um 4 m; andere Platzierungen, menschliches Auffinden und echte Geräte sind damit nicht abgenommen.

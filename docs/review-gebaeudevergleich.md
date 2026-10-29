@@ -37,6 +37,16 @@ Für eine numerische Zeitprüfung führt `bun tools/compare-review-strategies.ts
 
 Die getrennte Verschiebung eines Grabenendpunkts um eine Rasterzeile wurde mit `--trench-start-row=-1`, `--trench-start-row=1`, `--trench-end-row=-1` und `--trench-end-row=1` vor Beginn untersucht. Start −1 wird abgelehnt: „Ein Gebäude versperrt den Graben. Verlauf ändern oder Gebäude abreißen.“ Die übrigen drei Verläufe sind zulässig, kosten wegen einer zusätzlichen Zelle jeweils 675 und ergeben der Reihe nach 37.474,82, 21.552,70 und 21.622,17 Gesamtschaden. Ihre relativen Bilanzfehler liegen unter 1,44 × 10⁻¹⁴. Die getestete Ablehnung stammt aus der maßgeblichen Spielregel; diese numerische Prüfung belegt nicht, dass die Stelle und der Hinweis auf jedem Gerät leicht zu bedienen sind.
 
+Auch drei gerade Nachbarstrecken wurden mit denselben drei Dämmen vor der Flut geprüft. `bun tools/compare-review-strategies.ts dam3trench --route=X0,Y0,X1,Y1` setzt den jeweiligen Graben; alle Maßnahmen wurden angenommen. Zum Vergleich: Drei Dämme ohne Graben ergeben 34.792,87 Schaden und 0,01 m³ westlichen Modellabfluss; der Referenzgraben in Zeile 4 ergibt 21.600,61 Schaden und 618,65 m³.
+
+| Graben | Grabenkosten | Budgetrest | Gesamtschaden | Westlicher Modellabfluss |
+| --- | ---: | ---: | ---: | ---: |
+| (0,2) → (20,2) | 525 | 7.635 | 34.792,87 | 357,26 m³ |
+| (0,3) → (21,3) | 550 | 7.610 | 34.792,80 | 388,76 m³ |
+| (0,5) → (25,5) | 650 | 7.510 | 37.554,89 | 549,10 m³ |
+
+Die relativen Wasserbilanzfehler liegen unter 1,74 × 10⁻¹³. Der höhere Randabfluss dieser Gräben führt in diesen Vergleichen nicht zu einer nennenswerten Schadensreduktion; Zeile 5 erhöht den Schaden sogar um 2.762,02 gegenüber der reinen Dammvariante. Die Referenzwirkung ist damit empfindlich gegenüber der Lage. Die integrierten Randflüsse verfolgen keine Wasserteilchen und belegen keinen durchgehenden Weg; Platzierbarkeit ohne Testkoordinaten bleibt offen.
+
 Für eine räumlich getrennte zweite Ableitung wurden drei kurze, durch Gebäude nicht versperrte Westgräben weiter südlich geprüft. `bun tools/compare-review-strategies.ts dam3trench --route=X0,Y0,X1,Y1` setzt jeweils dieselben drei Dämme und anschließend den angegebenen Graben vor Flutbeginn. Alle Aktionen wurden angenommen:
 
 | Graben | Zusätzliche Kosten | Budgetrest | Gesamtschaden | Westlicher Modellabfluss |

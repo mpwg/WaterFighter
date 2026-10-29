@@ -21,3 +21,17 @@ test('Alte und doppelte Startmeldungen verändern eine neue laufende Runde nicht
   await page.getByRole('button',{name:'Pause'}).click();await expect(page.locator('#state')).toHaveText('Pausiert');
   expect(await page.evaluate(()=>(window as any).lastRound)).toBe(2);
 });
+
+test('Eine Startmeldung mit übersprungener Runde stoppt die Oberfläche sichtbar',async({page})=>{
+  await page.addInitScript(()=>{
+    const OriginalWorker=window.Worker;
+    window.Worker=class extends OriginalWorker {
+      constructor(url:string|URL,options?:WorkerOptions){super(url,options);(window as any).testWorker=this;}
+    };
+  });
+  await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.evaluate(()=>(window as any).testWorker.dispatchEvent(new MessageEvent('message',{data:{type:'ready',version:1,scenarioId:'brigittenau',round:3}})));
+  await expect(page.locator('#state')).toHaveText('Fehler');
+  await expect(page.locator('#run')).toBeDisabled();
+  await expect(page.getByRole('button',{name:'Seite neu laden'})).toBeVisible();
+});

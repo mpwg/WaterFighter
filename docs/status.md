@@ -64,6 +64,8 @@ Für den integrierten Stand `5c2e0c4` bestanden Build, 52 Vitest-Tests, zwei Pyt
 
 ### Bisherige Prüfungen
 
+- Auf Stand `0935599` bestanden `PATH=$HOME/.bun/bin:$PATH bun run test --maxWorkers=1` mit 52 Vitest-Tests, `PATH=$HOME/.bun/bin:$PATH bun run typecheck` und `python3 tools/test-breakline-faces.py` mit zwei Tests. Diese Prüfungen ersetzen keine vollständige Browser- oder Geräteabnahme.
+- Ein neuer Drei-Runden-Versuch mit `1.4-draft` erreichte zwei vollständige Runden; während der dritten meldete die Automatisierung eine geschlossene Browserseite. Damit ist dieser Versuch nicht bestanden. Die Ursache ist anhand des vorhandenen Ergebnisses nicht geklärt; eine Wiederholung mit zusätzlichen Ereignis- und Phasenangaben wurde gestartet.
 - Node.js 24.22.0, npm 12.2.0; TypeScript 7.0.2, Vite 8.3.5, Babylon.js 9.33.0, Vitest 5.0.5 und Playwright 1.64.1 sind in der Lockdatei festgelegt. Am 29. Oktober 2026 waren alle direkten npm- und festgelegten Python-Abhängigkeiten auf den aktuellen stabilen Versionen; indirekte Abhängigkeiten folgen den Vorgaben ihrer Elternpakete.
 - `npm run build` und `npm test` bestanden (ein Protokolltest); `npm run dev` startete und lieferte HTML über HTTP.
 - `npm run test:browser` scheiterte zunächst an fehlenden Systembibliotheken. Nach temporärem Entpacken der Ubuntu-Bibliotheken unter `/tmp/waterfighter-libs` bestand `LD_LIBRARY_PATH=/tmp/waterfighter-libs/root/usr/lib/x86_64-linux-gnu npm run test:browser` in Playwright-Chromium; Worker-Meldung und Canvas waren sichtbar. Ein Screenshot der Entwickleransicht zeigte die grüne Fläche. Das ist keine Desktop-Browserabnahme.

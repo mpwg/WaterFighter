@@ -4,7 +4,7 @@
 
 ## Karte im Werkzeugmodus verschieben
 
-Nach der Verbesserung der Platzierung lässt sich die Karte in allen Werkzeugmodi ziehen. Bei Damm und Graben bleibt ein bereits gewählter Startpunkt erhalten; gezogene Kontakte setzen keinen weiteren Punkt. Ein Produktionsbuild und 67 Modelltests bestanden. In Chromium mit Softwaregrafik bestanden gezielte Mausprüfungen in Hoch- und Querformat sowie Touch- und Mausprüfungen, die eine sichtbare Kartenverschiebung und die anschließende Endpunktauswahl prüfen. Ein erster erweiterter Touchlauf überschritt das bisherige 30-s-Testlimit; mit 90 s erlaubter Testdauer bestanden beide Verschiebungsfälle. Eine vollständige Suite auf diesem Anwendungsstand, unabhängige Spielpersonen und echte Geräte bleiben offen.
+Nach der Verbesserung der Platzierung lässt sich die Karte in allen Werkzeugmodi ziehen. Bei Damm und Graben bleibt ein bereits gewählter Startpunkt erhalten; gezogene Kontakte setzen keinen weiteren Punkt. Ein Produktionsbuild und 67 Modelltests bestanden. In Chromium mit Softwaregrafik bestanden gezielte Mausprüfungen in Hoch- und Querformat sowie Touch- und Mausprüfungen, die eine sichtbare Kartenverschiebung und die anschließende Endpunktauswahl prüfen. Ein erster erweiterter Touchlauf überschritt das bisherige 30-s-Testlimit; mit 90 s erlaubter Testdauer bestanden beide Verschiebungsfälle. Anschließend bestanden alle 64 Playwright-Chromium-Prüfungen auf dem Produktionsbuild des Anwendungscodes `4a54de4` unter Linux mit Softwaregrafik und einem Worker in 8,1 Minuten. Ein paralleler Langzeitlauf belastete den Rechner; die Zeit ist keine Leistungsmessung. Spätere Renderänderungen, unabhängige Spielpersonen und echte Geräte bleiben separat zu prüfen.
 
 ## Produktionsbuild mit direkter Dammführung
 

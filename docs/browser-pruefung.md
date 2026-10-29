@@ -521,3 +521,9 @@ Sechs gezielte Fälle für Werkzeughinweise in kleinen Ansichten, getrennte Grab
 Am 30. Oktober 2026 bestanden auf einem isolierten Git-Archiv von `25d4151` eine Installation mit `bun install --frozen-lockfile`, der Produktionsbuild und alle 89 Playwright-Prüfungen (`bun run test:browser --workers=1 --timeout=60000`). Der Produktionsserver verwendete im isolierten Test Port 4392 statt des Standardports. Google Chrome 156.0.8078.73 lief unter Linux mit Softwaregrafik; lokale Bibliotheken und Schriften waren über `LD_LIBRARY_PATH` und `FONTCONFIG_FILE` eingebunden. Die Suite dauerte 14,1 Minuten und umfasst die Werkzeughinweise, die kombinierten Neustarts und die Auswahl der Abrissstrategie. Touchfälle sind emuliert.
 
 Der Lauf verwendete Babylon.js 9.33.0 aus dem Lockfile dieses Commits. Die parallel erfolgte Aktualisierung auf 9.33.1 ist darin nicht enthalten; echte Geräte, tatsächliches Safari und menschliche Bedienung bleiben separat offen.
+
+### Vollständiger Browserdurchgang mit Babylon.js 9.33.1
+
+Für Anwendungscode `c8b4b33` wurde ein isolierter Produktionsbuild mit Bun und Babylon.js 9.33.1 erstellt. Der vollständige Playwright-Durchgang bestand mit **89 von 89 Prüfungen** in 14,2 Minuten; verwendet wurden Chrome 156.0.8078.73 unter Linux, Headless-Modus, Softwaregrafik und ein Testworker. Die Browserbibliotheken und Schriften wurden lokal bereitgestellt. Der nachfolgende Commit `1eb8e54` änderte Diagnoseskript und Dokumentation, jedoch weder Anwendungscode noch Browserprüfungen oder Abhängigkeiten.
+
+Die Suite deckt unter anderem Maus und emulierte Touch-Bedienung, Vorschau und Bestätigung, Fehlerfälle, Aktionen bei laufender und pausierter Flut sowie Neustart ab. Sie ersetzt keine manuelle Prüfung und keine Abnahme auf echtem iPhone, Android-Gerät oder in Safari. Die Vite-Buildausgabe meldete eine Warnung zu einem JavaScript-Chunk über 500 kB; der Build war erfolgreich.

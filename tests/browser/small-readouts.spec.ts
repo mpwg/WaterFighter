@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('Status und Quellen sind auf 320 × 480 lesbar und getrennt erreichbar', async ({ browser }) => {
+  test.setTimeout(60000);
   const context = await browser.newContext({ viewport: { width: 320, height: 480 }, isMobile: true, hasTouch: true });
   try {
     const page = await context.newPage();

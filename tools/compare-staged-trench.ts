@@ -16,9 +16,14 @@ if(routeArg){
   if(raw.length!==4||raw.some(v=>!/^\d+$/.test(v))||values.some((v,i)=>!Number.isInteger(v)||v<0||v>=(i%2===0?width:height)))throw Error('Route: --route=X0,Y0,X1,Y1');
   route=[[values[0],values[1]],[values[2],values[3]]];
 }
+const tipArg=process.argv.find(arg=>arg.startsWith('--tip='));
+const tipRaw=tipArg?tipArg.slice(6):'0';
+if(!/^(?:-[1-4]|[0-4])$/.test(tipRaw))throw Error('--tip muss ein ganzzahliger Versatz von −4 bis 4 sein');
+const tip=Number(tipRaw);
 const game=new Game(scenario),solver=game.solver,initial=solver.volume();
 for(const [i,segment] of fixture.segments.slice(0,3).entries()){
-  const result=game.apply(`dam-${i}`,{kind:'dam',faces:damPath(segment[0],segment[1],solver.width)});
+  const end:[number,number]=[segment[1][0]+(i===1?tip:0),segment[1][1]];
+  const result=game.apply(`dam-${i}`,{kind:'dam',faces:damPath(segment[0],end,solver.width)});
   if(!result.ok)throw Error(result.reason);
 }
 let applied=at===null, before:ReturnType<Game['totals']>|null=null,actionTime:number|null=null;
@@ -31,4 +36,4 @@ while(solver.time<scenario.parameters.duration-1e-9){
   const target=!applied && at!==null?at:scenario.parameters.duration;
   const t=solver.time,dt=solver.step(Math.min(1,target-t));game.addInflow(t,dt);game.updateDamage(dt);
 }
-console.log(JSON.stringify({scenario:scenario.version,route,at,actionTime,before,budget:game.budget,...game.totals(),relativeBalance:Math.abs(solver.volume()-initial-solver.inflow+solver.outflow-solver.roundoffVolume)/(initial+solver.inflow)},null,2));
+console.log(JSON.stringify({scenario:scenario.version,route,tip,at,actionTime,before,budget:game.budget,...game.totals(),relativeBalance:Math.abs(solver.volume()-initial-solver.inflow+solver.outflow-solver.roundoffVolume)/(initial+solver.inflow)},null,2));

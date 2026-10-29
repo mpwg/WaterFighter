@@ -6,7 +6,7 @@ import {validateScenario} from '../src/scenario';
 const mode=process.argv[2];
 const numberOption=(name:string,fallback:number)=>{const arg=process.argv.find(a=>a.startsWith(`--${name}=`));if(!arg)return fallback;const value=Number(arg.slice(name.length+3));if(!Number.isFinite(value))throw Error(`Ungültiger Wert für ${name}`);return value;};
 const at=numberOption('at',0),junction=numberOption('junction',0),entry=numberOption('entry',0),tip=numberOption('tip',0),trenchShift=numberOption('trench-row',0),trenchStart=numberOption('trench-start-row',0),trenchEnd=numberOption('trench-end-row',0);
-if(at<0||at>=300||![junction,entry,tip,trenchShift,trenchStart,trenchEnd].every(Number.isInteger)||[junction,entry,tip,trenchShift,trenchStart,trenchEnd].some(n=>Math.abs(n)>1))throw Error('Zeit 0–299, Verschiebungen −1 bis 1');
+if(at<0||at>=300||![junction,entry,tip,trenchShift,trenchStart,trenchEnd].every(Number.isInteger)||[junction,entry,trenchShift,trenchStart,trenchEnd].some(n=>Math.abs(n)>1)||Math.abs(tip)>4)throw Error('Zeit 0–299, Verschiebungen −1 bis 1, Endpunkt −4 bis 4');
 const cases:Record<string,{left:boolean;depth:number;dams:number;trench?:[[number,number],[number,number]];demolish?:string}>={
  original:{left:false,depth:0.8,dams:0},
  open:{left:true,depth:3,dams:0},

@@ -17,6 +17,17 @@
       {"kind": "dam", "start": [26, 10], "end": [36, 20]},
       {"kind": "dam", "start": [36, 20], "end": [42, 30]},
       {"kind": "trench", "start": [0, 4], "end": [25, 4]}
+    ],
+    "south-control": [
+      {"kind": "dam", "start": [26, 0], "end": [26, 10]},
+      {"kind": "dam", "start": [26, 10], "end": [34, 20]},
+      {"kind": "dam", "start": [36, 20], "end": [42, 30]}
+    ],
+    "south-divert": [
+      {"kind": "dam", "start": [26, 0], "end": [26, 10]},
+      {"kind": "dam", "start": [26, 10], "end": [34, 20]},
+      {"kind": "dam", "start": [36, 20], "end": [42, 30]},
+      {"kind": "trench", "start": [0, 46], "end": [47, 26]}
     ]
   }
 }

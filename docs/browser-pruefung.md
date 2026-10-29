@@ -459,3 +459,9 @@ Zwei gezielte Playwright-Prüfungen auf dem isolierten Produktionsbuild `42da208
 ### Kompakter Rundenzustand bei ausgeblendetem Menü
 
 Die Kopfzeile zeigt bei verborgenem Werkzeugmenü zusätzlich Zeit, Budget und Zustand; die regulären Anzeigen im Menü bleiben maßgeblich und werden aus denselben Worker-Snapshots aktualisiert. Auf dem Vite-Entwicklungsserver bestanden die gezielten Chromium-Prüfungen für 320 × 480 und 480 × 320 CSS-Pixel mit emuliertem Touch, laufender Uhr und Budget nach bestätigter Maßnahme. Kartenabfrage, Status und Quellen im kleinen Hochformat sowie Grabenhinweise in beiden Ausrichtungen blieben in weiteren vier Fällen erreichbar. Ein fünfter Grabenhinweisfall erreichte bei parallelen Browserläufen zunächst das 30-s-Testlimit; die gezielte Wiederholung mit 90-s-Grenze bestand nach 18,2 s. Der Produktionsbuild und 71 Modelltests bestanden. Die Tests verwenden Linux-Softwaregrafik und belegen weder menschliche Lesbarkeit noch echte Geräte oder eine vollständige Browser-Suite des geänderten Stands.
+
+### Gesamtsuite nach Vorschauersatz
+
+Aus einem separaten Git-Archiv von `d436db0` wurde am 29. Oktober 2026 der Produktionsbuild erstellt und mit Playwright-Chromium 156 unter Linux in Softwaregrafik auf Port 4359 geprüft. Alle 69 Browserfälle bestanden mit einem Worker in 13,2 Minuten. Der Lauf belegt den damaligen Vorschauersatz einschließlich bestehender Maus-, Touch-, Neustart- und Fehlerfälle; spätere Änderungen an Grabenanschluss und Statusanzeige sind darin nicht enthalten. Echte Geräte und menschliche Bedienung bleiben offen.
+
+Der kompakte Status wurde zusätzlich auf dem späteren Entwicklungsstand mit einer auf zwei Sekunden verkürzten Runde überprüft: Bei ausgeblendetem Menü zeigt er das Rundenende und nach „Neue Runde“ wieder 00:00, Vorbereitung und das Ausgangsbudget. Das ist ein gezielter Chromium-Test und keine vollständige Runde oder Geräteprüfung.

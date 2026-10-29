@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Auf dem isolierten Stand `d436db0` bestanden Produktionsbuild und alle 69 Chromium-Fälle; spätere Änderungen sind nicht eingeschlossen. Der kompakte Status wurde zusätzlich gezielt auf Rundenende und Neustart geprüft: [Prüfbeleg](browser-pruefung.md#gesamtsuite-nach-vorschauersatz).
+
 Bei ausgeblendetem Menü zeigt die Kopfzeile nun Zeit, Budget und Rundenzustand zusammen mit den Schäden. Produktionsbuild und 71 Modelltests sowie gezielte Chromium-Prüfungen für kleine Ansichten, Budgetaktualisierung und Kartenabfrage bestanden; ein zunächst zeitlich gescheiterter Grabenhinweis bestand bei Wiederholung. Echte Geräte und eine vollständige Browser-Suite dieses Stands bleiben offen.
 
 [Drei weitere zellgetrennte Westgräben](geodaten-voruntersuchung.md#drei-weitere-getrennte-direkte-westgräben) wurden mit drei Dämmen verglichen. Einer verschlechtert den Schaden stark, zwei geringfügig; keiner ist in dieser Kombination wirtschaftlich nützlich. Andere Wege und eine räumlich getrennte zweite Ableitung bleiben offen.

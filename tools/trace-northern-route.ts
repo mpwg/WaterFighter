@@ -1,4 +1,4 @@
-/** Mark water entering the eastern route and track ordered westward route crossings. */
+/** Track ordered route crossings, optionally marking only water added by the scenario inflow. */
 import {readFileSync} from 'node:fs';
 import {Game} from '../src/simulation/game';
 import {damPath,trenchPath} from '../src/simulation/path';
@@ -51,10 +51,12 @@ const rawSections=sectionsArg?sectionsArg.slice(11).split(','):null;
 if(rawSections&&(!rawSections.length||rawSections.some(v=>!/^\d+$/.test(v))))throw Error('Ungültige Querschnitte');
 const sections=rawSections?rawSections.map(Number):[30,20,10,5].filter(x=>x<=entryMin);
 if(!sections.length||sections.some((x,i)=>x<1||x>entryMin||(i>0&&x>=sections[i-1])||!cells.some(c=>c%w===x&&route.has(c-1))))throw Error('Querschnitte müssen absteigend und auf der Trasse liegen');
-const stages=Array.from({length:sections.length+1},()=>new Float64Array(n)),changes=stages.map(()=>new Float64Array(n));
+const traceInflow=process.argv.includes('--trace-inflow');
+const stages=Array.from({length:sections.length+1+(traceInflow?1:0)},()=>new Float64Array(n)),changes=stages.map(()=>new Float64Array(n));
 const stayOnRoute=process.argv.includes('--stay-on-route');
-let tagged=0,returned=0,leftRoute=0,otherExit=0,orderedWest=0,maxBound=0;
+let tagged=0,entered=0,returned=0,leftRoute=0,otherExit=0,orderedWest=0,maxBound=0;
 const seedRequested=process.argv.includes('--seed-at');
+if(traceInflow&&seedRequested)throw Error('--trace-inflow und --seed-at sind nicht kombinierbar');
 let seeded=0,seedDone=!seedRequested;
 function seed(){
  for(const i of cells)if(i%w>=entryMin&&i%w<=entryMax&&!scenario.waterMask[i]){const volume=s.h[i]*area;stages[0][i]+=volume;seeded+=volume;}
@@ -72,18 +74,23 @@ function transfer(a:number,b:number,rate:number,dt:number,section:number|null){
  let total=0;
  for(let k=0;k<stages.length;k++){
   const fraction=cellVolume>1e-10?stages[k][donor]/cellVolume:0;total+=fraction;
-  const moved=volume*fraction,next=section!==null&&rate<0&&route.has(a)&&route.has(b)&&k<sections.length&&section===sections[k]?k+1:k;
+  const moved=volume*fraction;
+  let next=k;
+  // Stage 0 follows injected water everywhere; subsequent stages start at the selected route entry.
+  if(traceInflow&&k===0&&!route.has(donor)&&route.has(receiver)&&receiver%w>=entryMin&&receiver%w<=entryMax&&!scenario.waterMask[receiver]&&s.time>=at-1e-9){next=1;entered+=moved;}
+  else if(section!==null&&rate<0&&route.has(a)&&route.has(b)&&k>=(traceInflow?1:0)&&k<stages.length-1&&section===sections[k-(traceInflow?1:0)])next=k+1;
   changes[k][donor]-=moved;
-  if(scenario.waterMask[receiver])returned+=moved;else if(stayOnRoute&&!route.has(receiver))leftRoute+=moved;else changes[next][receiver]+=moved;
+  if(traceInflow&&next===0)changes[0][receiver]+=moved;
+  else if(scenario.waterMask[receiver])returned+=moved;else if(stayOnRoute&&!route.has(receiver))leftRoute+=moved;else changes[next][receiver]+=moved;
  }
  // Mark previously unmarked inflow into the specified route section from non-route cells.
- if(s.time>=at-1e-9&&!route.has(donor)&&route.has(receiver)&&receiver%w>=entryMin&&receiver%w<=entryMax&&!scenario.waterMask[receiver]){
+ if(!traceInflow&&s.time>=at-1e-9&&!route.has(donor)&&route.has(receiver)&&receiver%w>=entryMin&&receiver%w<=entryMax&&!scenario.waterMask[receiver]){
   const fresh=volume*Math.max(0,1-total);changes[0][receiver]+=fresh;tagged+=fresh;
  }
 }
 function exit(cell:number,rate:number,dt:number,west:boolean){
  if(rate<=0)return;const volume=s.h[cell]*area;
- for(let k=0;k<stages.length;k++){const moved=volume>1e-10?rate*dt*stages[k][cell]/volume:0;changes[k][cell]-=moved;if(west&&k===sections.length){orderedWest+=moved;if(moved>0){const row=Math.floor(cell/w);westExitRows.set(row,(westExitRows.get(row)??0)+moved);}}else otherExit+=moved;}
+ for(let k=0;k<stages.length;k++){const moved=volume>1e-10?rate*dt*stages[k][cell]/volume:0;changes[k][cell]-=moved;if(west&&k===stages.length-1){orderedWest+=moved;if(moved>0){const row=Math.floor(cell/w);westExitRows.set(row,(westExitRows.get(row)??0)+moved);}}else otherExit+=moved;}
 }
 while(s.time<scenario.parameters.duration-1e-9){
  const t=s.time,maxDt=Math.min(1,scenario.parameters.duration-t,t<at-1e-9?at-t:Infinity),dt=s.stableStep(maxDt);for(const c of changes)c.fill(0);
@@ -91,10 +98,15 @@ while(s.time<scenario.parameters.duration-1e-9){
  for(let y=1;y<h;y++)for(let x=0;x<w;x++){const b=y*w+x,a=b-w;transfer(a,b,flux(a,b,'y',s.crestY[y*w+x]),dt,null);}
  for(let y=0;y<h;y++){const l=y*w,r=l+w-1;if(s.openBoundary.left)exit(l,Math.max(0,-s.qx[l])*s.cellSize,dt,true);if(s.openBoundary.right)exit(r,Math.max(0,s.qx[r])*s.cellSize,dt,false);}
  for(let x=0;x<w;x++){const top=x,bottom=(h-1)*w+x;if(s.openBoundary.top)exit(top,Math.max(0,-s.qy[top])*s.cellSize,dt,false);if(s.openBoundary.bottom)exit(bottom,Math.max(0,s.qy[bottom])*s.cellSize,dt,false);}
- if(s.step(maxDt)!==dt)throw Error('Zeitschritt stimmt nicht');game.addInflow(t,dt);game.updateDamage(dt);
+ if(s.step(maxDt)!==dt)throw Error('Zeitschritt stimmt nicht');
+ const beforeInflow=traceInflow?scenario.parameters.inflowCells.map(i=>s.h[i]):[];
+ game.addInflow(t,dt);
+ if(traceInflow)scenario.parameters.inflowCells.forEach((i,j)=>{const volume=(s.h[i]-beforeInflow[j])*area;changes[0][i]+=volume;tagged+=volume;});
+ game.updateDamage(dt);
  if(mode==='trench'&&actionTime===null&&s.time>=at-1e-9)dig();
- for(let i=0;i<n;i++){let total=0;for(let k=0;k<stages.length;k++){stages[k][i]+=changes[k][i];total+=stages[k][i];maxBound=Math.max(maxBound,-stages[k][i]);}maxBound=Math.max(maxBound,total-s.h[i]*area);if(stayOnRoute&&!route.has(i)&&total>1e-7)throw Error(`Markierung außerhalb der Trasse ${i}: ${total}`);if(maxBound>1e-7)throw Error(`Markierung außerhalb Wasserbilanz ${i}: ${maxBound}`);}
+ for(let i=0;i<n;i++){let total=0;for(let k=0;k<stages.length;k++){stages[k][i]+=changes[k][i];total+=stages[k][i];maxBound=Math.max(maxBound,-stages[k][i]);}maxBound=Math.max(maxBound,total-s.h[i]*area);if(stayOnRoute&&!route.has(i)&&total-(traceInflow?stages[0][i]:0)>1e-7)throw Error(`Markierung außerhalb der Trasse ${i}: ${total}`);if(maxBound>1e-7)throw Error(`Markierung außerhalb Wasserbilanz ${i}: ${maxBound}`);}
  if(!seedDone&&s.time>=at-1e-9)seed();
 }
+if(traceInflow&&Math.abs(tagged-s.inflow)>Math.max(1e-6,s.inflow*1e-10))throw Error('Zuflussmarkierung stimmt nicht mit dem Solver überein');
 const remaining=stages.map(stage=>stage.reduce((a,b)=>a+b,0));
-console.log(JSON.stringify({scenario:scenario.version,mode,dams,tip,partial,guard,at,actionTime,stayOnRoute,route:coordinates,entry:[entryMin,entryMax],sections,seedRequested,seeded,tagged,orderedWest,westExitRows:[...westExitRows].sort((a,b)=>a[0]-b[0]),returned,leftRoute,otherExit,remaining,balanceError:orderedWest+returned+leftRoute+otherExit+remaining.reduce((a,b)=>a+b,0)-tagged,maxBound,budget:game.budget,...game.totals(),waterBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow)},null,2));
+console.log(JSON.stringify({scenario:scenario.version,mode,dams,tip,partial,guard,at,actionTime,stayOnRoute,route:coordinates,entry:[entryMin,entryMax],sections,seedRequested,seeded,traceInflow,tagged,entered,orderedWest,westExitRows:[...westExitRows].sort((a,b)=>a[0]-b[0]),returned,leftRoute,otherExit,remaining,balanceError:orderedWest+returned+leftRoute+otherExit+remaining.reduce((a,b)=>a+b,0)-tagged,maxBound,budget:game.budget,...game.totals(),waterBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow)},null,2));

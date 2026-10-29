@@ -59,3 +59,21 @@ test('Startpunkt folgt einem ansteigenden Worker-Wasserstand',async({page})=>{
   },[empty,withMarker].map(bytes=>`data:image/png;base64,${bytes.toString('base64')}`));
   expect(await centroid(wetEmpty,marked)).toBeLessThan((await centroid(dryEmpty,dryMarked))-0.5);
 });
+
+test('Startmarkierung bleibt während einer laufenden Runde sichtbar',async({page})=>{
+  test.setTimeout(45000);
+  await page.setViewportSize({width:1200,height:800});await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('[data-mode="trench"]').click();await page.mouse.click(800,360);
+  await expect(page.locator('#message')).toContainText('Endpunkt');await page.locator('#run').click();
+  await page.waitForFunction(()=>{const [m,s]=document.querySelector('#time')!.textContent!.split(':').map(Number);return m*60+s>=10;});
+  await page.getByRole('button',{name:'Pause'}).click();await expect(page.locator('#state')).toHaveText('Pausiert');
+  const clip={x:780,y:340,width:40,height:40},marked=await page.screenshot({clip});
+  await page.locator('[data-mode="camera"]').click();await page.waitForTimeout(150);const empty=await page.screenshot({clip});
+  const changed=await page.evaluate(async([a,b])=>{
+    const pixels=async(src:string)=>{const img=await createImageBitmap(await (await fetch(src)).blob());const c=new OffscreenCanvas(img.width,img.height),ctx=c.getContext('2d')!;ctx.drawImage(img,0,0);return ctx.getImageData(0,0,img.width,img.height).data;};
+    const x=await pixels(a),y=await pixels(b);let count=0;
+    for(let i=0;i<x.length;i+=4)if(x[i]>180&&x[i+1]<160&&x[i+2]<100&&x[i]>x[i+1]*1.4&&Math.abs(x[i]-y[i])+Math.abs(x[i+1]-y[i+1])+Math.abs(x[i+2]-y[i+2])>40)count++;
+    return count;
+  },[marked,empty].map(bytes=>`data:image/png;base64,${bytes.toString('base64')}`));
+  expect(changed).toBeGreaterThan(0);
+});

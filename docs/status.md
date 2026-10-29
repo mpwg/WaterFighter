@@ -26,6 +26,8 @@ Bei Damm und Graben markiert ein Kreuz den gewählten Startpunkt; nach dem zweit
 
 Die Höhe des Startkreuzes folgt jetzt den Wasser-Snapshots, solange der zweite Punkt noch nicht gewählt ist. Ein Chromium-Bildvergleich setzt nach Auswahl testseitig den Wasserstand im Snapshot höher und prüft die Verschiebung des Kreuzes: Der alte Build `ccafdbb` verfehlt den Vergleich, der angepasste Produktionsbuild besteht ihn. Dies ist eine künstliche Snapshot-Änderung, keine durchgehend beobachtete Flut oder echte Geräteabnahme.
 
+Ein ergänzender Chromium-Test wählte den ersten Punkt auf dem ausgelieferten Szenario, ließ den echten Worker zehn simulierte Sekunden laufen und pausierte anschließend. Im Bildvergleich war die orange Markierung nach der Pause sichtbar und verschwand beim Werkzeugwechsel. Der Test betrachtet einen Zeitpunkt und eine automatisch gewählte Position; er belegt weder die Sichtbarkeit über eine ganze Flut noch echte Gerätebedienung.
+
 Die Wartephase wurde ergänzend in Chromium mit kontrolliert zurückgehaltener Aktion geprüft: Nach Ablehnung sind Verwerfen und Werkzeugwahl wieder verfügbar; nach Neustart beeinflusst eine erst danach zugestellte Aktion aus der alten Runde weder Budget noch neue Grabenvorschau. Alle drei Prüfungen dieser Datei und die Typprüfung bestanden. Die Ablehnung wurde durch eine testseitig veränderte Worker-Nachricht ausgelöst.
 
 Auf dem Produktionsbuild von Anwendungscode `803b812` bestanden alle 42 Chromium-Browserprüfungen unter Linux mit Softwaregrafik, einschließlich der Grabenvorschau und emulierten Touchbedienung. Die Prüfungen ersetzen keine vollständige menschliche Bedienung oder Abnahme auf echten Geräten.

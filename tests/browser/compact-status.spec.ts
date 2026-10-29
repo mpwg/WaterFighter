@@ -58,3 +58,27 @@ test('kompakter Status folgt Rundenende und Neustart',async({page})=>{
   await expect(compact).toContainText('Vorbereitung');
   await expect(compact).toContainText('Budget 10');
 });
+
+test('kompakter Status zeigt Pause und Fortsetzen',async({page})=>{
+  test.setTimeout(60000);
+  await page.setViewportSize({width:1200,height:800});await page.goto('/');
+  await expect(page.locator('#run')).toBeEnabled();await page.locator('#run').click();
+  await expect(page.locator('#state')).toHaveText('Läuft');
+  await page.locator('#panel-toggle').click();
+  await expect(page.locator('#compact-status')).toContainText('Läuft');
+  await page.locator('#panel-toggle').click();
+  await page.getByRole('button',{name:'Pause'}).click();
+  await expect(page.locator('#state')).toHaveText('Pausiert');
+  const paused=await page.locator('#time').textContent();
+  await page.locator('#panel-toggle').click();
+  const compact=page.locator('#compact-status');
+  await expect(compact).toContainText('Pausiert');
+  await expect(compact).toContainText(paused!);
+  await page.waitForTimeout(1000);
+  await expect(compact).toContainText(paused!);
+  await page.locator('#panel-toggle').click();
+  await page.getByRole('button',{name:'Fortsetzen'}).click();
+  await expect(page.locator('#state')).toHaveText('Läuft');
+  await page.locator('#panel-toggle').click();
+  await expect(compact).toContainText('Läuft');
+});

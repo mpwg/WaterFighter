@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Der aktuelle Anwendungscode wurde erneut als [statischer Unterpfad-Build](browser-pruefung.md#aktueller-produktionsbuild-unter-einem-unterpfad) einschließlich Worker, Aktionen, Neustart und Szenariodownload geprüft. Eine dauerhafte Bereitstellung und die Lizenzabnahme bleiben offen.
+
 Für den Einzelabriss nach 180 s zeigt eine [lokale Wasserbilanz](review-gebaeudevergleich.md#wasserbilanz-am-später-abgerissenen-gebäude) im Vergleich zur geschlossenen Kontrolle den geöffneten und durchströmten Gebäudegrundriss. Die Summen verfolgen keine einzelnen Wasserteilchen und beweisen keine reale Schutzwirkung.
 
 Auf dem isolierten Produktionsbuild `d38c0ca` mit schematischer Grabenlinie bestanden [alle 85 Chromium-Fälle](browser-pruefung.md#gesamtsuite-mit-schematischer-grabenlinie). Menschliche Bedienung, tatsächliches Safari und echte Geräte bleiben offen.

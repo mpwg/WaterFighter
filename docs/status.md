@@ -13,7 +13,7 @@ Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet di
 | AP 1 – Projektgrundlage | geprüft | Build, Typprüfung, Protokolltest, Entwicklungsserver und Browserlauf bestanden; Szene visuell geprüft | Bei Änderungen erneut prüfen |
 | AP 2 – Wiener Geodaten | in Arbeit | DGM und OSM bezogen, vorläufiges Szenariopaket zweimal bytegleich erzeugt und im Browser geladen: [Voruntersuchung](geodaten-voruntersuchung.md) | Bruchkanten und Durchlässe fachlich einordnen, Wasserwege und Lizenzpflichten belegen |
 | AP 3 – Simulation | in Arbeit | Synthetische Solver- und Bilanztests, Sichtkontrolle der Dammöffnung, 600-s-Szenariolauf und Schrittweitenvergleich: [Solverbericht](solverbericht.md) | hohe lokale Tiefen einordnen und mobile Leistung prüfen |
-| AP 4 – Darstellung | in Arbeit | Szenarioansicht, Strömungsmarker, Worker-Snapshots und Maus-/Touch-Kamerasteuerung; 14 Chrome-Browserprüfungen | Strömungsanimation und Schadensanzeige auf tatsächlichen Geräten prüfen |
+| AP 4 – Darstellung | in Arbeit | Szenarioansicht, Strömungsmarker, Worker-Snapshots und Maus-/Touch-Kamerasteuerung; 16 Chrome-Browserprüfungen | Strömungsanimation und Schadensanzeige auf tatsächlichen Geräten prüfen |
 | AP 5 – Werkzeuge/Schäden | in Arbeit | Worker-Regeln, Vorschau, Bestätigung, Budget und Schadenstests; drei Werkzeuge in Playwright-Chromium bedient | Wirkungsnachweise weiter abstimmen und Bedienung auf Geräten prüfen |
 | AP 6 – Spielrunde | in Arbeit | vollständige Browserrunden und erfolgreiche Dammstrategie; Werkzeugvergleiche im Szenario | Strategie auf echten Geräten prüfen; Werkzeugnutzen im Szenario belegen |
 | AP 7 – Gesamtprüfung | offen | Chrome- und Firefox-Abläufe, vollständige Runden und Messverfahren dokumentiert | Safari, reale Geräte und verbleibende Kriterien prüfen |
@@ -23,7 +23,7 @@ Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet di
 - Node.js 24.22.0, npm 12.2.0; Vite 8.3.5, Babylon.js 9.33.0, Vitest 5.0.5 und Playwright 1.64.1 sind in der Lockdatei festgelegt.
 - `npm run build` und `npm test` bestanden (ein Protokolltest); `npm run dev` startete und lieferte HTML über HTTP.
 - `npm run test:browser` scheiterte zunächst an fehlenden Systembibliotheken. Nach temporärem Entpacken der Ubuntu-Bibliotheken unter `/tmp/waterfighter-libs` bestand `LD_LIBRARY_PATH=/tmp/waterfighter-libs/root/usr/lib/x86_64-linux-gnu npm run test:browser` in Playwright-Chromium; Worker-Meldung und Canvas waren sichtbar. Ein Screenshot der Entwickleransicht zeigte die grüne Fläche. Das ist keine Desktop-Browserabnahme.
-- `gdalinfo` ist auf diesem Rechner nicht vorhanden; Rasterio verwendet GDAL 3.12.2. Die Voruntersuchung dokumentiert Rohdatenprüfsummen und zwei bytegleiche Pipeline-Läufe. Nach `npm ci` bestanden Build, 30 Vitest-Tests, zwei Python-Tests und 14 Chrome-Browserprüfungen auf Commit `40ff739`. Geräteverfügbarkeit ist noch zu prüfen.
+- `gdalinfo` ist auf diesem Rechner nicht vorhanden; Rasterio verwendet GDAL 3.12.2. Die Voruntersuchung dokumentiert Rohdatenprüfsummen und zwei bytegleiche Pipeline-Läufe. Nach `npm ci` bestanden Build, 30 Vitest-Tests, zwei Python-Tests und 16 Chrome-Browserprüfungen auf dem Arbeitsstand nach der Workerfehlerkorrektur. Geräteverfügbarkeit ist noch zu prüfen.
 
 ## Kriterienmatrix
 
@@ -42,10 +42,10 @@ Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet di
 | Atomare Aktionen, Budget, Wassererhaltung und Schadenswertung | offen | Regel-, Worker- und hydraulische Tests sowie Werkzeugvergleiche im Szenario bestehen; Geräteprüfungen fehlen |
 | Vollständige Runde und bezahlbare erfolgreiche Strategie | offen | Version 1.2: ohne Maßnahmen 322.771,10 Schaden; vollständige automatisierte 2×-Browserrunde mit Strategie 0 bei Budgetrest 2.600. Menschliche Gerätebedienung fehlt |
 | Neustart und Schutz vor alten/doppelten Nachrichten | offen | Uhr, Raster, Kamera, Werkzeugmodus und Aktionszustand sowie alte/doppelte Nachrichten in Tests geprüft; drei vollständige Neustartrunden auf Anwendungscode `40ff739` bestanden |
-| Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: 14 Headless-Abläufe; Firefox 159: virtuelle Desktop-Abläufe und vollständige 2×-Runde; Safari und manuelle Abnahme offen |
+| Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: 16 Headless-Abläufe; Firefox 159: virtuelle Desktop-Abläufe und vollständige 2×-Runde; Safari und manuelle Abnahme offen |
 | Echte iPhone-/Android-Abnahme | nicht prüfbar | Lokal kein Smartphone sichtbar und `adb`/`idevice_id` fehlen; Zugang zu echten Geräten bereitstellen |
 | Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Messskript und [Verfahren](mobil-messung.md) vorhanden; keine echten Smartphones lokal erreichbar |
-| Drei stabile aufeinanderfolgende Runden | offen | Drei 2×-Runden auf Anwendungscode `40ff739` bestanden; JS-Heap und Prozessbaum-RSS stichprobenartig erfasst, vollständige Bedienung und Langzeit-Lecks nicht ausgeschlossen: [Browserprüfung](browser-pruefung.md) |
+| Drei stabile aufeinanderfolgende Runden | offen | Drei 2×-Runden auf Anwendungscode `40ff739` bestanden; danach Fehlerbehandlung geändert. Endstand sowie vollständige Bedienung und Langzeit-Lecks bleiben offen: [Browserprüfung](browser-pruefung.md) |
 | Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Produktionsbuild unter Unterpfad einschließlich Worker und Szenario geprüft; vollständige Lizenzprüfung fehlt |
 
 „Offen“ bedeutet hier, dass die Arbeit noch auszuführen ist. „Nicht prüfbar“ darf erst eingetragen werden, wenn ein konkretes Hindernis ermittelt und beschrieben wurde. Die lokale Gerätesuche ist unten dokumentiert; ein entfernter Gerätezugang wurde nicht ausgeschlossen.

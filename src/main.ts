@@ -89,7 +89,7 @@ worker.onmessage=(event:MessageEvent<Response>)=>{
     resultDetails.textContent=`Flutschäden: ${number(data.floodDamage)} · Abrissverluste: ${number(data.demolitionLoss)} · Gesamtschaden: ${number(data.totalDamage)} · Ziel: höchstens ${number(data.target)} · Budgetrest: ${number(data.budget)}.`;
     resultPanel.hidden=false;
   }
-  else if(data.type==='error' && data.round===round) fail(`Simulation angehalten: ${data.message}`);
+  else if(data.type==='error' && (data.round===round || (round===0 && data.round===1))) fail(`Simulation angehalten: ${data.message}. Bitte die Seite neu laden.`);
 };
 worker.onerror=()=>fail('Der Worker ist ausgefallen. Bitte die Seite neu laden.');
 run.onclick=()=>{ if(!round)return; worker.postMessage({type:running?'pause':'start',round}); };
@@ -103,5 +103,6 @@ canvas.addEventListener('pointermove',e=>{if(pointer?.id===e.pointerId && mode==
 canvas.addEventListener('pointerup',e=>{if(pointer?.id===e.pointerId) {if(mode!=='camera') selectAt(e.clientX,e.clientY); else if(Math.hypot(e.clientX-pointer.startX,e.clientY-pointer.startY)<5) message.textContent=world?.inspect(e.clientX,e.clientY)??'Karte ist noch nicht bereit.';}pointer=undefined;}); canvas.addEventListener('pointercancel',()=>{pointer=undefined;});
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();if(round)worker.postMessage({type:'pause',round});fail('Grafikkontext verloren. Bitte Seite neu laden.');});
 fetch(`${import.meta.env.BASE_URL}scenarios/brigittenau-v1.json`).then(async response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return validateScenario(await response.json());}).then(loaded=>{
+  if(fatalError)return;
   scenario=loaded;app.querySelector<HTMLElement>('#target')!.textContent=loaded.parameters.damageTarget.toLocaleString('de-AT');world=new World(canvas,loaded); worker.postMessage({type:'init',scenario:loaded});
 }).catch((error:unknown)=>fail(`Szenario oder Grafik konnte nicht geladen werden: ${error instanceof Error?error.message:String(error)}`));

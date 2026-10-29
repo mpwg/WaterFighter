@@ -150,3 +150,42 @@ test('Neustart stellt Kartenmodus, Kameraziel und Zoom wieder her',async({page})
   await page.locator('#reset').click();await expect(page.locator('[data-mode="camera"]')).toHaveAttribute('aria-pressed','true');
   expect(await preview()).toBe(initial);
 });
+
+
+test('Workerfehler bei Initialisierung zeigt eine Wiederherstellungsmöglichkeit', async ({page})=>{
+  await page.addInitScript(()=>{
+    const OriginalWorker=window.Worker;
+    window.Worker=class extends OriginalWorker {
+      override postMessage(message: unknown, transferOrOptions?: Transferable[] | StructuredSerializeOptions) {
+        if((message as {type?:string}).type==='init') {
+          setTimeout(()=>this.dispatchEvent(new MessageEvent('message',{data:{type:'error',round:1,message:'Initialisierung fehlgeschlagen'}})),0);
+        } else super.postMessage(message,transferOrOptions as StructuredSerializeOptions);
+      }
+    };
+  });
+  await page.goto('/');
+  await expect(page.locator('#state')).toHaveText('Fehler');
+  await expect(page.locator('#message')).toContainText('Initialisierung fehlgeschlagen');
+  await expect(page.locator('#message')).toContainText('Seite neu laden');
+  await expect(page.locator('#run')).toBeDisabled();
+});
+
+test('Simulationsfehler nennt das Neuladen als Wiederherstellung', async ({page})=>{
+  await page.addInitScript(()=>{
+    const OriginalWorker=window.Worker;
+    window.Worker=class extends OriginalWorker {
+      override postMessage(message: unknown, transferOrOptions?: Transferable[] | StructuredSerializeOptions) {
+        if((message as {type?:string}).type==='start') {
+          const round=(message as {round:number}).round;
+          setTimeout(()=>this.dispatchEvent(new MessageEvent('message',{data:{type:'error',round,message:'Solverfehler'}})),0);
+        } else super.postMessage(message,transferOrOptions as StructuredSerializeOptions);
+      }
+    };
+  });
+  await page.goto('/'); await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('#run').click();
+  await expect(page.locator('#state')).toHaveText('Fehler');
+  await expect(page.locator('#message')).toContainText('Solverfehler');
+  await expect(page.locator('#message')).toContainText('Seite neu laden');
+  await expect(page.locator('#run')).toBeDisabled();
+});

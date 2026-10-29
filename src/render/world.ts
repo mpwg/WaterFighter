@@ -17,6 +17,7 @@ import earcut from 'earcut';
 import { visibleWaterIndices } from './water-indices';
 import { damCrest } from '../simulation/dam-height';
 import { groundRoads, terrainHeight } from './roads';
+import { buildingCondition } from './building-status';
 import type { Scenario } from '../scenario';
 import type { Action, BuildingStatus, Face } from '../simulation/game';
 
@@ -31,6 +32,7 @@ export class World {
   private readonly flowSamples: { x:number; y:number; height:number; vx:number; vy:number }[] = [];
   private readonly currentDepth: Float32Array;
   private currentBuildings = new Map<string,BuildingStatus>();
+  private readonly buildingMaterials: Record<ReturnType<typeof buildingCondition>,StandardMaterial>;
   private readonly roads?: LinesMesh;
   private readonly roadPositions?: Float32Array;
   private readonly land: Mesh;
@@ -83,7 +85,8 @@ export class World {
     this.flowLines=CreateLineSystem('flow',{lines:Array.from({length:count},()=>[Vector3.Zero(),Vector3.Zero()]),updatable:true},this.scene);
     this.flowLines.color=new Color3(0.8,0.96,0.99);this.flowLines.isPickable=false;
     this.flowPositions=new Float32Array(count*6);
-    const buildingMat=new StandardMaterial('buildings',this.scene); buildingMat.diffuseColor=new Color3(0.80,0.66,0.51); buildingMat.specularColor=Color3.Black(); buildingMat.backFaceCulling=false; buildingMat.emissiveColor=new Color3(0.19,0.14,0.10);
+    const material=(name:string,color:Color3)=>{const m=new StandardMaterial(name,this.scene);m.diffuseColor=color;m.specularColor=Color3.Black();m.backFaceCulling=false;m.emissiveColor=color.scale(0.23);return m;};
+    this.buildingMaterials={unbeschädigt:material('buildings',new Color3(0.80,0.66,0.51)),gefährdet:material('buildings-at-risk',new Color3(0.92,0.72,0.27)),beschädigt:material('buildings-damaged',new Color3(0.80,0.34,0.18)),verloren:material('buildings-lost',new Color3(0.30,0.22,0.21))};
     for(const building of scenario.buildings) {
       const rings=[building.polygon.outer,...building.polygon.holes];
       const points:number[]=[]; const holes:number[]=[];
@@ -100,7 +103,7 @@ export class World {
           indices.push(v,v+2,v+1,v+1,v+2,v+3);
         }
       }
-      const mesh=new Mesh(`building-${building.id}`,this.scene); const data=new VertexData(); data.positions=verts; data.indices=indices; const normals:number[]=[]; VertexData.ComputeNormals(verts,indices,normals); data.normals=normals; data.applyToMesh(mesh); mesh.material=buildingMat; mesh.metadata={buildingId:building.id};
+      const mesh=new Mesh(`building-${building.id}`,this.scene); const data=new VertexData(); data.positions=verts; data.indices=indices; const normals:number[]=[]; VertexData.ComputeNormals(verts,indices,normals); data.normals=normals; data.applyToMesh(mesh); mesh.material=this.buildingMaterials.unbeschädigt; mesh.metadata={buildingId:building.id};
     }
     this.resize(); this.updateWater(new Float32Array(scenario.initialDepth));
     window.addEventListener('resize',this.resize);
@@ -120,6 +123,7 @@ export class World {
   }
   updateState(bed:Float32Array, buildings:BuildingStatus[], dams:[string,number][], revision:number):void {
     this.currentBuildings=new Map(buildings.map(b=>[b.id,b]));
+    for(const b of buildings) {const mesh=this.scene.getMeshByName(`building-${b.id}`);if(mesh)mesh.material=this.buildingMaterials[buildingCondition(b)];}
     if(revision===this.terrainRevision) return;
     this.terrainRevision=revision;
     const bedChanged=this.bed.length!==bed.length || bed.some((value,i)=>value!==this.bed[i]);
@@ -188,7 +192,7 @@ export class World {
     const building=this.pick(clientX,clientY,true);
     if(building?.buildingId) {
       const b=this.currentBuildings.get(building.buildingId);
-      if(b) return `Gebäude: Flutschaden ${Math.round(b.damage).toLocaleString('de-AT')} von ${Math.round(b.value).toLocaleString('de-AT')}.`;
+      if(b) return `Gebäude ${buildingCondition(b)}: Flutschaden ${Math.round(b.damage).toLocaleString('de-AT')} von ${Math.round(b.value).toLocaleString('de-AT')}; Wassertiefe am Rand ${b.exposure.toFixed(2)} m.`;
     }
     const point=this.pick(clientX,clientY);
     if(!point) return 'Keine Stelle auf der Karte ausgewählt.';

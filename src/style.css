@@ -87,3 +87,14 @@ footer { position:absolute; bottom:16px; left:24px; max-width:min(500px,calc(100
   .panel { width:min(290px,calc(100vw - 110px)); }
   footer { max-width:max(80px,calc(100vw - 320px)); }
 }
+
+/* Keep the live score visible when the planning panel is tucked away. */
+.damage-summary { margin-top:4px; display:grid; gap:1px; font:11px/1.25 Georgia,serif; color:#143b38; white-space:nowrap; }
+.damage-summary strong { font-size:12px; }
+@media (min-height:501px) { .panel { top:142px; max-height:calc(100vh - 220px); } .preview { top:142px; } }
+@media (max-width:600px) and (min-height:501px) { .panel { top:112px; max-height:calc(100vh - 290px); } .preview { top:auto; } }
+@media (max-height:500px) { .panel { top:105px; max-height:calc(100vh - 115px); } .preview { top:105px; } }
+@media (max-width:600px) and (min-height:501px) and (max-height:700px) {
+  .panel > .eyebrow, .panel h2, .panel > p:not(#message) { display:none; }
+  .panel #state { font-size:12px; }
+}

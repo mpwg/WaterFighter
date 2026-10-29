@@ -5,8 +5,8 @@ import { damCrest } from './dam-height';
 export type Face = { axis: 'x' | 'y'; index: number };
 export type Action = { kind: 'dam'; faces: Face[] } | { kind: 'trench'; cells: number[] } | { kind: 'demolish'; buildingId: string };
 export type ActionResult = { ok: true; cost: number; budget: number } | { ok: false; reason: string; budget: number };
-export interface BuildingStatus { id: string; value: number; damage: number; demolished: boolean }
-interface BuildingState extends BuildingStatus { cells: number[]; neighbours: number[] }
+export interface BuildingStatus { id: string; value: number; damage: number; demolished: boolean; exposure: number }
+interface BuildingState extends Omit<BuildingStatus,'exposure'> { cells: number[]; neighbours: number[] }
 const key = (face: Face) => `${face.axis}:${face.index}`;
 function insideRing(x: number, y: number, ring: number[][]): boolean {
   let inside=false;
@@ -80,7 +80,7 @@ export class Game {
     }
     for(const [k,crest] of this.damFaces) {const [axis,raw]=k.split(':'),i=Number(raw),field=axis==='x'?s.crestX:s.crestY; field[i]=Math.max(field[i],crest);}
   }
-  status():BuildingStatus[] { return this.buildings.map(({id,value,damage,demolished})=>({id,value,damage,demolished})); }
+  status():BuildingStatus[] { return this.buildings.map(({id,value,damage,demolished,neighbours})=>({id,value,damage,demolished,exposure:demolished?0:neighbours.reduce((depth,i)=>Math.max(depth,this.solver.h[i]),0)})); }
   totals():{floodDamage:number;demolitionLoss:number;totalDamage:number} {
     let floodDamage=0,demolitionLoss=0;
     for(const b of this.buildings) if(b.demolished) demolitionLoss+=b.value; else floodDamage+=b.damage;

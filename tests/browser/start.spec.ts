@@ -62,6 +62,11 @@ test('Gebäudeabriss verlangt Vorschau und Bestätigung', async ({page})=>{
   await expect(page.locator('#preview-text')).toContainText('Budget danach:');
   await page.locator('#confirm').click();await expect(page.locator('#message')).toContainText('Maßnahme bestätigt');
   await expect(page.locator('#budget')).not.toHaveText('10 000');
+  await expect(page.locator('#damage-breakdown')).not.toHaveText('Flut 0 · Abriss 0');
+  const score=await page.locator('#damage-total').textContent();expect(score).not.toContain('Schaden 0 /');
+  await page.locator('#panel-toggle').click();await expect(page.locator('#game-panel')).toBeHidden();await expect(page.locator('#damage-total')).toBeVisible();
+  await page.locator('#panel-toggle').click();await page.locator('#reset').click();
+  await expect(page.locator('#damage-breakdown')).toHaveText('Flut 0 · Abriss 0');await expect(page.locator('#damage-total')).toContainText('Schaden 0 /');
 });
 
 

@@ -28,6 +28,8 @@ Die Typprüfung verwendet ES2025-Bibliothekstypen und prüft auch die TypeScript
 
 Bei einem nicht behebbaren Grafik-, Lade- oder Workerfehler wird das Menü geöffnet und bietet einen Knopf zum Neuladen der Seite; dabei beginnt eine neue Runde.
 
+Die Kopfzeile zeigt laufend Gesamtschaden, Ziel sowie Flut- und Abrissverluste, auch bei ausgeblendetem Menü. Gebäude werden nach Zustand eingefärbt; im Kartenmodus zeigt Antippen zusätzlich Zustand, Schaden und Wassertiefe am Gebäuderand als Text.
+
 ## Dokumentation
 
 - [Spielplan](docs/spielplan.md): Produktziel und Spielregeln.

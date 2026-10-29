@@ -102,7 +102,7 @@ export class Controller {
     const buffer=this.pool.pop()!; const target=new Float32Array(buffer), n=this.solver.h.length;
     target.set(this.solver.h,0); target.set(this.solver.qx,n); target.set(this.solver.qy,2*n); target.set(this.solver.bed,3*n);
     this.outstanding++;
-    this.emit({type:'snapshot',round:this.round,revision:this.revision,budget:this.game.budget,buildings:this.game.status(),dams:[...this.game.damFaces],time:this.solver.time,running:this.running,speed:this.speed,backlog:this.backlog,volume:this.solver.volume(),inflow:this.solver.inflow,outflow:this.solver.outflow,roundoffVolume:this.solver.roundoffVolume,buffer},[buffer]);
+    this.emit({type:'snapshot',round:this.round,revision:this.revision,budget:this.game.budget,...this.game.totals(),buildings:this.game.status(),dams:[...this.game.damFaces],time:this.solver.time,running:this.running,speed:this.speed,backlog:this.backlog,volume:this.solver.volume(),inflow:this.solver.inflow,outflow:this.solver.outflow,roundoffVolume:this.solver.roundoffVolume,buffer},[buffer]);
   }
   private fail(error: unknown): void {
     this.running=false; this.failed=true; this.lastClock=undefined;

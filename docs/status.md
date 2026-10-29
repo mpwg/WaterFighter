@@ -2,6 +2,8 @@
 
 Stand: 29. Oktober 2026.
 
+**Nächster Implementierungsauftrag für Terra:** [Review und Kurskorrektur zur Spielbarkeit](review-steuerung-terra.md). Nutzerpriorität: Vorbereitung und Eingriffe während der Flut gleichwertig verbessern; sinnvollen Werkzeugnutzen und sichtbares Schadensfeedback vor weiteren Detailoptimierungen belegen. Der Auftrag ist noch nicht umgesetzt und ändert keine bisherigen Abnahmestatus.
+
 ## Aktueller Stand
 
 Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet die Flut im Worker und bietet alle drei Werkzeuge sowie Ergebnis und Neustart. Eine vollständige automatisierte Runde und eine erfolgreiche Dammstrategie sind belegt. Die Szenario- und Gesamtprüfungen bleiben in Arbeit; echte Mobilgeräte und Safari wurden nicht abgenommen. Eine öffentliche Veröffentlichung erfolgte nicht.

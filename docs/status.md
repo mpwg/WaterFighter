@@ -44,7 +44,7 @@ Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet di
 | Neustart und Schutz vor alten/doppelten Nachrichten | offen | Uhr, Raster, Kamera, Werkzeugmodus und Aktionszustand sowie alte/doppelte Nachrichten in Tests geprüft; drei vollständige Neustartrunden auf Anwendungscode `40ff739` bestanden |
 | Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: 16 Headless-Abläufe; Firefox 159: virtuelle Desktop-Abläufe und vollständige 2×-Runde; Safari und manuelle Abnahme offen |
 | Echte iPhone-/Android-Abnahme | nicht prüfbar | Lokal kein Smartphone sichtbar und `adb`/`idevice_id` fehlen; Zugang zu echten Geräten bereitstellen |
-| Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Messskript und [Verfahren](mobil-messung.md) vorhanden; keine echten Smartphones lokal erreichbar |
+| Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Messskript in vollständiger Desktop-1×-Runde geprüft: Framezeit-Ziel mit Softwaregrafik verfehlt; keine echten Smartphones lokal erreichbar: [Verfahren](mobil-messung.md) |
 | Drei stabile aufeinanderfolgende Runden | offen | Drei 2×-Runden auf dem TypeScript-7-Produktionsbuild `4251f2e` mit Pause, Zoom und Neustart bestanden. Speicherstichproben steigen; zwölf kurze Neustarts mit Seiten- und Worker-Garbage-Collection sowie Prozessrollen untersucht; Ursachen und Langzeitverhalten bleiben offen: [Browserprüfung](browser-pruefung.md) |
 | Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Produktionsbuild unter Unterpfad einschließlich Worker und Szenario geprüft; vollständige Lizenzprüfung fehlt |
 

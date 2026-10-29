@@ -70,3 +70,21 @@ it('ordnet bestätigten und wiederholten Aktionen dieselbe Zustandsrevision zu',
   c.handle({type:'recycle',round:1,buffer:snapshots(messages)[0].buffer},0);
   expect(snapshots(messages).at(-1)!.revision).toBe(1);
 });
+
+
+it('verarbeitet nach einem Fehler keine Aktion und lässt einen sauberen Neustart zu',()=>{
+  const {c,messages}=setup();
+  c.handle({type:'start',round:1},0);
+  const action={kind:'trench' as const,cells:[0,1]};
+  c.handle({type:'action',round:1,id:'failed',action},NaN);
+  expect(messages.some(m=>m.type==='error' && m.round===1)).toBe(true);
+  expect(messages.some(m=>m.type==='action-result')).toBe(false);
+  c.handle({type:'start',round:1},1000);
+  c.handle({type:'action',round:1,id:'after',action},1000);
+  expect(messages.some(m=>m.type==='action-result')).toBe(false);
+  c.handle({type:'reset',round:1},1000);
+  expect(snapshots(messages).at(-1)?.round).toBe(2);
+  expect(snapshots(messages).at(-1)?.budget).toBe(scenario.parameters.budget);
+  c.handle({type:'action',round:2,id:'new',action},1000);
+  expect(messages.some(m=>m.type==='action-result' && m.round===2 && m.result.ok)).toBe(true);
+});

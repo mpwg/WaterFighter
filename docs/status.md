@@ -23,7 +23,7 @@ Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet di
 - Node.js 24.22.0, npm 12.2.0; Vite 8.3.5, Babylon.js 9.33.0, Vitest 5.0.5 und Playwright 1.64.1 sind in der Lockdatei festgelegt.
 - `npm run build` und `npm test` bestanden (ein Protokolltest); `npm run dev` startete und lieferte HTML über HTTP.
 - `npm run test:browser` scheiterte zunächst an fehlenden Systembibliotheken. Nach temporärem Entpacken der Ubuntu-Bibliotheken unter `/tmp/waterfighter-libs` bestand `LD_LIBRARY_PATH=/tmp/waterfighter-libs/root/usr/lib/x86_64-linux-gnu npm run test:browser` in Playwright-Chromium; Worker-Meldung und Canvas waren sichtbar. Ein Screenshot der Entwickleransicht zeigte die grüne Fläche. Das ist keine Desktop-Browserabnahme.
-- `gdalinfo` ist auf diesem Rechner nicht vorhanden; Rasterio verwendet GDAL 3.12.2. Die Voruntersuchung dokumentiert Rohdatenprüfsummen und zwei bytegleiche Pipeline-Läufe. Nach `npm ci` bestanden Build, 30 Vitest-Tests, zwei Python-Tests und 16 Chrome-Browserprüfungen auf dem Arbeitsstand nach der Workerfehlerkorrektur. Geräteverfügbarkeit ist noch zu prüfen.
+- `gdalinfo` ist auf diesem Rechner nicht vorhanden; Rasterio verwendet GDAL 3.12.2. Die Voruntersuchung dokumentiert Rohdatenprüfsummen und zwei bytegleiche Pipeline-Läufe. Nach `npm ci` bestanden Build, 31 Vitest-Tests, zwei Python-Tests und 16 Chrome-Browserprüfungen auf dem Arbeitsstand nach der Worker-Sperre bei Simulationsfehlern. Geräteverfügbarkeit ist noch zu prüfen.
 
 ## Kriterienmatrix
 
@@ -45,7 +45,7 @@ Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet di
 | Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: 16 Headless-Abläufe; Firefox 159: virtuelle Desktop-Abläufe und vollständige 2×-Runde; Safari und manuelle Abnahme offen |
 | Echte iPhone-/Android-Abnahme | nicht prüfbar | Lokal kein Smartphone sichtbar und `adb`/`idevice_id` fehlen; Zugang zu echten Geräten bereitstellen |
 | Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Messskript und [Verfahren](mobil-messung.md) vorhanden; keine echten Smartphones lokal erreichbar |
-| Drei stabile aufeinanderfolgende Runden | offen | Drei 2×-Runden auf Anwendungscode `48d5e8d` bestanden; Speicherstichproben steigen; zwölf kurze Neustarts mit Seiten- und Worker-Garbage-Collection sowie Prozessrollen untersucht; Ursachen und Langzeitverhalten bleiben offen: [Browserprüfung](browser-pruefung.md) |
+| Drei stabile aufeinanderfolgende Runden | offen | Drei 2×-Runden auf Anwendungscode `48d5e8d` bestanden; spätere Worker-Korrektur noch nicht im Drei-Runden-Lauf geprüft. Speicherstichproben steigen; zwölf kurze Neustarts mit Seiten- und Worker-Garbage-Collection sowie Prozessrollen untersucht; Ursachen und Langzeitverhalten bleiben offen: [Browserprüfung](browser-pruefung.md) |
 | Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Produktionsbuild unter Unterpfad einschließlich Worker und Szenario geprüft; vollständige Lizenzprüfung fehlt |
 
 „Offen“ bedeutet hier, dass die Arbeit noch auszuführen ist. „Nicht prüfbar“ darf erst eingetragen werden, wenn ein konkretes Hindernis ermittelt und beschrieben wurde. Die lokale Gerätesuche ist unten dokumentiert; ein entfernter Gerätezugang wurde nicht ausgeschlossen.

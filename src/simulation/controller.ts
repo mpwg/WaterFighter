@@ -17,6 +17,7 @@ export class Controller {
   private pool: ArrayBuffer[] = [];
   private outstanding = 0;
   private completed = false;
+  private failed = false;
   private dirty = false;
   private revision = 0;
   constructor(private readonly emit: Emit) {}
@@ -26,7 +27,7 @@ export class Controller {
     this.round++;
     this.game = new Game(scenario);
     this.solver = this.game.solver;
-    this.running = false; this.speed = 1; this.backlog = 0; this.lastClock = undefined; this.completed = false; this.revision = 0;
+    this.running = false; this.speed = 1; this.backlog = 0; this.lastClock = undefined; this.completed = false; this.failed = false; this.revision = 0;
     const bytes = scenario.grid.width * scenario.grid.height * 4 * Float32Array.BYTES_PER_ELEMENT;
     this.pool = [new ArrayBuffer(bytes), new ArrayBuffer(bytes)];
     this.outstanding = 0; this.dirty = true;
@@ -38,7 +39,11 @@ export class Controller {
     try {
       if (message.type === 'init') { if (!this.scenario) this.initialize(validateScenario(message.scenario)); return; }
       if (!this.scenario || !this.solver || message.round !== this.round) return;
-      if (this.running && (message.type === 'pause' || message.type === 'speed' || message.type === 'action')) this.tick(now);
+      if (this.failed && message.type !== 'reset' && message.type !== 'recycle') return;
+      if (this.running && (message.type === 'pause' || message.type === 'speed' || message.type === 'action')) {
+        this.tick(now);
+        if (this.failed) return;
+      }
       switch (message.type) {
         case 'reset': this.initialize(this.scenario); break;
         case 'start': if (!this.completed && !this.running) { this.running = true; this.lastClock = now; this.dirty = true; this.snapshot(); } break;
@@ -100,7 +105,7 @@ export class Controller {
     this.emit({type:'snapshot',round:this.round,revision:this.revision,budget:this.game.budget,buildings:this.game.status(),dams:[...this.game.damFaces],time:this.solver.time,running:this.running,speed:this.speed,backlog:this.backlog,volume:this.solver.volume(),inflow:this.solver.inflow,outflow:this.solver.outflow,roundoffVolume:this.solver.roundoffVolume,buffer},[buffer]);
   }
   private fail(error: unknown): void {
-    this.running=false; this.lastClock=undefined;
+    this.running=false; this.failed=true; this.lastClock=undefined;
     this.emit({type:'error',round:this.round,message:error instanceof Error ? error.message : String(error)});
   }
 }

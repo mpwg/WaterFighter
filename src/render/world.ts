@@ -23,6 +23,8 @@ import { MAX_TRENCH_FLOW_SAMPLES, trenchFlowCells } from './trench-flow';
 import type { Scenario } from '../scenario';
 import type { Action, BuildingStatus, Face } from '../simulation/game';
 
+const INITIAL_ALPHA=-Math.PI/4, INITIAL_BETA=Math.PI/3, INITIAL_RADIUS=1500;
+
 /** Render only; simulation state is owned by the worker. */
 export class World {
   readonly engine: Engine;
@@ -64,14 +66,14 @@ export class World {
     this.engine=new Engine(canvas,true,{ disableWebGL2Support:false, preserveDrawingBuffer:false });
     if (this.engine.webGLVersion < 2) { this.engine.dispose(); throw new Error('WebGL2 wird benötigt.'); }
     this.scene=new Scene(this.engine); this.scene.clearColor=new Color4(0.78,0.85,0.80,1);
-    this.camera=new ArcRotateCamera('camera',-Math.PI/4,Math.PI/3,1500,new Vector3(0,0,0),this.scene);
+    this.camera=new ArcRotateCamera('camera',INITIAL_ALPHA,INITIAL_BETA,INITIAL_RADIUS,new Vector3(0,0,0),this.scene);
     this.camera.mode=ArcRotateCamera.ORTHOGRAPHIC_CAMERA;
     new HemisphericLight('sky',new Vector3(0,1,0),this.scene).intensity=0.9;
     const land=new Mesh('terrain',this.scene), landData=this.gridData(scenario.bed,false);
     this.land=land; landData.applyToMesh(land,true); this.landPositions=new Float32Array(landData.positions!);
     const landMat=new StandardMaterial('land-material',this.scene); landMat.diffuseColor=new Color3(0.61,0.68,0.52); landMat.specularColor=Color3.Black(); landMat.backFaceCulling=false; landMat.emissiveColor=new Color3(0.22,0.25,0.19); land.material=landMat;
     this.trenchMaterial=new StandardMaterial('trench-material',this.scene);this.trenchMaterial.diffuseColor=new Color3(0.68,0.39,0.16);this.trenchMaterial.emissiveColor=new Color3(0.25,0.12,0.04);this.trenchMaterial.specularColor=Color3.Black();this.trenchMaterial.backFaceCulling=false;
-    this.water=new Mesh('water',this.scene); this.water.isPickable=false; const waterData=this.gridData(scenario.bed,true);
+    this.water=new Mesh('water',this.scene); this.water.isPickable=true; const waterData=this.gridData(scenario.bed,true);
     waterData.applyToMesh(this.water,true); this.water.hasVertexAlpha=true;
     this.waterPositions=new Float32Array(waterData.positions!); this.waterColors=new Float32Array(waterData.colors!);
     this.wetVertices=new Uint8Array((this.width+1)*(this.height+1));
@@ -210,7 +212,7 @@ export class World {
   pick(clientX:number,clientY:number,buildingOnly=false):{x:number;y:number;buildingId?:string}|undefined {
     const rect=this.canvas.getBoundingClientRect();
     // Babylon applies the engine hardware scaling itself when constructing the picking ray.
-    const hit=this.scene.pick(clientX-rect.left,clientY-rect.top,m=>buildingOnly?!!m.metadata?.buildingId:m===this.land);
+    const hit=this.scene.pick(clientX-rect.left,clientY-rect.top,m=>m.isEnabled()&&m.isVisible&&m.isPickable&&(buildingOnly?!!m.metadata?.buildingId:m===this.land||m===this.water));
     if(!hit?.hit||!hit.pickedPoint) return undefined;
     return {x:hit.pickedPoint.x+this.width*this.cell/2,y:hit.pickedPoint.z+this.height*this.cell/2,buildingId:hit.pickedMesh?.metadata?.buildingId};
   }
@@ -308,7 +310,7 @@ export class World {
     this.water.updateVerticesData(VertexBuffer.PositionKind,this.waterPositions,true);
     this.water.updateVerticesData(VertexBuffer.ColorKind,this.waterColors);
   }
-  resetView():void { this.zoom=560; this.camera.setTarget(Vector3.Zero()); this.resize(); }
+  resetView():void { this.zoom=560; this.camera.setTarget(Vector3.Zero()); this.camera.alpha=INITIAL_ALPHA; this.camera.beta=INITIAL_BETA; this.camera.radius=INITIAL_RADIUS; this.resize(); }
   setZoom(factor:number): void { this.zoom=Math.max(180,Math.min(950,this.zoom*factor)); this.resize(); }
   pan(dx:number,dy:number): void {
     const camera=this.camera; const scale=this.zoom/Math.max(1,this.canvas.clientHeight);

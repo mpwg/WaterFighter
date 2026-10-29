@@ -88,6 +88,8 @@ Auf 320 × 480 CSS-Pixeln bleiben Zeit, Budget und Zustand nun einzeilig; die Qu
 
 Die Kartenabfrage nennt bei Wasser neben der Tiefe den Wasserspiegel über Wiener Null. Bei ausgeblendetem Menü erscheint die Abfrage mit Zeitstempel außerhalb des Werkzeugfelds; damit können Wasserstände beidseits eines Damms verglichen werden. Build, 55 Vitest-Tests und fünf gezielte Chromium-Prüfungen bestanden. Die Verständlichkeit für eine Testperson und die Geräteprüfung bleiben offen.
 
+Karten- und Werkzeugauswahl berücksichtigen bei Überflutung nun die sichtbare Wasseroberfläche. Der Neustart stellt zusätzlich die ursprünglichen Kamerawinkel wieder her; [Diagnose und integrierte Prüfungen](browser-pruefung.md#auswahl-auf-erhöhtem-wasser-und-kameraneustart) beschreiben die Grenzen. Echte Geräte und menschliche Platzierung bleiben offen.
+
 ## Arbeitspakete
 
 | Paket | Status | Tatsächlicher Nachweis | Nächster Schritt |

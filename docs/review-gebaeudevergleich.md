@@ -17,6 +17,19 @@ Die relativen Wasserbilanzfehler liegen unter 2,1 × 10⁻¹³. Die drei Dämme 
 
 Bei vorbereiteten drei Dämmen senkt derselbe Graben nach 150 s den Schaden auf 1.001,29 bei 7.510 Budgetrest; ohne ihn betragen Schaden und Restbudget 23.574,17 und 8.160. Die Aktion wird numerisch zum exakten Zeitpunkt gesetzt, ohne menschliche Auswahlzeit. Einzelne Verschiebungen des ersten Dammstarts, des gemeinsamen Knickpunkts und des zweiten Endpunkts um eine Zelle wurden auf der neuen Pfadregel ebenfalls berechnet: Alle sechs geprüften Varianten waren zulässig, lagen zwischen 8.809,29 und 29.029,15 Schaden und hielten das Ziel ein. Das ist keine Garantie für beliebige Platzierungen.
 
+### Markierter Landgraben mit direkten Dämmen
+
+Auf Anwendungscode `f291cc9` vergleichen `bun tools/trace-review-diversion.ts dam3 --ordered` und `dam3trench --ordered` die drei direkten Dämme mit und ohne den Landgraben `(0,4) → (25,4)`. Die Diagnose markiert unmarkiertes Wasser beim Eintritt über die Nord- und Südkanten der Grabenzeile. Fünf Stufen zählen anschließend die westwärts in Reihenfolge überquerten Querschnitte bei x = 20, 15, 10 und 5 sowie den Austritt am Westrand. Zwischen den Querschnitten kann sich die Markierung auch außerhalb der Grabenzeile bewegen.
+
+| Größe | Drei Dämme | Drei Dämme und Graben |
+| --- | ---: | ---: |
+| Markierter Eintritt | 586,81 m³ | 598,89 m³ |
+| Nach allen vier Querschnitten am Westrand ausgetreten | 0 m³ | 318,39 m³ |
+| Im Modell verblieben | 586,81 m³ | 280,51 m³ |
+| Gesamtschaden | 23.574,17 | 863,20 |
+
+Die Markierungsbilanzreste liegen betragsmäßig unter 2,73 × 10⁻¹² m³ und die relativen Wasserbilanzfehler unter 9,90 × 10⁻¹⁴. Damit ist ein geordneter Modellanteil für diesen Graben auch mit der neuen Dammführung nachgewiesen. Zellmischung und numerische Diffusion erlauben keine Interpretation als reale Wasserteilchen; der Vergleich beweist nicht, dass dieser Anteil allein die Schadensdifferenz verursacht. Wasser jenseits des offenen Modellrands und menschliche Bedienung wurden nicht geprüft.
+
 ## Historische Vergleiche mit rechtwinkliger Dammführung
 
 Die folgenden dammbasierten Tabellen und Bilder stammen aus dem früheren Anwendungscode `b526c29` beziehungsweise dessen Vorgängern. Ihr Szenariopaket ist ebenfalls `1.4-draft`, aber die damalige Dammroute verlief zuerst horizontal und dann vertikal. Sie sind nicht die aktuellen Referenzwerte; zur Reproduktion des damaligen Dammverlaufs muss der entsprechende ältere Anwendungscode verwendet werden. Abschnitte ohne Dämme, etwa der einzelne Abriss, sind von der Dammführung unabhängig.

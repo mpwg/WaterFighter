@@ -54,3 +54,40 @@ test('diagonaler Graben bis zur Kartenecke lässt sich auswählen und bestätige
   await page.locator('#confirm').click();
   await expect(page.locator('#budget')).toHaveText('8 450');
 });
+
+for(const config of [
+  {name:'Hochformat',viewport:{width:390,height:844},pans:2,start:[40.85,417.79],end:[170.86,444.62]},
+  {name:'Querformat',viewport:{width:844,height:390},pans:0,start:[226.01,193.06],end:[286.08,205.45]},
+]) test(`diagonaler Referenzgraben ist per Touch im ${config.name} erreichbar`,async({browser})=>{
+  const context=await browser.newContext({viewport:config.viewport,hasTouch:true,isMobile:true});
+  try {
+    const page=await context.newPage();
+    await page.addInitScript(()=>{
+      const Original=window.Worker;
+      window.Worker=class extends Original {
+        override postMessage(message:any,options?:any){
+          if(message?.type==='preview'&&message.action?.kind==='trench')(window as any).diagonalCells=message.action.cells;
+          return super.postMessage(message,options);
+        }
+      };
+    });
+    await page.goto('/');
+    await expect(page.locator('#run')).toBeEnabled();
+    await page.locator('[data-mode="trench"]').click();
+    await page.locator('#panel-toggle').click();
+    const cdp=await context.newCDPSession(page);
+    for(let i=0;i<config.pans;i++){
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:80,y:500}]});
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:350,y:500}]});
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    }
+    await page.touchscreen.tap(config.start[0],config.start[1]);
+    await page.touchscreen.tap(config.end[0],config.end[1]);
+    await expect(page.locator('#confirm')).toBeEnabled();
+    expect(await page.evaluate(()=>(window as any).diagonalCells)).toEqual(trenchPath([0,0],[43,18],200));
+    await expect(page.locator('#preview-text')).toContainText('Kosten: 1550');
+    await expect(page.locator('#budget')).toHaveText('10 000');
+    await page.locator('#confirm').tap();
+    await expect(page.locator('#budget')).toHaveText('8 450');
+  } finally {await context.close();}
+});

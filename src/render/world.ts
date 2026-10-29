@@ -1,4 +1,18 @@
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Color3, Color4, Mesh, VertexData, StandardMaterial, VertexBuffer, MeshBuilder, LinesMesh } from '@babylonjs/core';
+// Babylon registers picking and mesh overlays through these side-effect modules.
+import '@babylonjs/core/Culling/ray';
+import '@babylonjs/core/Rendering/outlineRenderer';
+import { Engine } from '@babylonjs/core/Engines/engine';
+import { Scene } from '@babylonjs/core/scene';
+import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
+import { Vector3 } from '@babylonjs/core/Maths/math.vector';
+import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
+import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
+import { Mesh } from '@babylonjs/core/Meshes/mesh';
+import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
+import { LinesMesh } from '@babylonjs/core/Meshes/linesMesh';
+import { CreateLineSystem } from '@babylonjs/core/Meshes/Builders/linesBuilder';
+import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
+import { VertexBuffer } from '@babylonjs/core/Buffers/buffer';
 import earcut from 'earcut';
 import { visibleWaterIndices } from './water-indices';
 import type { Scenario } from '../scenario';
@@ -55,7 +69,7 @@ export class World {
     this.updateSurveyRidges();
     // A fixed, bounded set of visual stream markers is updated from worker momentum.
     const count=Math.ceil(this.width/12)*Math.ceil(this.height/12);
-    this.flowLines=MeshBuilder.CreateLineSystem('flow',{lines:Array.from({length:count},()=>[Vector3.Zero(),Vector3.Zero()]),updatable:true},this.scene);
+    this.flowLines=CreateLineSystem('flow',{lines:Array.from({length:count},()=>[Vector3.Zero(),Vector3.Zero()]),updatable:true},this.scene);
     this.flowLines.color=new Color3(0.8,0.96,0.99);this.flowLines.isPickable=false;
     this.flowPositions=new Float32Array(count*6);
     const buildingMat=new StandardMaterial('buildings',this.scene); buildingMat.diffuseColor=new Color3(0.80,0.66,0.51); buildingMat.specularColor=Color3.Black(); buildingMat.backFaceCulling=false; buildingMat.emissiveColor=new Color3(0.19,0.14,0.10);
@@ -109,7 +123,7 @@ export class World {
     if(signature!==this.damSignature) {
       this.damSignature=signature; this.damMesh?.dispose();
       const lines=dams.map(([key,crest])=>{const [axis,raw]=key.split(':'),index=Number(raw); return this.facePoints({axis:axis as 'x'|'y',index},crest+0.5);});
-      if(lines.length) {this.damMesh=MeshBuilder.CreateLineSystem('confirmed-dams',{lines},this.scene);this.damMesh.color=new Color3(0.75,0.29,0.12);this.damMesh.isPickable=false;}
+      if(lines.length) {this.damMesh=CreateLineSystem('confirmed-dams',{lines},this.scene);this.damMesh.color=new Color3(0.75,0.29,0.12);this.damMesh.isPickable=false;}
     }
   }
   private updateSurveyRidges():void {
@@ -123,7 +137,7 @@ export class World {
       const cut=this.scenario.bed[a]-this.bed[a]>depth-1e-4 && this.scenario.bed[b]-this.bed[b]>depth-1e-4 ? depth : 0;
       return this.facePoints(face,face.crest-cut+0.1);
     });
-    this.surveyMesh=MeshBuilder.CreateLineSystem('survey-ridges',{lines},this.scene);
+    this.surveyMesh=CreateLineSystem('survey-ridges',{lines},this.scene);
     this.surveyMesh.color=new Color3(0.35,0.40,0.26);this.surveyMesh.isPickable=false;
   }
   private facePoints(face:Face,height:number):Vector3[] {
@@ -147,7 +161,7 @@ export class World {
     let lines:Vector3[][]=[];
     if(action.kind==='dam') lines=action.faces.map(face=>{const i=face.axis==='x'?Math.floor(face.index/(this.width+1))*this.width+Math.min(this.width-1,face.index%(this.width+1)):Math.min(this.height-1,Math.floor(face.index/this.width))*this.width+face.index%this.width;return this.facePoints(face,this.bed[i]+this.scenario.parameters.damHeight+1);});
     else lines=action.cells.map(i=>{const x=i%this.width,y=Math.floor(i/this.width),h=this.bed[i]+1;return [new Vector3((x+.2)*this.cell-this.width*this.cell/2,h,(y+.5)*this.cell-this.height*this.cell/2),new Vector3((x+.8)*this.cell-this.width*this.cell/2,h,(y+.5)*this.cell-this.height*this.cell/2)];});
-    if(lines.length){this.previewMesh=MeshBuilder.CreateLineSystem('preview',{lines},this.scene);this.previewMesh.color=new Color3(1,0.38,0.08);this.previewMesh.isPickable=false;}
+    if(lines.length){this.previewMesh=CreateLineSystem('preview',{lines},this.scene);this.previewMesh.color=new Color3(1,0.38,0.08);this.previewMesh.isPickable=false;}
   }
   inspect(clientX:number,clientY:number):string {
     const building=this.pick(clientX,clientY,true);

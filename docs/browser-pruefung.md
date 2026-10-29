@@ -137,3 +137,9 @@ Der Seiten-Heap nach den Runden betrug 47.292.510 / 60.261.730 / 47.630.514 Byte
 Auf Produktionsbuild `599463a`, Szenario `1.3-draft`, liefen am 29. Oktober 2026 drei ungeschützte 2×-Runden mit `tools/observe-three-rounds.mjs` in Chrome 156.0.8078.73 unter Linux/Playwright mit Softwaregrafik. Pause, Zoom, Fortsetzen und Neustarts funktionierten; Seitenfehler wurden nicht protokolliert. Die Runden dauerten 153,136 / 153,054 / 152,987 s und endeten jeweils mit 140.415 Schaden und 10.000 Budgetrest.
 
 Der Seiten-Heap nach den Runden betrug 33.964.452 / 30.247.072 / 31.684.488 Bytes, die RSS-Summe im Prozessbaum 1.394.540.544 / 1.414.283.264 / 1.427.746.816 Bytes bei je zehn Prozessen. Der Heap schwankt, die RSS-Summe steigt; drei Stichproben können langsame Speicherprobleme nicht ausschließen. Die automatisierte Desktopprüfung ersetzt keine echte Geräteabnahme.
+
+## Gezielte Babylon-Imports
+
+Am 29. Oktober 2026 wurde der Babylon-Gesamtimport durch direkte Imports der benötigten Module ersetzt; Auswahl und Abrissmarkierung registrieren ihre Babylon-Komponenten ausdrücklich. Im Vergleich zum Produktionsbuild `390c4ec` sank das Haupt-JavaScript von 6.935,80 kB (gzip 1.523,27 kB) auf 1.047,90 kB (gzip 251,90 kB); Vite transformierte 478 statt 3.159 Module. Dies sind Buildgrößen der jeweiligen Hauptdatei, nicht die gesamten übertragenen Daten oder ein Framerate-Nachweis.
+
+Build, 35 Vitest-Tests und 21 Chrome-156-Browserprüfungen bestanden; ebenso der statische Unterpfadtest. In Chrome unter Linux mit Softwaregrafik wurden die Canvas-Screenshots der pausierten Ausgangsansicht und einer Abrissvorschau auf je 1.200 × 800 Pixel verglichen: Beide Paare waren bytegleich. Der Vergleich deckt nur diese Zustände und diese Umgebung ab. Die statischen Testserver meldeten eine fehlende Favicon-Datei; Seitenfehler traten nicht auf. Safari und echte Geräte bleiben ungeprüft.

@@ -8,6 +8,8 @@ Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet di
 
 Das Projekt verwendet pnpm 12.16.1 und `pnpm-lock.yaml`; ältere Prüfprotokolle nennen die damals ausgeführten npm- und npx-Befehle. Als Browserziel gelten aktuelle stabile Versionen, ohne gesonderte Unterstützung älterer Versionen. Nach der Umstellung bestanden eine saubere `pnpm ci`-Installation, Typprüfung, Build, 35 Vitest-Tests, zwei Python-Tests, 21 Chrome-Browserprüfungen und der statische Unterpfadtest; `pnpm audit` meldete keine bekannten Schwachstellen.
 
+Der Produktionsbuild verwendet gezielte Babylon-Imports; Ausgangsansicht und Abrissvorschau wurden mit dem vorigen Build verglichen: [Browserprüfung](browser-pruefung.md#gezielte-babylon-imports).
+
 ## Arbeitspakete
 
 | Paket | Status | Tatsächlicher Nachweis | Nächster Schritt |

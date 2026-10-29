@@ -25,6 +25,7 @@ export class World {
   private readonly waterPositions: Float32Array;
   private readonly waterColors: Float32Array;
   private readonly wetVertices: Uint8Array;
+  private readonly waterIndexBuffer: Uint16Array|Uint32Array;
   private wetTopologyReady = false;
   private zoom = 560;
   private readonly width: number;
@@ -47,6 +48,7 @@ export class World {
     waterData.applyToMesh(this.water,true); this.water.hasVertexAlpha=true;
     this.waterPositions=new Float32Array(waterData.positions!); this.waterColors=new Float32Array(waterData.colors!);
     this.wetVertices=new Uint8Array((this.width+1)*(this.height+1));
+    this.waterIndexBuffer=this.wetVertices.length<=65536?new Uint16Array(this.width*this.height*6):new Uint32Array(this.width*this.height*6);
     const waterMat=new StandardMaterial('water-material',this.scene); waterMat.diffuseColor=new Color3(0.21,0.58,0.72); waterMat.specularColor=new Color3(0.1,0.15,0.16); waterMat.backFaceCulling=false; waterMat.emissiveColor=new Color3(0.10,0.29,0.38); waterMat.useAlphaFromDiffuseTexture=false;
     this.water.material=waterMat;
     // The survey-derived face elevations affect flow, so show them on the map as well.
@@ -189,7 +191,7 @@ export class World {
       this.waterPositions[v*3+1]=this.bed[i]+depth[i]+0.08;
       this.waterColors[v*4+3]=depth[i]>0.02 ? 0.78 : 0;
     }
-    if(topologyChanged){this.water.setIndices(visibleWaterIndices(this.width,this.height,this.wetVertices),undefined,true);this.wetTopologyReady=true;}
+    if(topologyChanged){this.water.setIndices(visibleWaterIndices(this.width,this.height,this.wetVertices,this.waterIndexBuffer),undefined,true);this.wetTopologyReady=true;}
     this.water.updateVerticesData(VertexBuffer.PositionKind,this.waterPositions);
     this.water.updateVerticesData(VertexBuffer.ColorKind,this.waterColors);
   }

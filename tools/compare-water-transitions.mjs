@@ -1,10 +1,10 @@
-/** Compare dynamic water updates using baseline :5174 and current :5173 Vite servers. */
+/** Compare dynamic water updates using baseline and current Vite servers (defaults :5174 and :5173). */
 import {chromium} from 'playwright';
 import {createHash} from 'node:crypto';
 const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined});
 const modes=['dry','wet','mixed','dry','wet'],shots={};
 try {
- for(const [port,label] of [[5174,'baseline'],[5173,'current']]){
+ for(const [port,label] of [[Number(process.env.WATERFIGHTER_BASELINE_PORT??5174),'baseline'],[Number(process.env.WATERFIGHTER_CURRENT_PORT??5173),'current']]){
   const page=await browser.newPage({viewport:{width:1200,height:800}});
   await page.route('**/src/main.ts*',async route=>{const response=await route.fetch(),body=await response.text();await route.fulfill({response,body:body+'\nexport { world };\n'});});
   await page.goto(`http://127.0.0.1:${port}/`);await page.waitForFunction(()=>!document.querySelector('#run').disabled);await page.waitForTimeout(1000);

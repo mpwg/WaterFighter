@@ -29,7 +29,7 @@ try {
         if(state.visible && state.enabled)break;
         if(state.visible)await click('#cancel');
       }
-    } else {await pointer(690,300);await pointer(735,310);}
+    } else {await pointer(650,450);await pointer(700,450);}
     let preview;
     for(let i=0;i<100;i++){preview=await script('return {text:document.querySelector("#preview-text").textContent,enabled:!document.querySelector("#confirm").disabled,visible:!document.querySelector("#preview").hidden};');if(preview.visible&&preview.enabled)break;await new Promise(r=>setTimeout(r,100));}
     if(!preview.enabled){const shot=await command(prefix+'/screenshot',undefined,'GET');writeFileSync('/tmp/waterfighter-firefox-error.png',Buffer.from(shot,'base64'));throw new Error(`Keine bestätigbare Vorschau für ${mode}: ${JSON.stringify(preview)}`);}

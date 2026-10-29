@@ -39,6 +39,18 @@ if(mode!=='baseline') {
     cells+=indices.length;segments++;start=end+1;
   }
 }
+const cutSurveyCrests=scenario.surveyCrests.filter(face=>{
+  const x=face.axis==='x'?face.index%(w+1):face.index%w;
+  const y=face.axis==='x'?Math.floor(face.index/(w+1)):Math.floor(face.index/w);
+  const b=y*w+x,a=face.axis==='x'?b-1:b-w;
+  return game.trenchCells.has(a)&&game.trenchCells.has(b);
+});
+// Diagnostic counterfactual only: the game normally lowers these surveyed crests.
+const retainCrests=process.argv.includes('--retain-crests');
+if(retainCrests) for(const face of cutSurveyCrests) {
+  const field=face.axis==='x'?solver.crestX:solver.crestY;
+  field[face.index]=Math.max(field[face.index],face.crest);
+}
 let westOutflow=0;
 while(solver.time<scenario.parameters.duration-1e-9) {
   const t=solver.time,maxDt=Math.min(1,scenario.parameters.duration-t),dt=solver.stableStep(maxDt);
@@ -46,4 +58,4 @@ while(solver.time<scenario.parameters.duration-1e-9) {
   if(solver.step(maxDt)!==dt) throw Error('Zeitschritt stimmt nicht');
   game.addInflow(t,dt);game.updateDamage(dt);
 }
-console.log(JSON.stringify({scenario:scenario.version,mode,dams,cells,segments,budget:game.budget,...game.totals(),westOutflow,relativeBalance:Math.abs(solver.volume()-initial-solver.inflow+solver.outflow-solver.roundoffVolume)/(initial+solver.inflow)},null,2));
+console.log(JSON.stringify({scenario:scenario.version,mode,dams,cells,segments,cutSurveyCrests,retainCrests,budget:game.budget,...game.totals(),westOutflow,relativeBalance:Math.abs(solver.volume()-initial-solver.inflow+solver.outflow-solver.roundoffVolume)/(initial+solver.inflow),...(process.argv.includes('--buildings')?{buildings:game.status()}: {})},null,2));

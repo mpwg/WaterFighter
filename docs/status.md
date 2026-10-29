@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Schräg gewählte Grabenendpunkte erzeugen jetzt eine direkte, zellverbundene Rasterführung statt eines rechtwinkligen Knicks. Die fünfteilige [Südweg-Näherung](geodaten-voruntersuchung.md#fünf-diagonal-geführte-grabenabschnitte) ist spielregelkonform, bringt jedoch in der numerischen Runde praktisch keinen Schadensnutzen; ein zweiter sinnvoller Weg bleibt offen. Beide Referenzstrategien wurden erneut berechnet. Gezielte Browserprüfungen und Regeltests bestanden; eine neue vollständige Browser- und Geräteabnahme steht aus.
+
 Nach Geländeänderungen werden die Mesh-Grenzen für Gelände und Straßen aktualisiert. Ein Babylon-NullEngine-Test prüft die abgesenkten Grenzen nach einem Zustandsupdate und eine Geländeauswahl; ein konkreter Auswahl- oder Darstellungsfehler wurde dabei nicht reproduziert. Typprüfung und 58 Vitest-Tests bestanden auf dem damaligen gemeinsamen Arbeitsstand, der weitere uncommittete Änderungen enthielt. Eine erneute vollständige Browserprüfung dieses Commitstands steht aus.
 
 Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet die Flut im Worker und bietet alle drei Werkzeuge sowie Ergebnis und Neustart. Eine vollständige automatisierte Runde und eine erfolgreiche Dammstrategie sind belegt. Die Szenario- und Gesamtprüfungen bleiben in Arbeit; echte Mobilgeräte und Safari wurden nicht abgenommen. Eine öffentliche Veröffentlichung erfolgte nicht.

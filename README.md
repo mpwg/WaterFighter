@@ -1,6 +1,6 @@
 # WaterFighter
 
-WaterFighter soll ein browserbasiertes Hochwasserschutzspiel in einem realen Wiener Donauviertel werden. Der aktuelle Prototyp umfasst das Szenario, drei Bauwerkzeuge, eine Flutrunde und die Ergebnisanzeige. Die Szenario- und Geräteabnahme ist noch unvollständig. Die Anwendung ist keine Hochwasserprognose.
+WaterFighter ist ein browserbasierter Prototyp eines Hochwasserschutzspiels in einem realen Wiener Donauviertel. Er umfasst das Szenario, drei Bauwerkzeuge, eine Flutrunde und die Ergebnisanzeige. Die Szenario- und Geräteabnahme ist noch unvollständig. Die Anwendung ist keine Hochwasserprognose.
 
 ## Einrichtung und Prüfung
 
@@ -16,7 +16,7 @@ npm run build
 npm run test:browser
 ```
 
-Der Entwicklungsserver nennt seine lokale Adresse. `npm run preview` liefert den zuvor erzeugten Produktionsbuild lokal aus. Die technische Vorschau zeigt das vorläufige Szenario und einen pausierbaren Solver im Worker. Im Kartenmodus verschieben, zoomen und durch Antippen Wassertiefe oder Gebäudeschaden abfragen; für Damm oder Graben Start und Ende wählen, beim Abriss ein Gebäude auswählen und anschließend die Vorschau bestätigen. Die Geodaten-Voruntersuchung mit Python und Rasterio/GDAL ist in [geodaten-voruntersuchung.md](docs/geodaten-voruntersuchung.md) beschrieben; ein vorläufiges Szenariopaket liegt bei; seine Eignung und Vollständigkeit sind noch nicht abgenommen. Eine öffentliche Veröffentlichung ist nicht beauftragt.
+Der Entwicklungsserver nennt seine lokale Adresse. `npm run preview` liefert den zuvor erzeugten Produktionsbuild lokal aus. Das Spiel verwendet das vorläufige Szenario und einen pausierbaren Solver im Worker. Im Kartenmodus verschieben, zoomen und durch Antippen Wassertiefe oder Gebäudeschaden abfragen; für Damm oder Graben Start und Ende wählen, beim Abriss ein Gebäude auswählen und anschließend die Vorschau bestätigen. Die Geodaten-Voruntersuchung mit Python und Rasterio/GDAL ist in [geodaten-voruntersuchung.md](docs/geodaten-voruntersuchung.md) beschrieben; ein vorläufiges Szenariopaket liegt bei; seine Eignung und Vollständigkeit sind noch nicht abgenommen. Eine öffentliche Veröffentlichung ist nicht beauftragt.
 
 ## Dokumentation
 

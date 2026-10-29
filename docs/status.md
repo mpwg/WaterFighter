@@ -50,6 +50,8 @@ Die [Datenlizenz-Prüfung](datenlizenz-pruefung.md) ordnet Quellenhinweise und d
 
 Für den integrierten Stand `5c2e0c4` bestanden Build, 52 Vitest-Tests, zwei Python-Tests und alle 38 Chromium-Prüfungen; [Prüfumfang und Grenzen](browser-pruefung.md#integrierte-prüfungen-nach-szenariodownload). Nachfolgende Änderungen und echte Geräte sind darin nicht enthalten.
 
+Auf 320 × 480 CSS-Pixeln bleiben Zeit, Budget und Zustand nun einzeilig; die Quellenleiste liegt unter dem scrollbaren Werkzeugfeld. Emulierte Treffflächen- und Vorschautests bestanden: [Browserprüfung](browser-pruefung.md#kompakte-statusanzeige-bei-320--480). Echte Geräte bleiben offen.
+
 ## Arbeitspakete
 
 | Paket | Status | Tatsächlicher Nachweis | Nächster Schritt |

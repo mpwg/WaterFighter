@@ -234,3 +234,16 @@ Der Zehn-Minuten-Lauf `bun tools/check-scenario-balance.ts` auf dem gelieferten 
 `bun tools/inspect-scenario-depth.ts` berechnete am 29. Oktober 2026 die unbehandelte 300-s-Runde mit dem gelieferten `1.4-draft`. Die größte Tiefe von 13,030 m trat nach 142,99 s in der Zufluss-Gewässerzelle (29,0) auf; die künstliche Sohle liegt dort bei 0 m Wiener Null. Außerhalb der Zuflusszellen betrug die Spitze 11,515 m in Gewässerzelle (30,1) nach 145,56 s. Die höchste Tiefe auf einer als Land maskierten Zelle lag bei 5,195 m in (30,2) nach 148,67 s; dort betrug die Modellsohle 5,651 m und der Wasserspiegel 10,846 m Wiener Null. Alle drei Spitzen liegen am oberen Zuflussrand oder unmittelbar daneben. Die maximale Landtiefe ist somit nicht allein eine Anzeige der künstlichen Gewässersohle; auch Land wird in diesem Spielereignis dort stark überflutet.
 
 Der Gesamtschaden betrug 138.852,13, der relative Wasserbilanzfehler 8,40 × 10⁻¹⁴. Die Werte sind Zellmaxima zu unterschiedlichen Zeitpunkten und keine Messungen oder Kalibrierung eines realen Hochwassers. Die 90 Zuflusszellen erhalten eine vorgegebene künstliche Zuflusskurve; ihr Rand und die fehlende gemessene Bathymetrie begrenzen die physikalische Aussage. Der Versuch lokalisiert die Spitzen, belegt aber nicht ihre reale Plausibilität und ersetzt keine Sensitivitäts- oder Geräteprüfung.
+
+### Schrittweitenvergleich auf Version 1.4
+
+Am 29. Oktober 2026 wurden `bun tools/compare-timesteps.ts SCHRITT baseline` und `bun tools/compare-timesteps.ts SCHRITT bank` mit den maximalen Schrittweiten 1 und 0,05 s auf dem ausgelieferten `1.4-draft` über jeweils 300 simulierte Sekunden ausgeführt. Der Solver begrenzt beide Vorgaben zusätzlich durch CFL. `bank` setzt die elf Dammabschnitte aus `tests/fixtures/strategy.json` vor Beginn; dies ist die ältere, längere Dammstrategie, nicht die kürzere Reviewreferenz.
+
+| Fall | Max. Schritt | Schritte | Endvolumen | Gesamtschaden | Budgetrest | Relativer Bilanzfehler |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Ohne Eingriff | 1 s | 3.578 | 1.082.177,91 m³ | 138.852,13 | 10.000 | 8,40 × 10⁻¹⁴ |
+| Ohne Eingriff | 0,05 s | 6.000 | 1.082.201,61 m³ | 138.813,12 | 10.000 | 8,96 × 10⁻¹⁵ |
+| Elf Dämme | 1 s | 3.597 | 1.076.509,09 m³ | 35.146,35 | 2.600 | 2,68 × 10⁻¹³ |
+| Elf Dämme | 0,05 s | 6.000 | 1.076.535,10 m³ | 35.139,83 | 2.600 | 9,06 × 10⁻¹⁵ |
+
+Im unbehandelten Fall unterscheiden sich Schaden und Endvolumen um etwa 0,0281 % beziehungsweise 0,0022 % bezogen auf den 1-s-Lauf und erfüllen damit die zuvor festgelegten 1-%-Schranken. Beide Dammläufe bleiben innerhalb des Budgets und unter dem Schadensziel von 50.000; alle Bilanzfehler liegen unter 0,1 %. Dies ist ein Vergleich zweier Schrittweiten für zwei konkrete Fälle, kein allgemeiner Konvergenzbeweis, keine reale Kalibrierung und keine mobile Leistungsmessung.

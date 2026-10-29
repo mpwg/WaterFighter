@@ -36,6 +36,8 @@ Der Produktionsbuild verwendet gezielte Babylon-Imports; Ausgangsansicht und Abr
 
 Der [Gebäudevergleich](review-gebaeudevergleich.md) ordnet die drei Referenzrunden gebäudeweise ein. Die kombinierte Ableitung spart gegenüber zwei Dämmen 1.121,23 Gesamtschaden bei 2.202 zusätzlichen Budgeteinheiten; ein positiver Gesamtsaldo aus beiden Größen ist damit nicht belegt. Der Zehn-Minuten-Lauf auf dem ausgelieferten Szenario weist einen relativen Bilanzfehler von 8,42 × 10⁻¹⁴ aus. Ein einzelner Abriss zeigt inzwischen eine wirtschaftliche Verbesserung; menschliche Nutzbarkeit und eine erfolgreiche Strategie mit diesem Einzelabriss bleiben offen.
 
+Eine vollständige lokale Produktionsrunde mit einem während der laufenden Flut bestätigten Graben zeigte Schadensanzeige, Ergebnis und zurückgesetzte Werte nach Neustart. Der willkürlich platzierte Graben verfehlte das Ziel; die automatisierte Mausprüfung ersetzt keinen menschlichen Spieltest: [Browserprüfung](browser-pruefung.md#produktionsrunde-mit-laufendem-grabeneingriff).
+
 ## Arbeitspakete
 
 | Paket | Status | Tatsächlicher Nachweis | Nächster Schritt |

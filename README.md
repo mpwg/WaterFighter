@@ -32,6 +32,8 @@ Die Kopfzeile zeigt laufend Gesamtschaden, Ziel sowie Flut- und Abrissverluste, 
 
 Bestätigte Dämme erscheinen als orange Linien und bestätigte Gräben als braune Geländeflächen. Überflutetes Wasser kann die Grabenmarkierung verdecken.
 
+Strömungsmarker werden auch entlang bestätigter Gräben angezeigt, wenn dort genügend Wasser und Strömung vorhanden sind. Sie zeigen den berechneten Zustand und können in der Übersicht schwer erkennbar sein.
+
 Blaue Pfeile kennzeichnen die Zuflussbereiche; violette Pfeile markieren offene Modellränder, über die Wasser den Ausschnitt verlassen kann. Die Pfeile sind schematisch und keine Aussage über eine sichere reale Ableitung.
 
 Der Szenarioentwurf `1.4-draft` verwendet einen offenen westlichen Modellrand und 3 m Grabentiefe als Spielannahmen. Wasser außerhalb des Ausschnitts wird nicht weiter simuliert. Zwei numerische Referenzstrategien stehen in `tests/fixtures/review-strategies.json`; ihr [Gebäudevergleich](docs/review-gebaeudevergleich.md) erklärt Wirkung und Grenzen. Bilanz und Wertung lassen sich mit `bun tools/reference-strategies.ts baseline`, `shield` beziehungsweise `divert` nachvollziehen.

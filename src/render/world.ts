@@ -19,6 +19,7 @@ import { damCrest } from '../simulation/dam-height';
 import { groundRoads, terrainHeight } from './roads';
 import { buildingCondition } from './building-status';
 import { boundaryArrowLines, boundaryArrows } from './boundary-arrows';
+import { MAX_TRENCH_FLOW_SAMPLES, trenchFlowCells } from './trench-flow';
 import type { Scenario } from '../scenario';
 import type { Action, BuildingStatus, Face } from '../simulation/game';
 
@@ -31,6 +32,7 @@ export class World {
   private readonly flowLines: LinesMesh;
   private readonly flowPositions: Float32Array;
   private readonly flowSamples: { x:number; y:number; height:number; vx:number; vy:number }[] = [];
+  private flowTrenchCells:number[] = [];
   private readonly currentDepth: Float32Array;
   private currentBuildings = new Map<string,BuildingStatus>();
   private readonly buildingMaterials: Record<ReturnType<typeof buildingCondition>,StandardMaterial>;
@@ -94,7 +96,7 @@ export class World {
     // The survey-derived face elevations affect flow, so show them on the map as well.
     this.updateSurveyRidges();
     // A fixed, bounded set of visual stream markers is updated from worker momentum.
-    const count=Math.ceil(this.width/12)*Math.ceil(this.height/12);
+    const count=Math.ceil(this.width/12)*Math.ceil(this.height/12)+MAX_TRENCH_FLOW_SAMPLES;
     this.flowLines=CreateLineSystem('flow',{lines:Array.from({length:count},()=>[Vector3.Zero(),Vector3.Zero()]),updatable:true},this.scene);
     this.flowLines.color=new Color3(0.8,0.96,0.99);this.flowLines.isPickable=false;
     this.flowPositions=new Float32Array(count*6);
@@ -166,6 +168,7 @@ export class World {
     }
   }
   private updateTrenches(cells:number[]):void {
+    this.flowTrenchCells=trenchFlowCells(cells);
     this.trenchMesh?.dispose();this.trenchMesh=undefined;
     if(!cells.length)return;
     const positions:number[]=[],indices:number[]=[];
@@ -251,6 +254,13 @@ export class World {
         const sample=this.flowSamples[sampleIndex++]??(this.flowSamples[this.flowSamples.length]={x:x*this.cell-this.width*this.cell/2,y:y*this.cell-this.height*this.cell/2,height:0,vx:0,vy:0});
         sample.height=this.bed[i]+h+0.3;sample.vx=h>0.05?qx[i]/h:0;sample.vy=h>0.05?qy[i]/h:0;
       }
+      for(const i of this.flowTrenchCells) {
+        const x=i%this.width,y=Math.floor(i/this.width),h=depth[i];
+        const sample=this.flowSamples[sampleIndex++]??(this.flowSamples[this.flowSamples.length]={x:0,y:0,height:0,vx:0,vy:0});
+        sample.x=(x+.5)*this.cell-this.width*this.cell/2;sample.y=(y+.5)*this.cell-this.height*this.cell/2;
+        sample.height=this.bed[i]+h+0.3;sample.vx=h>0.05?qx[i]/h:0;sample.vy=h>0.05?qy[i]/h:0;
+      }
+      this.flowSamples.length=sampleIndex;
     }
     let topologyChanged=!this.wetTopologyReady;
     for(let y=0;y<=this.height;y++) for(let x=0;x<=this.width;x++) {

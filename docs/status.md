@@ -20,6 +20,8 @@ Die experimentelle Kombination wurde außerdem über die Oberfläche im instrume
 
 Bestätigte Gräben werden nun anhand der Worker-Zellen braun auf dem Gelände markiert und beim Neustart entfernt. Ein Vorbereitungs-Sichttest zeigt die Markierung bei ausgeblendetem Menü; sie bleibt in der Übersicht schmal und kann durch Wasser verdeckt werden. Echte Geräte bleiben ungeprüft: [Browserprüfung](browser-pruefung.md#bestätigte-gräben-sichtbar-machen).
 
+Zusätzliche, auf 200 begrenzte Strömungsmarker tasten bestätigte Grabenzellen anhand der Worker-Impulswerte ab; beim Neustart werden sie entfernt. Eine synthetische Sichtprobe zeigt den schmalen Wasserstreifen, aber noch keinen gut lesbaren vollständigen Weg. Die tatsächliche Flutrunde und mobile Leistung mit den zusätzlichen Markern bleiben zu prüfen.
+
 Eine vollständige experimentelle 2×-Runde mit Grabenmarkierung bestand anschließend im Entwicklungsbrowser. Schematische Pfeile und eine Legende kennzeichnen inzwischen Zufluss und offene Modellränder; die experimentelle Referenzrunde wurde vor dieser Änderung gespielt: [Browserprüfung](browser-pruefung.md#flutrunde-mit-grabenmarkierung-und-modellrand-hinweise).
 
 Nach der Pfeiländerung bestanden Produktionsbuild, 49 Vitest-Tests und 33 Chrome-Browserprüfungen. Die Tests der Pfeilpositionen prüfen gruppierte Zuflusszellen, konfigurierte Modellränder und Richtung; sie ersetzen keine vollständige Runde oder Geräteprüfung.

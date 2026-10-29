@@ -2,7 +2,7 @@ import {expect,it,vi} from 'vitest';
 import {World} from '../src/render/world';
 
 it('bewahrt die Wasserabfrage beim Wiederverwenden des Snapshot-Puffers und aktualisiert Strömung',()=>{
-  const world={width:2,height:2,cell:4,bed:[0,0,0,0],currentDepth:new Float32Array(4),flowSamples:[],
+  const world={width:2,height:2,cell:4,bed:[0,0,0,0],currentDepth:new Float32Array(4),flowSamples:[],flowTrenchCells:[],
     wetVertices:new Uint8Array(9),waterIndexBuffer:new Uint16Array(24),wetTopologyReady:false,waterPositions:new Float32Array(27),waterColors:new Float32Array(36),
     water:{setIndices:vi.fn(),updateVerticesData:vi.fn()}} as any;
   const depth=new Float32Array([1,0,0,0]),qx=new Float32Array([2,0,0,0]),qy=new Float32Array([1,0,0,0]);
@@ -47,9 +47,24 @@ it('zeichnet nur bestätigte Grabenzellen und entfernt die Markierung beim Neust
   const world={width:2,height:2,cell:4,bed:[0,0,0,0],scene,trenchMaterial:material} as any;
   try {
     (World.prototype as any).updateTrenches.call(world,[0,1]);
+    expect(world.flowTrenchCells).toEqual([0]);
     expect(world.trenchMesh.name).toBe('confirmed-trenches');expect(world.trenchMesh.isPickable).toBe(false);
     expect(world.trenchMesh.getTotalVertices()).toBe(8);expect(world.trenchMesh.getTotalIndices()).toBe(12);
     const old=world.trenchMesh;(World.prototype as any).updateTrenches.call(world,[]);
     expect(old.isDisposed()).toBe(true);expect(world.trenchMesh).toBeUndefined();
+    expect(world.flowTrenchCells).toEqual([]);
   } finally {scene.dispose();engine.dispose();}
+});
+
+it('zeigt Strömung in bestätigten Grabenzellen und entfernt ihre Marker nach Neustart',()=>{
+  const world={width:2,height:2,cell:4,bed:[0,0,0,0],currentDepth:new Float32Array(4),flowSamples:[],flowTrenchCells:[1],
+    wetVertices:new Uint8Array(9),waterIndexBuffer:new Uint16Array(24),wetTopologyReady:false,waterPositions:new Float32Array(27),waterColors:new Float32Array(36),
+    flowPositions:new Float32Array(12),flowLines:{updateVerticesData:vi.fn()},water:{setIndices:vi.fn(),updateVerticesData:vi.fn()}} as any;
+  const depth=new Float32Array([0,1,0,0]),qx=new Float32Array([0,-2,0,0]),qy=new Float32Array(4);
+  World.prototype.updateWater.call(world,depth,qx,qy);
+  expect(world.flowSamples).toHaveLength(2);expect(world.flowSamples[1]).toMatchObject({x:2,y:-2,vx:-2,vy:0});
+  (World.prototype as any).animateFlow.call(world,1);expect([...world.flowPositions.slice(6)]).not.toEqual([0,0,0,0,0,0]);
+  world.flowTrenchCells=[];World.prototype.updateWater.call(world,depth,qx,qy);
+  expect(world.flowSamples).toHaveLength(1);
+  (World.prototype as any).animateFlow.call(world,1);expect([...world.flowPositions.slice(6)]).toEqual([0,0,0,0,0,0]);
 });

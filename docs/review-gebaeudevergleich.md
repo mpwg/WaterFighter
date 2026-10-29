@@ -34,3 +34,16 @@ Der Graben kostet zusätzlich 650 und vermindert den Schaden um 13.192,26; auch 
 Für eine numerische Zeitprüfung führt `bun tools/compare-review-strategies.ts dam3trench --at=SEKUNDEN` alle vier Aktionen unmittelbar nacheinander zum angegebenen Zeitpunkt aus. Bei 60 s entstehen am Ende 21.600,69 Schaden; bei 120 s sind beim Eingriff bereits 187,19 eingetreten und am Ende 39.986,33. Bei 150 s stehen beim Eingriff 10.869,33 und am Ende 86.347,49 zu Buche: Das Ziel wird verfehlt. Der Budgetrest beträgt jeweils 7.510 und der relative Bilanzfehler höchstens 4,99 × 10⁻¹⁴. Dies sind idealisierte gleichzeitige Eingriffe; Auswahl, Vorschau und Bestätigung brauchen in einer menschlichen Runde Zeit. Die Zahlen legen keine allgemeine exakte Frist fest und ersetzen keine Bedienprüfung während der Flut.
 
 Die getrennte Verschiebung eines Grabenendpunkts um eine Rasterzeile wurde mit `--trench-start-row=-1`, `--trench-start-row=1`, `--trench-end-row=-1` und `--trench-end-row=1` vor Beginn untersucht. Start −1 wird abgelehnt: „Ein Gebäude versperrt den Graben. Verlauf ändern oder Gebäude abreißen.“ Die übrigen drei Verläufe sind zulässig, kosten wegen einer zusätzlichen Zelle jeweils 675 und ergeben der Reihe nach 37.474,82, 21.552,70 und 21.622,17 Gesamtschaden. Ihre relativen Bilanzfehler liegen unter 1,44 × 10⁻¹⁴. Die getestete Ablehnung stammt aus der maßgeblichen Spielregel; diese numerische Prüfung belegt nicht, dass die Stelle und der Hinweis auf jedem Gerät leicht zu bedienen sind.
+
+### Markierter Verlauf des Landgrabens
+
+`bun tools/trace-review-diversion.ts dam3trench --ordered` und `dam3 --ordered` vergleichen dieselben Dämme mit und ohne Graben über 300 s. Das Diagnoseprogramm markiert bisher unmarkiertes Wasser beim Eintritt in Zeile 4 über deren Nord- und Südkanten von x = 0 bis 25. Fünf Markierungsstufen erfassen, welcher Anteil danach die Kanten bei x = 20, 15, 10 und 5 in dieser Reihenfolge westwärts passiert und anschließend den Westrand verlässt. Zwischen diesen Querschnitten darf sich die Markierung auch außerhalb der Grabenzeile bewegen. Der Solver selbst wird nicht verändert.
+
+| Größe | Mit Graben | Ohne Graben |
+| --- | ---: | ---: |
+| Markiert | 969,97 m³ | 932,85 m³ |
+| Nach allen vier Querschnitten am Westrand ausgetreten | 618,65 m³ | 0 m³ |
+| Noch im Modell markiert | 351,32 m³ | 932,84 m³ |
+| Rest der geordneten Markierungsbilanz | −4,44 × 10⁻¹² m³ | −3,42 × 10⁻¹³ m³ |
+
+Die Summe der Stufen wich lokal um höchstens 5,69 × 10⁻¹⁴ m³ von der einfachen Markierung ab. Ein erster Versuch markierte nur den westwärts gerichteten Eintritt über die östliche Kante bei (26,4): Dort trat kein markiertes Wasser ein. Er ist mit `dam3trench --ordered --east-gate` reproduzierbar; der Damm liegt auf dieser Kante. Der seitliche Eintrag ist daher für diesen Lauf die passende untersuchte Eintrittsfläche. Rusanov-Diffusion und Zellmischung erlauben keine Interpretation als reale Wasserteilchen; der offene Modellrand berechnet keine Folgen außerhalb des Ausschnitts. Auch diese Bilanz belegt nicht, dass der markierte Anteil allein die gesamte Schadensänderung verursacht.

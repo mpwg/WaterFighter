@@ -2,6 +2,7 @@
 import {createServer} from 'node:http';
 import {readFile} from 'node:fs/promises';
 import {resolve, sep} from 'node:path';
+import {gunzipSync} from 'node:zlib';
 import {chromium} from '@playwright/test';
 
 const root=resolve('dist'),prefix='/waterfighter/';
@@ -40,6 +41,11 @@ try {
   const source=await page.locator('a[href$="scenarios/DATENQUELLEN.md"]').getAttribute('href');
   const sourceResponse=await page.request.get(new URL(source,page.url()).href);
   if(!sourceResponse.ok())throw Error(`Quellenhinweis: HTTP ${sourceResponse.status()}`);
+  const link=(await sourceResponse.text()).match(/\[Szenariopaket\]\(([^)]+)\)/)?.[1];
+  if(!link)throw Error('Szenariodownload fehlt im Quellenhinweis');
+  const scenarioResponse=await page.request.get(new URL(link,sourceResponse.url()).href);
+  if(!scenarioResponse.ok())throw Error(`Szenariodownload: HTTP ${scenarioResponse.status()}`);
+  if(!gunzipSync(await scenarioResponse.body()).equals(await readFile('public/scenarios/brigittenau-v1.json')))throw Error('Szenariodownload stimmt nicht mit der Quelldatei überein');
   if(!requests.some(r=>r.path.endsWith('/scenarios/brigittenau-v1.json.bin')&&r.status===200))throw Error('Szenario nicht geladen');
   if(!requests.some(r=>/worker.*\.js$/.test(r.path)&&r.status===200))throw Error('Worker nicht geladen');
   if(errors.length||requests.some(r=>r.status!==200))throw Error(JSON.stringify({errors,requests}));

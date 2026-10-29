@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Ein neuer Kartentipp während einer unbestätigten Maßnahmenvorschau verwirft diese und beginnt die nächste Auswahl; damit bleiben Startmarkierung und bestätigbare Maßnahme konsistent. Produktionsbuild, 68 Modelltests und drei gezielte Chromium-Fälle für Vorschau und Touch-Verschiebung bestanden. Die vollständige Browser-Suite für diese Änderung und echte Geräte bleiben offen.
+
 Eine [aktuelle Live-Runde mit direkter Dammführung](landgraben-live.md#live-runde-mit-direkter-dammführung) zeigt Strömungsmarker am Graben bei 03:01 und 04:00 und endet mit 863 Schaden. Die Kamera war testseitig fokussiert; durchgehende Sichtbarkeit, menschliche Bedienung und echte Geräte bleiben offen.
 
 Der [Spieltestablauf](spieltest.md#produktionsbuild-für-ein-gerät-im-selben-netzwerk) enthält nun konkrete Schritte für eine Produktionsvorschau auf einer privaten Netzwerkadresse. Ein lokaler Abruf von HTML und Szenario sowie der Chromium-Start mit Worker über die eigene Adresse gelangen; Zugriff von einem zweiten Gerät und die menschliche Prüfung wurden nicht durchgeführt.

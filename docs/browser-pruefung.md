@@ -1,5 +1,13 @@
 # Browser- und Stabilitätsprüfung
 
+## Fehleranzeige bei ausgeblendetem Menü
+
+Ein kritischer Lade-, Worker- oder Grafikfehler öffnet das ausgeblendete Spielmenü, beendet den Worker und bietet dort eine Schaltfläche zum Neuladen. Eine Browserprüfung löst einen Grafikkontextverlust bei ausgeblendetem Menü aus, prüft die sichtbare Fehlermeldung und lädt über die Schaltfläche erfolgreich eine neue Vorbereitung. Die Prüfung simuliert das Ereignis und ersetzt keine Geräteprüfung eines tatsächlichen Grafikverlusts.
+
+Auf diesem Änderungsstand bestanden der Produktionsbuild, 44 Vitest-Tests und alle 31 Playwright-Prüfungen mit Chrome 156 und Softwaregrafik.
+
+In der lokalen Linux-Testumgebung müssen neben den temporären Browserbibliotheken auch Schriften eingerichtet sein: Ohne `FONTCONFIG_FILE=/tmp/waterfighter-fonts/fonts.conf` zeigte Chrome Text mit praktisch null Breite, wodurch Prüfungen der Hilfe und des Quellenlinks scheiterten. Die Dateien unter `/tmp` sind lokale Testvoraussetzungen, keine Voraussetzungen für die ausgelieferte Anwendung.
+
 Stand: 29. Oktober 2026. Diese Nachweise ersetzen nicht die geforderte Abnahme auf echten Mobilgeräten und in tatsächlichem Safari.
 
 ## Drei aufeinanderfolgende Runden

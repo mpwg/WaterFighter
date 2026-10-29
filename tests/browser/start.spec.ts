@@ -161,9 +161,14 @@ test('Beschädigtes komprimiertes Szenario meldet einen Ladefehler',async({page}
 
 test('Verlust des Grafikkontexts pausiert und weist auf einen Neustart hin',async({page})=>{
   await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('#panel-toggle').click();await expect(page.locator('#game-panel')).toBeHidden();
   await page.locator('canvas').dispatchEvent('webglcontextlost',{cancelable:true});
+  await expect(page.locator('#game-panel')).toBeVisible();
   await expect(page.locator('#state')).toHaveText('Fehler');await expect(page.locator('#message')).toContainText('Bitte Seite neu laden');
   await expect(page.locator('#run')).toBeDisabled();
+  await page.getByRole('button',{name:'Seite neu laden'}).click();
+  await expect(page.locator('#run')).toBeEnabled();
+  await expect(page.locator('#state')).toHaveText('Vorbereitung');
 });
 
 test('Aktionslatenz wird erst nach Darstellung des bestätigten Zustands gemeldet',async({page})=>{

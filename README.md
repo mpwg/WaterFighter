@@ -24,6 +24,8 @@ Der Entwicklungsserver nennt seine lokale Adresse. `bun run preview` liefert den
 
 Das Spiel setzt aktuelle stabile Versionen von Safari, Chrome oder Firefox mit WebGL2 voraus. Ältere Browser werden nicht gesondert unterstützt; Safari und echte Mobilgeräte sind noch nicht abgenommen.
 
+Bei einem nicht behebbaren Grafik-, Lade- oder Workerfehler wird das Menü geöffnet und bietet einen Knopf zum Neuladen der Seite; dabei beginnt eine neue Runde.
+
 ## Dokumentation
 
 - [Spielplan](docs/spielplan.md): Produktziel und Spielregeln.

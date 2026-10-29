@@ -18,6 +18,8 @@ const canvas=app.querySelector('canvas')!;
 const panelToggle=app.querySelector<HTMLButtonElement>('#panel-toggle')!,gamePanel=app.querySelector<HTMLElement>('#game-panel')!;
 panelToggle.onclick=()=>{const open=panelToggle.getAttribute('aria-expanded')==='true';gamePanel.hidden=open;panelToggle.setAttribute('aria-expanded',String(!open));panelToggle.textContent=open?'Menü anzeigen':'Menü ausblenden';};
 const message=app.querySelector<HTMLParagraphElement>('#message')!;
+const reloadButton=document.createElement('button');
+reloadButton.textContent='Seite neu laden';reloadButton.hidden=true;reloadButton.onclick=()=>location.reload();message.after(reloadButton);
 const run=app.querySelector<HTMLButtonElement>('#run')!, reset=app.querySelector<HTMLButtonElement>('#reset')!, speedButton=app.querySelector<HTMLButtonElement>('#speed')!;
 const timeLabel=app.querySelector<HTMLElement>('#time')!, stateLabel=app.querySelector<HTMLElement>('#state')!;
 type Mode='camera'|'dam'|'trench'|'demolish';
@@ -61,7 +63,7 @@ function selectAt(x:number,y:number) {
   const action=pathAction(first,hit);first=undefined;if(action)showDraft(action);else message.textContent='Bitte einen längeren Verlauf wählen.';
 }
 let worker:Worker|undefined;
-function fail(text:string) { pendingPresentation.clear(); fatalError=true; running=false; worker?.terminate(); run.disabled=true; reset.disabled=true; speedButton.disabled=true; for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=true; clearDraft(); message.textContent=text; stateLabel.textContent='Fehler'; }
+function fail(text:string) { pendingPresentation.clear(); fatalError=true; running=false; worker?.terminate(); run.disabled=true; reset.disabled=true; speedButton.disabled=true; for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=true; clearDraft(); resultPanel.hidden=true; gamePanel.hidden=false; gamePanel.scrollTop=0; panelToggle.setAttribute('aria-expanded','true'); panelToggle.textContent='Menü ausblenden'; message.textContent=text; stateLabel.textContent='Fehler'; reloadButton.hidden=false; }
 try {worker=new Worker(new URL('./worker.ts',import.meta.url),{type:'module'});}
 catch {fail('Der Worker konnte nicht gestartet werden. Bitte die Seite neu laden.');}
 if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{

@@ -37,13 +37,17 @@ try {
  await page.mouse.click(building.x,building.y);await confirm('Abriss');
  await page.locator('#panel-toggle').click();await page.locator('[data-mode=trench]').click();await page.locator('#panel-toggle').click();
  for(const [x,y] of [[0,10],[23,10]]){const p=await landPoint(x,y,true);await page.mouse.click(p.x,p.y);}await confirm('Graben');
+ if(process.argv.includes('--prepare-only'))await page.screenshot({path:'/tmp/waterfighter-review-trench-visible.png'});
  await page.locator('#panel-toggle').click();
  await page.waitForFunction(()=>document.querySelector('#budget').textContent.replace(/\s/g,'')==='6598',null,{timeout:15000});
  await page.screenshot({path:'/tmp/waterfighter-review-preparation.png'});
+ if(process.argv.includes('--prepare-only')){console.log('Vorbereitung abgeschlossen');process.exitCode=0;}
+ else {
  await page.locator('#speed').click();const start=Date.now();await page.locator('#run').click();
  for(const t of [60,120,180,240]){await page.waitForFunction(t=>{const [m,s]=document.querySelector('#time').textContent.split(':').map(Number);return m*60+s>=t;},t,{timeout:240000});await page.screenshot({path:`/tmp/waterfighter-review-${t}.png`});}
  await page.waitForFunction(()=>!document.querySelector('#result').hidden,null,{timeout:240000});
  const report={browser:browser.version(),scenario:scenario.version,experimental:{leftOpen:true,trenchDepth:3},budget:await page.locator('#budget').textContent(),title:await page.locator('#result-title').textContent(),details:await page.locator('#result-details').textContent(),wallSeconds:(Date.now()-start)/1000,errors};
  await page.screenshot({path:'/tmp/waterfighter-review-result.png'});writeFileSync('/tmp/waterfighter-review-browser.json',JSON.stringify(report,null,2));
  if(report.title!=='Schadensziel erreicht'||errors.length)throw Error(`Runde fehlgeschlagen: ${JSON.stringify(report)}`);console.log(JSON.stringify(report,null,2));
+ }
 } finally {await browser.close();}

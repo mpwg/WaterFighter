@@ -30,6 +30,8 @@ Bei einem nicht behebbaren Grafik-, Lade- oder Workerfehler wird das Menü geöf
 
 Die Kopfzeile zeigt laufend Gesamtschaden, Ziel sowie Flut- und Abrissverluste, auch bei ausgeblendetem Menü. Gebäude werden nach Zustand eingefärbt; im Kartenmodus zeigt Antippen zusätzlich Zustand, Schaden und Wassertiefe am Gebäuderand als Text.
 
+Bestätigte Dämme erscheinen als orange Linien und bestätigte Gräben als braune Geländeflächen. Überflutetes Wasser kann die Grabenmarkierung verdecken.
+
 Wenn eine Bauvorschau nicht zulässig ist, erklärt sie den Grund, etwa einen Kartenrand, einen bereits vorhandenen Damm oder ein Gebäude im geplanten Graben.
 
 ## Dokumentation

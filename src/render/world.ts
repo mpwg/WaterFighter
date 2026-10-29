@@ -39,6 +39,8 @@ export class World {
   private readonly landPositions: Float32Array;
   private previewMesh?: LinesMesh;
   private damMesh?: LinesMesh;
+  private trenchMesh?: Mesh;
+  private readonly trenchMaterial: StandardMaterial;
   private surveyMesh?: LinesMesh;
   private damSignature = '';
   private terrainRevision = -1;
@@ -64,6 +66,7 @@ export class World {
     const land=new Mesh('terrain',this.scene), landData=this.gridData(scenario.bed,false);
     this.land=land; landData.applyToMesh(land,true); this.landPositions=new Float32Array(landData.positions!);
     const landMat=new StandardMaterial('land-material',this.scene); landMat.diffuseColor=new Color3(0.61,0.68,0.52); landMat.specularColor=Color3.Black(); landMat.backFaceCulling=false; landMat.emissiveColor=new Color3(0.22,0.25,0.19); land.material=landMat;
+    this.trenchMaterial=new StandardMaterial('trench-material',this.scene);this.trenchMaterial.diffuseColor=new Color3(0.68,0.39,0.16);this.trenchMaterial.emissiveColor=new Color3(0.25,0.12,0.04);this.trenchMaterial.specularColor=Color3.Black();this.trenchMaterial.backFaceCulling=false;
     this.water=new Mesh('water',this.scene); this.water.isPickable=false; const waterData=this.gridData(scenario.bed,true);
     waterData.applyToMesh(this.water,true); this.water.hasVertexAlpha=true;
     this.waterPositions=new Float32Array(waterData.positions!); this.waterColors=new Float32Array(waterData.colors!);
@@ -121,7 +124,7 @@ export class World {
     }
     const data=new VertexData(); data.positions=positions; data.indices=indices; const normals:number[]=[]; VertexData.ComputeNormals(positions,indices,normals); data.normals=normals; if(colored)data.colors=colors; return data;
   }
-  updateState(bed:Float32Array, buildings:BuildingStatus[], dams:[string,number][], revision:number):void {
+  updateState(bed:Float32Array, buildings:BuildingStatus[], dams:[string,number][], revision:number, trenches:number[]):void {
     this.currentBuildings=new Map(buildings.map(b=>[b.id,b]));
     for(const b of buildings) {const mesh=this.scene.getMeshByName(`building-${b.id}`);if(mesh)mesh.material=this.buildingMaterials[buildingCondition(b)];}
     if(revision===this.terrainRevision) return;
@@ -143,6 +146,7 @@ export class World {
       }
       this.updateSurveyRidges();
     }
+    this.updateTrenches(trenches);
     for(const b of buildings) {const mesh=this.scene.getMeshByName(`building-${b.id}`); if(mesh) mesh.setEnabled(!b.demolished);}
     const signature=JSON.stringify(dams);
     if(signature!==this.damSignature) {
@@ -150,6 +154,22 @@ export class World {
       const lines=dams.map(([key,crest])=>{const [axis,raw]=key.split(':'),index=Number(raw); return this.facePoints({axis:axis as 'x'|'y',index},crest+0.5);});
       if(lines.length) {this.damMesh=CreateLineSystem('confirmed-dams',{lines},this.scene);this.damMesh.color=new Color3(0.75,0.29,0.12);this.damMesh.isPickable=false;}
     }
+  }
+  private updateTrenches(cells:number[]):void {
+    this.trenchMesh?.dispose();this.trenchMesh=undefined;
+    if(!cells.length)return;
+    const positions:number[]=[],indices:number[]=[];
+    for(const i of cells){
+      const x=i%this.width,y=Math.floor(i/this.width),base=positions.length/3;
+      for(const [dx,dy] of [[0,0],[1,0],[0,1],[1,1]]){
+        const px=(x+dx)*this.cell,py=(y+dy)*this.cell;
+        positions.push(px-this.width*this.cell/2,terrainHeight(px,py,this.width,this.height,this.cell,this.bed)+0.15,py-this.height*this.cell/2);
+      }
+      indices.push(base,base+1,base+2,base+1,base+3,base+2);
+    }
+    const mesh=new Mesh('confirmed-trenches',this.scene),data=new VertexData();data.positions=positions;data.indices=indices;
+    const normals:number[]=[];VertexData.ComputeNormals(positions,indices,normals);data.normals=normals;data.applyToMesh(mesh);
+    mesh.material=this.trenchMaterial;mesh.isPickable=false;this.trenchMesh=mesh;
   }
   private updateSurveyRidges():void {
     this.surveyMesh?.dispose();

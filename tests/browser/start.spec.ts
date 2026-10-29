@@ -76,6 +76,21 @@ test('Vorschau erklärt ein Gebäude als Hindernis für den Graben',async({page}
   await expect(page.locator('#confirm')).toBeDisabled();await expect(page.locator('#budget')).toHaveText('10 000');
 });
 
+test('Grabenmarkierung entsteht erst nach Bestätigung und verschwindet beim Neustart',async({page})=>{
+  await page.addInitScript(()=>{
+    const OriginalWorker=window.Worker;(window as any).wfTrenches=[];
+    window.Worker=class extends OriginalWorker {constructor(url:string|URL,options?:WorkerOptions){super(url,options);this.addEventListener('message',e=>{if(e.data?.type==='snapshot')(window as any).wfTrenches.push({round:e.data.round,cells:e.data.trenches});});}};
+  });
+  await page.setViewportSize({width:1200,height:800});await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('[data-mode="trench"]').click();await page.mouse.click(800,360);await page.mouse.click(850,385);
+  await expect(page.locator('#confirm')).toBeEnabled();
+  expect(await page.evaluate(()=>(window as any).wfTrenches.at(-1).cells)).toEqual([]);
+  await page.locator('#confirm').click();
+  await page.waitForFunction(()=>(window as any).wfTrenches.some((s:any)=>s.round===1&&s.cells.length>0));
+  await page.locator('#reset').click();
+  await page.waitForFunction(()=>(window as any).wfTrenches.some((s:any)=>s.round===2&&s.cells.length===0));
+});
+
 
 test('Eine verkürzte Runde zeigt das Ergebnis und erlaubt den Neustart', async ({page})=>{
   const scenario=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));

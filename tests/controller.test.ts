@@ -48,8 +48,9 @@ it('akzeptiert bestätigte Aktionen auch in Pause höchstens einmal und verwirft
   const reply=replies[1].result;expect(reply.ok && reply.budget).toBe(scenario.parameters.budget-2*scenario.parameters.trenchCostPerCell);
   c.handle({type:'recycle',round:1,buffer:snapshots(messages)[0].buffer},0);
   expect(snapshots(messages).at(-1)!.budget).toBe(scenario.parameters.budget-50);
+  expect(snapshots(messages).at(-1)!.trenches).toEqual([0,1]);
   c.handle({type:'reset',round:1},0);c.handle({type:'action',round:1,id:'late',action},0);
-  const latest=snapshots(messages).at(-1)!;expect(latest.round).toBe(2);expect(latest.budget).toBe(scenario.parameters.budget);
+  const latest=snapshots(messages).at(-1)!;expect(latest.round).toBe(2);expect(latest.budget).toBe(scenario.parameters.budget);expect(latest.trenches).toEqual([]);
   expect(new Float32Array(latest.buffer)[16*3]).toBe(0);
 });
 

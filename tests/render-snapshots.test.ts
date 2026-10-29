@@ -38,3 +38,18 @@ it('zeigt die Dammvorschau auf der später bestätigten Krone bei unebenem Gelä
     }
   } finally {scene.dispose();engine.dispose();}
 });
+
+it('zeichnet nur bestätigte Grabenzellen und entfernt die Markierung beim Neustart',async()=>{
+  const {NullEngine}=await import('@babylonjs/core/Engines/nullEngine');
+  const {Scene}=await import('@babylonjs/core/scene');
+  const {StandardMaterial}=await import('@babylonjs/core/Materials/standardMaterial');
+  const engine=new NullEngine(),scene=new Scene(engine),material=new StandardMaterial('trench',scene);
+  const world={width:2,height:2,cell:4,bed:[0,0,0,0],scene,trenchMaterial:material} as any;
+  try {
+    (World.prototype as any).updateTrenches.call(world,[0,1]);
+    expect(world.trenchMesh.name).toBe('confirmed-trenches');expect(world.trenchMesh.isPickable).toBe(false);
+    expect(world.trenchMesh.getTotalVertices()).toBe(8);expect(world.trenchMesh.getTotalIndices()).toBe(12);
+    const old=world.trenchMesh;(World.prototype as any).updateTrenches.call(world,[]);
+    expect(old.isDisposed()).toBe(true);expect(world.trenchMesh).toBeUndefined();
+  } finally {scene.dispose();engine.dispose();}
+});

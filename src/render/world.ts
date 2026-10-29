@@ -1,5 +1,6 @@
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Color3, Color4, Mesh, VertexData, StandardMaterial, VertexBuffer, MeshBuilder, LinesMesh } from '@babylonjs/core';
 import earcut from 'earcut';
+import { visibleWaterIndices } from './water-indices';
 import type { Scenario } from '../scenario';
 import type { Action, BuildingStatus, Face } from '../simulation/game';
 
@@ -23,6 +24,8 @@ export class World {
   private terrainRevision = -1;
   private readonly waterPositions: Float32Array;
   private readonly waterColors: Float32Array;
+  private readonly wetVertices: Uint8Array;
+  private wetTopologyReady = false;
   private zoom = 560;
   private readonly width: number;
   private readonly height: number;
@@ -42,6 +45,7 @@ export class World {
     this.water=new Mesh('water',this.scene); this.water.isPickable=false; const waterData=this.gridData(scenario.bed,true);
     waterData.applyToMesh(this.water,true); this.water.hasVertexAlpha=true;
     this.waterPositions=new Float32Array(waterData.positions!); this.waterColors=new Float32Array(waterData.colors!);
+    this.wetVertices=new Uint8Array((this.width+1)*(this.height+1));
     const waterMat=new StandardMaterial('water-material',this.scene); waterMat.diffuseColor=new Color3(0.21,0.58,0.72); waterMat.specularColor=new Color3(0.1,0.15,0.16); waterMat.backFaceCulling=false; waterMat.emissiveColor=new Color3(0.10,0.29,0.38); waterMat.useAlphaFromDiffuseTexture=false;
     this.water.material=waterMat;
     // The survey-derived face elevations affect flow, so show them on the map as well.
@@ -175,11 +179,15 @@ export class World {
         this.flowSamples.push({x:x*this.cell-this.width*this.cell/2,y:y*this.cell-this.height*this.cell/2,height:this.bed[i]+h+0.3,vx:h>0.05?qx[i]/h:0,vy:h>0.05?qy[i]/h:0});
       }
     }
+    let topologyChanged=!this.wetTopologyReady;
     for(let y=0;y<=this.height;y++) for(let x=0;x<=this.width;x++) {
       const i=Math.min(y,this.height-1)*this.width+Math.min(x,this.width-1), v=y*(this.width+1)+x;
+      const wet=depth[i]>0.02?1:0;
+      if(this.wetVertices[v]!==wet){this.wetVertices[v]=wet;topologyChanged=true;}
       this.waterPositions[v*3+1]=this.bed[i]+depth[i]+0.08;
       this.waterColors[v*4+3]=depth[i]>0.02 ? 0.78 : 0;
     }
+    if(topologyChanged){this.water.setIndices(visibleWaterIndices(this.width,this.height,this.wetVertices),undefined,true);this.wetTopologyReady=true;}
     this.water.updateVerticesData(VertexBuffer.PositionKind,this.waterPositions);
     this.water.updateVerticesData(VertexBuffer.ColorKind,this.waterColors);
   }

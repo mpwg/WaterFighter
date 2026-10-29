@@ -515,3 +515,9 @@ Die Summe der `VmRSS`-Werte des Testprozesses und seiner Nachfahren betrug zu de
 Am 30. Oktober 2026 wurde `@babylonjs/core` von 9.33.0 auf 9.33.1 aktualisiert. `bun install --frozen-lockfile`, Produktionsbuild und 72 Vitest-Fälle bestanden; `bun outdated` meldete keine veralteten direkten Pakete und `bun audit` keine bekannten Schwachstellen unter 88 geprüften Paketen. Die festgelegten Versionen der Python-Geodaten- und Plotpakete entsprachen bei Abfrage den stabilen PyPI-Versionen.
 
 Sechs gezielte Fälle für Werkzeughinweise in kleinen Ansichten, getrennte Grabenplatzierung und sichtbare Grabentrasse bestanden auf dem Produktionsbuild in Google Chrome 156 unter Linux. Eine unmittelbar zuvor gestartete Gesamtsuite mit Babylon 9.33.0 wurde nach vier bestandenen Fällen bewusst beendet, um den Abhängigkeitsstand zu aktualisieren; sie ist kein Gesamtbeleg. Eine vollständige Browser-Suite für 9.33.1 und die echten Geräteprüfungen stehen noch aus.
+
+### Gesamte Chromium-Suite mit Werkzeughinweisen
+
+Am 30. Oktober 2026 bestanden auf einem isolierten Git-Archiv von `25d4151` eine Installation mit `bun install --frozen-lockfile`, der Produktionsbuild und alle 89 Playwright-Prüfungen (`bun run test:browser --workers=1 --timeout=60000`). Der Produktionsserver verwendete im isolierten Test Port 4392 statt des Standardports. Google Chrome 156.0.8078.73 lief unter Linux mit Softwaregrafik; lokale Bibliotheken und Schriften waren über `LD_LIBRARY_PATH` und `FONTCONFIG_FILE` eingebunden. Die Suite dauerte 14,1 Minuten und umfasst die Werkzeughinweise, die kombinierten Neustarts und die Auswahl der Abrissstrategie. Touchfälle sind emuliert.
+
+Der Lauf verwendete Babylon.js 9.33.0 aus dem Lockfile dieses Commits. Die parallel erfolgte Aktualisierung auf 9.33.1 ist darin nicht enthalten; echte Geräte, tatsächliches Safari und menschliche Bedienung bleiben separat offen.

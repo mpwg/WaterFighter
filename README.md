@@ -1,6 +1,6 @@
 # WaterFighter
 
-WaterFighter soll ein browserbasiertes Hochwasserschutzspiel in einem realen Wiener Donauviertel werden. Derzeit gibt es eine technische Szenario- und Simulationsvorschau; Werkzeuge sind als Vorschau und bestätigte Aktionen vorhanden; Ergebnis und abgestimmte Spielrunde fehlen noch. Die Anwendung ist keine Hochwasserprognose.
+WaterFighter soll ein browserbasiertes Hochwasserschutzspiel in einem realen Wiener Donauviertel werden. Derzeit gibt es eine technische Szenario- und Simulationsvorschau; Werkzeuge sind als Vorschau und bestätigte Aktionen vorhanden; Eine Ergebnisanzeige und rechnerische Referenzstrategie sind vorhanden; die vollständige Spielrunde und Geräteabnahme sind noch offen. Die Anwendung ist keine Hochwasserprognose.
 
 ## Einrichtung und Prüfung
 

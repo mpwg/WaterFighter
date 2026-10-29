@@ -4,7 +4,7 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
-Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird aus Rohdaten erzeugt und vom Worker geladen; die Vorschau unterstützt Bauaktionen und eine vorläufige Flutkurve, ist aber noch keine vollständig abgestimmte Spielrunde. AP 2–5 sind in Arbeit, AP 6–7 sind offen. Keine Veröffentlichung oder Geräteabnahme erfolgte.
+Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird aus Rohdaten erzeugt und vom Worker geladen; die Vorschau unterstützt Bauaktionen und eine vorläufige Flutkurve, ist aber noch keine vollständig abgestimmte Spielrunde. AP 2–6 sind in Arbeit, AP 7 ist offen. Keine Veröffentlichung oder Geräteabnahme erfolgte.
 
 ## Arbeitspakete
 
@@ -15,7 +15,7 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | AP 3 – Simulation | in Arbeit | Synthetische Solver- und Bilanztests; früher Desktop-Leistungstest auf Szenarioentwurf: [Solverbericht](solverbericht.md) | Zuflusskurve, Dammöffnung, Spielintegration und mobile Leistung prüfen |
 | AP 4 – Darstellung | in Arbeit | Szenarioansicht und Worker-Snapshots, Maus-/Touch-Kamerasteuerung; zwei Playwright-Chromium-Abläufe | Werkzeuge, Strömungsanimation, Schäden und tatsächliche Geräte prüfen |
 | AP 5 – Werkzeuge/Schäden | in Arbeit | Worker-Regeln, Vorschau, Bestätigung, Budget und Schadenstests; drei Werkzeuge in Playwright-Chromium bedient | Wirkungsnachweise, Bedienung auf Geräten und Prüfung der Gebäuderasterung |
-| AP 6 – Spielrunde | offen | Ablauf spezifiziert | Implementieren und abstimmen |
+| AP 6 – Spielrunde | in Arbeit | Ergebnisanzeige und numerische Referenzstrategie; verkürzter Browserablauf | Einführung, vollständige Browserrunde und Werkzeugnutzen prüfen |
 | AP 7 – Gesamtprüfung | offen | Abnahmeverfahren spezifiziert | Browser und reale Geräte prüfen |
 
 ### Bisherige Prüfungen
@@ -23,7 +23,7 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 - Node.js 24.22.0, npm 12.2.0; Vite 8.3.5, Babylon.js 9.33.0, Vitest 5.0.5 und Playwright 1.64.1 sind in der Lockdatei festgelegt.
 - `npm run build` und `npm test` bestanden (ein Protokolltest); `npm run dev` startete und lieferte HTML über HTTP.
 - `npm run test:browser` scheiterte zunächst an fehlenden Systembibliotheken. Nach temporärem Entpacken der Ubuntu-Bibliotheken unter `/tmp/waterfighter-libs` bestand `LD_LIBRARY_PATH=/tmp/waterfighter-libs/root/usr/lib/x86_64-linux-gnu npm run test:browser` in Playwright-Chromium; Worker-Meldung und Canvas waren sichtbar. Ein Screenshot der Entwickleransicht zeigte die grüne Fläche. Das ist keine Desktop-Browserabnahme.
-- `gdalinfo` ist auf diesem Rechner nicht vorhanden; Rasterio verwendet GDAL 3.12.2. Die Voruntersuchung dokumentiert Rohdatenprüfsummen und zwei bytegleiche Pipeline-Läufe. Build, 20 Vitest-Tests und vier Playwright-Chromium-Tests bestanden nach Einbindung des Szenarioladers und des Solvers. Geräteverfügbarkeit ist noch zu prüfen.
+- `gdalinfo` ist auf diesem Rechner nicht vorhanden; Rasterio verwendet GDAL 3.12.2. Die Voruntersuchung dokumentiert Rohdatenprüfsummen und zwei bytegleiche Pipeline-Läufe. Build, 21 Vitest-Tests und fünf Playwright-Chromium-Tests bestanden nach Einbindung des Szenarioladers und des Solvers. Geräteverfügbarkeit ist noch zu prüfen.
 
 ## Kriterienmatrix
 
@@ -40,8 +40,8 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | Plausible Flutwelle, Barrieren und Überströmung | offen | Symmetrische Welle und überströmbare Barriere numerisch geprüft; Dammöffnung und visuelle Kontrolle fehlen |
 | 2,5D-Ansicht, Touch-Modi und Fehlerbehandlung | offen | Erste Kartenansicht und Kamera; Werkzeugmodus, Animation und umfassende Fehlerprüfung fehlen |
 | Atomare Aktionen, Budget, Wassererhaltung und Schadenswertung | offen | Regel- und Worker-Tests bestehen für Vorschau, Doppelübermittlung, Graben, Abriss und Schadenszählung; Wirkungs- und Geräteprüfungen fehlen |
-| Vollständige Runde und bezahlbare erfolgreiche Strategie | offen | Vorläufige Referenz ohne Maßnahmen: Schaden 324.070,77; erfolgreiche Strategie und Ergebnisansicht fehlen |
-| Neustart und Schutz vor alten/doppelten Nachrichten | offen | Uhr und Raster-Neustart sowie alte Runden getestet; Bauaktionen und doppelte Nachrichten fehlen |
+| Vollständige Runde und bezahlbare erfolgreiche Strategie | offen | Ohne Maßnahmen 324.070,77 Schaden; Dammstrategie rechnerisch 0 bei Budgetrest 2.600. Vollständiger Browserablauf und tatsächliche Bedienbarkeit fehlen |
+| Neustart und Schutz vor alten/doppelten Nachrichten | offen | Uhr, Raster und Aktionszustand sowie alte/doppelte Nachrichten in Tests geprüft; vollständige Runden fehlen |
 | Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Keine Browserläufe |
 | Echte iPhone-/Android-Abnahme | offen | Gerätezugriff noch nicht untersucht; keine Geräteprüfungen |
 | Mobile Framezeiten, Simulationsrate und Aktionslatenz | offen | Keine Messungen |

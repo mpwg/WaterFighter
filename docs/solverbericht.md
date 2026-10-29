@@ -17,3 +17,9 @@ Die Vorschau zeigt Terrain, Gebäude und Wasser auf Grundlage des Szenarioentwur
 ## Vorläufige Referenzrunde
 
 `npx tsx tools/reference-round.ts` auf Node.js 24.22.0, Szenario `1-draft`, ohne Maßnahmen: 300 simulierte Sekunden, 4.512 Subschritte, 14,05 s Rechenzeit; Anfangsvolumen 499.584 m³, Zufluss 2.280.000 m³, Abfluss 1.630.644,79 m³, Endvolumen 1.148.939,21 m³, relativer Bilanzfehler 3,37 × 10⁻¹⁴. Spielschaden 324.070,77; Budgetrest 10.000. Maximale beobachtete Höhe 18,65 m Wiener Null und Gebäuderandtiefe 1,92 m. Dies sind Spielparameter und keine realen Hochwasserwerte. Die Runde belegt noch keine erfolgreiche Strategie oder die Eignung dieser Zuflusskurve.
+
+## Vergleichsstrategie
+
+`npx tsx tools/reference-round.ts 1 bank` verwendet die elf vorbereitbaren Dammabschnitte in `tests/fixtures/strategy.json` auf Szenario `1-draft`. Dieselbe Wegerzeugung wird von der Oberfläche verwendet. Die Abschnitte ergeben 185 Zellkanten und kosten 7.400 von 10.000 Budgeteinheiten; Dammhöhe 4 m über der jeweils höheren angrenzenden Sohle. Im Rechenlauf über 300 Sekunden lag der Flut- und Gesamtschaden bei 0, Budgetrest 2.600, Bilanzfehler 1,19 × 10⁻¹³. Ohne Maßnahmen betrug der Schaden 324.070,77. Das vorläufige Ziel liegt bei höchstens 50.000.
+
+Die Aktionsliste ist eine reproduzierbare numerische Referenz, noch kein Nachweis, dass ein Mensch sie in der Oberfläche vollständig und präzise platzieren kann. Die sinnvolle Wirkung von Graben und Abriss, vollständige Runden im Browser, eine Validierung des Schadensmodells und die mobile Leistung bleiben offen.

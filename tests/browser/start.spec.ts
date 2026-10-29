@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 test('Szenario und Worker laden; Uhr pausiert und startet neu', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#message')).toHaveText('Wiener Szenario geladen. Die Wasserberechnung ist bereit.');
@@ -55,4 +56,17 @@ test('Gebäudeabriss verlangt Vorschau und Bestätigung', async ({page})=>{
   await expect(page.locator('#confirm')).toBeEnabled();await expect(page.locator('#budget')).toHaveText('10 000');
   await page.locator('#confirm').click();await expect(page.locator('#message')).toContainText('Maßnahme bestätigt');
   await expect(page.locator('#budget')).not.toHaveText('10 000');
+});
+
+
+test('Eine verkürzte Runde zeigt das Ergebnis und erlaubt den Neustart', async ({page})=>{
+  const scenario=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
+  scenario.parameters.duration=2;
+  await page.route('**/scenarios/brigittenau-v1.json',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(scenario)}));
+  await page.goto('/');await expect(page.locator('#run')).toBeEnabled();await page.locator('#run').click();
+  await expect(page.locator('#result')).toBeVisible({timeout:15000});
+  await expect(page.locator('#result-details')).toContainText('Flutschäden');
+  await expect(page.locator('#result-details')).toContainText('Abrissverluste');
+  await page.getByRole('button',{name:'Neue Runde'}).click();await expect(page.locator('#result')).toBeHidden();
+  await expect(page.locator('#state')).toHaveText('Vorbereitung');await expect(page.locator('#budget')).toHaveText('10 000');
 });

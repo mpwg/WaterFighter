@@ -170,7 +170,7 @@ scenario = {
  'terrain': np.round(terrain,3).ravel().tolist(), 'bed': np.round(bed,3).ravel().tolist(), 'initialDepth': initial.ravel().tolist(), 'waterMask':water_mask.ravel().tolist(),
  'buildings':buildings, 'roads':roads, 'barriers':barriers, 'crossings':crossings,
  'water': [{'id':ident, 'polygons':[local_polygon(p) for p in polygon_parts(g)]} for ident,g in water_geometries],
- 'parameters': {'duration':300, 'budget':10000, 'damageTarget':0, 'waterLevel':water_level, 'manning':0.025, 'damHeight':1.5, 'damCostPerCell':40, 'trenchDepth':0.8, 'trenchCostPerCell':25, 'buildingValuePerSquareMetre':10, 'demolitionCostFraction':0.1, 'damageDepth':1, 'damageDuration':120, 'inflowCells':[x for x in range(60,100) if water_mask[0,x] == 1], 'inflowCurve':[[0,0],[60,4500],[140,15000],[210,10500],[300,0]], 'outflowEdges':['bottom','right']},
+ 'parameters': {'duration':300, 'budget':10000, 'damageTarget':50000, 'waterLevel':water_level, 'manning':0.025, 'damHeight':4.0, 'damCostPerCell':40, 'trenchDepth':0.8, 'trenchCostPerCell':25, 'buildingValuePerSquareMetre':10, 'demolitionCostFraction':0.1, 'damageDepth':1, 'damageDuration':120, 'inflowCells':[x for x in range(60,100) if water_mask[0,x] == 1], 'inflowCurve':[[0,0],[60,4500],[140,15000],[210,10500],[300,0]], 'outflowEdges':['bottom','right']},
  'adjustments': ['OSM-Gewässerflächen erhalten eine künstliche, ebene Sohle bei 0 m Wiener Null und einen Anfangsspiegel bei 2 m Wiener Null. Dies ist keine gemessene Bathymetrie.', 'Gebäude ohne verwendbare Höhenangabe erhalten 12 m Darstellungshöhe.'],
  'sources': {'osm':'© OpenStreetMap-Mitwirkende, ODbL 1.0, https://www.openstreetmap.org/copyright', 'terrain':'Datenquelle: Stadt Wien - data.wien.gv.at, CC BY 4.0', 'sha256':SOURCES},
 }

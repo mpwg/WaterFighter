@@ -52,3 +52,12 @@ it('akzeptiert bestätigte Aktionen auch in Pause höchstens einmal und verwirft
   const latest=snapshots(messages).at(-1)!;expect(latest.round).toBe(2);expect(latest.budget).toBe(scenario.parameters.budget);
   expect(new Float32Array(latest.buffer)[16*3]).toBe(0);
 });
+
+it('liefert zum Rundenende Ergebnis und lehnt spätere Aktionen ab',()=>{
+  const {c,messages}=setup();c.handle({type:'start',round:1},0);
+  for(let t=1000;t<=10000;t+=1000)c.tick(t);
+  const result=messages.find((m):m is Extract<Response,{type:'result'}>=>m.type==='result');
+  expect(result?.time).toBeCloseTo(10);expect(result?.achieved).toBe(true);expect(result?.budget).toBe(scenario.parameters.budget);
+  c.handle({type:'action',round:1,id:'late',action:{kind:'trench',cells:[0]}},10000);
+  const reply=messages.find((m):m is Extract<Response,{type:'action-result'}>=>m.type==='action-result');expect(reply?.result.ok).toBe(false);
+});

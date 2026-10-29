@@ -81,7 +81,8 @@ export class Controller {
       }
       if (this.solver.time >= this.scenario.parameters.duration-1e-8) {
         this.running = false; this.completed = true; this.backlog = 0;
-        this.emit({type:'result',round:this.round,time:this.solver.time});
+        const totals=this.game!.totals(),target=this.scenario.parameters.damageTarget;
+        this.emit({type:'result',round:this.round,time:this.solver.time,...totals,budget:this.game!.budget,target,achieved:totals.totalDamage<=target});
       }
       this.dirty = true; this.snapshot();
     } catch (error) { this.fail(error); }

@@ -16,17 +16,17 @@ Für diese Kandidaten wurden außerdem gemeinsame Eingriffe zu verschiedenen Flu
 
 Eine passive Modellmarkierung am Eingang des experimentellen Ableitungsgrabens zeigt, dass ein Teil vier Querschnitte in Reihenfolge passiert und den offenen Modellrand erreicht; der Kontrolllauf ohne Graben zeigt dies nicht. Dieser Nachweis beschreibt den numerischen Ausschnitt, keine reale sichere Ableitung: [Solverbericht](solverbericht.md#markierter-verlauf-im-experimentellen-ableitungsgraben).
 
-Die experimentelle Kombination wurde außerdem über die Oberfläche im instrumentierten Entwicklungsbrowser gesetzt und in einer vollständigen 2×-Runde erfolgreich gespielt. Das Bedienfeld verdeckte zunächst das betroffene Gebäude; der Graben ist in der Übersicht schwer erkennbar. Der historische Test verwendete projizierte Koordinaten und ein testseitig verändertes Szenario; menschliche Bedienbarkeit und ein Produktionslauf bleiben offen: [Browserprüfung](browser-pruefung.md#experimentelle-ableitungsstrategie-im-browser).
+Die experimentelle Kombination wurde außerdem über die Oberfläche im instrumentierten Entwicklungsbrowser gesetzt und in einer vollständigen 2×-Runde erfolgreich gespielt. Das Bedienfeld verdeckte zunächst das betroffene Gebäude; der Graben ist in der Übersicht schwer erkennbar. Der historische Test verwendete projizierte Koordinaten und ein testseitig verändertes Szenario; menschliche Bedienbarkeit und ein Produktionslauf dieser Referenzstrategie bleiben offen: [Browserprüfung](browser-pruefung.md#experimentelle-ableitungsstrategie-im-browser).
 
-Bestätigte Gräben werden nun anhand der Worker-Zellen braun auf dem Gelände markiert und beim Neustart entfernt. Ein neuer Vorbereitungs-Sichttest zeigt die Markierung bei ausgeblendetem Menü; sie bleibt in der Übersicht schmal und kann durch Wasser verdeckt werden. Vollständige Produktionsrunden und echte Geräte nach dieser Änderung stehen noch aus: [Browserprüfung](browser-pruefung.md#bestätigte-gräben-sichtbar-machen).
+Bestätigte Gräben werden nun anhand der Worker-Zellen braun auf dem Gelände markiert und beim Neustart entfernt. Ein Vorbereitungs-Sichttest zeigt die Markierung bei ausgeblendetem Menü; sie bleibt in der Übersicht schmal und kann durch Wasser verdeckt werden. Echte Geräte bleiben ungeprüft: [Browserprüfung](browser-pruefung.md#bestätigte-gräben-sichtbar-machen).
 
-Eine vollständige experimentelle 2×-Runde mit Grabenmarkierung bestand anschließend im Entwicklungsbrowser. Schematische Pfeile und eine Legende kennzeichnen inzwischen Zufluss und offene Modellränder; ein vollständiger Lauf nach dieser weiteren Darstellungsänderung sowie echte Geräte bleiben offen: [Browserprüfung](browser-pruefung.md#flutrunde-mit-grabenmarkierung-und-modellrand-hinweise).
+Eine vollständige experimentelle 2×-Runde mit Grabenmarkierung bestand anschließend im Entwicklungsbrowser. Schematische Pfeile und eine Legende kennzeichnen inzwischen Zufluss und offene Modellränder; die experimentelle Referenzrunde wurde vor dieser Änderung gespielt: [Browserprüfung](browser-pruefung.md#flutrunde-mit-grabenmarkierung-und-modellrand-hinweise).
 
 Nach der Pfeiländerung bestanden Produktionsbuild, 49 Vitest-Tests und 33 Chrome-Browserprüfungen. Die Tests der Pfeilpositionen prüfen gruppierte Zuflusszellen, konfigurierte Modellränder und Richtung; sie ersetzen keine vollständige Runde oder Geräteprüfung.
 
 Auf diesem Stand bestanden Produktionsbuild, 46 Vitest-Tests und 32 Chrome-Browserprüfungen einschließlich der verständlichen Ablehnung eines durch ein Gebäude versperrten Grabens. Die Platzierungs- und Zeitvergleiche sind numerisch; sie ersetzen keine vollständige Runde auf echten Geräten.
 
-Die Kopfzeile zeigt laufende Schäden und Ziel auch bei ausgeblendetem Menü. Gebäude werden anhand von Schaden und aktueller Wassertiefe am Rand eingefärbt; Antippen liefert einen Text mit Zustand und Werten. Der Worker liefert die Schadenssummen und Exposition; die Darstellung aktualisiert Gebäudefarben bei jedem Snapshot unabhängig von der Aktionsrevision. Build, 45 Vitest-Tests und 31 Chrome-Prüfungen bestanden; nach einer anschließenden Verdichtung des kleinen Hochformats bestanden die fünf betroffenen Ansichtsprüfungen erneut. Eine vollständige Produktionsrunde und tatsächliche Geräte mit der neuen Anzeige sind noch nicht geprüft.
+Die Kopfzeile zeigt laufende Schäden und Ziel auch bei ausgeblendetem Menü. Gebäude werden anhand von Schaden und aktueller Wassertiefe am Rand eingefärbt; Antippen liefert einen Text mit Zustand und Werten. Der Worker liefert die Schadenssummen und Exposition; die Darstellung aktualisiert Gebäudefarben bei jedem Snapshot unabhängig von der Aktionsrevision. Build, 45 Vitest-Tests und 31 Chrome-Prüfungen bestanden; nach einer anschließenden Verdichtung des kleinen Hochformats bestanden die fünf betroffenen Ansichtsprüfungen erneut. Eine spätere Produktionsrunde mit dieser Anzeige ist unten dokumentiert; tatsächliche Geräte bleiben ungeprüft.
 
 Das Projekt verwendet Bun 1.4.4 und `bun.lock`; ältere Prüfprotokolle nennen die damals ausgeführten npm-, npx- und pnpm-Befehle. Als Browserziel gelten aktuelle stabile Versionen, ohne gesonderte Unterstützung älterer Versionen. Nach der vorherigen pnpm-Umstellung bestanden eine saubere `pnpm ci`-Installation, Typprüfung, Build, 35 Vitest-Tests, zwei Python-Tests, 21 Chrome-Browserprüfungen und der statische Unterpfadtest; `pnpm audit` meldete keine bekannten Schwachstellen.
 
@@ -81,6 +81,18 @@ Eine vollständige lokale Produktionsrunde mit einem während der laufenden Flut
 | Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Produktionsbuild unter Unterpfad einschließlich Worker und komprimiertem Szenario geprüft; Entwicklungscache bei Dateiersatz geprüft; direkte Links zu Aufbereitung und Quellen ergänzt, vollständige Lizenzprüfung fehlt |
 
 „Offen“ bedeutet hier, dass die Arbeit noch auszuführen ist. „Nicht prüfbar“ darf erst eingetragen werden, wenn ein konkretes Hindernis ermittelt und beschrieben wurde. Die lokale Gerätesuche ist unten dokumentiert; ein entfernter Gerätezugang wurde nicht ausgeschlossen.
+
+### Review-Abnahme: Spielbarkeit
+
+| Review-Kriterium | Status | Beleg beziehungsweise fehlender Nachweis |
+| --- | --- | --- |
+| Vergleichsrunden und Werkzeugkontrollen auf demselben Szenario | erfüllt | Version 1.4: [Gebäude-, Kosten- und Kontrollvergleiche](review-gebaeudevergleich.md); beide Referenzstrategien halten Budget und Schadensziel ein. Die Werte sind numerisch. |
+| Räumlicher Wasserverlauf | offen | Für zwei Grabenvarianten ist ein geordneter markierter Modellanteil bis zum Westrand bilanziert. Der Verlauf ist in der Spielansicht noch nicht durchgehend sichtbar und der Modellrand keine real geprüfte Ableitung. |
+| Laufender Schaden, Gebäudezustände und Orientierung | offen | Worker-Snapshots, Textabfrage, Farben und Modellrandpfeile sind implementiert; ein Produktionslauf zeigt laufende Schäden und Ergebnis. Menschliche Verständlichkeit und Geräteansichten fehlen. |
+| Vorbereitung, laufende Uhr, Pause und Platzierungsabweichungen | offen | Worker- und numerische Zeitvergleiche, Grenz- und Gebäudeablehnungen sowie ein laufender Produktions-Grabeneingriff sind belegt. Menschliche Ausführung der Referenzen und die Bedienbarkeit aller Werkzeuge in allen drei Phasen sind nicht vollständig nachgewiesen. |
+| Maus und Touch in Hoch- und Querformat | offen | Automatisierte Touch- und Treffflächenprüfungen existieren; eine vollständige aktuelle getrennte Maus- und Touch-Abnahme beider Formate steht aus. Emulation belegt keine echte Hardware. |
+| Person ohne Testkoordinaten: Runde und zweiter Versuch | offen | Hier wurde keine unabhängige Testperson beobachtet. Spielbaren Stand bereitstellen und beide Versuche mit Verständnis und gezielter Änderung protokollieren. |
+| Tatsächliches Safari und echte iPhone-/Android-Geräte | nicht prüfbar | Auf dem dokumentierten Linux-Rechner fehlen diese Geräte und Safari; Zugang bereitstellen. Emulation und Playwright-WebKit ersetzen sie nicht. |
 
 ## Fortsetzung
 

@@ -19,6 +19,26 @@ Die relativen Wasserbilanzfehler liegen unter 2,1 × 10⁻¹³. Die drei Dämme 
 
 Bei vorbereiteten drei Dämmen senkt derselbe Graben nach 150 s den Schaden auf 1.001,29 bei 7.510 Budgetrest; ohne ihn betragen Schaden und Restbudget 23.574,17 und 8.160. Die Aktion wird numerisch zum exakten Zeitpunkt gesetzt, ohne menschliche Auswahlzeit. Einzelne Verschiebungen des ersten Dammstarts, des gemeinsamen Knickpunkts und des zweiten Endpunkts um eine Zelle wurden auf der neuen Pfadregel ebenfalls berechnet: Alle sechs geprüften Varianten waren zulässig, lagen zwischen 8.809,29 und 29.029,15 Schaden und hielten das Ziel ein. Das ist keine Garantie für beliebige Platzierungen.
 
+### Gebäudeschäden bei direkter Dammführung
+
+Am 30. Oktober 2026 wurden auf Anwendungscode `960e190` die vollständigen 300-s-Runden mit `bun tools/reference-strategies.ts baseline`, `shield` und `land-divert` sowie `bun tools/compare-review-strategies.ts dam3` auf demselben ausgelieferten Szenario `1.4-draft` berechnet. Die Maßnahmen wurden vor Flutbeginn gesetzt; `dam3` entspricht den drei Dämmen von `land-divert` ohne den Graben. Die Tabelle zeigt die größten im Vergleich relevanten Schäden als Spielwerte; keines dieser Gebäude wurde abgerissen.
+
+| Gebäude | Ohne Eingriff | Zwei Dämme | Drei Dämme | Drei Dämme und Landgraben |
+| --- | ---: | ---: | ---: | ---: |
+| `w491428570-0` | 36.801,31 | 0 | 0 | 0 |
+| `r9350494-0` | 25.180,70 | 0 | 0 | 0 |
+| `r4257449-0` | 22.826,00 | 1.232,57 | 0 | 0 |
+| `w33581744-0` | 15.809,35 | 0 | 0 | 0 |
+| `w316294474-0` | 11.056,00 | 11.056,00 | 11.056,00 | 0 |
+| `w219815193-0` | 10.418,00 | 9.168,46 | 9.171,46 | 0 |
+| `w177928758-0` | 3.406,00 | 1.043,80 | 1.032,32 | 0 |
+| `w501079921-0` | 1.487,00 | 1.487,00 | 1.487,00 | 0 |
+| `w1193005551-0` | 1.556,00 | 826,40 | 827,39 | 863,20 |
+
+Die zwei Dämme auf der Eintrittsseite senken den Schaden an `w491428570-0` und `r9350494-0` in diesem Vergleich auf null; mit dem dritten Damm fällt auch bei `r4257449-0` kein Schaden an. Der zusätzliche Landgraben senkt gegenüber denselben drei Dämmen den Schaden an `w316294474-0`, `w219815193-0`, `w501079921-0` und `w177928758-0` jeweils auf null. An `w1193005551-0` steigt er dagegen um 35,81. Über alle Gebäude ergibt sich durch den Graben ein Rückgang um 22.710,97 bei 650 zusätzlichen Budgetkosten. Die relativen Wasserbilanzfehler aller vier Läufe liegen unter 2,02 × 10⁻¹³.
+
+Die Änderungen sind Ergebnisse des Gegenversuchs im Spielmodell: Der räumlich markierte Wasseranteil ist im folgenden Abschnitt beschrieben, erklärt aber nicht allein die gesamte Schadensänderung. Die Werte sind weder eine reale Schutzprognose noch ein Nachweis, dass eine Person die Maßnahmen ohne Testkoordinaten findet.
+
 ### Markierter Landgraben mit direkten Dämmen
 
 Auf Anwendungscode `f291cc9` vergleichen `bun tools/trace-review-diversion.ts dam3 --ordered` und `dam3trench --ordered` die drei direkten Dämme mit und ohne den Landgraben `(0,4) → (25,4)`. Die Diagnose markiert unmarkiertes Wasser beim Eintritt über die Nord- und Südkanten der Grabenzeile. Fünf Stufen zählen anschließend die westwärts in Reihenfolge überquerten Querschnitte bei x = 20, 15, 10 und 5 sowie den Austritt am Westrand. Zwischen den Querschnitten kann sich die Markierung auch außerhalb der Grabenzeile bewegen.

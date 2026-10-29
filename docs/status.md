@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Die Kartenverschiebung während der Grabenauswahl wurde auf Build `d38c0ca` auch in Firefox mit Maus und emuliertem Touch geprüft: [Prüfbeleg](browser-pruefung.md#firefox-runde-mit-schematischer-grabenlinie). Menschliche Bedienung und echte Geräte bleiben offen.
+
 Firefox 159 bestand auf dem isolierten Produktionsbuild `d38c0ca` einen automatisierten Werkzeugtest und eine unbehandelte vollständige 2×-Runde: [Prüfbeleg](browser-pruefung.md#firefox-runde-mit-schematischer-grabenlinie). Menschliche Abnahme, tatsächliches Safari und echte Geräte bleiben offen.
 
 Der aktuelle Anwendungscode wurde erneut als [statischer Unterpfad-Build](browser-pruefung.md#aktueller-produktionsbuild-unter-einem-unterpfad) einschließlich Worker, Aktionen, Neustart und Szenariodownload geprüft. Eine dauerhafte Bereitstellung und die Lizenzabnahme bleiben offen.

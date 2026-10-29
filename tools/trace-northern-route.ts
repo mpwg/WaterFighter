@@ -11,7 +11,12 @@ const game=new Game(scenario),s=game.solver,w=s.width,h=s.height,n=w*h,area=s.ce
 for(const [i,segment] of fixture.segments.slice(0,3).entries()){const r=game.apply(`dam-${i}`,{kind:'dam',faces:damPath(segment[0],segment[1],w)});if(!r.ok)throw Error(r.reason);}
 const cells=trenchPath([0,3],[38,11],w),route=new Set(cells);
 if(mode==='trench'){const result=game.apply('trench',{kind:'trench',cells});if(!result.ok)throw Error(result.reason);}
-const sections=[30,20,10,5],stages=Array.from({length:sections.length+1},()=>new Float64Array(n)),changes=stages.map(()=>new Float64Array(n));
+const entryArg=process.argv.find(a=>a.startsWith('--entry='));
+const parts=entryArg?entryArg.slice(8).split(','):['30','38'];
+if(parts.length!==2||parts.some(v=>!/^\d+$/.test(v)))throw Error('Eintrittsbereich: --entry=MIN,MAX');
+const [entryMin,entryMax]=parts.map(Number);
+if(entryMin>entryMax||entryMin<5||entryMax>38)throw Error('Eintrittsbereich muss zwischen 5 und 38 liegen');
+const sections=[30,20,10,5].filter(x=>x<=entryMin),stages=Array.from({length:sections.length+1},()=>new Float64Array(n)),changes=stages.map(()=>new Float64Array(n));
 let tagged=0,returned=0,otherExit=0,orderedWest=0,maxBound=0;
 function flux(a:number,b:number,axis:'x'|'y',crest:number){
  const ha=s.h[a],hb=s.h[b],z=Math.max(s.bed[a],s.bed[b],crest),aa=Math.max(0,ha+s.bed[a]-z),ab=Math.max(0,hb+s.bed[b]-z),q=axis==='x'?s.qx:s.qy;
@@ -27,8 +32,8 @@ function transfer(a:number,b:number,rate:number,dt:number,section:number|null){
   changes[k][donor]-=moved;
   if(scenario.waterMask[receiver])returned+=moved;else changes[next][receiver]+=moved;
  }
- // Mark previously unmarked inflow into the eastern route from any non-route cell.
- if(!route.has(donor)&&route.has(receiver)&&receiver%w>=30&&!scenario.waterMask[receiver]){
+ // Mark previously unmarked inflow into the specified route section from non-route cells.
+ if(!route.has(donor)&&route.has(receiver)&&receiver%w>=entryMin&&receiver%w<=entryMax&&!scenario.waterMask[receiver]){
   const fresh=volume*Math.max(0,1-total);changes[0][receiver]+=fresh;tagged+=fresh;
  }
 }
@@ -46,4 +51,4 @@ while(s.time<scenario.parameters.duration-1e-9){
  for(let i=0;i<n;i++){let total=0;for(let k=0;k<stages.length;k++){stages[k][i]+=changes[k][i];total+=stages[k][i];maxBound=Math.max(maxBound,-stages[k][i]);}maxBound=Math.max(maxBound,total-s.h[i]*area);if(maxBound>1e-7)throw Error(`Markierung außerhalb Wasserbilanz ${i}: ${maxBound}`);}
 }
 const remaining=stages.map(stage=>stage.reduce((a,b)=>a+b,0));
-console.log(JSON.stringify({scenario:scenario.version,mode,sections,tagged,orderedWest,returned,otherExit,remaining,balanceError:orderedWest+returned+otherExit+remaining.reduce((a,b)=>a+b,0)-tagged,maxBound,budget:game.budget,...game.totals(),waterBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow)},null,2));
+console.log(JSON.stringify({scenario:scenario.version,mode,entry:[entryMin,entryMax],sections,tagged,orderedWest,returned,otherExit,remaining,balanceError:orderedWest+returned+otherExit+remaining.reduce((a,b)=>a+b,0)-tagged,maxBound,budget:game.budget,...game.totals(),waterBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow)},null,2));

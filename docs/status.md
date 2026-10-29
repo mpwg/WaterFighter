@@ -52,7 +52,7 @@ Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet di
 
 ## Fortsetzung
 
-AP 2 benötigt insbesondere hydraulische Interpretation der Bruchkanten, zwei geeignete Wasserwege und Lizenzprüfung. Zwei statische Landkorridore wurden geprüft, jedoch in der Referenzflut nicht vollständig nass; Momentaufnahmen zeigen getrennte nasse Bereiche; Flussauswertung an zwei ausgewählten Uferabschnitten belegt dort keine zwei wirksamen Umleitungen. Der Solver wurde unabhängig davon bereits begonnen; Szenarioabnahme und Solverabnahme bleiben offen. Die verbleibenden Kriterien und die reale Geräteabnahme sind offen.
+AP 2 benötigt insbesondere hydraulische Interpretation der Bruchkanten, zwei geeignete Wasserwege und Lizenzprüfung. Zwei statische Landkorridore wurden geprüft, jedoch in der Referenzflut nicht vollständig nass; Gerichtete Momentanflüsse zeigen zwei getrennte Zellfolgen vom Zufluss auf Land; zwei unabhängig nutzbare Umleitungen sind noch nicht belegt. Der Solver wurde unabhängig davon bereits begonnen; Szenarioabnahme und Solverabnahme bleiben offen. Die verbleibenden Kriterien und die reale Geräteabnahme sind offen.
 
 Lokale Geräteprüfung: USB zeigte ein QEMU-Tablet und Controller; `adb`, `idevice_id`, `xcrun`, Chrome und Firefox waren nicht im Pfad. Safari ist auf diesem Linux-Rechner nicht verfügbar. Chrome und Firefox wurden später temporär installiert; ein entfernter Gerätezugang wurde nicht ausgeschlossen. Die vollständige Chromium-Headless-Runde und ihre Grenzen sind im [Solverbericht](solverbericht.md#vollständige-browserrunde-vorheriger-build) dokumentiert.
 

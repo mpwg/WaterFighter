@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Ein [Produktionslauf mit spätem Landgraben](browser-pruefung.md#später-landgraben-mit-babylonjs-9331) erreichte auf `1e770da` mit Babylon.js 9.33.1 das Schadensziel und bestand den Neustart. Ein erster Versuch endete mit ungeklärtem Browserabbruch; die Wiederholung gelang. Menschliche Bedienung, echte Geräte und spätere Änderungen bleiben separat zu prüfen.
+
 Firefox 159 bestand auf dem isolierten Build `c8b4b33` mit Babylon.js 9.33.1 einen automatisierten Werkzeugtest und eine vollständige unbehandelte 2×-Runde: [Prüfbeleg](browser-pruefung.md#firefox-runde-mit-babylonjs-9331). Menschliche Abnahme, tatsächliches Safari und echte Geräte bleiben offen.
 
 Babylon.js wurde am 30. Oktober 2026 auf 9.33.1 aktualisiert. Produktionsbuild, 72 Modelltests und sechs gezielte Chromium-Fälle bestanden; `bun outdated` meldet keine veralteten direkten Pakete und `bun audit` keine bekannten Schwachstellen. Die festgelegten Python-Pakete entsprechen den abgefragten stabilen PyPI-Versionen. Die vollständige Browser-Suite für diesen Abhängigkeitsstand bleibt offen: [Prüfbeleg](browser-pruefung.md#babylonjs-9331).

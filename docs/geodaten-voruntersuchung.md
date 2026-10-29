@@ -225,6 +225,18 @@ Die zuvor nur experimentell untersuchten Parameter sind ab `1.4-draft` im gelief
 
 Das Grabenende des untersuchten Beispiels liegt etwa bei 16,38467° Ost, 48,24254° Nord. Eine Prüfung der geschlossenen Gebäudewege im prüfsummengesicherten OSM-Rohstand findet dort unmittelbar das als `Rivergate` bezeichnete Bürogebäude (`way/33581744`) und weitere Gebäude im Umkreis. Der Vergleich berücksichtigt keine vollständige Kartierung und keine Auswirkungen außerhalb des Modells. Er unterstreicht, dass der numerische Auslass nicht als tatsächlich sicherer Weg interpretiert werden darf.
 
+### Zwei frühere Landkorridore als Gräben auf Version 1.4
+
+`bun tools/evaluate-land-corridor.ts baseline`, `0` und `1` vergleicht die oben geometrisch gefundenen Landkorridore auf dem ausgelieferten Szenario `1.4-draft`. Das Werkzeug teilt jeden Korridor an Richtungswechseln in gerade, nicht überlappende Grabenaktionen; sämtliche Aktionen werden vor Flutbeginn durch `Game.apply` einzeln geprüft und bezahlt. Der Westrand ist gemäß Szenarioannahme offen. Der Ablauf nutzt die deterministische Korridorsuche `tools/find-land-routes.ts` und die vollständige 300-s-Runde.
+
+| Variante | Grabenabschnitte / Zellen | Budgetrest | Gesamtschaden | Westlicher Modellabfluss |
+| --- | ---: | ---: | ---: | ---: |
+| Ohne Graben | 0 / 0 | 10.000 | 138.852,13 | 1.547,47 m³ |
+| Korridor (53,35) → (0,42) | 8 / 61 | 8.475 | 117.711,67 | 1.966,08 m³ |
+| Korridor (149,166) → (0,139) | 46 / 207 | 4.825 | 138.852,13 | 1.547,47 m³ |
+
+Die relativen Wasserbilanzfehler lagen unter 2,64 × 10⁻¹³. Der nördliche Graben senkt den Schaden um 21.140,46 bei 1.525 Kosten; der südliche verändert ihn um weniger als 0,01. Beide bleiben über dem Schadensziel von 50.000. Die getrennt berechneten Abschnitte sind durch die Spielregeln zulässig, ihre tatsächliche Bedienbarkeit wurde nicht geprüft; insbesondere erscheinen 46 Einzelaktionen aufwendig. Der integrierte Randabfluss verfolgt keine zusammenhängende Wassermenge und belegt keinen vollständigen Fließweg. Andere Grabenführungen und Kombinationen bleiben möglich. Diese Ergebnisse belegen weiterhin keine zwei sinnvoll nutzbaren Ableitungswege und keine Folgen außerhalb der Karte.
+
 Zwei Pipeline-Läufe mit den dokumentierten Rohdaten erzeugten dieselbe Szenariodatei mit SHA-256 `bf7f274f8899ac3fa0332e2df2936423d06795a0bb193d4e7328aa0925512470`. Das lokale Rohdatenarchiv `raw-data/waterfighter-source-1.4-draft.tar.gz` enthält die elf prüfsummengeprüften Quelldateien und das Versionsmanifest; SHA-256 `89072e858e53cf3f77062a2117d18607235b2346b2b123af07e4bd882f56a77f`. Es liegt außerhalb von Git. Fachliche Prüfung der Bruchkanten und Durchlässe sowie die Lizenz- und Geräteabnahme bleiben offen.
 
 Ein weiterer unabhängiger Wiederaufbau am 29. Oktober 2026 entpackte dieses Archiv mit Pythons `tarfile`-Filter `data` nach `/tmp/wf-archive-audit`, kopierte `build-scenario.py`, `breakline_faces.py` und `scenario-adjustments.json` dorthin und führte die Pipeline mit den lokal installierten Versionen aus `tools/requirements-geo.txt` aus. Die erzeugte Datei enthielt 104 Gebäude, 422 Straßenabschnitte und 15.612 Wasserzellen; ihre SHA-256 war erneut `bf7f274f8899ac3fa0332e2df2936423d06795a0bb193d4e7328aa0925512470`, bytegleich mit dem ausgelieferten Paket. Der Lauf belegt die Wiederherstellung aus diesem lokalen Archiv, keine dauerhafte externe Bereitstellung oder vollständige Lizenz- und Fachdatenprüfung.

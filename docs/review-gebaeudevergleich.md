@@ -88,3 +88,22 @@ Die relativen Wasserbilanzfehler lagen unter 1,41 × 10⁻¹³. Die ersten beide
 Die relativen Wasserbilanzfehler liegen unter 8,6 × 10⁻¹⁴. Bei 150 / 155 s bleibt das Ziel erreicht und der Gesamtschaden um 1.090,14 unter dem Kontrolllauf; gegenüber diesem werden 2.202 zusätzliche Budgeteinheiten verbraucht. Bei 180 / 185 s ist das Ziel zwar noch erreicht, der Schaden liegt aber bereits deutlich über dem Kontrolllauf; ab 210 / 215 s wird das Ziel in diesen Versuchen verfehlt. Schäden und Budget sind getrennte Spielgrößen; ein positiver Saldo bei Addition beider Größen ist hier nicht belegt.
 
 Das sind numerisch exakt geplante Einzelaktionen mit fünf simulierten Sekunden Abstand, keine beobachteten Bedienzeiten. Pausen, menschliche Platzierung und Unsicherheit über den tatsächlichen Verlauf wurden nicht simuliert. Die Tabelle zeigt mögliche reaktive Wirkung und ihre Grenze für diese konkrete Kombination; sie beweist weder eine allgemeine Zeitgrenze noch menschliche Spielbarkeit.
+
+## Graben nach vorbereiteten drei Dammabschnitten
+
+`bun tools/compare-staged-trench.ts control` und `bun tools/compare-staged-trench.ts SEKUNDEN` vergleichen auf `1.4-draft` jeweils eine vollständige unbehandelte Flut nach drei vorbereiteten Referenzdämmen. Der zweite Fall bestätigt zusätzlich den Graben (0,4)–(25,4) zum angegebenen Simulationszeitpunkt über die reguläre Aktionsprüfung. Der Kontrollfall behält die drei Dämme ohne Graben.
+
+| Grabenzeitpunkt | Schaden vor dem Graben | Gesamtschaden am Ende | Budgetrest | Verbesserung gegenüber Kontrolle |
+| --- | ---: | ---: | ---: | ---: |
+| Kein Graben | – | 34.792,87 | 8.160 | – |
+| Vorbereitung | 0 | 21.600,61 | 7.510 | 13.192,26 |
+| 60 s | 0 | 21.600,62 | 7.510 | 13.192,25 |
+| 120 s | 0 | 21.600,62 | 7.510 | 13.192,25 |
+| 150 s | 88,84 | 22.515,01 | 7.510 | 12.277,86 |
+| 180 s | 4.077,56 | 34.648,03 | 7.510 | 144,84 |
+| 210 s | 13.423,01 | 34.821,65 | 7.510 | −28,78 |
+| 240 s | 21.771,43 | 34.814,44 | 7.510 | −21,57 |
+
+Die relativen Wasserbilanzfehler betragen höchstens 1,8 × 10⁻¹³. Der Graben kostet 650; bis zum getesteten Zeitpunkt 150 s übersteigt die Schadensminderung diese Kosten auch bei Addition der beiden getrennten Spielgrößen deutlich. Bei 180 s ist der Nutzen kleiner als die Kosten, ab 210 s verschlechtert sich das Ergebnis leicht. Alle Fälle bleiben wegen der vorbereiteten Dämme unter dem Ziel von 50.000. Die Werte zeigen einen möglichen wirtschaftlichen Eingriff während der Flut und eine zeitliche Grenze für diesen konkreten Verlauf; sie sind keine allgemeine Frist.
+
+Der Verlauf nutzt die in der [vorherigen Untersuchung](#graben-mit-drei-dammabschnitten) beschriebenen Land- und Gewässerzellen und den offenen Modellrand als Spielannahme. Die Aktion wird numerisch zum exakten Zeitpunkt vollständig ausgeführt; Platzierung, Bestätigung, Pause und menschliche Bedienzeit sind damit nicht nachgewiesen. Folgen außerhalb des Ausschnitts werden nicht berechnet.

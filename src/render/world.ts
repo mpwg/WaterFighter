@@ -99,6 +99,8 @@ export class World {
     const count=Math.ceil(this.width/12)*Math.ceil(this.height/12)+MAX_TRENCH_FLOW_SAMPLES;
     this.flowLines=CreateLineSystem('flow',{lines:Array.from({length:count},()=>[Vector3.Zero(),Vector3.Zero()]),updatable:true},this.scene);
     this.flowLines.color=new Color3(0.8,0.96,0.99);this.flowLines.isPickable=false;
+    // Dynamic markers start at the origin; their initial bounds do not follow updates.
+    this.flowLines.alwaysSelectAsActiveMesh=true;
     this.flowPositions=new Float32Array(count*6);
     const material=(name:string,color:Color3)=>{const m=new StandardMaterial(name,this.scene);m.diffuseColor=color;m.specularColor=Color3.Black();m.backFaceCulling=false;m.emissiveColor=color.scale(0.23);return m;};
     this.buildingMaterials={unbeschädigt:material('buildings',new Color3(0.80,0.66,0.51)),gefährdet:material('buildings-at-risk',new Color3(0.92,0.72,0.27)),beschädigt:material('buildings-damaged',new Color3(0.80,0.34,0.18)),verloren:material('buildings-lost',new Color3(0.30,0.22,0.21))};
@@ -234,10 +236,12 @@ export class World {
   }
   private animateFlow(now:number):void {
     const positions=this.flowPositions;positions.fill(0);
+    const regularCount=Math.ceil(this.width/12)*Math.ceil(this.height/12);
     for(let i=0;i<this.flowSamples.length;i++) {
       const a=this.flowSamples[i],speed=Math.hypot(a.vx,a.vy);
       if(speed<0.01)continue;
-      const ux=a.vx/speed,uy=a.vy/speed,phase=((now*Math.min(speed,3)/5+i*.37)%1-.5)*this.cell*5;
+      // Keep trench markers near their narrow sampled cell instead of drifting onto dry land.
+      const ux=a.vx/speed,uy=a.vy/speed,phase=((now*Math.min(speed,3)/5+i*.37)%1-.5)*this.cell*(i<regularCount?5:0.75);
       const x=a.x+ux*phase,y=a.y+uy*phase,o=i*6;
       positions[o]=x-ux*3;positions[o+1]=a.height;positions[o+2]=y-uy*3;
       positions[o+3]=x+ux*3;positions[o+4]=a.height;positions[o+5]=y+uy*3;

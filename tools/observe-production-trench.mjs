@@ -12,6 +12,7 @@ try {
  await page.locator('[data-mode="trench"]').click();await page.mouse.click(800,360);await page.mouse.click(850,385);
  await page.waitForFunction(()=>!document.querySelector('#confirm').disabled);await page.locator('#confirm').click();
  await page.waitForFunction(()=>document.querySelector('#preview').hidden);
+ await page.waitForFunction(()=>document.querySelector('#budget').textContent.replace(/\s/g,'')!=='10000');
  const budget=await page.locator('#budget').textContent();
  await page.waitForFunction(()=>!document.querySelector('#result').hidden,null,{timeout:240000});
  const report={browser:browser.version(),scenario,budget,wallSeconds:(Date.now()-start)/1000,result:await page.locator('#result-details').textContent(),score:await page.locator('#damage-total').textContent(),breakdown:await page.locator('#damage-breakdown').textContent(),errors};

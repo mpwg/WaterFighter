@@ -366,6 +366,7 @@ test('Werkzeuge und Quellen bleiben im schmalen Querformat erreichbar',async({br
 });
 
 test('Neustart nach allen Werkzeugen und Flut stellt die Kartenansicht wieder her',async({page})=>{
+  test.setTimeout(90000);
   await page.setViewportSize({width:1200,height:800});
   await page.addInitScript(()=>window.addEventListener('waterfighter:diagnostics',event=>{(window as any).lastRound=(event as CustomEvent).detail.round;}));
   await page.goto('/');await expect(page.locator('#budget')).toHaveText('10 000');

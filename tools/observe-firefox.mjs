@@ -22,7 +22,14 @@ try {
   const toolResults=[];
   for(const mode of ['trench','dam','demolish']) {
     await click(`[data-mode="${mode}"]`);
-    if(mode==='demolish')await pointer(560,245);else {await pointer(690,300);await pointer(735,310);}
+    if(mode==='demolish') {
+      for(const [x,y] of [[560,245],[410,225],[450,230],[600,210],[515,220],[675,225]]) {
+        await pointer(x,y);await new Promise(r=>setTimeout(r,300));
+        const state=await script('return {visible:!document.querySelector("#preview").hidden,enabled:!document.querySelector("#confirm").disabled};');
+        if(state.visible && state.enabled)break;
+        if(state.visible)await click('#cancel');
+      }
+    } else {await pointer(690,300);await pointer(735,310);}
     let preview;
     for(let i=0;i<100;i++){preview=await script('return {text:document.querySelector("#preview-text").textContent,enabled:!document.querySelector("#confirm").disabled,visible:!document.querySelector("#preview").hidden};');if(preview.visible&&preview.enabled)break;await new Promise(r=>setTimeout(r,100));}
     if(!preview.enabled){const shot=await command(prefix+'/screenshot',undefined,'GET');writeFileSync('/tmp/waterfighter-firefox-error.png',Buffer.from(shot,'base64'));throw new Error(`Keine bestätigbare Vorschau für ${mode}: ${JSON.stringify(preview)}`);}

@@ -1,7 +1,7 @@
 /** Shortened rounds for a page-heap investigation, not a full-round stability test. */
 import {readFileSync,writeFileSync} from 'node:fs';
 import {chromium} from 'playwright';
-import {processTreeRss} from './process-memory.mjs';
+import {processTreeRss,processTreeMemoryByRole} from './process-memory.mjs';
 const scenario=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
 scenario.parameters.duration=2;
 const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined});
@@ -20,7 +20,7 @@ try {
     await page.waitForFunction(()=>document.querySelector('#result').hidden&&document.querySelector('#time').textContent==='00:00');
     await cdp.send('HeapProfiler.collectGarbage');
     const heap=await cdp.send('Runtime.getHeapUsage');
-    report.rounds.push({round:i+1,pageHeapUsed:heap.usedSize,pageHeapTotal:heap.totalSize,processTreeRss:processTreeRss()});
+    report.rounds.push({round:i+1,pageHeapUsed:heap.usedSize,pageHeapTotal:heap.totalSize,processTreeRss:processTreeRss(),processMemoryByRole:processTreeMemoryByRole()});
   }
   if(errors.length)throw Error(errors.join('; '));
 } finally {

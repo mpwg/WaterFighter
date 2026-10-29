@@ -15,7 +15,7 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | AP 3 – Simulation | in Arbeit | Synthetische Solver- und Bilanztests; früher Desktop-Leistungstest auf Szenarioentwurf: [Solverbericht](solverbericht.md) | Zuflusskurve, Dammöffnung, Spielintegration und mobile Leistung prüfen |
 | AP 4 – Darstellung | in Arbeit | Szenarioansicht und Worker-Snapshots, Maus-/Touch-Kamerasteuerung; zwei Playwright-Chromium-Abläufe | Strömungsanimation und Schadensanzeige auf tatsächlichen Geräten prüfen |
 | AP 5 – Werkzeuge/Schäden | in Arbeit | Worker-Regeln, Vorschau, Bestätigung, Budget und Schadenstests; drei Werkzeuge in Playwright-Chromium bedient | Werkzeugnutzen im Wiener Szenario und Bedienung auf Geräten prüfen |
-| AP 6 – Spielrunde | in Arbeit | Ergebnisanzeige und numerische Referenzstrategie; verkürzter Browserablauf | Strategie auf neuem Szenario und echten Geräten prüfen; Werkzeugnutzen im Szenario belegen |
+| AP 6 – Spielrunde | in Arbeit | Ergebnisanzeige und numerische Referenzstrategie; verkürzter Browserablauf | Strategie auf echten Geräten prüfen; Werkzeugnutzen im Szenario belegen |
 | AP 7 – Gesamtprüfung | offen | Abnahmeverfahren spezifiziert | Browser und reale Geräte prüfen |
 
 ### Bisherige Prüfungen
@@ -40,9 +40,9 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | Plausible Flutwelle, Barrieren und Überströmung | offen | Symmetrische Welle und überströmbare Barriere numerisch geprüft; Dammöffnung und visuelle Kontrolle fehlen |
 | 2,5D-Ansicht, Touch-Modi und Fehlerbehandlung | offen | Karten- und Werkzeugmodi, Strömungsmarker und Zustandsabfrage vorhanden; tatsächliche Geräte und umfassende Fehlerprüfung fehlen |
 | Atomare Aktionen, Budget, Wassererhaltung und Schadenswertung | offen | Regel-, Worker- und synthetische hydraulische Tests bestehen; Wirkungsnachweise im Szenario und Geräteprüfungen fehlen |
-| Vollständige Runde und bezahlbare erfolgreiche Strategie | offen | Version 1.2: ohne Maßnahmen 322.771,10 Schaden, Dammstrategie rechnerisch 0 bei Budgetrest 2.600. Vollständiger 2×-Browserlauf der Strategie auf Version 1.1 bestanden; menschliche Bedienung und Wiederholung auf 1.2 fehlen |
+| Vollständige Runde und bezahlbare erfolgreiche Strategie | offen | Version 1.2: ohne Maßnahmen 322.771,10 Schaden; vollständige automatisierte 2×-Browserrunde mit Strategie 0 bei Budgetrest 2.600. Menschliche Gerätebedienung fehlt |
 | Neustart und Schutz vor alten/doppelten Nachrichten | offen | Uhr, Raster und Aktionszustand sowie alte/doppelte Nachrichten in Tests geprüft; vollständige Runden fehlen |
-| Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Keine Browserläufe |
+| Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: sechs Headless-Abläufe; Firefox 159: kein WebGL-Kontext in dieser Umgebung; Safari nicht lokal verfügbar |
 | Echte iPhone-/Android-Abnahme | nicht prüfbar | Lokal kein Smartphone sichtbar und `adb`/`idevice_id` fehlen; Zugang zu echten Geräten bereitstellen |
 | Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Keine echten Smartphones lokal erreichbar; Messung auf beiden Geräten erforderlich |
 | Drei stabile aufeinanderfolgende Runden | offen | Keine Laufzeitprüfung |

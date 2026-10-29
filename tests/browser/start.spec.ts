@@ -106,6 +106,23 @@ for (const device of [
   await context.close();
 });
 
+test('Zweiter Finger übernimmt keine laufende Werkzeugberührung',async({browser})=>{
+  const context=await browser.newContext({viewport:{width:1200,height:800},hasTouch:true});
+  const page=await context.newPage();await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('[data-mode="dam"]').click();
+  const cdp=await context.newCDPSession(page), first={x:800,y:360,id:1},second={x:850,y:385,id:2};
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[first]});
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[first,second]});
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[second]});
+  await expect(page.locator('#message')).toHaveText('Start und Ende auf der Karte antippen.');
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  await expect(page.locator('#message')).toHaveText('Endpunkt auf der Karte antippen.');
+  await page.touchscreen.tap(second.x,second.y);
+  await expect(page.locator('#confirm')).toBeEnabled();
+  await expect(page.locator('#budget')).toHaveText('10 000');
+  await context.close();
+});
+
 test('Fehlendes Szenario zeigt eine verständliche Fehlermeldung',async({page})=>{
   await page.route('**/scenarios/brigittenau-v1.json',route=>route.fulfill({status:404,body:'fehlt'}));await page.goto('/');
   await expect(page.locator('#message')).toContainText('Szenario oder Grafik konnte nicht geladen werden: HTTP 404');

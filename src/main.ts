@@ -105,9 +105,10 @@ speedButton.onclick=()=>{ if(!round)return; speed=speed===1?2:1; speedButton.tex
 app.querySelector<HTMLButtonElement>('#zoom-in')!.onclick=()=>world?.setZoom(0.8);
 app.querySelector<HTMLButtonElement>('#zoom-out')!.onclick=()=>world?.setZoom(1.25);
 let pointer: {id:number;x:number;y:number;startX:number;startY:number}|undefined;
-canvas.addEventListener('pointerdown',e=>{pointer={id:e.pointerId,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY};canvas.setPointerCapture(e.pointerId);});
+canvas.addEventListener('pointerdown',e=>{if(pointer)return;pointer={id:e.pointerId,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY};canvas.setPointerCapture(e.pointerId);});
 canvas.addEventListener('pointermove',e=>{if(pointer?.id===e.pointerId && mode==='camera'){world?.pan(e.clientX-pointer.x,e.clientY-pointer.y);pointer.x=e.clientX;pointer.y=e.clientY;}});
-canvas.addEventListener('pointerup',e=>{if(pointer?.id===e.pointerId) {if(mode!=='camera') selectAt(e.clientX,e.clientY); else if(Math.hypot(e.clientX-pointer.startX,e.clientY-pointer.startY)<5) message.textContent=world?.inspect(e.clientX,e.clientY)??'Karte ist noch nicht bereit.';}pointer=undefined;}); canvas.addEventListener('pointercancel',()=>{pointer=undefined;});
+canvas.addEventListener('pointerup',e=>{if(pointer?.id!==e.pointerId)return; if(mode!=='camera') selectAt(e.clientX,e.clientY); else if(Math.hypot(e.clientX-pointer.startX,e.clientY-pointer.startY)<5) message.textContent=world?.inspect(e.clientX,e.clientY)??'Karte ist noch nicht bereit.';pointer=undefined;});
+for(const event of ['pointercancel','lostpointercapture'] as const) canvas.addEventListener(event,e=>{if(pointer?.id===e.pointerId)pointer=undefined;});
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();if(round)worker?.postMessage({type:'pause',round});fail('Grafikkontext verloren. Bitte Seite neu laden.');});
 fetch(`${import.meta.env.BASE_URL}scenarios/brigittenau-v1.json`).then(async response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return validateScenario(await response.json());}).then(loaded=>{
   if(fatalError)return;

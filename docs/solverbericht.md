@@ -247,3 +247,11 @@ Am 29. Oktober 2026 wurden `bun tools/compare-timesteps.ts SCHRITT baseline` und
 | Elf Dämme | 0,05 s | 6.000 | 1.076.535,10 m³ | 35.139,83 | 2.600 | 9,06 × 10⁻¹⁵ |
 
 Im unbehandelten Fall unterscheiden sich Schaden und Endvolumen um etwa 0,0281 % beziehungsweise 0,0022 % bezogen auf den 1-s-Lauf und erfüllen damit die zuvor festgelegten 1-%-Schranken. Beide Dammläufe bleiben innerhalb des Budgets und unter dem Schadensziel von 50.000; alle Bilanzfehler liegen unter 0,1 %. Dies ist ein Vergleich zweier Schrittweiten für zwei konkrete Fälle, kein allgemeiner Konvergenzbeweis, keine reale Kalibrierung und keine mobile Leistungsmessung.
+
+### Überströmung an den Referenzdämmen auf Version 1.4
+
+`bun tools/inspect-dam-overtopping.ts` berechnete am 29. Oktober 2026 die vollständige 300-s-Runde mit den beiden vorbereiteten Dämmen aus `tests/fixtures/review-strategies.json` auf dem gelieferten `1.4-draft`. Das Diagnoseprogramm tastet vor jedem Solver-Schritt dieselben rekonstruierten Rusanov-Massenflüsse an den bestätigten Dammkanten ab; es verändert den Solverzustand nicht. Als Überschreitung zählt ein rekonstruierter Wasserstand mehr als 0,000001 m über der effektiven Kantenhöhe.
+
+An vier der 30 Dammkanten wurde die Krone überschritten, erstmals nach 119,32 s. Der größte Höhenüberschuss betrug 1,329 m nach 151,41 s an Kante `x:26` mit Dammkrone 10,212 m Wiener Null. Über alle Dammkanten wurden richtungsgetrennt 627,58 m³ in positiver und 1.064,85 m³ in negativer Achsenrichtung integriert; allein an der Kante mit dem höchsten Überschuss waren es 709,06 m³ in negativer Richtung. Diese Flusssummen können mehrfach hin- und herbewegtes Wasser enthalten und sind keine eindeutigen Wassermengen oder ein nachverfolgter Weg. Gesamtschaden 34.768,16, Budgetrest 8.800 und relativer Bilanzfehler 2,28 × 10⁻¹⁴ stimmen mit der numerischen Referenzrunde überein.
+
+Die Untersuchung belegt überströmte Kanten und rekonstruierte Modellflüsse für diesen einen Dammverlauf; sie belegt keine reale Hochwasserhöhe und keine durchgehend verständliche Darstellung der Überströmung im Browser. Der Vergleich zu einer Runde ohne Damm ist im [Gebäudevergleich](review-gebaeudevergleich.md) dokumentiert; die getrennte [synthetische Barrierenprüfung](#sichtkontrolle-der-dammöffnung) bleibt der kontrollierte Nachweis von Rückstau und Öffnung.

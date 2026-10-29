@@ -303,6 +303,22 @@ Die Lage ist empfindlich: Wird nur das östliche Grabenende um eine Zeile nach `
 Eine vollständige Produktionsrunde des isolierten Anwendungscodes `42da208` wurde mit `bun tools/observe-south-production.mjs` in Chrome 156.0.8078.73 unter Linux bei 1600 × 1000 und Softwaregrafik ausgeführt. Die Worker-Vorschau wurde für jede Maßnahme mit den Referenzkanten beziehungsweise -zellen verglichen; die projizierten Testkoordinaten sind in `tests/fixtures/south-screen-points.json` festgehalten. Nach 151,712 s bei 2× meldete die Oberfläche 38.064 Schaden, 6.540 Budgetrest und „Schadensziel erreicht“, ohne protokollierte Seitenfehler. Der Neustart setzte Zeit, Budget und Schaden zurück. Der Browser- und der numerische Vergleich sind getrennte Läufe; die Ursache ihrer geringfügigen Abweichung wurde nicht eigens untersucht. Dies ist keine menschliche Bedienprüfung. Eine unabhängige Person und echte Mobilgeräte bleiben offen.
 
 
+### Gebäudeschäden entlang der südlichen Strategie
+
+Am 30. Oktober 2026 wurden auf Anwendungscode `15722aa` die 300-s-Runden mit `bun tools/reference-strategies.ts south-control` und `south-divert` erneut berechnet; die unbehandelte Vergleichsrunde stammt aus dem gleichartigen Lauf auf `960e190`. Beide verwenden dasselbe ausgelieferte Szenario `1.4-draft`, und alle Maßnahmen wurden vor Flutbeginn gesetzt. Die Tabelle zeigt Gebäude mit den größten Veränderungen durch den zusätzlichen Graben; keines wurde abgerissen.
+
+| Gebäude | Ohne Eingriff | Drei Dämme mit Öffnung | Dieselben Dämme und südlicher Graben |
+| --- | ---: | ---: | ---: |
+| `r9350494-0` | 25.180,70 | 17.088,41 | 0 |
+| `w491428570-0` | 36.801,31 | 0 | 5.531,00 |
+| `w1343275154-0` | 8.754,22 | 4.613,56 | 3.584,97 |
+| `w1184608697-0` | 0 | 0 | 857,29 |
+| `w316294475-0` | 1.502,63 | 1.525,15 | 1.349,84 |
+
+Der zusätzliche Graben beseitigt den modellierten Schaden an `r9350494-0` und verringert ihn an `w1343275154-0`; zugleich entstehen an `w491428570-0` und `w1184608697-0` zusätzliche Schäden. Über alle Gebäude zusammen sinkt der Schaden um 11.901,91 bei 1.700 zusätzlichen Budgetkosten. Die relativen Wasserbilanzfehler der beiden südlichen Läufe liegen unter 1,50 × 10⁻¹³.
+
+Die Werte zeigen eine räumliche Verlagerung im Spielmodell. Der oben beschriebene markierte Modellanteil allein erklärt nicht die gesamte Schadensdifferenz; reale Schutzwirkung und menschliches Auffinden der Route sind nicht belegt.
+
 ### Südlicher Graben nach Flutbeginn im Produktionsbrowser
 
 Auf dem isolierten Produktionsbuild von `833f4b6` wurden die drei Dämme mit Öffnung in der Vorbereitung gesetzt. `bun tools/observe-south-production.mjs --after-flood` startete die Flut mit 2× und pausierte bei angezeigten 02:34. Die automatisierte Auswahl prüfte die Worker-Vorschau gegen die vollständige Referenztrasse und verwarf unpassende Vorschauen. Der erste Punkt traf mit den vorbereiteten Testkoordinaten, der zweite nach Verschiebung um zwei Bildpunkte nach oben. Die bestätigte Aktion kostete 1.700; die Vorschau wies auf fünf abgesenkte Modellkanten hin. Während der Pause blieb die angezeigte Zeit stehen.

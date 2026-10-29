@@ -6,11 +6,25 @@ const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigit
 const mode=process.argv[2]??'baseline';
 if(!['baseline','0','1'].includes(mode))throw Error('Argument: baseline | 0 | 1');
 const game=new Game(scenario),s=game.solver,w=s.width,h=s.height,n=w*h,area=s.cellSize**2,initialVolume=s.volume();
-const gates=[{axis:'y' as const,index:42*w+58},{axis:'y' as const,index:89*w+95}];
-if(mode!=='baseline'){const action=game.apply('probe',{kind:'dam',faces:[gates[Number(mode)]]});if(!action.ok)throw Error(action.reason);}
+const gateArg=process.argv.find(a=>a.startsWith('--gates='));
+const gateSpecs=gateArg?gateArg.slice(8).split(','):['y:8458','y:17895'];
+if(gateSpecs.length!==2 || new Set(gateSpecs).size!==2)throw Error('Genau zwei verschiedene Kanten angeben');
+const gates=gateSpecs.map(spec=>{
+ const match=/^([xy]):(\d+)$/.exec(spec);if(!match)throw Error('Kante muss x:INDEX oder y:INDEX sein');
+ const axis=match[1] as 'x'|'y',index=Number(match[2]);
+ const x=axis==='x'?index%(w+1):index%w,y=axis==='x'?Math.floor(index/(w+1)):Math.floor(index/w);
+ if(axis==='x'?(x<=0||x>=w||y>=h):(y<=0||y>=h||x>=w))throw Error('Kante liegt nicht im Inneren');
+ const b=y*w+x,a=axis==='x'?b-1:b-w;
+ if(Boolean(scenario.waterMask[a])===Boolean(scenario.waterMask[b]))throw Error('Kante muss Gewässer und Land trennen');
+ const sign=scenario.waterMask[a]?1:-1,land=sign===1?b:a;
+ return {axis,index,sign,origin:[land%w,Math.floor(land/w)] as const};
+});
+if(mode!=='baseline'){const {axis,index}=gates[Number(mode)];const action=game.apply('probe',{kind:'dam',faces:[{axis,index}]});if(!action.ok)throw Error(action.reason);}
 const dye=[new Float64Array(n),new Float64Array(n)],change=[new Float64Array(n),new Float64Array(n)];
 const tagged=[0,0],exited=[0,0],returned=[0,0],peakLand=[0,0];
-const origins=[[58,42],[95,89]] as const, distances=[8,16,32,64];
+const origins=gates.map(g=>g.origin), distances=[8,16,32,64];
+const gateX=new Map(gates.flatMap((g,k)=>g.axis==='x'?[[g.index,k] as const]:[]));
+const gateY=new Map(gates.flatMap((g,k)=>g.axis==='y'?[[g.index,k] as const]:[]));
 const peakBeyond=origins.map(()=>distances.map(()=>0));
 const farthest=origins.map(()=>0);
 function flux(a:number,b:number,axis:'x'|'y',crest:number){
@@ -27,7 +41,7 @@ function transfer(a:number,b:number,rate:number,dt:number,gate:number){
   if(scenario.waterMask[receiver])returned[k]+=amount;else change[k][receiver]+=amount;
  }
  // Mark only previously unmarked water passing a selected face in the landward direction.
- if(gate>=0 && rate>0){const amount=volume*Math.max(0,1-c0-c1);change[gate][receiver]+=amount;tagged[gate]+=amount;}
+ if(gate>=0 && rate*gates[gate].sign>0){const amount=volume*Math.max(0,1-c0-c1);change[gate][receiver]+=amount;tagged[gate]+=amount;}
 }
 function exit(cell:number,rate:number,dt:number){
  if(rate<=0)return;
@@ -38,10 +52,10 @@ while(s.time<scenario.parameters.duration-1e-9){
  const t=s.time,maxDt=Math.min(1,scenario.parameters.duration-t),dt=s.stableStep(maxDt);
  change[0].fill(0);change[1].fill(0);
  for(let y=0;y<h;y++)for(let x=1;x<w;x++){
-  const a=y*w+x-1,b=a+1,index=y*(w+1)+x;transfer(a,b,flux(a,b,'x',s.crestX[index]),dt,-1);
+  const a=y*w+x-1,b=a+1,index=y*(w+1)+x,gate=gateX.get(index)??-1;transfer(a,b,flux(a,b,'x',s.crestX[index]),dt,gate);
  }
  for(let y=1;y<h;y++)for(let x=0;x<w;x++){
-  const b=y*w+x,a=b-w,index=y*w+x,gate=index===gates[0].index?0:index===gates[1].index?1:-1;
+  const b=y*w+x,a=b-w,index=y*w+x,gate=gateY.get(index)??-1;
   transfer(a,b,flux(a,b,'y',s.crestY[index]),dt,gate);
  }
  for(let y=0;y<h;y++){const left=y*w,right=left+w-1;if(s.openBoundary.left)exit(left,Math.max(0,-s.qx[left])*s.cellSize,dt);if(s.openBoundary.right)exit(right,Math.max(0,s.qx[right])*s.cellSize,dt);}

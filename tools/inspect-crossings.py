@@ -31,8 +31,11 @@ for crossing in s['crossings']:
                for i in tree.query(line, predicate='intersects')]
     overlap = [(bid, length) for bid, length in overlap if length > 0.05]
     close = face_tree.query(line.buffer(size), predicate='intersects')
+    intersecting = [int(i) for i in close if line.intersects(faces[int(i)])]
     rows.append({'id': crossing['id'], 'bridge': crossing['bridge'], 'tunnel': crossing['tunnel'],
-                 'buildingOverlaps': sorted(overlap), 'crestFacesWithin4m': len(close)})
+                 'buildingOverlaps': sorted(overlap), 'crestFacesWithin4m': len(close),
+                 'crestFacesIntersecting': len(intersecting),
+                 'intersectingCrests': [s['surveyCrests'][i] for i in intersecting]})
 print(json.dumps({'version': s['version'], 'count': len(rows),
                   'types': dict(Counter((r['tunnel'] or 'bridge:' + str(r['bridge'])) for r in rows)),
                   'withBuildingOverlap': sum(bool(r['buildingOverlaps']) for r in rows),

@@ -1,7 +1,7 @@
 /** Track water marked at each inlet until its first return to the water mask or exit. */
 import {readFileSync} from 'node:fs';
 import {Game} from '../src/simulation/game';
-import {trenchPath} from '../src/simulation/path';
+import {damPath,trenchPath} from '../src/simulation/path';
 import {validateScenario} from '../src/scenario';
 const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
 // Optional diagnostic sensitivity only; the delivered scenario remains unchanged.
@@ -10,6 +10,17 @@ if(depthArg){const depth=Number(depthArg.slice(8));if(!Number.isFinite(depth)||d
 const mode=process.argv[2]??'baseline';
 if(!['baseline','0','1'].includes(mode))throw Error('Argument: baseline | 0 | 1');
 const game=new Game(scenario),s=game.solver,w=s.width,h=s.height,n=w*h,area=s.cellSize**2,initialVolume=s.volume();
+const damsArg=process.argv.find(a=>a.startsWith('--dams='));
+const dams=damsArg?Number(damsArg.slice(7)):0;
+if(!Number.isInteger(dams)||dams<0||dams>3)throw Error('Dammanzahl muss zwischen 0 und 3 liegen');
+if(dams){
+ const fixture=JSON.parse(readFileSync('tests/fixtures/strategy.json','utf8'));
+ if(fixture.scenario!==scenario.version)throw Error('Referenzstrategie passt nicht zum Szenario');
+ for(const [i,segment] of fixture.segments.slice(0,dams).entries()){
+  const result=game.apply(`dam-${i}`,{kind:'dam',faces:damPath(segment[0],segment[1],w)});
+  if(!result.ok)throw Error(result.reason);
+ }
+}
 const gateArg=process.argv.find(a=>a.startsWith('--gates='));
 const gateSpecs=gateArg?gateArg.slice(8).split(','):['y:8458','y:17895'];
 if(gateSpecs.length!==2 || new Set(gateSpecs).size!==2)throw Error('Genau zwei verschiedene Kanten angeben');
@@ -101,4 +112,4 @@ while(s.time<scenario.parameters.duration-1e-9){
  for(let k=0;k<2;k++){peakLand[k]=Math.max(peakLand[k],land[k]);for(let j=0;j<distances.length;j++)peakBeyond[k][j]=Math.max(peakBeyond[k][j],beyond[k][j]);}
 }
 const markers=gates.map((gate,k)=>{const remaining=dye[k].reduce((a,b)=>a+b,0);return {gate,tagged:tagged[k],exited:exited[k],returned:returned[k],remaining,peakLand:peakLand[k],peakBeyond:distances.map((metres,j)=>({metres,volume:peakBeyond[k][j]})),farthestCellAtLeastPoint1M3:farthest[k],balanceError:remaining+exited[k]+returned[k]-tagged[k]};});
-console.log(JSON.stringify({scenario:scenario.version,trenchDepth:scenario.parameters.trenchDepth,mode,trench:trenchArg??null,route:routeArg??null,time:s.time,budget:game.budget,...game.totals(),markers,maxBoundError,waterBalance:Math.abs(s.volume()-initialVolume-s.inflow+s.outflow-s.roundoffVolume)/(initialVolume+s.inflow)},null,2));
+console.log(JSON.stringify({scenario:scenario.version,trenchDepth:scenario.parameters.trenchDepth,dams,mode,trench:trenchArg??null,route:routeArg??null,time:s.time,budget:game.budget,...game.totals(),markers,maxBoundError,waterBalance:Math.abs(s.volume()-initialVolume-s.inflow+s.outflow-s.roundoffVolume)/(initialVolume+s.inflow)},null,2));

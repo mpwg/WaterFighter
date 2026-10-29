@@ -178,3 +178,19 @@ Die relativen Wasserbilanzfehler liegen unter 3,20 × 10⁻¹³. Beim ersten Gra
 Für den zweiten Graben berechnet `bun tools/trace-land-retention.ts baseline --gates=x:2250,y:10867 --trench=0,3,38,11` ohne Dämme am östlichen Endpunkt 134,56 m³ markierten landwärtigen Eintritt. Davon treten vor der ersten Rückkehr in die Gewässermaske praktisch keine markierten Mengen unmittelbar am Modellrand aus; der relative Wasserbilanzfehler beträgt 1,04 × 10⁻¹³ und der Markierungsbilanzrest −1,44 × 10⁻¹¹ m³. Die Markierung verfolgt weder andere Eintritte noch reale Wasserteilchen. Insbesondere belegt der integrierte Westabfluss keinen zusammenhängenden Weg dieser markierten Menge und der Modellrand keine sicheren Folgen außerhalb der Karte.
 
 Ein weiterer Vergleich auf dem isolierten Stand `b5f2a8f` setzt denselben Graben erst nach drei vorbereiteten Dämmen: Bei 120, 150 beziehungsweise 180 s betragen die Gesamtschäden 10.666,06, 10.747,43 und 32.375,00; der Budgetrest ist jeweils 6.985. Die Kontrolle ohne Graben ergibt 34.792,87. Der relative Wasserbilanzfehler liegt unter 1,03 × 10⁻¹³. Die Aktion wird numerisch zum exakten Zeitpunkt gesetzt; Bedienzeit und menschliche Platzierung sind nicht geprüft. Für eine Wiederholung auf diesem historischen Stand ist die aktuelle `tools/compare-staged-trench.ts` mit `--route=0,3,38,11` in ein Archiv von `b5f2a8f` zu kopieren. Spätere Änderungen der Dammführung erfordern neue Kontrollläufe.
+
+### Wiederholung mit direkter Dammführung
+
+Die Kandidaten wurden mit der später übernommenen direkten Dammführung erneut verglichen. Die Rechnung verwendete ein Archiv von `efde9e3` und die anschließend in `2851271` übernommene Datei `src/simulation/path.ts` (SHA-256 `d40c1c29509caee918288f537064c3ed0168534dd2868505ac07f422a127c4b9`); Solver, Spielregeln, Szenario und Dammfixture waren gegenüber `f291cc9` unverändert. Alle Maßnahmen wurden über `Game.apply` geprüft.
+
+| Fall | Gesamtschaden | Budgetrest |
+| --- | ---: | ---: |
+| Drei Dämme, kein Graben | 23.574,17 | 8.160 |
+| Drei Dämme, Graben `(0,4) → (34,5)` vor Beginn | 780,49 | 7.260 |
+| Drei Dämme, Graben `(0,3) → (38,11)` vor Beginn | 808,69 | 6.985 |
+| Dieselben Dämme, zweiter Graben bei 150 s | 816,02 | 6.985 |
+| Dieselben Dämme, zweiter Graben bei 180 s | 21.034,08 | 6.985 |
+
+Die relativen Wasserbilanzfehler liegen unter 3,21 × 10⁻¹³. Auch bei 180 s liegt die rechnerische Schadensminderung von 2.540,09 über den zusätzlichen Grabenkosten von 1.175, sofern beide Spielgrößen addiert werden. Die Eingriffe erfolgen idealisiert zum exakten Zeitpunkt; menschliche Bedienung und Geräteabnahme fehlen. Die Trassen liegen im selben nördlichen Bereich und belegen keine räumlich getrennte zweite Ableitung.
+
+Die ergänzte Option `--dams=3` von `tools/trace-land-retention.ts` erlaubt dieselbe Dammkonfiguration in einer Markierungsrechnung. Mit `--gates=x:2250,y:10867` wurden der Kontrollfall und der zusätzliche Graben `--trench=0,3,38,11` verglichen. An der östlichen Endkante `x:2250` betrug der markierte landwärtige Eintritt ohne Graben 0 und mit Graben 134,21 m³. Der mit Graben markierte Anteil kehrte bis auf 0,00022 m³ in die Gewässermaske zurück; kein markierter Anteil trat vorher am Modellrand aus. Der betreffende Markierungsbilanzrest war −2,27 × 10⁻¹¹ m³. Die Rechnung verfolgt nur diese beiden Eingänge, nicht sämtliche Wasserwege oder reale Wasserteilchen. Sie erklärt die Schadensminderung nicht vollständig und belegt keinen durchgehenden Fluss dieser Markierung zum Rand.

@@ -22,6 +22,13 @@ try {
  if(!previewCheck[0].includes('Kosten: 400')||!previewCheck[1].includes('Kosten: 800')||!previewCheck[2].includes('Gebäudeverlust insgesamt: 16 017')||!previewCheck[3].includes('Kosten: 600'))throw Error(`Maßnahmen abweichend: ${JSON.stringify(previewCheck)}`);
  console.log('Referenzmaßnahmen bestätigt; Budgetrest 6.598.');
  await page.locator('#speed').click();const start=Date.now();await page.locator('#run').click();
+ if(process.argv.includes('--capture-flow')){
+  await page.locator('#panel-toggle').click();
+  for(const seconds of [120,180,240]){
+   await page.waitForFunction(target=>{const [m,s]=document.querySelector('#time').textContent.split(':').map(Number);return m*60+s>=target;},seconds,{timeout:240000});
+   await page.screenshot({path:`/tmp/waterfighter-reference-flow-${seconds}.png`});
+  }
+ }
  await page.waitForFunction(()=>!document.querySelector('#result').hidden,null,{timeout:240000});
  const report={browser:browser.version(),scenario:version,viewport:points.viewport,previews,wallSeconds:(Date.now()-start)/1000,title:await page.locator('#result-title').textContent(),result:await page.locator('#result-details').textContent(),score:await page.locator('#damage-total').textContent(),breakdown:await page.locator('#damage-breakdown').textContent(),errors};
  await page.screenshot({path:'/tmp/waterfighter-reference-production.png'});

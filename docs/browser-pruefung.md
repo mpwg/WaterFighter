@@ -283,6 +283,12 @@ Die Oberfläche bestätigte zwei Dämme für 400 und 800 Budgeteinheiten, den Ab
 
 Der Lauf belegt die automatisierte Referenzstrategie auf diesem Produktionsbuild, keine eigenständige Suche oder Bedienung durch eine Person. Die Bildschirmkoordinaten hängen von Ansicht und Kamera ab; spätere Darstellungsänderungen, tatsächliches Safari und echte Mobilgeräte sind durch diesen Lauf nicht abgedeckt. Der offene Westrand ist eine Spielannahme, und Folgen außerhalb des Modellausschnitts werden nicht berechnet.
 
+### Referenzrunde mit Strömungsmarkern
+
+Am 29. Oktober 2026 wurde der Produktionsbuild von `69eead7` mit `bun --bun vite build --outDir /tmp/waterfighter-flow-69eead7` separat erzeugt und lokal per Python-HTTP-Server ausgeliefert. Chrome 156.0.8078.73 auf Linux mit Softwaregrafik spielte `bun tools/observe-review-production.mjs --capture-flow` mit denselben vorbereiteten Bildschirmkoordinaten. Anwendung und Szenarioantwort wurden nicht instrumentiert oder ersetzt. Nach Bestätigung aller Maßnahmen lief die vollständige 2×-Runde 151,195 s und ergab 17.625 Flut-, 16.017 Abriss- und 33.642 Gesamtschaden bei 6.598 Budgetrest; das Ziel wurde erreicht. Die laufende Anzeige entsprach dem Ergebnis, nach Neustart stand der Schaden auf 0; Seitenfehler wurden nicht protokolliert.
+
+Bei ausgeblendetem Menü wurden Bilder nach Erreichen von 120, 180 und 240 simulierten Sekunden aufgenommen. Die [Aufnahme ab 180 s](referenz-produktionsflut.png) zeigt laufende Schadensaufteilung, Gebäudezustände und Strömungsstriche im Gewässer. Der Graben und sein Wasserweg bleiben in der unvergrößerten Gesamtansicht sehr klein und nicht durchgehend nachvollziehbar. Die Prüfung verwendet feste Testkoordinaten und Einzelbilder; sie ersetzt weder den menschlichen Spieltest noch eine Geräte- oder Safariabnahme.
+
 ### Integrierte Prüfungen nach Szenariodownload
 
 Ein aus Commit `5c2e0c4` isoliert erzeugter Produktionsbuild bestand am 29. Oktober 2026 mit Bun 1.4.4 die Typprüfung und den Build, 52 Vitest-Tests, zwei Python-Bruchkantentests und alle 38 Playwright-Chromium-Prüfungen (3,8 Minuten) unter Linux mit Softwaregrafik und eingerichteten Schriften. Die Browserprüfungen umfassen Maus und emulierten Touch in beiden Ausrichtungen, laufende und pausierte Maßnahmen, Quellen-Download sowie den kombinierten Neustart. Nachfolgende Änderungen, tatsächliches Safari, echte Mobilgeräte und ein menschlicher Spieltest sind damit nicht abgedeckt.

@@ -2,6 +2,10 @@
 
 **Versionsbezug:** Die folgenden historischen Dammrunden und Screenshots vor der direkten Dammführung verwendeten die frühere rechtwinklige Pfadregel. Sie belegen den jeweils genannten damaligen Build, nicht die neuen Referenzwerte; aktuelle Nachweise sind gesondert gekennzeichnet.
 
+## Gesamtsuite nach kompaktem Status
+
+Auf einem isolierten Archiv von `0f3ee22` bestand am 29. Oktober 2026 der Produktionsbuild. Der anschließende Playwright-Lauf mit Chrome 156 unter Linux, Softwaregrafik und einem Worker endete nach 13,5 Minuten mit 81 bestandenen Fällen und einem Timeout nach 30 Sekunden bei `small-readouts.spec.ts` (Status und Treffflächen bei 320 × 480). Der gleiche Fall bestand anschließend auf demselben Build und mit demselben Zeitlimit isoliert in 20,6 Sekunden. Die Ursache des ursprünglichen Timeouts ist ungeklärt; der Gesamtlauf ist deshalb nicht als vollständig bestanden zu werten. Zeitweise liefen weitere numerische Untersuchungen und Browserprüfungen parallel. Dies ist weder eine Leistungsmessung noch eine menschliche oder echte Geräteprüfung; spätere Tests und Änderungen sind nicht umfasst.
+
 ## Karte im Werkzeugmodus verschieben
 
 Nach der Verbesserung der Platzierung lässt sich die Karte in allen Werkzeugmodi ziehen. Bei Damm und Graben bleibt ein bereits gewählter Startpunkt erhalten; gezogene Kontakte setzen keinen weiteren Punkt. Ein Produktionsbuild und 67 Modelltests bestanden. In Chromium mit Softwaregrafik bestanden gezielte Mausprüfungen in Hoch- und Querformat sowie Touch- und Mausprüfungen, die eine sichtbare Kartenverschiebung und die anschließende Endpunktauswahl prüfen. Ein erster erweiterter Touchlauf überschritt das bisherige 30-s-Testlimit; mit 90 s erlaubter Testdauer bestanden beide Verschiebungsfälle. Anschließend bestanden alle 64 Playwright-Chromium-Prüfungen auf dem Produktionsbuild des Anwendungscodes `4a54de4` unter Linux mit Softwaregrafik und einem Worker in 8,1 Minuten. Ein paralleler Langzeitlauf belastete den Rechner; die Zeit ist keine Leistungsmessung. Spätere Renderänderungen, unabhängige Spielpersonen und echte Geräte bleiben separat zu prüfen.

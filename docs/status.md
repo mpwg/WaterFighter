@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Auf dem isolierten Build `0f3ee22` bestanden 81 von 82 Chromium-Fällen; der nach Zeitüberschreitung fehlgeschlagene Fall zur kleinen Statusansicht bestand bei isolierter Wiederholung. Die Ursache bleibt ungeklärt: [Prüfbeleg](browser-pruefung.md#gesamtsuite-nach-kompaktem-status). Spätere Änderungen, menschliche Bedienung und echte Geräte bleiben separat zu prüfen.
+
 Ein [strenger Markierungsvergleich](review-gebaeudevergleich.md#markierung-innerhalb-zweier-getrennter-grabentrassen) bilanziert Modellanteile, die ab den geprüften seitlichen Eintritten bis zu zwei 168 m voneinander entfernten Westaustritten innerhalb der jeweiligen, zellgetrennten Grabentrasse bleiben. Die Vergleichsrunden nutzen unterschiedliche Dammkonfigurationen. Herkunft ab Flusszufluss, reale Folgen jenseits des Modellrands und menschliche Nutzbarkeit bleiben offen.
 
 Eine [zweite erfolgreiche Referenzkombination](review-gebaeudevergleich.md#getrennter-südlicher-graben-mit-dammöffnung) nutzt einen zellgetrennten südlichen Graben und eine Dammöffnung. Sie erreicht das Ziel mit wirtschaftlichem Zusatznutzen; ein geordneter Modellanteil erreicht den Westrand. Eine vollständige Produktionsrunde bestand mit Testkoordinaten. Einzelne Zellabweichungen können das Ergebnis stark verschlechtern; menschliche Bedienung, echte Geräte und der gesamte Weg ab Flusszufluss bleiben offen.

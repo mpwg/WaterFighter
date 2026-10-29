@@ -69,3 +69,22 @@ Auf dem ausgelieferten Szenario `1.4-draft` berechnet `bun tools/compare-review-
 | 150 s | 10.869,33 | 66.198,51 | 16.017 | 82.215,51 |
 
 Die relativen Wasserbilanzfehler lagen unter 1,41 × 10⁻¹³. Die ersten beiden Zeitpunkte bleiben unter dem Ziel von 50.000, der dritte nicht. Der vor den Aktionen bereits verbuchte Schaden wird durch den späteren Abriss eines betroffenen Gebäudes nicht zusätzlich zum Abrissverlust gezählt. Die Eingriffe erfolgen in diesem Vergleich idealisiert ohne Bedienzeit; die Werte belegen keine genaue Frist für menschliches Spielen und keine Gerätebedienung.
+
+## Gestaffelte Eingriffe nach vorbereiteten Dämmen
+
+`bun tools/compare-staged-strategy.ts shield 60` und `bun tools/compare-staged-strategy.ts divert ZEIT` vergleichen die ausgelieferte Version `1.4-draft` über je 300 s. Beide Referenzdämme werden in der Vorbereitung gesetzt. Im Ableitungsfall wird das Gebäude bei `ZEIT` abgerissen und der Graben fünf simulierte Sekunden später bestätigt; der Kontrollfall enthält nur die vorbereiteten Dämme. Die Anwendung der Aktionen erfolgt mit `Game.apply`, einschließlich regulärer Validierung, Kosten und Schadenswertung.
+
+| Abriss / Graben | Bereits eingetretener Gesamtschaden vor Abriss | Flutschaden am Ende | Abrissverlust | Gesamtschaden | Budgetrest |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Kein weiterer Eingriff | – | 34.768,16 | 0 | 34.768,16 | 8.800 |
+| 60 / 65 s | 0 | 17.629,93 | 16.017 | 33.646,93 | 6.598 |
+| 120 / 125 s | 0 | 17.629,92 | 16.017 | 33.646,92 | 6.598 |
+| 150 / 155 s | 88,83 | 17.661,02 | 16.017 | 33.678,02 | 6.598 |
+| 180 / 185 s | 4.068,43 | 33.334,56 | 16.017 | 49.351,56 | 6.598 |
+| 210 / 215 s | 13.408,82 | 34.159,38 | 16.017 | 50.176,38 | 6.598 |
+| 240 / 245 s | 21.753,08 | 34.734,23 | 16.017 | 50.751,23 | 6.598 |
+| 270 / 275 s | 29.605,28 | 34.768,16 | 16.017 | 50.785,16 | 6.598 |
+
+Die relativen Wasserbilanzfehler liegen unter 8,6 × 10⁻¹⁴. Bei 150 / 155 s bleibt das Ziel erreicht und der Gesamtschaden um 1.090,14 unter dem Kontrolllauf; gegenüber diesem werden 2.202 zusätzliche Budgeteinheiten verbraucht. Bei 180 / 185 s ist das Ziel zwar noch erreicht, der Schaden liegt aber bereits deutlich über dem Kontrolllauf; ab 210 / 215 s wird das Ziel in diesen Versuchen verfehlt. Schäden und Budget sind getrennte Spielgrößen; ein positiver Saldo bei Addition beider Größen ist hier nicht belegt.
+
+Das sind numerisch exakt geplante Einzelaktionen mit fünf simulierten Sekunden Abstand, keine beobachteten Bedienzeiten. Pausen, menschliche Platzierung und Unsicherheit über den tatsächlichen Verlauf wurden nicht simuliert. Die Tabelle zeigt mögliche reaktive Wirkung und ihre Grenze für diese konkrete Kombination; sie beweist weder eine allgemeine Zeitgrenze noch menschliche Spielbarkeit.

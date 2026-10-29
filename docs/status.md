@@ -6,7 +6,7 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
-[Strömungsmarker](browser-pruefung.md#strömungsrichtung-an-den-markern) zeigen ihre lokale Richtung nun mit Pfeilspitzen. Eine Sichtprobe und gezielte Tests bestehen; Lesbarkeit auf echten Geräten und eine vollständige Browserprüfung des neuen Stands sind offen.
+[Strömungsmarker](browser-pruefung.md#strömungsrichtung-an-den-markern) zeigen ihre lokale Richtung nun mit Pfeilspitzen. Eine Sichtprobe und alle 63 Chromium-Prüfungen auf dem isolierten Stand `b44c067` bestehen; Lesbarkeit und Leistung auf echten Geräten bleiben offen.
 
 Ein [Gebäudevergleich mit Sichtbildern](review-gebaeudevergleich.md#gebäudewirkung-und-gespeicherte-wassermenge) zeigt beim nördlichen Graben niedrigere Randtiefen an zwei besonders betroffenen Gebäuden und mehr Wasser in den Grabenzellen. Eine alleinige Ursache oder geordnete Durchleitung ist daraus nicht bewiesen.
 

@@ -51,3 +51,6 @@ footer { position:absolute; bottom:16px; left:24px; max-width:min(500px,calc(100
 }
 .readouts { grid-template-columns:.7fr .9fr 1.4fr; }
 @media (max-height:500px) { .readouts { grid-template-columns:.7fr .9fr 1.4fr; } }
+
+.credits { font:11px/1.35 system-ui,sans-serif; color:#143b38; }
+.credits a { font-weight:600; }

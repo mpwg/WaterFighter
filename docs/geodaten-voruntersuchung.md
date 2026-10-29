@@ -2,7 +2,7 @@
 
 Stand: 29. Oktober 2026. Dieser Ausschnitt und das Prüfskript sind vorläufig; sie sind **kein fertiges Spielszenario**.
 
-Als Kandidat dient ein 800 × 800 m großes Gebiet in der Brigittenau an der Donau: EPSG:31256, West/Süd/Ost/Nord 3900/344150/4700/344950 m. Die Eignung für mindestens zwei spielbare Wasserwege und die Übereinstimmung der Daten sind noch visuell und hydraulisch zu prüfen. Die OSM-Abfrage umfasst einen etwas größeren Bereich, damit Gebäude am Rand erfasst werden.
+Als Kandidat dient ein 800 × 800 m großes Gebiet in der Brigittenau an der Donau: EPSG:31256, West/Süd/Ost/Nord 3900/344150/4700/344950 m. Die räumliche Übereinstimmung wurde anhand eines unabhängigen Orthofotos visuell geprüft; die Eignung für mindestens zwei spielbare Wasserwege ist hydraulisch noch zu belegen. Die OSM-Abfrage umfasst einen etwas größeren Bereich, damit Gebäude am Rand erfasst werden.
 
 ## Bezogene Rohdaten
 
@@ -17,7 +17,7 @@ Reproduktion setzt exakt diese Dateien voraus; bei geändertem Abruf sind Prüfs
 python tools/inspect-geodata.py
 ```
 
-Das Prüfskript benutzt Rasterio/GDAL zur Mittelung auf 4 m und PyProj zur Koordinatentransformation. Es schreibt ausschließlich `/tmp/waterfighter-geodata-inspection.json`. Der geprüfte Rasterausschnitt enthält 200 × 200 endliche Zellen, Werte 0,647 bis 11,247 m Wiener Null; 91 geschlossene gültige Gebäudewege, 419 Straßenwege und ein Gewässerweg schneiden das Rechteck. Diese Zählung beweist weder lückenlose OSM-Relationen noch ein übereinstimmendes Ufer. Der Donau-Mittelachsenweg allein bildet die Wasserfläche nicht ab. Multipolygone, Ufer, schmale Barrieren und Randbeschnitt sind vor einem Szenariopaket zu bearbeiten. Ein Vergleich mit Referenzkarte, NoData-Prüfung der Quelldaten und reproduzierbare Ausgabeprüfung stehen aus.
+Das Prüfskript benutzt Rasterio/GDAL zur Mittelung auf 4 m und PyProj zur Koordinatentransformation. Es schreibt ausschließlich `/tmp/waterfighter-geodata-inspection.json`. Der geprüfte Rasterausschnitt enthält 200 × 200 endliche Zellen, Werte 0,647 bis 11,247 m Wiener Null; 91 geschlossene gültige Gebäudewege, 419 Straßenwege und ein Gewässerweg schneiden das Rechteck. Diese Zählung beweist weder lückenlose OSM-Relationen noch ein übereinstimmendes Ufer. Der Donau-Mittelachsenweg allein bildet die Wasserfläche nicht ab. Multipolygone, Ufer, schmale Barrieren und Randbeschnitt sind vor einem Szenariopaket zu bearbeiten. Eine spätere Pipelineprüfung kontrolliert die Quelldatei auf maskierte und nicht endliche Rasterwerte und die Ausgabe auf endliche Werte; der Quellraster meldet keinen expliziten NoData-Wert. Eine weitergehende Prüfung auf fachlich falsche, aber endliche Werte bleibt offen.
 
 ## Gewässerrelationen und Kontrollbild
 
@@ -30,14 +30,14 @@ Nach dem ersten Prüfskript erzeugt `python tools/inspect-water.py` ein SVG in `
 
 ## Vorläufiges Szenariopaket
 
-`tools/build-scenario.py` liest die oben aufgeführten Rohdateien und die unten genannten sechs Gebäude-Relationen direkt und prüft ihre SHA-256-Werte vor der Verarbeitung. Ausgabe ist `public/scenarios/brigittenau-v1.json`; diese Datei ist ein Entwurf (`1-draft`), keine abgenommene Spielkarte. Eine Python-Umgebung mit `pip install -r tools/requirements-geo.txt` vorausgesetzt:
+`tools/build-scenario.py` liest die oben aufgeführten Rohdateien und die unten genannten sechs Gebäude-Relationen direkt und prüft ihre SHA-256-Werte vor der Verarbeitung. Ausgabe ist `public/scenarios/brigittenau-v1.json`; diese Datei ist ein Entwurf (`1.1-draft`), keine abgenommene Spielkarte. Eine Python-Umgebung mit `pip install -r tools/requirements-geo.txt` vorausgesetzt:
 
 ```sh
 python tools/build-scenario.py
 sha256sum public/scenarios/brigittenau-v1.json
 ```
 
-Zwei aufeinanderfolgende Läufe ergaben SHA-256 `06fa66ea104b02ce570275a124012d6a95a2296f8d012b6349d996cbb5781bd1`. Verwendet: Python 3.14.4, Rasterio 1.5.2 mit GDAL 3.12.2, PyProj 3.8.0/PROJ 9.8.1, Shapely 2.2.0/GEOS 3.14.1, NumPy 2.5.4. Andere Bibliotheksstände können die Geometrie oder Rundung ändern. Rasterio erkennt die CRS-Kennung des Quell-TIFF nur mit reduziertem Konfidenzschwellwert; die maßgebliche CRS-Angabe der Stadt und die Koordinaten sind oben dokumentiert.
+Zwei aufeinanderfolgende Läufe ergaben SHA-256 `a1b263d2ffae9ab7aa8b1520b7e8ea2af99b034d2151f2270fdaa955064a4eb7`. Verwendet: Python 3.14.4, Rasterio 1.5.2 mit GDAL 3.12.2, PyProj 3.8.0/PROJ 9.8.1, Shapely 2.2.0/GEOS 3.14.1, NumPy 2.5.4. Andere Bibliotheksstände können die Geometrie oder Rundung ändern. Die WKT-Dateien besitzen unvollständige Autoritätsmetadaten; die Pipeline vergleicht deshalb Projektion, Meridian, Verschiebung, Maßstab und Bessel-Ellipsoid direkt, statt einen unsicheren EPSG-Vorschlag zu übernehmen. Die maßgebliche CRS-Angabe der Stadt ist oben dokumentiert.
 
 Das Paket enthält das unbearbeitete gemittelte Gelände, separat ein Simulationsbett, initiale Wassertiefen, Gewässermasken und OSM-Geometrien. Mangels Bathymetrie wird die Sohle der OSM-Gewässerflächen im Entwurf künstlich auf 0 m Wiener Null und der Anfangsspiegel auf 2 m Wiener Null gesetzt; dies ist keine Messung. 12 m dienen als Darstellungshöhe, wenn keine brauchbare OSM-Höhe vorliegt. Das vorläufige Schadensziel ist 50.000; eine rechnerische Dammstrategie erreicht es. Vollständige spielerische und hydraulische Abnahme stehen aus. Die Geometrien werden am Szenariorand beschnitten; Gebäude-Multipolygone aus dem Kartenausschnitt werden inklusive Innenringen aufgelöst; sechs in der Kartenabfrage unvollständige Relationen wurden zusätzlich vollständig heruntergeladen. Schutzlinien und Durchlässe wurden noch nicht gesondert modelliert. Das Paket ist ohne Laufzeit-Kartenabfrage verfügbar und enthält Quellenangaben; die Lizenz- und Vollständigkeitsprüfung der OSM-Ableitung bleibt offen.
 
@@ -54,4 +54,14 @@ Die zusätzlich bezogenen Gebäude-Relationen liegen unter `raw-data/building-re
 
 Das erste Kontrollbild zeigt weiterhin nur Gebäudewege und nicht die nachträglich einbezogenen Gebäude-Relationen; es muss mit der endgültigen Ausgabe neu erstellt und unabhängig geprüft werden.
 
-Der aktuelle Entwurf führt außerdem 26 OSM-Linien mit Mauer- oder Böschungskennzeichen und 73 Brücken-/Tunnelabschnitte getrennt auf. Diese Merkmale sind Kandidaten, keine bereits geprüften hydraulischen Sperren oder Durchlässe; ihre Höhen und tatsächliche Funktion sind nicht aus den Tags ableitbar. Die vier Meter gemittelten Höhen können schmale Kanten glätten. Bruchkanten und daraus resultierende Sperren müssen vor der Szenarioabnahme gesondert aufbereitet und geprüft werden.
+Der aktuelle Entwurf führt außerdem 26 OSM-Linien mit Mauer- oder Böschungskennzeichen und 73 Brücken-/Tunnelabschnitte getrennt auf. Diese Merkmale sind Kandidaten, keine bereits geprüften hydraulischen Sperren oder Durchlässe; ihre Höhen und tatsächliche Funktion sind nicht aus den Tags ableitbar. Die vier Meter gemittelten Höhen können schmale Kanten glätten. Die inzwischen bezogenen Bruchkanten sind separat im Paket enthalten. Daraus abgeleitete hydraulische Sperren müssen vor der Szenarioabnahme geprüft und gegebenenfalls umgesetzt werden.
+
+## Unabhängiges Orthofoto und Wiener Bruchkanten
+
+Am 29. Oktober 2026 wurden 72 Kacheln des [basemap.at-Orthofotos](https://basemap.at/orthofoto/) über den [WMTS-Dienst](https://mapsneu.wien.gv.at/basemapneu/1.0.0/WMTSCapabilities.xml) (Zoom 18) abgerufen. Datenquelle: [basemap.at](https://basemap.at/), CC BY 4.0. Die Kacheln liegen nur in `raw-data/basemap-orthofoto/`; ihre Prüfsummen stehen in [orthofoto-kacheln.json](orthofoto-kacheln.json). `python tools/check-overlay.py --download` bezieht fehlende Kacheln, die erneute Ausführung ohne diesen Schalter prüft die gespeicherten Prüfsummen und erzeugt beide Bilder. Aktualisierte Serverkacheln können nicht den ursprünglichen Abruf ersetzen, wenn ihre Prüfsumme abweicht. Pillow 13.0.0 ist zusätzlich in den Python-Voraussetzungen enthalten.
+
+[Orthofoto mit Szenariogeometrien](orthofoto-kontrolle.jpg): Grundkarte basemap.at, © OpenStreetMap-Mitwirkende; Gebäude rot, Straßen gelb, Gewässerränder cyan. Die visuellen Kontrollen zeigen passende Gebäudeumrisse, Ufer und Brückenachsen ohne auffälligen großflächigen Projektionsversatz. Dies ist keine Vermessung der Lagegenauigkeit; Vegetation, Bauzustand und Erfassungszeitpunkt können einzelne Abweichungen verdecken.
+
+Die [DGM-Bruchkanten, Blatt 35/2](https://www.wien.gv.at/ma41datenviewer/downloads/geodaten/dgm_bk_shp/35_2_dgm_bk.zip), wurden am selben Tag bezogen: SHA-256 `f5abb28d8a6d93ee99ae2f0934639ad5e5e1358b2985081aa3c9a9ca771aa7db`, CC BY 4.0, Datenquelle: Stadt Wien - data.wien.gv.at. Das Paket enthält 289 beschnittene 3D-Liniensegmente mit Höhen von 0,650 bis 11,275 m Wiener Null. Das [Bruchkanten-Kontrollbild](bruchkanten-kontrolle.jpg) ergänzt dieselbe Überlagerung um Typ 1 in Grün und Typ 2 in Magenta. Die fachliche Bedeutung dieser Typcodes und ihre Eignung als wasserundurchlässige Kanten sind noch nicht geklärt. Die Linien sind deshalb derzeit **keine** Solver-Barrieren; durch die Rastermittelung geglättete Schutzlinien und Durchlässe bleiben eine offene Abnahmelücke.
+
+Die OSM-Ableitung und ihre Lizenzhinweise sind in [DATENQUELLEN.md](../public/scenarios/DATENQUELLEN.md) aufgeführt; die OSM-abgeleiteten Daten sind im Szenariopaket maschinenlesbar verfügbar. Ob die dauerhafte Bereitstellung der exakt verwendeten Ausgangsdaten und die Kombination aller Daten sämtliche Weitergabepflichten erfüllt, bleibt zu prüfen.

@@ -8,6 +8,7 @@ export interface Scenario {
   terrain: number[]; bed: number[]; initialDepth: number[]; waterMask: number[];
   buildings: Building[]; roads: Road[];
   barriers: { id: string; kind: string; points: number[][] }[];
+  breaklines: { type: number; points: number[][] }[];
   crossings: { id: string; bridge: string | null; tunnel: string | null; points: number[][] }[];
   water: { id: string; polygons: Polygon[] }[];
   parameters: { duration: number; budget: number; damageTarget: number; waterLevel: number; manning: number; damHeight: number; damCostPerCell: number; trenchDepth: number; trenchCostPerCell: number; buildingValuePerSquareMetre: number; demolitionCostFraction: number; damageDepth: number; damageDuration: number; inflowCells: number[]; inflowCurve: number[][]; outflowEdges: ('left'|'right'|'top'|'bottom')[] };
@@ -18,7 +19,7 @@ export interface Scenario {
 export function validateScenario(value: unknown): Scenario {
   if (!value || typeof value !== 'object') throw new Error('Szenario ist kein Objekt.');
   const s = value as Scenario;
-  if (s.id !== 'brigittenau' || s.version !== '1-draft') throw new Error('Unbekannte Szenarioversion.');
+  if (s.id !== 'brigittenau' || s.version !== '1.1-draft') throw new Error('Unbekannte Szenarioversion.');
   const g = s.grid;
   if (!g || !Number.isInteger(g.width) || !Number.isInteger(g.height) || g.width < 1 || g.height < 1 || g.width * g.height > 1_000_000 || !Number.isFinite(g.cellSize) || g.cellSize <= 0 || !Array.isArray(g.origin) || g.origin.length !== 2 || !g.origin.every(Number.isFinite) || g.crs !== 'EPSG:31256' || g.rowDirection !== 'south') throw new Error('Ungültiges Szenarioraster.');
   for (const field of ['terrain', 'bed', 'initialDepth', 'waterMask'] as const) {
@@ -33,6 +34,7 @@ export function validateScenario(value: unknown): Scenario {
   if (!Array.isArray(s.roads) || !s.roads.every(r => r && typeof r.id === 'string' && typeof r.kind === 'string' && validPoints(r.points,2))) throw new Error('Ungültige Straßen.');
   if (!Array.isArray(s.barriers) || !s.barriers.every(b => b && typeof b.id === 'string' && typeof b.kind === 'string' && validPoints(b.points,2))) throw new Error('Ungültige Barrieren.');
   if (!Array.isArray(s.crossings) || !s.crossings.every(c => c && typeof c.id === 'string' && (c.bridge === null || typeof c.bridge === 'string') && (c.tunnel === null || typeof c.tunnel === 'string') && validPoints(c.points,2))) throw new Error('Ungültige Brücken oder Tunnel.');
+  if (!Array.isArray(s.breaklines) || !s.breaklines.every(b=>b && Number.isInteger(b.type) && Array.isArray(b.points) && b.points.length>=2 && b.points.every(p=>Array.isArray(p) && p.length===3 && p.every(Number.isFinite)))) throw new Error('Ungültige DGM-Bruchkanten.');
   if (!Array.isArray(s.water) || !s.water.every(w => w && typeof w.id === 'string' && Array.isArray(w.polygons) && w.polygons.every(validPolygon))) throw new Error('Ungültige Gewässer.');
   const p = s.parameters;
   if (!p || !Number.isFinite(p.duration) || p.duration <= 0 || !Number.isFinite(p.budget) || p.budget < 0 || !Number.isFinite(p.damageTarget) || p.damageTarget < 0 || !Number.isFinite(p.waterLevel)) throw new Error('Ungültige Spielparameter.');

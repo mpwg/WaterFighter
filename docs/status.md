@@ -11,7 +11,7 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | Paket | Status | Tatsächlicher Nachweis | Nächster Schritt |
 | --- | --- | --- | --- |
 | AP 1 – Projektgrundlage | geprüft | Build, Typprüfung, Protokolltest, Entwicklungsserver und Browserlauf bestanden; Szene visuell geprüft | Bei Änderungen erneut prüfen |
-| AP 2 – Wiener Geodaten | in Arbeit | DGM und OSM bezogen, vorläufiges Szenariopaket zweimal bytegleich erzeugt und im Browser geladen: [Voruntersuchung](geodaten-voruntersuchung.md) | Referenzüberlagerung, Eignung und fertige reproduzierbare Pipeline prüfen |
+| AP 2 – Wiener Geodaten | in Arbeit | DGM und OSM bezogen, vorläufiges Szenariopaket zweimal bytegleich erzeugt und im Browser geladen: [Voruntersuchung](geodaten-voruntersuchung.md) | Bruchkanten hydraulisch interpretieren, zwei Wasserwege und Lizenzpflichten prüfen |
 | AP 3 – Simulation | in Arbeit | Synthetische Solver- und Bilanztests; früher Desktop-Leistungstest auf Szenarioentwurf: [Solverbericht](solverbericht.md) | Zuflusskurve, Dammöffnung, Spielintegration und mobile Leistung prüfen |
 | AP 4 – Darstellung | in Arbeit | Szenarioansicht und Worker-Snapshots, Maus-/Touch-Kamerasteuerung; zwei Playwright-Chromium-Abläufe | Strömungsanimation und Schadensanzeige auf tatsächlichen Geräten prüfen |
 | AP 5 – Werkzeuge/Schäden | in Arbeit | Worker-Regeln, Vorschau, Bestätigung, Budget und Schadenstests; drei Werkzeuge in Playwright-Chromium bedient | Werkzeugnutzen im Wiener Szenario und Bedienung auf Geräten prüfen |
@@ -34,8 +34,8 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | Goal-Übergabe dokumentiert | erfüllt | `goal-auftrag.md` |
 | Historische Untersuchung erhalten; README aktualisiert | erfüllt | `archiv/enginevergleich-3d.md`, `../README.md` |
 | Build, Typprüfung, Entwicklungsserver und Worker-Start | erfüllt | Build, Server, Protokolltest und Worker-Initialisierung in Playwright-Chromium geprüft |
-| Reproduzierbares reales Wiener Szenario | offen | Entwurf wird aus festgehaltenen Rohdaten bytegleich erzeugt; Geometrie, Barrieren, Eignung und Lizenzpflichten noch nicht vollständig geprüft |
-| Ausrichtung, Höhenbezug, Datenlücken und Quellen geprüft | offen | Höhenbezug und Rohdatenquellen dokumentiert; Überlagerung und Lückenprüfung fehlen |
+| Reproduzierbares reales Wiener Szenario | offen | Version 1.1-draft bytegleich erzeugt; Orthofotoüberlagerung geprüft, hydraulische Barrieren, Eignung und Lizenzpflichten offen |
+| Ausrichtung, Höhenbezug, Datenlücken und Quellen geprüft | offen | Orthofotoüberlagerung, Höhenbezug und endliche Rasterwerte geprüft; fachliche Datenlücken und Bruchkanteninterpretation offen |
 | Stabiler Solver und Bilanzfehler unter 0,1 % | offen | Geschlossenes Becken und bilanziertes Zu-/Abfluss-Testfeld bestehen; vollständige Stabilitäts- und Integrationsprüfung fehlt |
 | Plausible Flutwelle, Barrieren und Überströmung | offen | Symmetrische Welle und überströmbare Barriere numerisch geprüft; Dammöffnung und visuelle Kontrolle fehlen |
 | 2,5D-Ansicht, Touch-Modi und Fehlerbehandlung | offen | Karten- und Werkzeugmodi, Strömungsmarker und Zustandsabfrage vorhanden; tatsächliche Geräte und umfassende Fehlerprüfung fehlen |
@@ -52,6 +52,6 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 
 ## Fortsetzung
 
-AP 2 benötigt insbesondere die unabhängige Referenzüberlagerung der vollständigen Geometrie, Bruchkanten, zwei geeignete Wasserwege und Lizenzprüfung. Der Solver wurde unabhängig davon bereits begonnen; Szenarioabnahme und Solverabnahme bleiben offen. Die verbleibenden Kriterien und die reale Geräteabnahme sind offen.
+AP 2 benötigt insbesondere hydraulische Interpretation der Bruchkanten, zwei geeignete Wasserwege und Lizenzprüfung. Der Solver wurde unabhängig davon bereits begonnen; Szenarioabnahme und Solverabnahme bleiben offen. Die verbleibenden Kriterien und die reale Geräteabnahme sind offen.
 
 Lokale Geräteprüfung: USB zeigte ein QEMU-Tablet und Controller; `adb`, `idevice_id`, `xcrun`, Chrome und Firefox waren nicht im Pfad. Safari ist auf diesem Linux-Rechner nicht verfügbar. Ein entfernter Gerätezugang wurde nicht ausgeschlossen. Die vollständige Chromium-Headless-Runde und ihre Grenzen sind im [Solverbericht](solverbericht.md#vollständige-browserrunde-vorheriger-build) dokumentiert.

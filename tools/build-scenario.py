@@ -2,13 +2,16 @@
 """Reproduzierbare Aufbereitung des Wiener Szenarios (Rohdaten siehe Dokumentation)."""
 import hashlib
 import json
+import io
+import zipfile
 import math
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import numpy as np
 import rasterio
-from pyproj import Transformer
+import shapefile
+from pyproj import Transformer, CRS
 from rasterio.enums import Resampling
 from rasterio.features import rasterize
 from rasterio.transform import from_origin
@@ -25,6 +28,7 @@ EXTENT = box(X, Y, X + SIZE, Y + SIZE)
 TRANSFORM = from_origin(X, Y + SIZE, CELL, CELL)
 PROJECT = Transformer.from_crs(4326, 31256, always_xy=True)
 SOURCES = {
+    '35_2_dgm_bk.zip': 'f5abb28d8a6d93ee99ae2f0934639ad5e5e1358b2985081aa3c9a9ca771aa7db',
     '35_2_dgm_tif.zip': 'e8808f973a48223240e2c8863223ee4e2e85b988426c44fadd5f0b0cb95aa638',
     'brigittenau.osm': '954e0ac7985cc586ca5bdcb3eb912b3a1e7c75d0bbffe188b2e0bcdb9ceff9fd',
     'donau-relation.osm': 'ea5984cc48996b5455208f16aae808b72928ef03d4f88fe6fb9646a230485b88',
@@ -41,10 +45,21 @@ for name, expected in SOURCES.items():
     if actual != expected:
         raise ValueError(f'Prüfsumme von {name} stimmt nicht: {actual}')
 
+def check_m34(wkt):
+    # The legacy WKT has incomplete authority metadata; low-confidence EPSG
+    # guesses can even identify an unrelated CRS. Check its actual parameters.
+    crs=CRS.from_wkt(wkt)
+    op=crs.coordinate_operation
+    expected={'Latitude of natural origin':0, 'Longitude of natural origin':16+1/3, 'Scale factor at natural origin':1, 'False easting':0, 'False northing':-5000000}
+    params={p.name:p.value for p in op.params} if op else {}
+    if not op or op.method_name != 'Transverse Mercator' or any(k not in params or abs(params[k]-v)>1e-6 for k,v in expected.items()) or abs(crs.ellipsoid.semi_major_metre-6377397.155)>0.001 or abs(crs.ellipsoid.inverse_flattening-299.1528128)>0.00001:
+        raise ValueError('Quell-Koordinatensystem stimmt nicht mit Wiener GK M34 überein')
+
 # Direkt aus dem überprüften ZIP lesen, damit eine abweichende entpackte Datei nicht unbemerkt einfließt.
 terrain = np.full((N, N), np.nan, dtype=np.float32)
 with rasterio.open(f'zip://{RAW / "35_2_dgm_tif.zip"}!35_2_dgm.tif') as src:
-    if src.crs.to_epsg(confidence_threshold=25) != 31256 or not (src.bounds.left <= X and src.bounds.bottom <= Y and src.bounds.right >= X+SIZE and src.bounds.top >= Y+SIZE):
+    check_m34(src.crs.to_wkt())
+    if not (src.bounds.left <= X and src.bounds.bottom <= Y and src.bounds.right >= X+SIZE and src.bounds.top >= Y+SIZE):
         raise ValueError('DGM-Koordinatensystem oder Abdeckung stimmt nicht')
     source_data = src.read(1, masked=True)
     if np.ma.getmaskarray(source_data).any() or not np.isfinite(source_data).all():
@@ -156,6 +171,27 @@ for way in ways.values():
                 if 'bridge' in tags or 'tunnel' in tags:
                     crossings.append({'id': way.attrib['id'], 'bridge': tags.get('bridge'), 'tunnel': tags.get('tunnel'), 'points': coordinates})
 buildings.sort(key=lambda b:b['id']); roads.sort(key=lambda r:(r['id'],r['points'])); barriers.sort(key=lambda r:(r['id'],r['points'])); crossings.sort(key=lambda r:(r['id'],r['points']))
+# Keep 3D survey breaklines independently of the averaged elevation raster.
+# Their attributes do not by themselves identify hydraulic barriers or culverts.
+breaklines = []
+with zipfile.ZipFile(RAW / '35_2_dgm_bk.zip') as archive:
+    check_m34(archive.read('35_2_dgm_bk.prj').decode())
+    def member(suffix): return io.BytesIO(archive.read('35_2_dgm_bk.'+suffix))
+    reader=shapefile.Reader(shp=member('shp'),shx=member('shx'),dbf=member('dbf'))
+    if reader.shapeType != shapefile.POLYLINEZ: raise ValueError('Unerwarteter Bruchkantentyp')
+    for record in reader.iterShapeRecords():
+        shape=record.shape
+        if len(shape.z)!=len(shape.points) or not all(math.isfinite(z) for z in shape.z): raise ValueError('Ungültige Bruchkantenhöhe')
+        parts=list(shape.parts)+[len(shape.points)]
+        for a,b in zip(parts,parts[1:]):
+            if b-a<2:continue
+            line=LineString([(shape.points[i][0],shape.points[i][1],shape.z[i]) for i in range(a,b)]).intersection(EXTENT)
+            segments=list(line.geoms) if hasattr(line,'geoms') else [line]
+            for segment in segments:
+                if segment.geom_type=='LineString' and segment.length>0:
+                    coords=[[round(x-X,2),round(Y+SIZE-y,2),round(z,3)] for x,y,z in segment.coords]
+                    breaklines.append({'type':int(record.record[0]),'points':coords})
+
 water_mask = rasterize([(mapping(g), 1) for _,g in water_geometries if not g.is_empty], out_shape=(N,N), transform=TRANSFORM, fill=0, dtype='uint8')
 # DGM liefert keine bathymetrische Aufnahme: synthetische Sohle und Anfangspegel
 # sind explizit spielerische Annahmen, die bei der Kalibrierung geändert werden können.
@@ -165,14 +201,14 @@ bed = terrain.copy()
 bed[water_mask == 1] = water_level-bed_depth
 initial = np.where(water_mask == 1, bed_depth, 0).astype(np.float32)
 scenario = {
- 'id':'brigittenau', 'version':'1-draft', 'name':'Brigittenau an der Donau',
+ 'id':'brigittenau', 'version':'1.1-draft', 'name':'Brigittenau an der Donau',
  'grid': {'width':N, 'height':N, 'cellSize':CELL, 'origin':[X,Y+SIZE], 'crs':'EPSG:31256', 'heightReference':'Wiener Null (EPSG:8881)', 'rowDirection':'south'},
  'terrain': np.round(terrain,3).ravel().tolist(), 'bed': np.round(bed,3).ravel().tolist(), 'initialDepth': initial.ravel().tolist(), 'waterMask':water_mask.ravel().tolist(),
- 'buildings':buildings, 'roads':roads, 'barriers':barriers, 'crossings':crossings,
+ 'buildings':buildings, 'roads':roads, 'barriers':barriers, 'crossings':crossings, 'breaklines':breaklines,
  'water': [{'id':ident, 'polygons':[local_polygon(p) for p in polygon_parts(g)]} for ident,g in water_geometries],
  'parameters': {'duration':300, 'budget':10000, 'damageTarget':50000, 'waterLevel':water_level, 'manning':0.025, 'damHeight':4.0, 'damCostPerCell':40, 'trenchDepth':0.8, 'trenchCostPerCell':25, 'buildingValuePerSquareMetre':10, 'demolitionCostFraction':0.1, 'damageDepth':1, 'damageDuration':120, 'inflowCells':[x for x in range(60,100) if water_mask[0,x] == 1], 'inflowCurve':[[0,0],[60,4500],[140,15000],[210,10500],[300,0]], 'outflowEdges':['bottom','right']},
- 'adjustments': ['OSM-Gewässerflächen erhalten eine künstliche, ebene Sohle bei 0 m Wiener Null und einen Anfangsspiegel bei 2 m Wiener Null. Dies ist keine gemessene Bathymetrie.', 'Gebäude ohne verwendbare Höhenangabe erhalten 12 m Darstellungshöhe.'],
- 'sources': {'osm':'© OpenStreetMap-Mitwirkende, ODbL 1.0, https://www.openstreetmap.org/copyright', 'terrain':'Datenquelle: Stadt Wien - data.wien.gv.at, CC BY 4.0', 'sha256':SOURCES},
+ 'adjustments': ['Die DGM-Bruchkanten sind als 3D-Geometrie enthalten, aber noch nicht automatisch als hydraulische Sperren oder Durchlässe umgesetzt.', 'OSM-Gewässerflächen erhalten eine künstliche, ebene Sohle bei 0 m Wiener Null und einen Anfangsspiegel bei 2 m Wiener Null. Dies ist keine gemessene Bathymetrie.', 'Gebäude ohne verwendbare Höhenangabe erhalten 12 m Darstellungshöhe.'],
+ 'sources': {'osm':'© OpenStreetMap-Mitwirkende, ODbL 1.0, https://www.openstreetmap.org/copyright und https://opendatacommons.org/licenses/odbl/1-0/', 'terrain':'Datenquelle: Stadt Wien - data.wien.gv.at, CC BY 4.0, https://creativecommons.org/licenses/by/4.0/', 'sha256':SOURCES},
 }
 OUT.parent.mkdir(parents=True,exist_ok=True)
 OUT.write_text(json.dumps(scenario,ensure_ascii=False,separators=(',',':'),allow_nan=False)+'\n',encoding='utf-8')

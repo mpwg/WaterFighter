@@ -28,7 +28,7 @@ Auf Stand `bc6c8ed` bestanden 70 Modelltests und drei gezielte Chromium-Fälle z
 
 Die Geodatenpipeline erzeugte das ausgelieferte Szenario erneut bytegleich aus den lokal gesicherten Rohdaten; Prüfsumme, Versionen und Grenzen stehen in der [Geodaten-Voruntersuchung](geodaten-voruntersuchung.md#erneuter-isolierter-szenariobuild).
 
-[Gräben können an bestehende Gräben anschließen](review-gebaeudevergleich.md#verbundene-nordgräben): Bereits ausgehobene Zellen werden in der Vorschau genannt und weder erneut bezahlt noch vertieft. Regel-, Worker- und gezielter Chromium-Test bestehen. Beide untersuchten Nordtrassen bleiben teilweise überlappend; ihr gemeinsamer Bau verbessert die getestete Runde nicht gegenüber dem diagonalen Graben allein.
+[Gräben können an bestehende Gräben anschließen](review-gebaeudevergleich.md#verbundene-nordgräben): Bereits ausgehobene Zellen werden in der Vorschau genannt und weder erneut bezahlt noch vertieft. Auf dem isolierten Build `bc6c8ed` bestanden 70 Modelltests und [alle 71 Chromium-Prüfungen](browser-pruefung.md#produktionsbuild-mit-grabenanschlüssen). Beide untersuchten Nordtrassen bleiben teilweise überlappend; ihr gemeinsamer Bau verbessert die getestete Runde nicht gegenüber dem diagonalen Graben allein.
 
 Die erneute Paketprüfung am 29. Oktober 2026 mit `bun outdated` meldet keine veralteten Pakete; `bun audit` meldet keine bekannten Schwachstellen unter 88 geprüften Paketen. Das Ergebnis ist eine Momentaufnahme der abgefragten Registry.
 

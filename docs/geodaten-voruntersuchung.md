@@ -241,6 +241,16 @@ Als weitere geometrische Suche findet `bun tools/find-southern-trench.ts 7 > /tm
 
 Dieser niedrigere Weg ist durch die Spielregeln bezahlbar, aber mit 55 Bestätigungen nicht als praktisch bedienbar nachgewiesen. Die Suche optimiert geometrische Länge unter einer Höhenbegrenzung, nicht Richtung, Durchfluss oder Schäden; sie schließt andere Wege und Kombinationen nicht aus. Beide Versuche belegen keine zweite wirksame Ableitung und keine Folgen außerhalb des Modellgebiets.
 
+Als Sensitivitätsversuch verändert die neue Option `--depth=5` beziehungsweise `--depth=8` von `tools/trace-land-retention.ts` die Grabentiefe ausschließlich im Speicher. Auf demselben Weg und mit denselben Eintrittskanten ergeben sich folgende 300-s-Läufe; die 3-m-Zeile ist die bereits dokumentierte ausgelieferte Konfiguration. Die Grabenkosten bleiben in dieser Diagnose unverändert und sind keine Kostenabschätzung für tiefere Bauwerke.
+
+| Grabentiefe | Markierter Eintritt an `y:24918` | Markierter direkter Randaustritt vor Rückkehr ins Gewässer | Maximales gleichzeitiges markiertes Landvolumen | Gesamtschaden |
+| --- | ---: | ---: | ---: | ---: |
+| 3 m | 6.785,23 m³ | 9,18 × 10⁻²¹ m³ | 212,06 m³ | 138.852,11 |
+| 5 m | 9.576,82 m³ | 1,29 × 10⁻¹⁸ m³ | 360,30 m³ | 138.668,82 |
+| 8 m | 9.959,90 m³ | 1,65 × 10⁻¹² m³ | 647,97 m³ | 138.337,16 |
+
+Der 5-m-Lauf hatte einen relativen Wasserbilanzfehler von 1,10 × 10⁻¹⁴ und einen Markierungsbilanzrest von −7,88 × 10⁻¹⁰ m³; beim 8-m-Lauf waren es 5,73 × 10⁻¹⁴ und −1,29 × 10⁻⁹ m³. Größere Tiefe erhöht den markierten Eintritt und das aufgestaute Landvolumen, liefert für diese markierte Eintrittskante und diesen Verlauf aber keinen nennenswerten direkten Randaustritt und nur geringe Schadensänderung. Die Markierung endet bei der ersten Rückkehr ins Gewässer und verfolgt keine realen Wasserteilchen. Sie schließt andere Eintrittsstellen, spätere Fließwege oder andere Trassen nicht aus; eine solche Vertiefung wurde weder ins Spiel übernommen noch fachlich als reales Bauwerk bewertet. Wiederholung nach `bun tools/find-southern-trench.ts 7 > /tmp/wf-southern-route-7.json` mit `bun tools/trace-land-retention.ts baseline --gates=y:10867,y:24918 --route-file=/tmp/wf-southern-route-7.json --depth=5` beziehungsweise `--depth=8`.
+
 ## Übernahme der Spielparameter in Version 1.4
 
 Die zuvor nur experimentell untersuchten Parameter sind ab `1.4-draft` im gelieferten Szenario: 3 m Grabentiefe und ein zusätzlich offener westlicher Modellrand. Sie stehen mit ihrer Erläuterung in `tools/scenario-adjustments.json` und werden von `tools/build-scenario.py` in das Szenariopaket übernommen. Gelände, Gebäude, Rohdaten und das Schadensziel 50.000 bleiben unverändert. Der offene Rand entfernt Wasser aus dem berechneten Ausschnitt; das Gebiet dahinter wird nicht berechnet. Die Öffnung ist eine Spielvereinfachung, keine Aussage über reale Schadensvermeidung.

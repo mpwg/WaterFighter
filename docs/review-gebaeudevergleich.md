@@ -55,7 +55,9 @@ Für eine räumlich getrennte zweite Ableitung wurden drei kurze, durch Gebäude
 | (0,42) → (17,42) | 450 | 7.710 | 34.792,87 | 0,0071 m³ |
 | (0,44) → (14,44) | 375 | 7.785 | 34.792,87 | 0,0071 m³ |
 
-Diese drei Werte für Schaden und Randabfluss stimmen in der Berechnung mit der Kontrolle aus drei Dämmen ohne Graben überein; die relativen Bilanzfehler liegen jeweils bei 1,58 × 10⁻¹³. Anders als der oben untersuchte Graben in Zeile 4 zeigen sie damit keine zusätzliche Schutzwirkung. Die gezielte Auswahl umfasst nur drei kurze gerade Strecken und schließt andere Platzierungen, Abrisse oder Kombinationen nicht aus. Ein zweiter wirksamer Wasserweg ist damit weiterhin nicht belegt.
+Die weitere Nachbarstrecke `(0,43) → (15,43)` kostet 400 und ergibt ebenfalls 34.792,87 Schaden und 0,0071 m³ Westabfluss bei 7.760 Budgetrest; ihr relativer Bilanzfehler beträgt 1,58 × 10⁻¹³.
+
+Diese vier Werte für Schaden und Randabfluss stimmen in der Berechnung mit der Kontrolle aus drei Dämmen ohne Graben überein; die relativen Bilanzfehler liegen jeweils bei 1,58 × 10⁻¹³. Anders als der oben untersuchte Graben in Zeile 4 zeigen sie damit keine zusätzliche Schutzwirkung. Die gezielte Auswahl umfasst nur vier kurze gerade Strecken und schließt andere Platzierungen, Abrisse oder Kombinationen nicht aus. Ein zweiter wirksamer Wasserweg ist damit weiterhin nicht belegt.
 
 ### Markierter Verlauf des Landgrabens
 

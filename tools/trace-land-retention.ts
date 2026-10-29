@@ -4,6 +4,9 @@ import {Game} from '../src/simulation/game';
 import {trenchPath} from '../src/simulation/path';
 import {validateScenario} from '../src/scenario';
 const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
+// Optional diagnostic sensitivity only; the delivered scenario remains unchanged.
+const depthArg=process.argv.find(a=>a.startsWith('--depth='));
+if(depthArg){const depth=Number(depthArg.slice(8));if(!Number.isFinite(depth)||depth<=0||depth>10)throw Error('Grabentiefe muss größer 0 und höchstens 10 m sein');scenario.parameters.trenchDepth=depth;}
 const mode=process.argv[2]??'baseline';
 if(!['baseline','0','1'].includes(mode))throw Error('Argument: baseline | 0 | 1');
 const game=new Game(scenario),s=game.solver,w=s.width,h=s.height,n=w*h,area=s.cellSize**2,initialVolume=s.volume();
@@ -98,4 +101,4 @@ while(s.time<scenario.parameters.duration-1e-9){
  for(let k=0;k<2;k++){peakLand[k]=Math.max(peakLand[k],land[k]);for(let j=0;j<distances.length;j++)peakBeyond[k][j]=Math.max(peakBeyond[k][j],beyond[k][j]);}
 }
 const markers=gates.map((gate,k)=>{const remaining=dye[k].reduce((a,b)=>a+b,0);return {gate,tagged:tagged[k],exited:exited[k],returned:returned[k],remaining,peakLand:peakLand[k],peakBeyond:distances.map((metres,j)=>({metres,volume:peakBeyond[k][j]})),farthestCellAtLeastPoint1M3:farthest[k],balanceError:remaining+exited[k]+returned[k]-tagged[k]};});
-console.log(JSON.stringify({scenario:scenario.version,mode,trench:trenchArg??null,route:routeArg??null,time:s.time,budget:game.budget,...game.totals(),markers,maxBoundError,waterBalance:Math.abs(s.volume()-initialVolume-s.inflow+s.outflow-s.roundoffVolume)/(initialVolume+s.inflow)},null,2));
+console.log(JSON.stringify({scenario:scenario.version,trenchDepth:scenario.parameters.trenchDepth,mode,trench:trenchArg??null,route:routeArg??null,time:s.time,budget:game.budget,...game.totals(),markers,maxBoundError,waterBalance:Math.abs(s.volume()-initialVolume-s.inflow+s.outflow-s.roundoffVolume)/(initialVolume+s.inflow)},null,2));

@@ -500,3 +500,16 @@ Ein isolierter Produktionsbuild des Anwendungscodes `d38c0ca` wurde mit `bun too
 Die vollständige Runde endete ohne protokollierte Seitenfehler mit 36.282 Flutschaden, keinem Abrissverlust und 7.140 Budgetrest; das Ziel von 50.000 wurde erreicht. Der Neustart stellte 00:00, 10.000 Budget und null Schaden wieder her. Die gemessenen 211,931 s umfassen unter anderem die Pause und automatisierte Auswahlversuche und sind kein Leistungsnachweis. Die vorgegebenen und nachjustierten Bildschirmkoordinaten belegen keine menschliche Auffindbarkeit oder Gerätebedienung.
 
 Ein erster Versuch erreichte die Zielprüfung, scheiterte jedoch an einer fehlerhaften DOM-Eigenschaft im Neustartteil des Prüfskripts; die Ergebniszahlen wurden dabei nicht gesichert. Eine Wiederholung wurde vor dem Ergebnis durch das Schließen des Browsers unterbrochen, ohne geklärte Ursache. Erst der oben dokumentierte erneute Lauf mit korrigiertem Skript und Google Chrome schloss einschließlich Neustart ab. Die Modelluntersuchungen zum Wasserweg und die echte Geräteabnahme bleiben davon getrennt.
+
+### Platzierungsabweichungen des 20-m-Schutzdamms
+
+Der gesamte 20-m-Damm `(41,28) → (46,28)` wurde jeweils um eine Rasterzelle in eine der vier Achsrichtungen verschoben; die übrigen vorbereiteten Dämme und der bei 180 s angelegte Graben blieben unverändert. `bun tools/compare-partial-diversion.ts 7 trench --guard-radius=2 --at=180 --guard-shift=X,Y` und der entsprechende `control`-Lauf ohne `--at` vergleichen jede Verschiebung mit denselben Dämmen ohne Graben. Eine Rasterzelle entspricht 4 m; die Verschiebung betrifft beide Endpunkte des Schutzdamms.
+
+| Verschiebung x / y | Schaden ohne Graben | Schaden mit Graben | Schadensminderung |
+| --- | ---: | ---: | ---: |
+| −1 / 0 | 47.842,43 | 36.202,49 | 11.639,93 |
+| +1 / 0 | 48.482,30 | 36.577,30 | 11.905,00 |
+| 0 / −1 | 48.102,77 | 46.947,55 | 1.155,22 |
+| 0 / +1 | 47.820,20 | 36.206,75 | 11.613,45 |
+
+Alle Maßnahmen sind zulässig, alle Grabenrunden enden mit 7.140 Budgetrest und unter dem Schadensziel. In drei Verschiebungen ist die Schadensminderung größer als die Grabenkosten von 1.700; bei `0 / −1` ist sie kleiner. Die relativen Wasserbilanzfehler liegen unter 2,42 × 10⁻¹³. Die Untersuchung behandelt nur diese vier vollständigen Verschiebungen, nicht unabhängige Verschiebungen einzelner Endpunkte oder menschliche Auswahl; sie ersetzt keine Geräteprüfung und ist keine reale Schutzempfehlung.

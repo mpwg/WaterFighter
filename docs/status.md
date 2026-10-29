@@ -22,6 +22,8 @@ Ein zusätzlicher Regeltest auf dem ausgelieferten Szenario 1.4 prüft den kurze
 
 Nach einer Bestätigung zeigt die Vorschau „Maßnahme wird ausgeführt“; Verwerfen und Werkzeugwechsel bleiben bis zur Workerantwort gesperrt. Ein Chromium-Test verzögert die Übermittlung künstlich und prüft die Sperre, das unveränderte Budget während des Wartens und die anschließende Ausführung. Produktionsbuild, 54 Vitest-Tests und zwei gezielte Chromium-Prüfungen bestanden; die Verzögerung ist ein Testaufbau und keine gemessene Geräte-Latenz.
 
+Bei Damm und Graben markiert ein Kreuz den gewählten Startpunkt; nach dem zweiten Punkt oder einem Werkzeugwechsel wird es durch die Verlaufsvorschau ersetzt beziehungsweise entfernt. Ein Chromium-Bildvergleich prüft die Markierung auf dem Szenario und auf einer künstlich gleichmäßig überfluteten Karte; ein weiterer Wechselvergleich prüft ihr Verschwinden. Produktionsbuild, 54 Vitest-Tests und fünf gezielte Chromium-Prüfungen bestanden. Sichtbarkeit während einer dynamischen Flut und auf echten Geräten bleibt zu prüfen.
+
 Die Wartephase wurde ergänzend in Chromium mit kontrolliert zurückgehaltener Aktion geprüft: Nach Ablehnung sind Verwerfen und Werkzeugwahl wieder verfügbar; nach Neustart beeinflusst eine erst danach zugestellte Aktion aus der alten Runde weder Budget noch neue Grabenvorschau. Alle drei Prüfungen dieser Datei und die Typprüfung bestanden. Die Ablehnung wurde durch eine testseitig veränderte Worker-Nachricht ausgelöst.
 
 Auf dem Produktionsbuild von Anwendungscode `803b812` bestanden alle 42 Chromium-Browserprüfungen unter Linux mit Softwaregrafik, einschließlich der Grabenvorschau und emulierten Touchbedienung. Die Prüfungen ersetzen keine vollständige menschliche Bedienung oder Abnahme auf echten Geräten.

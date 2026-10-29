@@ -213,6 +213,22 @@ export class World {
     if(!hit?.hit||!hit.pickedPoint) return undefined;
     return {x:hit.pickedPoint.x+this.width*this.cell/2,y:hit.pickedPoint.z+this.height*this.cell/2,buildingId:hit.pickedMesh?.metadata?.buildingId};
   }
+  showStart(point:{x:number;y:number}):void {
+    this.showPreview();
+    const x=point.x-this.width*this.cell/2,y=point.y-this.height*this.cell/2;
+    const cx=Math.max(0,Math.min(this.width-1,Math.floor(point.x/this.cell))),cy=Math.max(0,Math.min(this.height-1,Math.floor(point.y/this.cell)));
+    let surface=terrainHeight(point.x,point.y,this.width,this.height,this.cell,this.bed);
+    for(const dx of [0,1]) for(const dy of [0,1]) {
+      const i=Math.min(cy+dy,this.height-1)*this.width+Math.min(cx+dx,this.width-1);
+      surface=Math.max(surface,this.bed[i]+this.currentDepth[i]);
+    }
+    const h=surface+1.5,r=this.cell*1.5;
+    this.previewMesh=CreateLineSystem('preview-start',{lines:[
+      [new Vector3(x-r,h,y),new Vector3(x+r,h,y)],
+      [new Vector3(x,h,y-r),new Vector3(x,h,y+r)],
+    ]},this.scene);
+    this.previewMesh.color=new Color3(1,0.38,0.08);this.previewMesh.isPickable=false;
+  }
   showPreview(action?:Action):void {
     this.previewMesh?.dispose(); this.previewMesh=undefined;
     for(const m of this.scene.meshes) if(m.metadata?.buildingId) m.renderOverlay=false;

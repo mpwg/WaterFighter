@@ -66,8 +66,8 @@ function selectAt(x:number,y:number) {
   if(!world||!scenario||awaiting||finished||fatalError)return;
   if(mode==='demolish') {const hit=world.pick(x,y,true);if(hit?.buildingId) showDraft({kind:'demolish',buildingId:hit.buildingId});else message.textContent='Bitte ein Gebäude auswählen.';return;}
   const hit=world.pick(x,y);if(!hit){message.textContent='Bitte innerhalb der Karte auswählen.';return;}
-  if(!first){first=hit;message.textContent='Endpunkt auf der Karte antippen.';return;}
-  const action=pathAction(first,hit);first=undefined;if(action)showDraft(action);else message.textContent='Bitte einen längeren Verlauf wählen.';
+  if(!first){first=hit;world.showStart(hit);message.textContent='Endpunkt auf der Karte antippen.';return;}
+  const action=pathAction(first,hit);first=undefined;if(action)showDraft(action);else {world.showPreview();message.textContent='Bitte einen längeren Verlauf wählen.';}
 }
 let worker:Worker|undefined;
 function fail(text:string) { pendingPresentation.clear(); fatalError=true; running=false; worker?.terminate(); run.disabled=true; reset.disabled=true; speedButton.disabled=true; for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=true; clearDraft(); resultPanel.hidden=true; gamePanel.hidden=false; gamePanel.scrollTop=0; panelToggle.setAttribute('aria-expanded','true'); panelToggle.textContent='Menü ausblenden'; message.textContent=text; stateLabel.textContent='Fehler'; reloadButton.hidden=false; }

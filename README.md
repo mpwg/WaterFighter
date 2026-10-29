@@ -1,23 +1,26 @@
 # WaterFighter
 
-Ein geplantes Hochwasserschutzspiel für den Browser: Schütze ein reales Wiener Stadtviertel an der Donau mit Dämmen, Gräben und gezieltem Gebäudeabriss.
+WaterFighter soll ein browserbasiertes Hochwasserschutzspiel in einem realen Wiener Donauviertel werden. Derzeit gibt es eine technische Szenario- und Simulationsvorschau; Werkzeuge sind als Vorschau und bestätigte Aktionen vorhanden; Ergebnis und abgestimmte Spielrunde fehlen noch. Die Anwendung ist keine Hochwasserprognose.
 
-**Stand: 29. Oktober 2026 — Konzept und Umsetzungsplanung. Es gibt noch keine Spielimplementierung.**
+## Einrichtung und Prüfung
 
-Der vereinbarte Prototyp verbindet echte OpenStreetMap-Geometrien und Wiener Geländehöhen mit einer stilisierten 2,5D-Darstellung. Eine Flachwassersimulation berechnet Flutwelle, Strömung und Rückstau. Spieler können unbegrenzt vorbereiten und während der pausierbaren Echtzeit weiter eingreifen. Budget und Schäden bestimmen das Ergebnis.
+Voraussetzung: Node.js 24 und npm; für Browserprüfungen zusätzlich ein von Playwright unterstützter Browser mit seinen Systembibliotheken.
 
-Zielplattformen sind Desktop-Browser sowie iPhone und Android. Die reale Geografie dient einem Spiel, keiner Hochwasserprognose.
+```sh
+npm ci
+npm run dev
+npm run typecheck
+npm test
+npm run build
+npm run test:browser
+```
+
+Der Entwicklungsserver nennt seine lokale Adresse. `npm run preview` liefert den zuvor erzeugten Produktionsbuild lokal aus. Die technische Vorschau zeigt das vorläufige Szenario und einen pausierbaren Solver im Worker. Im Kartenmodus verschieben und zoomen; für Damm oder Graben Start und Ende wählen, beim Abriss ein Gebäude auswählen und anschließend die Vorschau bestätigen. Die Geodaten-Voruntersuchung mit Python und Rasterio/GDAL ist in [geodaten-voruntersuchung.md](docs/geodaten-voruntersuchung.md) beschrieben; ein vorläufiges Szenariopaket liegt bei; seine Eignung und Vollständigkeit sind noch nicht abgenommen. Eine öffentliche Veröffentlichung ist nicht beauftragt.
 
 ## Dokumentation
 
-- [Spielplan](docs/spielplan.md): verbindliche Produktentscheidungen, Spielregeln und Grenzen.
-- [Detaillierter Umsetzungsplan](docs/umsetzungsplan.md): Architektur, Arbeitspakete AP 1–7, Schnittstellen und Abnahmekriterien.
-- [Status und Kriterienmatrix](docs/status.md): tatsächlicher Fortschritt, fehlende Nachweise und nächster Schritt.
-- [Kopierfertiger Goal-Auftrag](docs/goal-auftrag.md): Auftrag für den implementierenden Agenten.
-- [Historischer 3D-Enginevergleich](docs/archiv/enginevergleich-3d.md): archivierter früherer Ansatz, keine aktuelle Architekturvorgabe.
-
-## Geplanter technischer Aufbau
-
-TypeScript, Vite und Babylon.js mit WebGL2; Flachwassersimulation in einem Web Worker; Python und GDAL für die vorgelagerte Geodatenaufbereitung. Die fertige Anwendung soll statisch und ohne Laufzeit-Backend auslieferbar sein.
-
-Es sind noch keine Abhängigkeiten, Startbefehle oder Testläufe eingerichtet. Diese README wird während der Umsetzung um die tatsächlich funktionierende Einrichtung und Bedienung ergänzt. Eine öffentliche Veröffentlichung ist nicht beauftragt.
+- [Spielplan](docs/spielplan.md): Produktziel und Spielregeln.
+- [Umsetzungsplan](docs/umsetzungsplan.md): Architektur, Arbeitspakete und Abnahmekriterien.
+- [Status und Kriterienmatrix](docs/status.md): Fortschritt und tatsächliche Nachweise.
+- [Goal-Auftrag](docs/goal-auftrag.md): Implementierungsauftrag.
+- [Historischer 3D-Enginevergleich](docs/archiv/enginevergleich-3d.md): früherer Ansatz, keine Architekturvorgabe.

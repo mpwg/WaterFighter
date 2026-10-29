@@ -13,9 +13,9 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | AP 1 – Projektgrundlage | geprüft | Build, Typprüfung, Protokolltest, Entwicklungsserver und Browserlauf bestanden; Szene visuell geprüft | Bei Änderungen erneut prüfen |
 | AP 2 – Wiener Geodaten | in Arbeit | DGM und OSM bezogen, vorläufiges Szenariopaket zweimal bytegleich erzeugt und im Browser geladen: [Voruntersuchung](geodaten-voruntersuchung.md) | Referenzüberlagerung, Eignung und fertige reproduzierbare Pipeline prüfen |
 | AP 3 – Simulation | in Arbeit | Synthetische Solver- und Bilanztests; früher Desktop-Leistungstest auf Szenarioentwurf: [Solverbericht](solverbericht.md) | Zuflusskurve, Dammöffnung, Spielintegration und mobile Leistung prüfen |
-| AP 4 – Darstellung | in Arbeit | Szenarioansicht und Worker-Snapshots, Maus-/Touch-Kamerasteuerung; zwei Playwright-Chromium-Abläufe | Werkzeuge, Strömungsanimation, Schäden und tatsächliche Geräte prüfen |
-| AP 5 – Werkzeuge/Schäden | in Arbeit | Worker-Regeln, Vorschau, Bestätigung, Budget und Schadenstests; drei Werkzeuge in Playwright-Chromium bedient | Wirkungsnachweise, Bedienung auf Geräten und Prüfung der Gebäuderasterung |
-| AP 6 – Spielrunde | in Arbeit | Ergebnisanzeige und numerische Referenzstrategie; verkürzter Browserablauf | Einführung, vollständige Browserrunde und Werkzeugnutzen prüfen |
+| AP 4 – Darstellung | in Arbeit | Szenarioansicht und Worker-Snapshots, Maus-/Touch-Kamerasteuerung; zwei Playwright-Chromium-Abläufe | Strömungsanimation und Schadensanzeige auf tatsächlichen Geräten prüfen |
+| AP 5 – Werkzeuge/Schäden | in Arbeit | Worker-Regeln, Vorschau, Bestätigung, Budget und Schadenstests; drei Werkzeuge in Playwright-Chromium bedient | Werkzeugnutzen im Wiener Szenario und Bedienung auf Geräten prüfen |
+| AP 6 – Spielrunde | in Arbeit | Ergebnisanzeige und numerische Referenzstrategie; verkürzter Browserablauf | Strategie vollständig im Browser ausführen und Werkzeugnutzen im Szenario prüfen |
 | AP 7 – Gesamtprüfung | offen | Abnahmeverfahren spezifiziert | Browser und reale Geräte prüfen |
 
 ### Bisherige Prüfungen
@@ -23,7 +23,7 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 - Node.js 24.22.0, npm 12.2.0; Vite 8.3.5, Babylon.js 9.33.0, Vitest 5.0.5 und Playwright 1.64.1 sind in der Lockdatei festgelegt.
 - `npm run build` und `npm test` bestanden (ein Protokolltest); `npm run dev` startete und lieferte HTML über HTTP.
 - `npm run test:browser` scheiterte zunächst an fehlenden Systembibliotheken. Nach temporärem Entpacken der Ubuntu-Bibliotheken unter `/tmp/waterfighter-libs` bestand `LD_LIBRARY_PATH=/tmp/waterfighter-libs/root/usr/lib/x86_64-linux-gnu npm run test:browser` in Playwright-Chromium; Worker-Meldung und Canvas waren sichtbar. Ein Screenshot der Entwickleransicht zeigte die grüne Fläche. Das ist keine Desktop-Browserabnahme.
-- `gdalinfo` ist auf diesem Rechner nicht vorhanden; Rasterio verwendet GDAL 3.12.2. Die Voruntersuchung dokumentiert Rohdatenprüfsummen und zwei bytegleiche Pipeline-Läufe. Build, 21 Vitest-Tests und fünf Playwright-Chromium-Tests bestanden nach Einbindung des Szenarioladers und des Solvers. Geräteverfügbarkeit ist noch zu prüfen.
+- `gdalinfo` ist auf diesem Rechner nicht vorhanden; Rasterio verwendet GDAL 3.12.2. Die Voruntersuchung dokumentiert Rohdatenprüfsummen und zwei bytegleiche Pipeline-Läufe. Build, 24 Vitest-Tests und sechs Playwright-Chromium-Tests bestanden nach Einbindung des Szenarioladers und des Solvers. Geräteverfügbarkeit ist noch zu prüfen.
 
 ## Kriterienmatrix
 
@@ -38,13 +38,13 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | Ausrichtung, Höhenbezug, Datenlücken und Quellen geprüft | offen | Höhenbezug und Rohdatenquellen dokumentiert; Überlagerung und Lückenprüfung fehlen |
 | Stabiler Solver und Bilanzfehler unter 0,1 % | offen | Geschlossenes Becken und bilanziertes Zu-/Abfluss-Testfeld bestehen; vollständige Stabilitäts- und Integrationsprüfung fehlt |
 | Plausible Flutwelle, Barrieren und Überströmung | offen | Symmetrische Welle und überströmbare Barriere numerisch geprüft; Dammöffnung und visuelle Kontrolle fehlen |
-| 2,5D-Ansicht, Touch-Modi und Fehlerbehandlung | offen | Erste Kartenansicht und Kamera; Werkzeugmodus, Animation und umfassende Fehlerprüfung fehlen |
-| Atomare Aktionen, Budget, Wassererhaltung und Schadenswertung | offen | Regel- und Worker-Tests bestehen für Vorschau, Doppelübermittlung, Graben, Abriss und Schadenszählung; Wirkungs- und Geräteprüfungen fehlen |
-| Vollständige Runde und bezahlbare erfolgreiche Strategie | offen | Ohne Maßnahmen 324.070,77 Schaden; Dammstrategie rechnerisch 0 bei Budgetrest 2.600. Vollständiger Browserablauf und tatsächliche Bedienbarkeit fehlen |
+| 2,5D-Ansicht, Touch-Modi und Fehlerbehandlung | offen | Karten- und Werkzeugmodi, Strömungsmarker und Zustandsabfrage vorhanden; tatsächliche Geräte und umfassende Fehlerprüfung fehlen |
+| Atomare Aktionen, Budget, Wassererhaltung und Schadenswertung | offen | Regel-, Worker- und synthetische hydraulische Tests bestehen; Wirkungsnachweise im Szenario und Geräteprüfungen fehlen |
+| Vollständige Runde und bezahlbare erfolgreiche Strategie | offen | Ohne Maßnahmen 324.070,77 Schaden; Dammstrategie rechnerisch 0 bei Budgetrest 2.600. Vollständige ungeschützte 2×-Browserrunde auf vorherigem Build bestanden; Bedienbarkeit der Strategie fehlt |
 | Neustart und Schutz vor alten/doppelten Nachrichten | offen | Uhr, Raster und Aktionszustand sowie alte/doppelte Nachrichten in Tests geprüft; vollständige Runden fehlen |
 | Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Keine Browserläufe |
-| Echte iPhone-/Android-Abnahme | offen | Gerätezugriff noch nicht untersucht; keine Geräteprüfungen |
-| Mobile Framezeiten, Simulationsrate und Aktionslatenz | offen | Keine Messungen |
+| Echte iPhone-/Android-Abnahme | nicht prüfbar | Lokal kein Smartphone sichtbar und `adb`/`idevice_id` fehlen; Zugang zu echten Geräten bereitstellen |
+| Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Keine echten Smartphones lokal erreichbar; Messung auf beiden Geräten erforderlich |
 | Drei stabile aufeinanderfolgende Runden | offen | Keine Laufzeitprüfung |
 | Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Build vorhanden; vollständige Quellen- und Lizenzprüfung fehlt |
 
@@ -53,3 +53,5 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 ## Fortsetzung
 
 AP 2 benötigt insbesondere die unabhängige Referenzüberlagerung der vollständigen Geometrie, Bruchkanten, zwei geeignete Wasserwege und Lizenzprüfung. Der Solver wurde unabhängig davon bereits begonnen; Szenarioabnahme und Solverabnahme bleiben offen. Die verbleibenden Kriterien und die reale Geräteabnahme sind offen.
+
+Lokale Geräteprüfung: USB zeigte ein QEMU-Tablet und Controller; `adb`, `idevice_id`, `xcrun`, Chrome und Firefox waren nicht im Pfad. Safari ist auf diesem Linux-Rechner nicht verfügbar. Ein entfernter Gerätezugang wurde nicht ausgeschlossen. Die vollständige Chromium-Headless-Runde und ihre Grenzen sind im [Solverbericht](solverbericht.md#vollständige-browserrunde-vorheriger-build) dokumentiert.

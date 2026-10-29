@@ -1,2 +1,4 @@
 import { defineConfig } from '@playwright/test';
-export default defineConfig({ testDir: './tests/browser', use: { baseURL: 'http://127.0.0.1:4173' }, webServer: { command: 'npm run preview', port: 4173, reuseExistingServer: true } });
+const useDev=process.env.WATERFIGHTER_TEST_DEV==='1';
+const port=useDev?5173:4173;
+export default defineConfig({ testDir:'./tests/browser', use:{baseURL:`http://127.0.0.1:${port}`}, webServer:{command:useDev?'npm run dev':'npm run preview',port,reuseExistingServer:true} });

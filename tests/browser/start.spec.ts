@@ -70,3 +70,9 @@ test('Eine verkürzte Runde zeigt das Ergebnis und erlaubt den Neustart', async 
   await page.getByRole('button',{name:'Neue Runde'}).click();await expect(page.locator('#result')).toBeHidden();
   await expect(page.locator('#state')).toHaveText('Vorbereitung');await expect(page.locator('#budget')).toHaveText('10 000');
 });
+
+test('Einführung und Zustandsabfrage sind erreichbar',async ({page})=>{
+  await page.setViewportSize({width:1200,height:800});await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.getByText('So wird gespielt').click();await expect(page.getByText(/Wassertiefe und Gebäudeschaden antippen/)).toBeVisible();
+  await page.mouse.click(800,360);await expect(page.locator('#message')).toContainText(/Wassertiefe|Gebäude/);
+});

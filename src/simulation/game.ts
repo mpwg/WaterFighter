@@ -42,6 +42,13 @@ export class Game {
       const y0=Math.max(0,Math.floor(Math.min(...ys)/g.cellSize)), y1=Math.min(g.height-1,Math.floor(Math.max(...ys)/g.cellSize));
       const cells:number[]=[];
       for(let y=y0;y<=y1;y++) for(let x=x0;x<=x1;x++) if(insideBuilding((x+0.5)*g.cellSize,(y+0.5)*g.cellSize,b)) {const i=y*g.width+x;cells.push(i);this.occupied[i]++;}
+      // Preserve buildings smaller than a cell: assign the cell containing an
+      // actual footprint point instead of silently omitting their obstruction and damage.
+      if(cells.length===0 && x0<=x1 && y0<=y1) {
+        const [px,py]=b.polygon.outer[0];
+        const x=Math.max(0,Math.min(g.width-1,Math.floor(px/g.cellSize))),y=Math.max(0,Math.min(g.height-1,Math.floor(py/g.cellSize)));
+        const i=y*g.width+x;cells.push(i);this.occupied[i]++;
+      }
       const own=new Set(cells), neighbours=new Set<number>();
       for(const i of cells) { const x=i%g.width,y=Math.floor(i/g.width); for(const [nx,ny] of [[x-1,y],[x+1,y],[x,y-1],[x,y+1]]) if(nx>=0&&nx<g.width&&ny>=0&&ny<g.height&&!own.has(ny*g.width+nx)) neighbours.add(ny*g.width+nx); }
       const state:BuildingState={id:b.id,value:Math.round(b.area*scenario.parameters.buildingValuePerSquareMetre),damage:0,demolished:false,cells,neighbours:[...neighbours]};

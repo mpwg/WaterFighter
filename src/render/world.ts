@@ -9,11 +9,17 @@ export class World {
   readonly scene: Scene;
   readonly camera: ArcRotateCamera;
   private readonly water: Mesh;
+  private readonly flowLines: LinesMesh;
+  private readonly flowPositions: Float32Array;
+  private flowSamples: { x:number; y:number; height:number; vx:number; vy:number }[] = [];
+  private currentDepth = new Float32Array(0);
+  private currentBuildings = new Map<string,BuildingStatus>();
   private readonly land: Mesh;
   private readonly landPositions: Float32Array;
   private previewMesh?: LinesMesh;
   private damMesh?: LinesMesh;
   private damSignature = '';
+  private terrainRevision = -1;
   private readonly waterPositions: Float32Array;
   private readonly waterColors: Float32Array;
   private zoom = 560;
@@ -37,6 +43,11 @@ export class World {
     this.waterPositions=new Float32Array(waterData.positions!); this.waterColors=new Float32Array(waterData.colors!);
     const waterMat=new StandardMaterial('water-material',this.scene); waterMat.diffuseColor=new Color3(0.21,0.58,0.72); waterMat.specularColor=new Color3(0.1,0.15,0.16); waterMat.backFaceCulling=false; waterMat.emissiveColor=new Color3(0.10,0.29,0.38); waterMat.useAlphaFromDiffuseTexture=false;
     this.water.material=waterMat;
+    // A fixed, bounded set of visual stream markers is updated from worker momentum.
+    const count=Math.ceil(this.width/12)*Math.ceil(this.height/12);
+    this.flowLines=MeshBuilder.CreateLineSystem('flow',{lines:Array.from({length:count},()=>[Vector3.Zero(),Vector3.Zero()]),updatable:true},this.scene);
+    this.flowLines.color=new Color3(0.8,0.96,0.99);this.flowLines.isPickable=false;
+    this.flowPositions=new Float32Array(count*6);
     const buildingMat=new StandardMaterial('buildings',this.scene); buildingMat.diffuseColor=new Color3(0.80,0.66,0.51); buildingMat.specularColor=Color3.Black(); buildingMat.backFaceCulling=false; buildingMat.emissiveColor=new Color3(0.19,0.14,0.10);
     for(const building of scenario.buildings) {
       const rings=[building.polygon.outer,...building.polygon.holes];
@@ -58,7 +69,7 @@ export class World {
     }
     this.resize(); this.updateWater(new Float32Array(scenario.initialDepth));
     window.addEventListener('resize',this.resize);
-    this.engine.runRenderLoop(()=>this.scene.render());
+    this.engine.runRenderLoop(()=>{this.animateFlow(performance.now()/1000);this.scene.render();});
   }
   private gridData(values:number[], colored:boolean): VertexData {
     const positions:number[]=[], indices:number[]=[], colors:number[]=[];
@@ -72,7 +83,10 @@ export class World {
     }
     const data=new VertexData(); data.positions=positions; data.indices=indices; const normals:number[]=[]; VertexData.ComputeNormals(positions,indices,normals); data.normals=normals; if(colored)data.colors=colors; return data;
   }
-  updateState(bed:Float32Array, buildings:BuildingStatus[], dams:[string,number][]):void {
+  updateState(bed:Float32Array, buildings:BuildingStatus[], dams:[string,number][], revision:number):void {
+    this.currentBuildings=new Map(buildings.map(b=>[b.id,b]));
+    if(revision===this.terrainRevision) return;
+    this.terrainRevision=revision;
     this.bed=Array.from(bed);
     for(let y=0;y<=this.height;y++) for(let x=0;x<=this.width;x++) {
       const i=Math.min(y,this.height-1)*this.width+Math.min(x,this.width-1), v=y*(this.width+1)+x;
@@ -109,8 +123,39 @@ export class World {
     else lines=action.cells.map(i=>{const x=i%this.width,y=Math.floor(i/this.width),h=this.bed[i]+1;return [new Vector3((x+.2)*this.cell-this.width*this.cell/2,h,(y+.5)*this.cell-this.height*this.cell/2),new Vector3((x+.8)*this.cell-this.width*this.cell/2,h,(y+.5)*this.cell-this.height*this.cell/2)];});
     if(lines.length){this.previewMesh=MeshBuilder.CreateLineSystem('preview',{lines},this.scene);this.previewMesh.color=new Color3(1,0.38,0.08);this.previewMesh.isPickable=false;}
   }
-  updateWater(depth:Float32Array): void {
+  inspect(clientX:number,clientY:number):string {
+    const building=this.pick(clientX,clientY,true);
+    if(building?.buildingId) {
+      const b=this.currentBuildings.get(building.buildingId);
+      if(b) return `Gebäude: Flutschaden ${Math.round(b.damage).toLocaleString('de-AT')} von ${Math.round(b.value).toLocaleString('de-AT')}.`;
+    }
+    const point=this.pick(clientX,clientY);
+    if(!point) return 'Keine Stelle auf der Karte ausgewählt.';
+    const x=Math.max(0,Math.min(this.width-1,Math.floor(point.x/this.cell))),y=Math.max(0,Math.min(this.height-1,Math.floor(point.y/this.cell)));
+    return `Wassertiefe: ${(this.currentDepth[y*this.width+x]??0).toFixed(2)} m.`;
+  }
+  private animateFlow(now:number):void {
+    const positions=this.flowPositions;positions.fill(0);
+    for(let i=0;i<this.flowSamples.length;i++) {
+      const a=this.flowSamples[i],speed=Math.hypot(a.vx,a.vy);
+      if(speed<0.01)continue;
+      const ux=a.vx/speed,uy=a.vy/speed,phase=((now*Math.min(speed,3)/5+i*.37)%1-.5)*this.cell*5;
+      const x=a.x+ux*phase,y=a.y+uy*phase,o=i*6;
+      positions[o]=x-ux*3;positions[o+1]=a.height;positions[o+2]=y-uy*3;
+      positions[o+3]=x+ux*3;positions[o+4]=a.height;positions[o+5]=y+uy*3;
+    }
+    this.flowLines.updateVerticesData(VertexBuffer.PositionKind,positions);
+  }
+  updateWater(depth:Float32Array, qx?:Float32Array, qy?:Float32Array): void {
     if(depth.length!==this.width*this.height) throw new Error('Ungültiger Wasser-Snapshot');
+    this.currentDepth=Float32Array.from(depth);
+    if(qx && qy) {
+      this.flowSamples=[];
+      for(let y=0;y<this.height;y+=12) for(let x=0;x<this.width;x+=12) {
+        const i=y*this.width+x,h=depth[i];
+        this.flowSamples.push({x:x*this.cell-this.width*this.cell/2,y:y*this.cell-this.height*this.cell/2,height:this.bed[i]+h+0.3,vx:h>0.05?qx[i]/h:0,vy:h>0.05?qy[i]/h:0});
+      }
+    }
     for(let y=0;y<=this.height;y++) for(let x=0;x<=this.width;x++) {
       const i=Math.min(y,this.height-1)*this.width+Math.min(x,this.width-1), v=y*(this.width+1)+x;
       this.waterPositions[v*3+1]=this.bed[i]+depth[i]+0.08;

@@ -34,3 +34,33 @@ describe('Bauaktionen und Schäden',()=>{
     expect(g.totals()).toEqual({floodDamage:0,demolitionLoss:160,totalDamage:160});
   });
 });
+
+describe('Hydraulische Wirkung der Werkzeuge',()=>{
+  it('leitet durch einen Graben Wasser über eine künstliche Bodenschwelle',()=>{
+    const w=12,h=5,bed=Array.from({length:w*h},(_,i)=>i%w>=5&&i%w<=6?0.65:0);
+    const cfg={...scenario,grid:{...scenario.grid,width:w,height:h},bed,terrain:bed,initialDepth:Array.from({length:w*h},(_,i)=>i%w<5?0.5:0),waterMask:Array(w*h).fill(0),buildings:[],parameters:{...scenario.parameters,trenchDepth:0.8}};
+    const plain=new Game(cfg),dug=new Game(cfg), initial=dug.solver.volume();
+    const cells=[2*w+5,2*w+6];expect(dug.apply('ditch',{kind:'trench',cells}).ok).toBe(true);
+    plain.solver.advance(15);dug.solver.advance(15);
+    const downstream=(g:Game)=>g.solver.h.reduce((sum,v,i)=>sum+(i%w>6?v:0),0);
+    expect(downstream(plain)).toBeLessThan(1e-8);expect(downstream(dug)).toBeGreaterThan(0.1);
+    expect(Math.abs(dug.solver.volume()-initial)/initial).toBeLessThan(0.001);
+  });
+  it('öffnet durch Abriss eines Gebäudes einen zuvor versperrten Wasserweg',()=>{
+    const w=12,h=5,bed=Array(w*h).fill(0);
+    const cfg={...scenario,grid:{...scenario.grid,width:w,height:h},bed,terrain:bed,initialDepth:Array.from({length:w*h},(_,i)=>i%w<5?1:0),waterMask:Array(w*h).fill(0),buildings:[{id:'bar',area:80,height:8,heightEstimated:true,polygon:{outer:[[20,0],[24,0],[24,20],[20,20],[20,0]],holes:[]}}]};
+    const blocked=new Game(cfg),open=new Game(cfg),initial=open.solver.volume();
+    expect(open.apply('remove',{kind:'demolish',buildingId:'bar'}).ok).toBe(true);
+    blocked.solver.advance(15);open.solver.advance(15);
+    const downstream=(g:Game)=>g.solver.h.reduce((sum,v,i)=>sum+(i%w>5?v:0),0);
+    expect(downstream(blocked)).toBeLessThan(1e-8);expect(downstream(open)).toBeGreaterThan(1);
+    expect(Math.abs(open.solver.volume()-initial)/initial).toBeLessThan(0.001);
+  });
+});
+
+it('nimmt kleine Gebäude ohne Zellmittelpunkt in Blockade und Schadenswertung auf',()=>{
+  const small={...scenario,buildings:[{id:'small',area:1,height:5,heightEstimated:true,polygon:{outer:[[8.1,8.1],[9.1,8.1],[9.1,9.1],[8.1,9.1],[8.1,8.1]],holes:[]}}]};
+  const g=new Game(small);expect(g.buildings[0].cells).toEqual([12]);
+  expect(g.solver.crestX[2*6+2]).toBeGreaterThan(100);
+  g.solver.h[11]=1;g.updateDamage(60);expect(g.totals().floodDamage).toBeGreaterThan(0);
+});

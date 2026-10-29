@@ -18,6 +18,7 @@ export class Controller {
   private outstanding = 0;
   private completed = false;
   private dirty = false;
+  private revision = 0;
   constructor(private readonly emit: Emit) {}
 
   private initialize(scenario: Scenario): void {
@@ -25,7 +26,7 @@ export class Controller {
     this.round++;
     this.game = new Game(scenario);
     this.solver = this.game.solver;
-    this.running = false; this.speed = 1; this.backlog = 0; this.lastClock = undefined; this.completed = false;
+    this.running = false; this.speed = 1; this.backlog = 0; this.lastClock = undefined; this.completed = false; this.revision = 0;
     const bytes = scenario.grid.width * scenario.grid.height * 4 * Float32Array.BYTES_PER_ELEMENT;
     this.pool = [new ArrayBuffer(bytes), new ArrayBuffer(bytes)];
     this.outstanding = 0; this.dirty = true;
@@ -47,7 +48,7 @@ export class Controller {
           if (!this.game) break;
           const result=this.completed ? {ok:false as const,reason:'Runde bereits beendet.',budget:this.game.budget} : message.type==='preview' ? this.game.preview(message.action) : this.game.apply(message.id,message.action);
           this.emit({type:'action-result',round:this.round,id:message.id,preview:message.type==='preview',result});
-          if(message.type==='action' && result.ok) { this.dirty=true; this.snapshot(); }
+          if(message.type==='action' && result.ok) { this.revision++; this.dirty=true; this.snapshot(); }
           break;
         }
         case 'recycle': {
@@ -94,7 +95,7 @@ export class Controller {
     const buffer=this.pool.pop()!; const target=new Float32Array(buffer), n=this.solver.h.length;
     target.set(this.solver.h,0); target.set(this.solver.qx,n); target.set(this.solver.qy,2*n); target.set(this.solver.bed,3*n);
     this.outstanding++;
-    this.emit({type:'snapshot',round:this.round,budget:this.game.budget,buildings:this.game.status(),dams:[...this.game.damFaces],time:this.solver.time,running:this.running,speed:this.speed,backlog:this.backlog,volume:this.solver.volume(),inflow:this.solver.inflow,outflow:this.solver.outflow,roundoffVolume:this.solver.roundoffVolume,buffer},[buffer]);
+    this.emit({type:'snapshot',round:this.round,revision:this.revision,budget:this.game.budget,buildings:this.game.status(),dams:[...this.game.damFaces],time:this.solver.time,running:this.running,speed:this.speed,backlog:this.backlog,volume:this.solver.volume(),inflow:this.solver.inflow,outflow:this.solver.outflow,roundoffVolume:this.solver.roundoffVolume,buffer},[buffer]);
   }
   private fail(error: unknown): void {
     this.running=false; this.lastClock=undefined;

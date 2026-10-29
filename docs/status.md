@@ -6,9 +6,13 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Eine [Markierung seitlicher Eintritte](review-gebaeudevergleich.md#seitlicher-eintritt-und-geordnete-querungen) im östlichen Bereich des wirksamen Nordgrabens ergab keinen Anteil, der vier ausgewählte Trassenkanten in Reihenfolge passierte und vor Rückkehr ins Gewässer den Westrand erreichte. Andere Eintrittsstellen und Wege bleiben offen.
+
 Schräg gesetzte Dämme folgen nun wie Gräben einer direkten, verbundenen Rasterlinie. Das Szenario bleibt `1.4-draft`, aber dammbasierte Ergebnisse vor dieser Änderung sind historisch und mit der neuen Pfadregel nicht unverändert reproduzierbar. Die aktuellen numerischen Referenzen ergeben 138.852,13 Schaden ohne Maßnahmen, 25.821,81 mit zwei Dämmen und 863,20 mit drei Dämmen und Landgraben; die Restbudgets betragen 10.000, 8.800 und 7.510. Der [aktuelle Vergleich](review-gebaeudevergleich.md#aktueller-vergleich-mit-direkter-dammführung) enthält Kontrollfälle und Grenzen. Browser- und menschliche Prüfung der neuen Strategie sind noch offen.
 
 Die [neue Dammführung](solverbericht.md#überströmung-und-rückstau-mit-direkter-dammführung) wurde auch numerisch auf Überströmung und lokalen Rückstau geprüft; die frühere visuelle Aufnahme ist weiterhin historisch.
+
+Auf dem Produktionsbuild des Anwendungscodes `2851271` bestanden [alle 62 Chromium-Browserprüfungen](browser-pruefung.md#produktionsbuild-mit-direkter-dammführung); 63 Modelltests einschließlich kleiner vollständiger Pfadrasterprüfung bestanden ebenfalls. Echte Geräte und menschliche Bedienung bleiben offen.
 
 Eine [Suche nach nördlichen Landgräben](review-gebaeudevergleich.md#wiederholung-mit-direkter-dammführung) fand zwei spielregelkonforme Kandidaten; beide senken mit der direkten Dammführung den Schaden deutlich. Einer wirkt auch bei Eingriff nach 150 und 180 s. Der markierte Eintritt am östlichen Grabenende erreicht den Rand nicht; räumlich getrennte Ableitung und menschliche Bedienbarkeit bleiben offen.
 

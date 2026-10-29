@@ -4,10 +4,11 @@ import {Game} from '../src/simulation/game';
 import {damPath,trenchPath} from '../src/simulation/path';
 import {validateScenario} from '../src/scenario';
 const mode=process.argv[2];if(!['combined','dam2demolish','dam2'].includes(mode))throw Error('Fall: combined | dam2demolish | dam2');
-const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
+const raw=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
+const scenario=validateScenario(raw);
 const fixture=JSON.parse(readFileSync('tests/fixtures/strategy.json','utf8'));
-if(scenario.version!=='1.3-draft'||fixture.scenario!==scenario.version)throw Error('Szenarioversion stimmt nicht');
-scenario.parameters.outflowEdges.push('left');scenario.parameters.trenchDepth=3;
+if(scenario.version!=='1.4-draft'||fixture.scenario!==scenario.version)throw Error('Szenarioversion stimmt nicht');
+if(!scenario.parameters.outflowEdges.includes('left')||scenario.parameters.trenchDepth!==3)throw Error('Ableitungsannahmen stimmen nicht');
 const game=new Game(scenario),s=game.solver,w=s.width,h=s.height,n=w*h,area=s.cellSize**2,initial=s.volume();
 for(const [i,segment] of fixture.segments.slice(0,2).entries()){const r=game.apply(`dam-${i}`,{kind:'dam',faces:damPath(segment[0],segment[1],w)});if(!r.ok)throw Error(r.reason);}
 if(mode!=='dam2'){const r=game.apply('demolition',{kind:'demolish',buildingId:'w33581744-0'});if(!r.ok)throw Error(r.reason);}

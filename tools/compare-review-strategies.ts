@@ -1,4 +1,4 @@
-/** Exploratory review candidates; all changes are in memory, not the scenario package. */
+/** Compare review candidates on the delivered scenario; variations stay in memory. */
 import {readFileSync} from 'node:fs';
 import {Game, type Action} from '../src/simulation/game';
 import {damPath,trenchPath} from '../src/simulation/path';
@@ -19,10 +19,12 @@ const cases:Record<string,{left:boolean;depth:number;dams:number;trench?:[[numbe
  combined:{left:true,depth:3,dams:2,trench:[[0,10],[23,10]],demolish:'w33581744-0'},
 };
 const config=cases[mode];if(!config)throw Error(`Fall wählen: ${Object.keys(cases).join(', ')}`);
-const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
+const raw=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
+const scenario=validateScenario(raw);
 const fixture=JSON.parse(readFileSync('tests/fixtures/strategy.json','utf8'));
-if(scenario.version!=='1.3-draft'||fixture.scenario!==scenario.version)throw Error('Szenario oder Referenzversion stimmt nicht');
-if(config.left&&!scenario.parameters.outflowEdges.includes('left'))scenario.parameters.outflowEdges.push('left');
+if(scenario.version!=='1.4-draft'||fixture.scenario!==scenario.version)throw Error('Szenario oder Referenzversion stimmt nicht');
+scenario.parameters.outflowEdges=scenario.parameters.outflowEdges.filter(edge=>edge!=='left');
+if(config.left)scenario.parameters.outflowEdges.push('left');
 scenario.parameters.trenchDepth=config.depth;
 const game=new Game(scenario),s=game.solver,initial=s.volume();
 const actions:Action[]=[];

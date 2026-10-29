@@ -46,6 +46,8 @@ Die Dachnormalen der Gebäude wurden korrigiert: Unbeschädigte Dächer erschein
 
 Die [Datenlizenz-Prüfung](datenlizenz-pruefung.md) ordnet Quellenhinweise und den maschinenlesbaren Download des zum Build gehörigen Szenariopakets ein. Die Lizenzprüfung der Datenkombination und die dauerhafte Bereitstellung bleiben offen.
 
+Für den integrierten Stand `5c2e0c4` bestanden Build, 52 Vitest-Tests, zwei Python-Tests und alle 38 Chromium-Prüfungen; [Prüfumfang und Grenzen](browser-pruefung.md#integrierte-prüfungen-nach-szenariodownload). Nachfolgende Änderungen und echte Geräte sind darin nicht enthalten.
+
 ## Arbeitspakete
 
 | Paket | Status | Tatsächlicher Nachweis | Nächster Schritt |

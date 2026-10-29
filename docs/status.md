@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+[Angeschlossene Gräben](browser-pruefung.md#grabenanschluss-nach-flutbeginn) wurden auch bei laufender Flut und in Pause im Produktionsbrowser geprüft: Nur neue Zellen wurden berechnet, und die Uhr blieb in der Pause stehen. Die kurzen automatisierten Tests ersetzen keine vollständige menschliche Runde oder Geräteprüfung.
+
 Eine [vollständige Landgraben-Runde im emulierten Hochformat](landgraben-live.md#live-runde-im-emulierten-hochformat) erreichte nach Touch-Platzierung und testseitiger Kamerafokussierung das Ziel; bei 03:00 und 04:00 zeigen alle 13 abgetasteten Grabenmarker Strömung. Ein echtes Smartphone und menschliches Auffinden der zunächst außerhalb des Ausschnitts liegenden Stelle bleiben offen.
 
 Auf Stand `bc6c8ed` bestanden 70 Modelltests und drei gezielte Chromium-Fälle zum Anschluss von Gräben und Ersetzen der Vorschau: [Prüfbeleg](browser-pruefung.md#vorschauersatz-und-angeschlossene-gräben). Eine vollständige Browser-Suite und echte Geräte für diesen Stand bleiben offen.

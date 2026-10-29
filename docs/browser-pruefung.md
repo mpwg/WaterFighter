@@ -450,3 +450,8 @@ Auf dem isolierten Produktionsbuild `64ba8bd` bestanden am 29. Oktober 2026 zus�
 ### Vorschauersatz und angeschlossene Gräben
 
 Auf Anwendungscode `bc6c8ed` bestanden am 29. Oktober 2026 `bun run test` mit 70 Modelltests sowie `bun --bun playwright test tests/browser/connected-trench.spec.ts tests/browser/preview-selection.spec.ts --workers=1` mit drei gezielten Fällen auf dem Vite-Entwicklungsserver. Playwright-Chromium 156 unter Linux verwendete Softwaregrafik und für einen Fall emulierten Touch. Die Fälle prüfen die Kosten einer überlappenden Grabenverlängerung und das Ersetzen einer unbestätigten Vorschau per Maus und Touch. Sie sind keine vollständige Browser-Suite, keine vollständige Spielrunde und keine Geräteabnahme.
+
+
+### Grabenanschluss nach Flutbeginn
+
+Zwei gezielte Playwright-Prüfungen auf dem isolierten Produktionsbuild `42da208` bestätigten zunächst einen Graben in der Vorbereitung und verlängerten ihn nach mindestens vier simulierten Sekunden. Eine Prüfung führte die Verlängerung bei laufender 2×-Flut aus, die andere in einer Pause. Beide prüften anhand der Worker-Vorschaunachricht, dass der neue Verlauf tatsächlich alte und neue Zellen enthält, dass die Vorschau deren Wiederverwendung und nur die Kosten neuer Zellen nennt und dass die Kosten erst bei Bestätigung einmalig abgezogen werden. In der Pause blieb die angezeigte Zeit stehen; während der laufenden Variante blieb der Zustand „Läuft“. Die Tests verwendeten automatisierte Bildschirmpositionen in Chromium unter Linux mit Softwaregrafik. Sie belegen weder eine gesamte Runde noch die Bedienung auf echten Geräten; Wassererhaltung und Wiederholung der Aktion werden gesondert durch die Regel- und Workertests geprüft.

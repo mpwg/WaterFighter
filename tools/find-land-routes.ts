@@ -7,6 +7,7 @@ const {solver:s}=new Game(scenario),{width:w,height:h,cellSize}=scenario.grid;
 const level=10; // metres Wiener Null, chosen before searching; not a measured flood level.
 // A conservative screen: do not excavate either side of the selected sensitive faces.
 const avoidSensitive=process.argv.includes('--avoid-sensitive')||process.argv.includes('--avoid-sensitive-all');
+const avoidAllCrests=process.argv.includes('--avoid-all-crests');
 const excluded=new Set<number>();
 if(avoidSensitive) {
  const sensitive=process.argv.includes('--avoid-sensitive-all')?[7072,7073,7269]:[7072,7073];
@@ -14,6 +15,12 @@ if(avoidSensitive) {
  for(const face of sensitive) {
   const x=face%(w+1),y=Math.floor(face/(w+1));excluded.add(y*w+x-1);excluded.add(y*w+x);
  }
+}
+if(avoidAllCrests) for(const face of scenario.surveyCrests) {
+ const x=face.axis==='x'?face.index%(w+1):face.index%w;
+ const y=face.axis==='x'?Math.floor(face.index/(w+1)):Math.floor(face.index/w);
+ const b=y*w+x,a=face.axis==='x'?b-1:b-w;
+ excluded.add(a);excluded.add(b);
 }
 function neighbours(i:number):[number,number][] {
  const x=i%w,y=Math.floor(i/w),items:[number,number][]=[];
@@ -44,4 +51,4 @@ function search(y0:number,y1:number) {
  const path:number[]=[];for(let i=end;i>=0;i=parents[i])path.push(i);path.reverse();
  return {rows:[y0,y1],cells:path.length,lengthM:(path.length-1)*cellSize,start:[path[0]%w,Math.floor(path[0]/w)],end:[end%w,Math.floor(end/w)],path:path.map(i=>[i%w,Math.floor(i/w)])};
 }
-console.log(JSON.stringify({version:scenario.version,levelWienerNullM:level,avoidSensitive,routes:[search(20,70),search(120,170)]},null,2));
+console.log(JSON.stringify({version:scenario.version,levelWienerNullM:level,avoidSensitive,avoidAllCrests,routes:[search(20,70),search(120,170)]},null,2));

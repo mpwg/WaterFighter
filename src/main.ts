@@ -34,12 +34,13 @@ const pendingPresentation=new Map<string,{round:number;confirmedAt:number;confir
 let mode:Mode='camera', modeRevision=0, first:{x:number;y:number}|undefined, draft:Action|undefined, previewId='', serial=0, awaiting=false;
 const resultPanel=app.querySelector<HTMLElement>('#result')!, resultTitle=app.querySelector<HTMLElement>('#result-title')!, resultDetails=app.querySelector<HTMLElement>('#result-details')!;
 app.querySelector<HTMLButtonElement>('#again')!.onclick=()=>{if(round)worker?.postMessage({type:'reset',round});};
-const preview=app.querySelector<HTMLDivElement>('#preview')!,previewText=app.querySelector<HTMLElement>('#preview-text')!,confirm=app.querySelector<HTMLButtonElement>('#confirm')!,budgetLabel=app.querySelector<HTMLElement>('#budget')!;
-function clearDraft() {first=undefined;draft=undefined;previewId='';awaiting=false;preview.hidden=true;confirm.disabled=true;world?.showPreview();}
+const preview=app.querySelector<HTMLDivElement>('#preview')!,previewText=app.querySelector<HTMLElement>('#preview-text')!,confirm=app.querySelector<HTMLButtonElement>('#confirm')!,cancel=app.querySelector<HTMLButtonElement>('#cancel')!,budgetLabel=app.querySelector<HTMLElement>('#budget')!;
+function setAwaiting(value:boolean) {awaiting=value;cancel.disabled=value;for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=value||fatalError;}
+function clearDraft() {first=undefined;draft=undefined;previewId='';setAwaiting(false);preview.hidden=true;confirm.disabled=true;world?.showPreview();}
 function chooseMode(next:Mode) { mode=next;modeRevision++;clearDraft(); for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.setAttribute('aria-pressed',String(b.dataset.mode===mode)); message.textContent=mode==='camera'?'Karte verschieben und zoomen.':mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.'; }
 for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.onclick=()=>chooseMode(b.dataset.mode as Mode);
-app.querySelector<HTMLButtonElement>('#cancel')!.onclick=clearDraft;
-confirm.onclick=()=>{if(!draft||!round||awaiting)return;awaiting=true;confirm.disabled=true;pendingPresentation.set(previewId,{round,confirmedAt:performance.now(),confirmedRunning:running,confirmedSpeed:speed,confirmedVisible:document.visibilityState==='visible'});worker?.postMessage({type:'action',round,id:previewId,action:draft});};
+cancel.onclick=clearDraft;
+confirm.onclick=()=>{if(!draft||!round||awaiting)return;setAwaiting(true);confirm.disabled=true;previewText.textContent='Maßnahme wird ausgeführt …';pendingPresentation.set(previewId,{round,confirmedAt:performance.now(),confirmedRunning:running,confirmedSpeed:speed,confirmedVisible:document.visibilityState==='visible'});worker?.postMessage({type:'action',round,id:previewId,action:draft});};
 function describeDraft(action:Action):string {
   if(!scenario)return '';
   const p=scenario.parameters, number=(n:number)=>n.toLocaleString('de-AT');
@@ -108,7 +109,7 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
     if(!data.preview && pending) {if(data.result.ok) pending.revision=data.revision;else pendingPresentation.delete(data.id);}
     if(data.id!==previewId) return;
     if(data.preview) {confirm.disabled=!data.result.ok;previewText.textContent=data.result.ok?`${draft?describeDraft(draft)+' · ':''}Kosten: ${data.result.cost} · Budget danach: ${data.result.budget}${data.result.loweredCrests?` · Senkt ${data.result.loweredCrests} modellierte ${data.result.loweredCrests===1?'Geländekante':'Geländekanten'}; der Wasserverlauf kann sich ändern.`:''}`:data.result.reason;}
-    else {awaiting=false;if(data.result.ok){message.textContent=`Maßnahme bestätigt. Kosten: ${data.result.cost}.`;clearDraft();}else{previewText.textContent=data.result.reason;confirm.disabled=true;}}
+    else {setAwaiting(false);if(data.result.ok){message.textContent=`Maßnahme bestätigt. Kosten: ${data.result.cost}.`;clearDraft();}else{previewText.textContent=data.result.reason;confirm.disabled=true;}}
   }
   else if(data.type==='result' && data.round===round && !fatalError) { running=false; finished=true; clearDraft();run.disabled=true; stateLabel.textContent='Beendet'; message.textContent='Die Runde ist beendet.';
     const number=(n:number)=>Math.round(n).toLocaleString('de-AT');

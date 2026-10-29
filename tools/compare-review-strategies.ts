@@ -41,11 +41,21 @@ for(const [i,segment] of fixture.segments.slice(0,config.dams).entries()){
 }
 if(config.demolish)actions.push({kind:'demolish',buildingId:config.demolish});
 if(config.trench){const [start,end]=config.trench;actions.push({kind:'trench',cells:trenchPath([start[0],start[1]+trenchShift+trenchStart],[end[0],end[1]+trenchShift+trenchEnd],s.width)});}
+const retainCrests=process.argv.includes('--retain-crests');
+if(retainCrests&&!config.trench)throw Error('--retain-crests erfordert einen Grabenfall');
 const results:ReturnType<Game['apply']>[]=[];let applied=false,damageAtAction=0;
 function applyActions(){damageAtAction=game.totals().totalDamage;for(const [i,a] of actions.entries()){
  const r=game.apply(`review-${i}`,a);results.push(r);
  if(!r.ok){console.log(JSON.stringify({scenario:scenario.version,mode,experimental:config,at,junction,entry,tip,trenchShift,trenchStart,trenchEnd,invalidAction:a,reason:r.reason}));process.exit(0);}
-}applied=true;}
+}
+// Diagnostic counterfactual only: preserve survey crests crossed by the actual trench.
+if(retainCrests)for(const face of scenario.surveyCrests){
+ const x=face.axis==='x'?face.index%(s.width+1):face.index%s.width;
+ const y=face.axis==='x'?Math.floor(face.index/(s.width+1)):Math.floor(face.index/s.width);
+ const b=y*s.width+x,a=face.axis==='x'?b-1:b-s.width;
+ if(game.trenchCells.has(a)&&game.trenchCells.has(b)){const field=face.axis==='x'?s.crestX:s.crestY;field[face.index]=Math.max(field[face.index],face.crest);}
+}
+applied=true;}
 if(at===0)applyActions();
 let leftOutflow=0;
 while(s.time<scenario.parameters.duration-1e-9){
@@ -54,4 +64,4 @@ while(s.time<scenario.parameters.duration-1e-9){
  if(s.step(maxDt)!==dt)throw Error('Zeitschritt stimmt nicht');game.addInflow(t,dt);game.updateDamage(dt);
  if(!applied&&s.time>=at-1e-9)applyActions();
 }
-console.log(JSON.stringify({scenario:scenario.version,mode,experimental:config,at,junction,entry,tip,trenchShift,trenchStart,trenchEnd,damageAtAction,actions,results,time:s.time,budget:game.budget,...game.totals(),inflow:s.inflow,outflow:s.outflow,leftOutflow,relativeBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow),buildings:game.status()},null,2));
+console.log(JSON.stringify({scenario:scenario.version,mode,experimental:config,retainCrests,at,junction,entry,tip,trenchShift,trenchStart,trenchEnd,damageAtAction,actions,results,time:s.time,budget:game.budget,...game.totals(),inflow:s.inflow,outflow:s.outflow,leftOutflow,relativeBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow),buildings:game.status()},null,2));

@@ -1,7 +1,7 @@
 /** Exercises map picking, previews, confirmation and a full 2× round in Vite dev mode.
  * A test-only exported reference permits projecting the fixture's known grid vertices
  * to mouse coordinates; actions still go through the public UI and worker protocol. */
-import { chromium } from 'playwright';
+import { chromium } from '@playwright/test';
 import { readFileSync, writeFileSync } from 'node:fs';
 const segments=JSON.parse(readFileSync('tests/fixtures/strategy.json','utf8')).segments;
 const candidate=process.argv.includes('--candidate');

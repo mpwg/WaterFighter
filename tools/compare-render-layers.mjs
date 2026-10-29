@@ -1,5 +1,5 @@
 /** Development-only layer ablation to locate rendering cost. */
-import {chromium} from 'playwright';
+import {chromium} from '@playwright/test';
 import {writeFileSync} from 'node:fs';
 const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined});
 const results=[];

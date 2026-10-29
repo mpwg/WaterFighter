@@ -1,5 +1,5 @@
 /** Count visual water topology rebuilds during a short 1× diagnostic window. */
-import {chromium} from 'playwright';
+import {chromium} from '@playwright/test';
 const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined});
 const page=await browser.newPage({viewport:{width:1200,height:800}}),errors=[];
 page.on('pageerror',e=>errors.push(e.message));

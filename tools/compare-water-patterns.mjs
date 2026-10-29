@@ -1,6 +1,6 @@
 /** Compare baseline :4174 and current :4173 using synthetic initial depths. */
 import {readFileSync} from 'node:fs';
-import {chromium} from 'playwright';
+import {chromium} from '@playwright/test';
 const original=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
 const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined});
 for(const mode of ['dry','wet','mixed'])for(const [port,name] of [[4174,'before'],[4173,'after']]){

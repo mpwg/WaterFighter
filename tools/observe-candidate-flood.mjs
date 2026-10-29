@@ -1,6 +1,6 @@
 /** Capture a full candidate flood at fixed displayed simulation times. */
 import {readFileSync,writeFileSync} from 'node:fs';
-import {chromium} from 'playwright';
+import {chromium} from '@playwright/test';
 const scenario=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
 if(scenario.version!=='1.2-draft')throw Error('Kandidatenvergleich benötigt den historischen Szenarioentwurf 1.2');
 scenario.parameters.inflowCurve=scenario.parameters.inflowCurve.map(([t,q])=>[t,q*0.75]);

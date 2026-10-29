@@ -1,6 +1,6 @@
 /** Render precomputed diagnostic states with UI hidden; no game-state mutation. */
 import {readFileSync} from 'node:fs';
-import {chromium} from 'playwright';
+import {chromium} from '@playwright/test';
 const {states}=JSON.parse(readFileSync('/tmp/waterfighter-candidate-states.json','utf8'));
 const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined});
 const page=await browser.newPage({viewport:{width:1200,height:800}});

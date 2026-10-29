@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet die Flut im Worker und bietet alle drei Werkzeuge sowie Ergebnis und Neustart. Eine vollständige automatisierte Runde und eine erfolgreiche Dammstrategie sind belegt. Die Szenario- und Gesamtprüfungen bleiben in Arbeit; echte Mobilgeräte und Safari wurden nicht abgenommen. Eine öffentliche Veröffentlichung erfolgte nicht.
 
+Das Projekt verwendet pnpm 12.16.1 und `pnpm-lock.yaml`; ältere Prüfprotokolle nennen die damals ausgeführten npm- und npx-Befehle. Als Browserziel gelten aktuelle stabile Versionen, ohne gesonderte Unterstützung älterer Versionen. Nach der Umstellung bestanden eine saubere `pnpm ci`-Installation, Typprüfung, Build, 35 Vitest-Tests, zwei Python-Tests, 21 Chrome-Browserprüfungen und der statische Unterpfadtest; `pnpm audit` meldete keine bekannten Schwachstellen.
+
 ## Arbeitspakete
 
 | Paket | Status | Tatsächlicher Nachweis | Nächster Schritt |

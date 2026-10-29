@@ -1,5 +1,5 @@
 /** Compare dynamic water updates using baseline and current Vite servers (defaults :5174 and :5173). */
-import {chromium} from 'playwright';
+import {chromium} from '@playwright/test';
 import {createHash} from 'node:crypto';
 const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined});
 const modes=['dry','wet','mixed','dry','wet'],shots={};

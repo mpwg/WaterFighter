@@ -1,0 +1,6 @@
+allowBuilds:
+  esbuild: false
+# Bereits vor der Migration festgelegte Versionen.
+minimumReleaseAgeExclude:
+  - "@babylonjs/core@9.33.0"
+  - "@types/node@26.6.6"

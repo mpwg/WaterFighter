@@ -1,5 +1,5 @@
 /** Compare a previous and current Vite build over short 1× windows. */
-import {chromium} from 'playwright';
+import {chromium} from '@playwright/test';
 const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined}),results=[];
 try {
  for(const [port,label] of [[Number(process.env.WATERFIGHTER_BASELINE_PORT??5175),'baseline'],[Number(process.env.WATERFIGHTER_CURRENT_PORT??5173),'current'],[Number(process.env.WATERFIGHTER_CURRENT_PORT??5173),'current'],[Number(process.env.WATERFIGHTER_BASELINE_PORT??5175),'baseline']]){

@@ -1,6 +1,6 @@
 /** Shortened rounds for a page-heap investigation, not a full-round stability test. */
 import {readFileSync,writeFileSync} from 'node:fs';
-import {chromium} from 'playwright';
+import {chromium} from '@playwright/test';
 import {processTreeRss,processTreeMemoryByRole} from './process-memory.mjs';
 const scenario=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
 scenario.parameters.duration=2;

@@ -1,4 +1,4 @@
-import { chromium } from 'playwright';
+import { chromium } from '@playwright/test';
 import { writeFileSync } from 'node:fs';
 const browser=await chromium.launch();
 const page=await browser.newPage({viewport:{width:1200,height:800}});

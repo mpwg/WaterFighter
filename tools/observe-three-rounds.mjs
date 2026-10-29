@@ -1,5 +1,5 @@
 /** Three full 2× rounds, no interventions, in a local static build. */
-import { chromium } from 'playwright';
+import { chromium } from '@playwright/test';
 import { writeFileSync } from 'node:fs';
 import { processTreeRss } from './process-memory.mjs';
 const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined,args:['--enable-precise-memory-info']});

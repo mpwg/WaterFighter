@@ -1,5 +1,5 @@
 /** Regression check with an explicitly doubled Babylon render resolution. */
-import { chromium } from 'playwright';
+import { chromium } from '@playwright/test';
 const browser=await chromium.launch(),page=await browser.newPage({viewport:{width:1200,height:800},deviceScaleFactor:2});
 await page.route('**/src/main.ts*',async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text())+'\nexport { world };\n'});});
 await page.goto('http://127.0.0.1:5173/');await page.waitForFunction(()=>!document.querySelector('#run').disabled);

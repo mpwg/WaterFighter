@@ -364,3 +364,18 @@ Die Markierung kann zwischen den Querschnitten die Grabenzellen verlassen, wird 
 Am 29. Oktober 2026 wurde `tools/build-scenario.py` aus einem isolierten Git-Archiv von `31816d2` mit den lokal gesicherten Rohdaten erneut ausgeführt. Das Skript prüfte die hinterlegten Prüfsummen der elf Quelldateien und erzeugte 104 Gebäude, 422 Straßenabschnitte und 15.612 Wasserzellen. Die SHA-256 des erzeugten JSON lautet `bf7f274f8899ac3fa0332e2df2936423d06795a0bb193d4e7328aa0925512470` und stimmt bytegenau mit dem ausgelieferten Szenario überein. Verwendet wurden Python 3.14.4, NumPy 2.5.4, Rasterio 1.5.2, Shapely 2.2.0, PyProj 3.8.0 und PyShp 3.1.6. Der isolierte Nachbau verändert das Szenario im Arbeitsverzeichnis nicht; er bestätigt weder die fachliche Eignung der modellierten Geometrie noch eine abschließende Lizenzfreigabe.
 
 Für einen Wiederherstellungstest wurde am selben Tag das lokale Archiv `waterfighter-source-1.4-draft.tar.gz` (SHA-256 `89072e858e53cf3f77062a2117d18607235b2346b2b123af07e4bd882f56a77f`, Manifestversion `1.4-draft`) in ein separates Git-Archiv von `5952c44` entpackt. Der anschließende Pipeline-Lauf prüfte die elf enthaltenen Quelldateien und erzeugte erneut dasselbe Szenario mit SHA-256 `bf7f274f8899ac3fa0332e2df2936423d06795a0bb193d4e7328aa0925512470`. Das belegt die lokale Wiederherstellung aus diesem Archiv; eine dauerhafte externe Sicherung ist damit nicht nachgewiesen.
+
+
+### Drei weitere getrennte direkte Westgräben
+
+Die mit `bun tools/find-northern-trenches.ts` geometrisch gesiebten Wege wurden zusätzlich darauf geprüft, ob sie die 26 Zellen des Referenzgrabens `(0,4) → (25,4)` meiden und ein gewässernahes Ende mit `y ≥ 15` haben. Unter den Einschränkungen dieses Siebs – direkter Rasterweg von der Westkante, höchstens 100 Zellen, vollständig auf Land und ohne Gebäude – verbleiben vier Kandidaten: der oben untersuchte `(0,45) → (48,28)` sowie die drei folgenden. Die Zellprüfung zeigt keine Überlappung mit dem Referenzgraben; sie beweist für sich keinen durchgehend getrennten Wasserfluss.
+
+Auf einem isolierten Archiv `42da208` wurden die drei neuen Wege mit `bun tools/compare-review-strategies.ts dam3trench --route=X0,Y0,X1,Y1` nach denselben drei vorbereiteten Dämmen über 300 s gerechnet. Alle Aktionen waren zulässig. Der Kontrollfall ohne Graben beträgt 23.574,17 Schaden und 8.160 Budgetrest.
+
+| Graben | Kosten | Abgesenkte Modellkanten | Gesamtschaden | Budgetrest |
+| --- | ---: | ---: | ---: | ---: |
+| `(0,46) → (48,27)` | 1.700 | 3 | 254.613,32 | 6.460 |
+| `(0,46) → (47,26)` | 1.700 | 5 | 23.612,52 | 6.460 |
+| `(0,46) → (46,25)` | 1.700 | 3 | 23.615,57 | 6.460 |
+
+Die relativen Wasserbilanzfehler liegen unter 1,16 × 10⁻¹³. Der erste Graben erzeugt in diesem Vergleich wesentlich mehr Schaden; die beiden anderen verändern ihn nur geringfügig zum Schlechteren und kosten zusätzlich Budget. Keine der drei ist damit ein wirtschaftlich nützlicher zweiter Schutzweg in dieser Kombination. Die Rechnungen trennen die Wirkung einzelner abgesenkter Kanten nicht und schließen andere, anders zusammengesetzte Wege oder Szenarioanpassungen nicht aus. Menschliche Platzierung, der durchgängige Wasserverlauf und reale Folgen außerhalb des Modellrands bleiben ungeprüft.

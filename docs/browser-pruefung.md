@@ -370,3 +370,9 @@ Auf einem anschließend isoliert aus Commit `6187434` erzeugten Produktionsbuild
 ### Hinweis auf bereits durch Gebäude gesperrte Dammkanten
 
 Der Worker zählt bei einer zulässigen Dammvorschau Kanten, die durch angrenzende Gebäude im aktuellen Modellzustand bereits mindestens ebenso hoch gesperrt sind; die Oberfläche erklärt die Anzahl. Die Aktion bleibt möglich und wird regulär bepreist. Ein Regeltest prüft die unveränderte Vorschau und das Verschwinden des Hinweises nach Gebäudeabriss. Ein Chromium-Test mit testseitig ergänzt platziertem Gebäude prüfte den Hinweis vor Bestätigung und unverändertes Budget; zwei emulierte Touchprüfungen bei 320 × 480 und 480 × 320 prüften sichtbare, erreichbare Bestätigungs- und Verwerfen-Schaltflächen. Build, 61 Vitest-Tests und zwei Python-Tests bestanden. Menschliche Verständlichkeit und echte Geräte bleiben offen.
+
+### Produktionsbuild mit diagonaler Grabenführung
+
+Am 29. Oktober 2026 wurde Commit `b5f2a8f` aus einem Git-Archiv separat gebaut. `bun run test` bestand mit 60 Vitest-Tests, der Produktionsbuild einschließlich Typprüfung bestand. Alle 58 Playwright-Tests bestanden in Headless-Chromium 156.0.8078.4 auf Linux mit Softwaregrafik (ein Worker, 6,5 Minuten). Der separate Previewserver verwendete Port 4289 ohne Wiederverwendung eines bestehenden Servers; lokale Bibliotheken und Schriften waren über `LD_LIBRARY_PATH` und `FONTCONFIG_FILE` eingebunden.
+
+Der Lauf umfasst die diagonale Grabenvorschau und Bestätigung, die Werkzeugbedienung mit Maus und emuliertem Touch sowie den kombinierten Neustart. Er prüft den genannten Commit, keine späteren Änderungen, keine menschliche Durchführung und keine echten Mobilgeräte oder tatsächliches Safari.

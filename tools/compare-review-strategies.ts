@@ -5,8 +5,8 @@ import {damPath,trenchPath} from '../src/simulation/path';
 import {validateScenario} from '../src/scenario';
 const mode=process.argv[2];
 const numberOption=(name:string,fallback:number)=>{const arg=process.argv.find(a=>a.startsWith(`--${name}=`));if(!arg)return fallback;const value=Number(arg.slice(name.length+3));if(!Number.isFinite(value))throw Error(`Ungültiger Wert für ${name}`);return value;};
-const at=numberOption('at',0),junction=numberOption('junction',0),entry=numberOption('entry',0),tip=numberOption('tip',0),trenchShift=numberOption('trench-row',0);
-if(at<0||at>=300||![junction,entry,tip,trenchShift].every(Number.isInteger)||[junction,entry,tip,trenchShift].some(n=>Math.abs(n)>1))throw Error('Zeit 0–299, Verschiebungen −1 bis 1');
+const at=numberOption('at',0),junction=numberOption('junction',0),entry=numberOption('entry',0),tip=numberOption('tip',0),trenchShift=numberOption('trench-row',0),trenchStart=numberOption('trench-start-row',0),trenchEnd=numberOption('trench-end-row',0);
+if(at<0||at>=300||![junction,entry,tip,trenchShift,trenchStart,trenchEnd].every(Number.isInteger)||[junction,entry,tip,trenchShift,trenchStart,trenchEnd].some(n=>Math.abs(n)>1))throw Error('Zeit 0–299, Verschiebungen −1 bis 1');
 const cases:Record<string,{left:boolean;depth:number;dams:number;trench?:[[number,number],[number,number]];demolish?:string}>={
  original:{left:false,depth:0.8,dams:0},
  open:{left:true,depth:3,dams:0},
@@ -34,11 +34,11 @@ for(const [i,segment] of fixture.segments.slice(0,config.dams).entries()){
  actions.push({kind:'dam',faces:damPath(start,end,s.width)});
 }
 if(config.demolish)actions.push({kind:'demolish',buildingId:config.demolish});
-if(config.trench){const [start,end]=config.trench;actions.push({kind:'trench',cells:trenchPath([start[0],start[1]+trenchShift],[end[0],end[1]+trenchShift],s.width)});}
+if(config.trench){const [start,end]=config.trench;actions.push({kind:'trench',cells:trenchPath([start[0],start[1]+trenchShift+trenchStart],[end[0],end[1]+trenchShift+trenchEnd],s.width)});}
 const results:ReturnType<Game['apply']>[]=[];let applied=false,damageAtAction=0;
 function applyActions(){damageAtAction=game.totals().totalDamage;for(const [i,a] of actions.entries()){
  const r=game.apply(`review-${i}`,a);results.push(r);
- if(!r.ok){console.log(JSON.stringify({scenario:scenario.version,mode,experimental:config,at,junction,entry,tip,trenchShift,invalidAction:a,reason:r.reason}));process.exit(0);}
+ if(!r.ok){console.log(JSON.stringify({scenario:scenario.version,mode,experimental:config,at,junction,entry,tip,trenchShift,trenchStart,trenchEnd,invalidAction:a,reason:r.reason}));process.exit(0);}
 }applied=true;}
 if(at===0)applyActions();
 let leftOutflow=0;
@@ -48,4 +48,4 @@ while(s.time<scenario.parameters.duration-1e-9){
  if(s.step(maxDt)!==dt)throw Error('Zeitschritt stimmt nicht');game.addInflow(t,dt);game.updateDamage(dt);
  if(!applied&&s.time>=at-1e-9)applyActions();
 }
-console.log(JSON.stringify({scenario:scenario.version,mode,experimental:config,at,junction,entry,tip,trenchShift,damageAtAction,actions,results,time:s.time,budget:game.budget,...game.totals(),inflow:s.inflow,outflow:s.outflow,leftOutflow,relativeBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow),buildings:game.status()},null,2));
+console.log(JSON.stringify({scenario:scenario.version,mode,experimental:config,at,junction,entry,tip,trenchShift,trenchStart,trenchEnd,damageAtAction,actions,results,time:s.time,budget:game.budget,...game.totals(),inflow:s.inflow,outflow:s.outflow,leftOutflow,relativeBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow),buildings:game.status()},null,2));

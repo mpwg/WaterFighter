@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Beim späten getrennten Westgraben ergaben offener und experimentell geschlossener Westrand exakt denselben Schaden; über den offenen Westrand wurde in diesen Läufen kein Abfluss erfasst. Der Nutzen ist für diese Kombination daher nicht als Ableitung über diesen Rand belegt: [Gegenversuch](geodaten-voruntersuchung.md#gegenversuch-mit-geschlossenem-westrand).
+
 Eine [Live-Sichtprobe des südlichen Grabens](landgraben-live.md#südlicher-graben-in-einer-live-runde) zeigt in einer erfolgreichen Runde Strömungsmarker an drei Zeitpunkten; Teile der Trasse sind durch Gebäude oder Wasser schwer zu verfolgen. Die Kamera war testseitig fokussiert, menschliche Bedienung und echte Geräte bleiben offen.
 
 Für die getrennte Ableitung mit längerem Schutzdamm und Grabenbau bei 180 s erreicht eine streng auf der Trasse verfolgte Markierung aus dem östlichen Abschnitt den Westrand bis Rundenende nicht, auch wenn bereits vorhandenes Wasser einbezogen wird: [Diagnose](geodaten-voruntersuchung.md#wasserweg-beim-späten-eingriff-mit-längerem-schutzdamm). Die Ursache des Schadensnutzens und menschliche Bedienung bleiben offen.

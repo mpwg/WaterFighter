@@ -457,3 +457,14 @@ Der bisherige Standardlauf `bun tools/trace-northern-route.ts trench --route=0,0
 Bei 300 s entfallen 10.742,75 Schaden der Kontrolle auf `r9350494-0`; mit Graben hat dieses Gebäude keinen Schaden. Am Nachbargebäude `w1343275154-0` betragen die Schäden 5.225,88 beziehungsweise 4.428,80. Das größere Wasservolumen in den Grabenzellen ist mit einer Speicherwirkung vereinbar, beweist aber nicht, dass sie allein die Schadensminderung verursacht. Die Stichproben begrenzen die Zeitschritte anders als der frühere Vergleich und können geringfügig andere Endwerte ergeben.
 
 Die [Kontrollansicht](spaeter-westgraben-kontrolle.png) und die [Ansicht nach Grabenbau](spaeter-westgraben-mit-graben.png) zeigen die gespeicherten Zustände bei 270 s mit derselben testseitig fokussierten Kamera. Sie wurden mit dem Renderer von `99703e5`, Vite und Playwright-Chromium 156 unter Linux erzeugt; Menüs sind ausgeblendet. Die Bilder zeigen den Unterschied der modellierten Gebäudezustände und Wasserflächen zu diesem Zeitpunkt, keine menschliche Bedienung oder Verfolgung realer Wasserteilchen. Wiederholung: `bun tools/compare-partial-exposure.ts FALL --snapshot=/tmp/wf-partial-270-FALL.json` für beide Fälle, danach `bun tools/render-partial-exposure.mjs` gegen einen lokalen Vite-Server auf Port 5198. Eine sichere Ableitung außerhalb der Karte wird nicht berechnet.
+
+### Gegenversuch mit geschlossenem Westrand
+
+Für die Kombination mit verkürztem Damm, 20-m-Schutzdamm und Grabenbau bei 180 s wurde der westliche Modellrand ausschließlich im Speicher geschlossen. `bun tools/compare-partial-diversion.ts 7 control --guard-radius=2 --closed-west` und `bun tools/compare-partial-diversion.ts 7 trench --guard-radius=2 --at=180 --closed-west` ändern weder Szenariodatei noch andere Randbedingungen. Die Kontrollen mit offenem Westrand verwenden dieselben Befehle ohne `--closed-west`.
+
+| Modellrand | Ohne Graben: Schaden / Budget | Mit Graben: Schaden / Budget |
+| --- | ---: | ---: |
+| West offen | 47.918,99 / 8.840 | 36.235,49 / 7.140 |
+| West geschlossen | 47.918,99 / 8.840 | 36.235,49 / 7.140 |
+
+Die Schadenswerte der jeweiligen offenen und geschlossenen Fälle stimmen auch vor Rundung exakt überein. In den beiden offenen Läufen integriert das Diagnosewerkzeug über die gesamte Runde keinen westlichen Randabfluss; die relativen Wasserbilanzfehler aller vier Läufe liegen unter 1,27 × 10⁻¹³. Die Grabenaktion erhält das vorhandene Wasservolumen. Für diesen späten Eingriff ist der Schadensnutzen somit nicht durch einen im Modell beobachteten Abfluss über den Westrand belegt. Der Versuch identifiziert nicht allein die Ursache des Nutzens und sagt nichts über den Wasserweg außerhalb des Ausschnitts oder über andere Eingriffszeitpunkte und Dammkombinationen aus.

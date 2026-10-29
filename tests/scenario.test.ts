@@ -21,6 +21,8 @@ describe('Szenariolader', () => {
   it('weist beschädigte Raster und unbekannte Versionen zurück', () => {
     expect(() => validateScenario({ ...scenario, version: 'unknown' })).toThrow();
     expect(() => validateScenario({ ...scenario, terrain: [NaN] })).toThrow();
+    expect(() => validateScenario({ ...scenario, grid: { ...scenario.grid, heightReference: 'Adria' } })).toThrow('Ungültiger Höhenbezug; Wiener Null erforderlich.');
+    expect(() => validateScenario({ ...scenario, grid: { ...scenario.grid, heightReference: undefined } })).toThrow('Ungültiger Höhenbezug; Wiener Null erforderlich.');
     expect(() => validateScenario({ ...scenario, initialDepth: scenario.initialDepth.map(() => -1) })).toThrow();
   });
 });

@@ -14,9 +14,17 @@ try {
     const rssBefore=processTreeRss();
     const heapBefore=await page.evaluate(()=>performance.memory?.usedJSHeapSize??null);
     await page.locator('#speed').click();const start=Date.now();await page.locator('#run').click();
+    await page.waitForFunction(()=>document.querySelector('#time').textContent!=='00:00',null,{timeout:30000});
+    await page.getByRole('button',{name:'Pause'}).click();
+    await page.waitForFunction(()=>document.querySelector('#state').textContent==='Pausiert');
+    const paused=await page.locator('#time').textContent();
+    await page.locator('#zoom-in').click();await page.locator('#zoom-out').click();
+    if(await page.locator('#time').textContent()!==paused)throw Error('Zeit lief während Pause weiter');
+    await page.getByRole('button',{name:'Fortsetzen'}).click();
+    await page.waitForFunction(()=>document.querySelector('#state').textContent==='Läuft');
     await page.waitForFunction(()=>!document.querySelector('#result').hidden,null,{timeout:240000});
     const result=await page.locator('#result-details').textContent(),heapAfter=await page.evaluate(()=>performance.memory?.usedJSHeapSize??null);
-    const row={round:i+1,wallSeconds:(Date.now()-start)/1000,result,heapBefore,heapAfter,rssBefore,rssAfter:processTreeRss()};report.rounds.push(row);save();console.log(JSON.stringify(row));
+    const row={round:i+1,pausedAt:paused,interactions:['Pause','Zoom','Fortsetzen'],wallSeconds:(Date.now()-start)/1000,result,heapBefore,heapAfter,rssBefore,rssAfter:processTreeRss()};report.rounds.push(row);save();console.log(JSON.stringify(row));
     if(i<2){await page.locator('#again').click();await page.waitForFunction(()=>document.querySelector('#result').hidden && document.querySelector('#time').textContent==='00:00');}
   }
 } catch(error) {errors.push(String(error));save();process.exitCode=1;} finally {await browser.close();}

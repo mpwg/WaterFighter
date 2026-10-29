@@ -12,8 +12,8 @@ export class World {
   private readonly water: Mesh;
   private readonly flowLines: LinesMesh;
   private readonly flowPositions: Float32Array;
-  private flowSamples: { x:number; y:number; height:number; vx:number; vy:number }[] = [];
-  private currentDepth = new Float32Array(0);
+  private readonly flowSamples: { x:number; y:number; height:number; vx:number; vy:number }[] = [];
+  private readonly currentDepth: Float32Array;
   private currentBuildings = new Map<string,BuildingStatus>();
   private readonly land: Mesh;
   private readonly landPositions: Float32Array;
@@ -33,6 +33,7 @@ export class World {
   private bed: number[];
   constructor(private readonly canvas: HTMLCanvasElement, private readonly scenario: Scenario) {
     this.width=scenario.grid.width; this.height=scenario.grid.height; this.cell=scenario.grid.cellSize; this.bed=scenario.bed;
+    this.currentDepth=new Float32Array(this.width*this.height);
     this.engine=new Engine(canvas,true,{ disableWebGL2Support:false, preserveDrawingBuffer:false });
     if (this.engine.webGLVersion < 2) { this.engine.dispose(); throw new Error('WebGL2 wird benötigt.'); }
     this.scene=new Scene(this.engine); this.scene.clearColor=new Color4(0.78,0.85,0.80,1);
@@ -171,12 +172,13 @@ export class World {
   }
   updateWater(depth:Float32Array, qx?:Float32Array, qy?:Float32Array): void {
     if(depth.length!==this.width*this.height) throw new Error('Ungültiger Wasser-Snapshot');
-    this.currentDepth=Float32Array.from(depth);
+    this.currentDepth.set(depth);
     if(qx && qy) {
-      this.flowSamples=[];
+      let sampleIndex=0;
       for(let y=0;y<this.height;y+=12) for(let x=0;x<this.width;x+=12) {
         const i=y*this.width+x,h=depth[i];
-        this.flowSamples.push({x:x*this.cell-this.width*this.cell/2,y:y*this.cell-this.height*this.cell/2,height:this.bed[i]+h+0.3,vx:h>0.05?qx[i]/h:0,vy:h>0.05?qy[i]/h:0});
+        const sample=this.flowSamples[sampleIndex++]??(this.flowSamples[this.flowSamples.length]={x:x*this.cell-this.width*this.cell/2,y:y*this.cell-this.height*this.cell/2,height:0,vx:0,vy:0});
+        sample.height=this.bed[i]+h+0.3;sample.vx=h>0.05?qx[i]/h:0;sample.vy=h>0.05?qy[i]/h:0;
       }
     }
     let topologyChanged=!this.wetTopologyReady;

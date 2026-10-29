@@ -109,3 +109,9 @@ Die Ergebnisse sind mit dem früheren Hinweis auf noch nicht eingesammelte Worke
 Am 29. Oktober 2026 prüfte `tools/observe-firefox.mjs` den Produktionsbuild `4bd9fbe` mit Szenario `1.3-draft` im offiziellen Firefox 159.0 über geckodriver 0.37.1. Laden, Start, Pause, Neustart sowie Vorschau und Bestätigung aller drei Werkzeuge funktionierten. Eine anschließende ungeschützte 2×-Runde erreichte nach 150,956 s das Ergebnis mit 140.414 Schaden und 10.000 Budgetrest; der Screenshot zeigte die Ergebnisanzeige mit lesbaren Texten.
 
 Der Lauf verwendete einen virtuellen Linux-X-Desktop mit Mesa-Softwaregrafik und deaktivierter Firefox-Content-Sandbox für die temporären Testschriften. Dies ist ein automatisierter Umgebungstest, keine manuelle Abnahme unter regulären Browsersicherheitseinstellungen und kein Ersatz für Safari oder echte Mobilgeräte.
+
+## Wiederverwendung der Darstellungsdaten
+
+Die Darstellung kopiert Tiefen-Snapshots nun in einen bestehenden Puffer und aktualisiert vorhandene Strömungsmarker statt sie bei jedem Snapshot neu anzulegen. Ein Vitest prüft insbesondere, dass spätere Änderungen am zurückgegebenen Snapshot die gespeicherte Tiefenabfrage nicht verändern und dass die Marker aktualisiert werden. Produktionsbuild, 34 Vitest-Tests und 19 Chrome-Browserprüfungen bestanden.
+
+Ein erneuter Zwölf-Kurzrunden-Test mit Szenario `1.3-draft`, Chrome 156.0.8078.73 und erzwungener Seiten- und Worker-Garbage-Collection ergab für die Renderer-PSS-Summe nach Runde 1 und 12 236.818.432 beziehungsweise 229.062.656 Bytes und für den Seiten-Heap 20.237.404 beziehungsweise 20.815.248 Bytes; Seitenfehler wurden nicht protokolliert. Diese Stichproben ähneln dem vorigen GC-Lauf und belegen keine messbare Leistungsverbesserung oder das Fehlen langsamer Lecks. Vollständige Runden und echte Geräte müssen nach der Darstellungsänderung erneut geprüft werden.

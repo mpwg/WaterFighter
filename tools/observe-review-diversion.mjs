@@ -6,6 +6,7 @@ if(scenario.version!=='1.4-draft')throw Error('Szenarioversion stimmt nicht');
 const segments=JSON.parse(readFileSync('tests/fixtures/strategy.json','utf8')).segments.slice(0,2);
 const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined});
 const page=await browser.newPage({viewport:{width:1600,height:1000}}),errors=[];
+const points={scenario:scenario.version,viewport:{width:1600,height:1000},dams:[],building:null,trench:[]};
 page.on('pageerror',e=>errors.push(e.message));page.on('crash',()=>errors.push('Seite abgestürzt'));
 try {
  await page.route('**/src/main.ts*',async route=>{const response=await route.fetch();const body=await response.text();await route.fulfill({response,body:body+'\nexport { world };\n'});});
@@ -19,7 +20,7 @@ try {
  },{x,y,cell});}
  async function confirm(label){await page.locator('#confirm').waitFor({state:'visible',timeout:15000});await page.waitForFunction(()=>!document.querySelector('#confirm').disabled,null,{timeout:15000});const text=await page.locator('#preview-text').textContent();await page.locator('#confirm').click();await page.waitForFunction(()=>document.querySelector('#preview').hidden,null,{timeout:15000});console.log(label,text);}
  await page.locator('[data-mode=dam]').click();
- for(const [i,[start,end]] of segments.entries()){for(const [x,y] of [start,end]){const p=await landPoint(x,y);await page.mouse.click(p.x,p.y);}await confirm(`Damm ${i+1}`);}
+ for(const [i,[start,end]] of segments.entries()){const segment=[];for(const [x,y] of [start,end]){const p=await landPoint(x,y);segment.push(p);await page.mouse.click(p.x,p.y);}points.dams.push(segment);await confirm(`Damm ${i+1}`);}
  await page.locator('[data-mode=demolish]').click();
  const building=await page.evaluate(async ()=>{
   const {world}=await import(document.querySelector('script[src*="/src/main.ts"]').src),{Vector3,Matrix}=await import('/node_modules/@babylonjs/core/Maths/math.vector.js');
@@ -30,13 +31,15 @@ try {
    const x=rect.left+p.x*rect.width/world.engine.getRenderWidth(),y=rect.top+p.y*rect.height/world.engine.getRenderHeight();if(world.pick(x,y,true)?.buildingId==='w33581744-0')return {x,y};
   }throw Error('Kein sichtbarer Treffpunkt für Gebäude');
  });
+ points.building=building;
  await page.locator('#panel-toggle').click();
  await page.mouse.click(building.x,building.y);await confirm('Abriss');
  await page.locator('#panel-toggle').click();await page.locator('[data-mode=trench]').click();await page.locator('#panel-toggle').click();
- for(const [x,y] of [[0,10],[23,10]]){const p=await landPoint(x,y,true);await page.mouse.click(p.x,p.y);}await confirm('Graben');
+ for(const [x,y] of [[0,10],[23,10]]){const p=await landPoint(x,y,true);points.trench.push(p);await page.mouse.click(p.x,p.y);}await confirm('Graben');
  if(process.argv.includes('--prepare-only'))await page.screenshot({path:'/tmp/waterfighter-review-trench-visible.png'});
  await page.locator('#panel-toggle').click();
  await page.waitForFunction(()=>document.querySelector('#budget').textContent.replace(/\s/g,'')==='6598',null,{timeout:15000});
+ writeFileSync('/tmp/waterfighter-review-points.json',JSON.stringify(points,null,2));
  await page.screenshot({path:'/tmp/waterfighter-review-preparation.png'});
  if(process.argv.includes('--prepare-only')){console.log('Vorbereitung abgeschlossen');process.exitCode=0;}
  else {

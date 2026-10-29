@@ -17,7 +17,7 @@ function difference(game:Game,key:string){
  const s=game.solver,[axis,raw]=key.split(':'),i=Number(raw),x=axis==='x'?i%(s.width+1):i%s.width,y=axis==='x'?Math.floor(i/(s.width+1)):Math.floor(i/s.width);
  const a=axis==='x'?y*s.width+x-1:(y-1)*s.width+x,b=axis==='x'?a+1:y*s.width+x;
  if(a<0||b>=s.h.length)throw Error(`Randkante ${key}`);
- const left=s.bed[a]+s.h[a],right=s.bed[b]+s.h[b];return {left,right,difference:left-right};
+ const leftDepth=s.h[a],rightDepth=s.h[b],left=s.bed[a]+leftDepth,right=s.bed[b]+rightDepth;return {left,right,leftDepth,rightDepth,difference:left-right,bothWet:leftDepth>0.02&&rightDepth>0.02};
 }
 const rows=[];
 const capture=process.argv.includes('--capture');
@@ -26,7 +26,9 @@ for(const time of [60,90,120,150,180,210,240,270,300]){
  advance(shield,time);advance(baseline,time);
  const comparisons=[...shield.damFaces.keys()].map(key=>{const withDam=difference(shield,key),without=difference(baseline,key);return {key,withDam,without,contrast:Math.abs(withDam.difference)-Math.abs(without.difference)};});
  const peak=comparisons.reduce((a,b)=>a.contrast>b.contrast?a:b);
- rows.push({time,peak,shieldDamage:shield.totals().totalDamage,baselineDamage:baseline.totals().totalDamage});
+ const wetComparisons=comparisons.filter(c=>c.withDam.bothWet&&c.without.bothWet);
+ const wetPeak=wetComparisons.length?wetComparisons.reduce((a,b)=>a.contrast>b.contrast?a:b):null;
+ rows.push({time,peak,wetPeak,shieldDamage:shield.totals().totalDamage,baselineDamage:baseline.totals().totalDamage});
  if(capture && (time===120||time===150))for(const [name,game] of [['baseline',baseline],['shield',shield]] as const){const s=game.solver;snapshots.push({name,time,bed:Array.from(s.bed),depth:Array.from(s.h),qx:Array.from(s.qx),qy:Array.from(s.qy),buildings:game.status(),dams:[...game.damFaces]});}
 }
 const balance=(g:Game)=>{const s=g.solver;return Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow);};

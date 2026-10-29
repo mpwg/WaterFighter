@@ -25,4 +25,4 @@ export function compressedScenario(file=fileURLToPath(new URL('./public/scenario
     generateBundle() {this.emitFile({type:'asset',fileName:route.slice(1),source:content()});},
   };
 }
-export default defineConfig({base:'./',plugins:[compressedScenario()]});
+export default defineConfig({base:'./',build:{target:'esnext'},plugins:[compressedScenario()]});

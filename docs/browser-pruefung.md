@@ -469,3 +469,9 @@ Der kompakte Status wurde zusätzlich auf dem späteren Entwicklungsstand mit ei
 ### Produktionsbuild mit Grabenanschlüssen
 
 Auf dem isolierten Produktionsbuild `bc6c8ed` bestanden am 29. Oktober 2026 der Build, alle 70 Vitest-Tests und alle 71 Playwright-Prüfungen in Headless-Chromium 156.0.8078.4 unter Linux mit Softwaregrafik (ein Worker, 13,5 Minuten bei paralleler Testlast). Der Previewserver verwendete Port 4349 ohne Wiederverwendung; lokale Bibliotheken und Schriften waren über `LD_LIBRARY_PATH` und `FONTCONFIG_FILE` eingebunden. Der Lauf enthält unter anderem die Anschlussvorschau mit Kosten nur für neue Zellen, Touchbedienung, Pause und kombinierten Neustart. Er belegt den genannten Commit und ersetzt weder spätere Tests noch die menschliche und echte Geräteabnahme.
+
+### Grabenanschluss per emuliertem Touch
+
+Am 29. Oktober 2026 bestätigte `tests/browser/connected-trench-touch.spec.ts` im Chromium-Entwicklungsbrowser Grabenanschlüsse per emuliertem Touch bei 390 × 844 und 844 × 390 CSS-Pixeln. In beiden Fällen wurde zuerst der diagonale Referenzgraben gesetzt und anschließend eine teilweise überlappende Strecke ausgewählt. Der Test vergleicht die vom Worker empfangenen Zellfolgen, prüft den Hinweis auf bereits ausgehobene Zellen und die Kosten ausschließlich für neue Zellen und bestätigt die korrekte Budgetänderung. Die verwendeten Testkoordinaten sind fest; im Hochformat wird die Karte zuvor testseitig verschoben.
+
+Ein erster Versuch mit weiter verlängerten Endpunkten wurde in beiden Formaten korrekt wegen eines Gebäudes abgelehnt; für den Anschlussnachweis wurden andere feste zulässige Endpunkte gewählt. Die zwei anschließenden Fälle bestanden in Headless-Chromium 156.0.8078.4 unter Linux mit Softwaregrafik. Emulation und feste Koordinaten ersetzen weder selbstständige menschliche Platzierung noch Tests auf echten Smartphones.

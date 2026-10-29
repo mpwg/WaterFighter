@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Der [Grabenanschluss](browser-pruefung.md#grabenanschluss-per-emuliertem-touch) wurde mit festen Koordinaten und emuliertem Touch in beiden Ausrichtungen auf Vorschau, Kosten und Budget geprüft. Menschliche Platzierung und echte Geräte bleiben offen.
+
 Ein [zellgetrennter Westgraben ohne Dämme](geodaten-voruntersuchung.md#südlicher-westgraben-ohne-und-mit-referenzdämmen) senkt den Schaden um 3.961,10 bei 1.700 Kosten; ein geordneter Modellanteil von 921,36 m³ erreicht den Westrand. Er verfehlt allein das Ziel und verschlechtert die getesteten Dammkombinationen. Eine zweite erfolgreiche Gesamtstrategie und ein überall getrennter Verlauf bleiben offen.
 
 Auf dem isolierten Stand `d436db0` bestanden Produktionsbuild und alle 69 Chromium-Fälle; spätere Änderungen sind nicht eingeschlossen. Der kompakte Status wurde zusätzlich gezielt auf Rundenende und Neustart geprüft: [Prüfbeleg](browser-pruefung.md#gesamtsuite-nach-vorschauersatz).

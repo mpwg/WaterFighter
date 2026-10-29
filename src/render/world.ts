@@ -13,7 +13,7 @@ import { LinesMesh } from '@babylonjs/core/Meshes/linesMesh';
 import { CreateLineSystem } from '@babylonjs/core/Meshes/Builders/linesBuilder';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { VertexBuffer } from '@babylonjs/core/Buffers/buffer';
-import earcut from 'earcut';
+import { roofIndices } from './roof';
 import { visibleWaterIndices } from './water-indices';
 import { damCrest } from '../simulation/dam-height';
 import { groundRoads, terrainHeight } from './roads';
@@ -108,7 +108,7 @@ export class World {
       const cx=Math.max(0,Math.min(this.width-1,Math.floor(points[0]/this.cell))), cy=Math.max(0,Math.min(this.height-1,Math.floor(points[1]/this.cell)));
       const ground=scenario.terrain[cy*this.width+cx]; const verts:number[]=[]; const indices:number[]=[];
       for(let i=0;i<points.length;i+=2) verts.push(points[i]-this.width*this.cell/2, ground+building.height, points[i+1]-this.height*this.cell/2);
-      const top=earcut(points,holes,2); for(let i=0;i<top.length;i+=3) indices.push(top[i],top[i+2],top[i+1]);
+      indices.push(...roofIndices(points,holes));
       for(const ring of rings) {
         const n=ring.length-1;
         for(let i=0;i<n;i++) { const j=(i+1)%n,a=ring[i],b=ring[j],v=verts.length/3;

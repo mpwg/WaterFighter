@@ -40,6 +40,8 @@ Eine vollständige lokale Produktionsrunde mit einem während der laufenden Flut
 
 Die Spielhilfe erklärt nun, wie Zufluss, Dämme, Gräben und Pause bei der Planung zusammenwirken. Nach dem Produktionsbuild bestanden 49 Vitest-Tests und alle 33 Chromium-Browserprüfungen einschließlich emuliertem Touch und kombiniertem Neustart; [Details und Testumgebung](browser-pruefung.md#produktionsrunde-mit-laufendem-grabeneingriff). Ein menschlicher Spieltest bleibt offen.
 
+Die Dachnormalen der Gebäude wurden korrigiert: Unbeschädigte Dächer erscheinen in der Produktionsansicht hell statt nahezu schwarz, wodurch die Zustandsfarben besser erkennbar sind. Build und 50 Vitest-Tests sowie Chromium-Prüfungen für Abriss und kombinierten Neustart bestanden; eine menschliche Beurteilung der Zustandsfarben bleibt offen.
+
 ## Arbeitspakete
 
 | Paket | Status | Tatsächlicher Nachweis | Nächster Schritt |

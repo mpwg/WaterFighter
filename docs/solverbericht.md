@@ -10,6 +10,14 @@ Stand: 29. Oktober 2026. Dies ist keine vollständige Solver- oder Geräteabnahm
 
 Frühe Messung: `node tools/benchmark-solver.mjs 600`, Node.js 24.22.0 auf diesem Linux-Rechner, Szenario `1-draft`, Raster 200 × 200, 4 m Zellen, geschlossene Ränder und ohne Gebäude-/Bauwerksmodell. 600 simulierte Sekunden benötigten 6,564 s, 2.788 Subschritte, entsprechend 91,4 simulierten Sekunden pro realer Sekunde; relativer Volumenfehler 2,33 × 10⁻¹⁶. Dies misst nur den Solver im Node-Prozess, nicht Browserrendering, Worker-Kommunikation oder Smartphoneleistung. Es ist keine mobile Echtzeitabnahme.
 
+## Zehn Minuten mit mehreren Eingriffen
+
+`bun tools/check-intervention-balance.ts` wurde am 29. Oktober 2026 auf einem isolierten Archiv von `42da208` mit Szenario `1.4-draft` ausgeführt. Drei Referenzdämme wurden vor Beginn gesetzt; bei exakt 150 simulierten Sekunden folgten ein Landgraben, ein daran angeschlossener diagonaler Graben und der Abriss von `w316294474-0`. Sechs Zellen der zweiten Grabenaktion waren bereits ausgehoben; sie wurden nicht erneut berechnet. Jede Aktionskennung wurde unmittelbar wiederholt und veränderte weder Budget noch Wasservolumen ein zweites Mal. Nach Abriss wurde geprüft, dass der volle Gebäudewert den zuvor angesammelten Gebäudeschaden ersetzt, statt ihn zusätzlich zu zählen.
+
+Alle sechs bestätigten Aktionen erhielten das Wasservolumen unmittelbar; bei den drei Eingriffen nach Flutbeginn betrug es vor und nach jeder Aktion 1.277.734,14 m³. Nach 600 simulierten Sekunden und 6.508 Schritten ergab sich ein relativer Bilanzfehler von 1,67 × 10⁻¹³, bezogen auf Anfangsvolumen plus Zufluss; die Tiefe blieb endlich und nicht negativ, das Maximum betrug 13,20 m. Der Restbetrag nach den Aktionen war 5.379. Das Skript bricht bei Bilanzfehler ab 0,1 %, negativer oder nicht endlicher Tiefe, abweichender Vorschau, doppelter Belastung oder Volumenänderung durch eine Aktion ab.
+
+Die reguläre Spielrunde endet nach 300 s; die Verlängerung auf 600 s dient hier ausschließlich der numerischen Stabilitätsprüfung. Die Eingriffe erfolgen idealisiert unmittelbar zum Zeitpunkt 150 s. Der Test beweist weder reale hydraulische Plausibilität noch menschliche Bedienbarkeit oder Leistung auf Mobilgeräten.
+
 ## Überströmung und Rückstau mit direkter Dammführung
 
 Auf Szenario `1.4-draft` wurden die zwei Referenzdämme nach der Umstellung auf direkte Rasterführung mit `bun tools/inspect-dam-overtopping.ts` und `bun tools/compare-dam-backwater.ts` erneut über 300 s untersucht. Von 30 Dammkanten werden zwei überströmt; die erste Überschreitung beginnt bei etwa 120,0 s. An Kante `x:26` beträgt die größte berechnete Überstauhöhe 1,03 m bei etwa 150,9 s. Der aufsummierte gerichtete Modellfluss über alle Dammkanten beträgt in einer Richtung 723,06 m³; dies ist eine numerische Flussbilanz und keine Verfolgung einzelner Wasserteilchen. Der relative Bilanzfehler beträgt 2,02 × 10⁻¹³.

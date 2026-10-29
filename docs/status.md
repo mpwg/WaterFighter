@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Eine [Zehn-Minuten-Simulation mit sechs Aktionen](solverbericht.md#zehn-minuten-mit-mehreren-eingriffen) bestätigt Wasserbilanz und Positivität mit Dämmen, verbundenen Gräben und Abriss bei 150 s; der relative Bilanzfehler beträgt 1,67 × 10⁻¹³. Die Verlängerung über die reguläre Rundenzeit ist ein numerischer Test, keine Geräte- oder Spielabnahme.
+
 Die drei [Referenzrunden nach Einführung anschließbarer Gräben](review-gebaeudevergleich.md#aktueller-vergleich-mit-direkter-dammführung) reproduzieren auf `42da208` ihre bisherigen Schäden und Budgets; die numerische Prüfung ersetzt keine menschliche Spielrunde.
 
 Nach dem Verwerfen einer Maßnahmenvorschau fordert der Hinweis wieder zur passenden ersten Auswahl auf. Produktionsbuild, 71 Modelltests und vier gezielte Chromium-Fälle für Vorschauersatz und Verwerfen bestanden; eine vollständige Browser-Suite dieses Anwendungsstands und echte Geräte bleiben offen.

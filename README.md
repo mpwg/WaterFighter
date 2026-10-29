@@ -6,6 +6,8 @@ WaterFighter ist ein browserbasierter Prototyp eines Hochwasserschutzspiels in e
 
 Voraussetzung: [Bun 1.4.4](https://bun.com/docs/installation) im PATH; TypeScript 7 wird über die Lockdatei installiert; für Browserprüfungen zusätzlich ein von Playwright unterstützter Browser mit seinen Systembibliotheken.
 
+Falls Bun bereits unter `~/.bun/bin/bun` installiert ist, aber `bun` nicht gefunden wird, ergänzt `export PATH="$HOME/.bun/bin:$PATH"` den Suchpfad für die aktuelle Shell.
+
 ```sh
 bun install --frozen-lockfile
 bun run dev

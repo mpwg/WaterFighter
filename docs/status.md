@@ -58,7 +58,7 @@ Der Produktionsbuild verwendet gezielte Babylon-Imports; Ausgangsansicht und Abr
 
 ## Fortsetzung
 
-AP 2 benötigt insbesondere hydraulische Interpretation der Bruchkanten, zwei geeignete Wasserwege und Lizenzprüfung. Zwei statische Landkorridore wurden geprüft, jedoch in der Referenzflut nicht vollständig nass; Zwei getrennte Eintrittskanten sind über eine Runde einzeln sperrbar; passive Modellmarkierungen bilanzieren ihren Verbleib, belegen aber keine durchgehenden nutzbaren Umleitungswege. Der Solver wurde unabhängig davon bereits begonnen; Szenarioabnahme und Solverabnahme bleiben offen. Die verbleibenden Kriterien und die reale Geräteabnahme sind offen.
+AP 2 benötigt insbesondere hydraulische Interpretation der Bruchkanten, zwei geeignete Wasserwege und Lizenzprüfung. Zwei statische Landkorridore wurden geprüft, jedoch in der Referenzflut nicht vollständig nass; zwei getrennte Eintrittskanten sind über eine Runde einzeln sperrbar. Eine neue Markierungsbilanz bis zur ersten Rückkehr ins Gewässer zeigt deutlich unterschiedlich weit reichende Landpassagen, belegt aber keine zwei nutzbaren Umleitungswege. Der Solver wurde unabhängig davon bereits begonnen; Szenarioabnahme und Solverabnahme bleiben offen. Die verbleibenden Kriterien und die reale Geräteabnahme sind offen.
 
 Lokale Geräteprüfung: USB zeigte ein QEMU-Tablet und Controller; `adb`, `idevice_id`, `xcrun`, Chrome und Firefox waren nicht im Pfad. Safari ist auf diesem Linux-Rechner nicht verfügbar. Chrome und Firefox wurden später temporär installiert; ein entfernter Gerätezugang wurde nicht ausgeschlossen. Die vollständige Chromium-Headless-Runde und ihre Grenzen sind im [Solverbericht](solverbericht.md#vollständige-browserrunde-vorheriger-build) dokumentiert.
 

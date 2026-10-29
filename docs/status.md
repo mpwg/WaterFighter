@@ -36,8 +36,8 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | Build, Typprüfung, Entwicklungsserver und Worker-Start | erfüllt | Build, Server, Protokolltest und Worker-Initialisierung in Playwright-Chromium geprüft |
 | Reproduzierbares reales Wiener Szenario | offen | Version 1.2-draft mit approximierten Bruchlinien; Orthofotoüberlagerung geprüft, Durchlässe, Eignung und Lizenzpflichten offen |
 | Ausrichtung, Höhenbezug, Datenlücken und Quellen geprüft | offen | Orthofotoüberlagerung, Höhenbezug und endliche Rasterwerte geprüft; fachliche Datenlücken und Bruchkanteninterpretation offen |
-| Stabiler Solver und Bilanzfehler unter 0,1 % | offen | Geschlossenes Becken und bilanziertes Zu-/Abfluss-Testfeld bestehen; vollständige Stabilitäts- und Integrationsprüfung fehlt |
-| Plausible Flutwelle, Barrieren und Überströmung | offen | Symmetrische Welle, Dammöffnung und überströmbare Barriere numerisch geprüft; visuelle Wellenkontrolle fehlt |
+| Stabiler Solver und Bilanzfehler unter 0,1 % | offen | Geschlossenes Becken, bilanziertes Zu-/Abfluss-Testfeld und 600-s-Szenariolauf bestehen; Einordnung der hohen lokalen Tiefe und Geräteprüfung fehlen |
+| Plausible Flutwelle, Barrieren und Überströmung | offen | Symmetrische Welle, Dammöffnung und überströmbare Barriere numerisch geprüft; [synthetische Sichtkontrolle](solverbericht.md#sichtkontrolle-der-dammöffnung) vorhanden |
 | 2,5D-Ansicht, Touch-Modi und Fehlerbehandlung | offen | Karten- und Werkzeugmodi, Strömungsmarker und Zustandsabfrage vorhanden; tatsächliche Geräte und umfassende Fehlerprüfung fehlen |
 | Atomare Aktionen, Budget, Wassererhaltung und Schadenswertung | offen | Regel-, Worker- und hydraulische Tests sowie Werkzeugvergleiche im Szenario bestehen; Geräteprüfungen fehlen |
 | Vollständige Runde und bezahlbare erfolgreiche Strategie | offen | Version 1.2: ohne Maßnahmen 322.771,10 Schaden; vollständige automatisierte 2×-Browserrunde mit Strategie 0 bei Budgetrest 2.600. Menschliche Gerätebedienung fehlt |

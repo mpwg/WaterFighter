@@ -38,6 +38,8 @@ Der [Gebäudevergleich](review-gebaeudevergleich.md) ordnet die drei Referenzrun
 
 Eine vollständige lokale Produktionsrunde mit einem während der laufenden Flut bestätigten Graben zeigte Schadensanzeige, Ergebnis und zurückgesetzte Werte nach Neustart. Der willkürlich platzierte Graben verfehlte das Ziel; die automatisierte Mausprüfung ersetzt keinen menschlichen Spieltest: [Browserprüfung](browser-pruefung.md#produktionsrunde-mit-laufendem-grabeneingriff).
 
+Die Spielhilfe erklärt nun, wie Zufluss, Dämme, Gräben und Pause bei der Planung zusammenwirken. Nach dem Produktionsbuild bestanden 49 Vitest-Tests und alle 33 Chromium-Browserprüfungen einschließlich emuliertem Touch und kombiniertem Neustart; [Details und Testumgebung](browser-pruefung.md#produktionsrunde-mit-laufendem-grabeneingriff). Ein menschlicher Spieltest bleibt offen.
+
 ## Arbeitspakete
 
 | Paket | Status | Tatsächlicher Nachweis | Nächster Schritt |

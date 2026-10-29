@@ -10,6 +10,12 @@ Stand: 29. Oktober 2026. Dies ist keine vollständige Solver- oder Geräteabnahm
 
 Frühe Messung: `node tools/benchmark-solver.mjs 600`, Node.js 24.22.0 auf diesem Linux-Rechner, Szenario `1-draft`, Raster 200 × 200, 4 m Zellen, geschlossene Ränder und ohne Gebäude-/Bauwerksmodell. 600 simulierte Sekunden benötigten 6,564 s, 2.788 Subschritte, entsprechend 91,4 simulierten Sekunden pro realer Sekunde; relativer Volumenfehler 2,33 × 10⁻¹⁶. Dies misst nur den Solver im Node-Prozess, nicht Browserrendering, Worker-Kommunikation oder Smartphoneleistung. Es ist keine mobile Echtzeitabnahme.
 
+## Überströmung und Rückstau mit direkter Dammführung
+
+Auf Szenario `1.4-draft` wurden die zwei Referenzdämme nach der Umstellung auf direkte Rasterführung mit `bun tools/inspect-dam-overtopping.ts` und `bun tools/compare-dam-backwater.ts` erneut über 300 s untersucht. Von 30 Dammkanten werden zwei überströmt; die erste Überschreitung beginnt bei etwa 120,0 s. An Kante `x:26` beträgt die größte berechnete Überstauhöhe 1,03 m bei etwa 150,9 s. Der aufsummierte gerichtete Modellfluss über alle Dammkanten beträgt in einer Richtung 723,06 m³; dies ist eine numerische Flussbilanz und keine Verfolgung einzelner Wasserteilchen. Der relative Bilanzfehler beträgt 2,02 × 10⁻¹³.
+
+Im Vergleich mit der unbehandelten Runde beträgt bei 120 s der Wasserstandsunterschied über dieselbe Kante mit Damm 4,18 m, ohne Damm 0,08 m in Gegenrichtung; dies zeigt den lokalen Rückstau im Modell. Der Vergleich tastet feste Zeitpunkte ab und verwendet dafür angepasste letzte Zeitschritte; seine Endschadenswerte weichen deshalb geringfügig von der Referenzberechnung ab. Er belegt keine reale Wirksamkeit oder durchgehend erkennbare Darstellung auf Geräten.
+
 ## Worker und Ansicht
 
 Der Worker besitzt eine pausierbare Uhr und begrenzt die Arbeit pro Tick; nicht berechnete Zeit bleibt als Rückstand erhalten. Zwei übertragbare Snapshot-Puffer begrenzen ausstehende Rasterdaten, und nach einer Pufferrückgabe wird der neueste Zustand nachgeliefert. Alte Rundenkennungen werden ignoriert. Controller-Tests prüfen Pause, Geschwindigkeitswechsel, Rückstand, Puffer und Neustart. Der Worker validiert Vorschau und Aktionen, führt sie auch in Pause aus und verwendet eine vorläufige Zuflusskurve.

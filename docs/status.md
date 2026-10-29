@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Die drei [Referenzrunden nach Einführung anschließbarer Gräben](review-gebaeudevergleich.md#aktueller-vergleich-mit-direkter-dammführung) reproduzieren auf `42da208` ihre bisherigen Schäden und Budgets; die numerische Prüfung ersetzt keine menschliche Spielrunde.
+
 Nach dem Verwerfen einer Maßnahmenvorschau fordert der Hinweis wieder zur passenden ersten Auswahl auf. Produktionsbuild, 71 Modelltests und vier gezielte Chromium-Fälle für Vorschauersatz und Verwerfen bestanden; eine vollständige Browser-Suite dieses Anwendungsstands und echte Geräte bleiben offen.
 
 [Angeschlossene Gräben](browser-pruefung.md#grabenanschluss-nach-flutbeginn) wurden auch bei laufender Flut und in Pause im Produktionsbrowser geprüft: Nur neue Zellen wurden berechnet, und die Uhr blieb in der Pause stehen. Die kurzen automatisierten Tests ersetzen keine vollständige menschliche Runde oder Geräteprüfung.

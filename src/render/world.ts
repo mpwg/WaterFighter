@@ -305,7 +305,7 @@ export class World {
       this.waterColors[v*4+3]=depth[i]>0.02 ? 0.78 : 0;
     }
     if(topologyChanged){this.water.setIndices(visibleWaterIndices(this.width,this.height,this.wetVertices,this.waterIndexBuffer),undefined,true);this.wetTopologyReady=true;}
-    this.water.updateVerticesData(VertexBuffer.PositionKind,this.waterPositions);
+    this.water.updateVerticesData(VertexBuffer.PositionKind,this.waterPositions,true);
     this.water.updateVerticesData(VertexBuffer.ColorKind,this.waterColors);
   }
   resetView():void { this.zoom=560; this.camera.setTarget(Vector3.Zero()); this.resize(); }

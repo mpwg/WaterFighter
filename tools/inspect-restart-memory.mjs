@@ -1,3 +1,4 @@
+import { gzipSync } from 'node:zlib';
 /** Shortened rounds for a page-heap investigation, not a full-round stability test. */
 import {readFileSync,writeFileSync} from 'node:fs';
 import {chromium} from '@playwright/test';
@@ -11,7 +12,7 @@ page.on('pageerror',e=>errors.push(e.message));page.on('crash',()=>errors.push('
 const cdp=await page.context().newCDPSession(page);
 const report={version:scenario.version,browser:browser.version(),duration:2,workerGc,rounds:[],errors};
 try {
-  await page.route('**/scenarios/brigittenau-v1.json',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(scenario)}));
+  await page.route('**/scenarios/brigittenau-v1.json.bin',r=>r.fulfill({status:200,contentType:'application/octet-stream',body:gzipSync(Buffer.from(JSON.stringify(scenario)))}));
   await page.goto(process.env.WATERFIGHTER_URL??'http://127.0.0.1:4173/');
   await page.waitForFunction(()=>!document.querySelector('#run').disabled);
   for(let i=0;i<12;i++) {

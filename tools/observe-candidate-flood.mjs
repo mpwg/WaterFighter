@@ -1,3 +1,4 @@
+import { gzipSync } from 'node:zlib';
 /** Capture a full candidate flood at fixed displayed simulation times. */
 import {readFileSync,writeFileSync} from 'node:fs';
 import {chromium} from '@playwright/test';
@@ -9,7 +10,7 @@ const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHR
 const page=await browser.newPage({viewport:{width:1200,height:800}}),errors=[];
 page.on('pageerror',e=>errors.push(e.message));page.on('crash',()=>errors.push('Seite abgestürzt'));
 try {
- await page.route('**/scenarios/brigittenau-v1.json',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(scenario)}));
+ await page.route('**/scenarios/brigittenau-v1.json.bin',r=>r.fulfill({status:200,contentType:'application/octet-stream',body:gzipSync(Buffer.from(JSON.stringify(scenario)))}));
  await page.goto(process.env.WATERFIGHTER_URL??'http://127.0.0.1:4173/');
  await page.waitForFunction(()=>!document.querySelector('#run').disabled);
  await page.screenshot({path:'/tmp/waterfighter-candidate-000.png'});

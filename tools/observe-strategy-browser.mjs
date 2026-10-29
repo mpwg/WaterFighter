@@ -1,3 +1,4 @@
+import { gzipSync } from 'node:zlib';
 /** Exercises map picking, previews, confirmation and a full 2× round in Vite dev mode.
  * A test-only exported reference permits projecting the fixture's known grid vertices
  * to mouse coordinates; actions still go through the public UI and worker protocol. */
@@ -14,7 +15,7 @@ if(candidate){
   if(scenario.version!=='1.2-draft')throw Error('Kandidatenvergleich benötigt den historischen Szenarioentwurf 1.2');
   scenario.parameters.inflowCurve=scenario.parameters.inflowCurve.map(([t,q])=>[t,q*0.75]);
   scenario.parameters.inflowCells=Array.from({length:scenario.grid.width},(_,x)=>x).filter(x=>x<150&&scenario.waterMask[x]===1);
-  await page.route('**/scenarios/brigittenau-v1.json',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(scenario)}));
+  await page.route('**/scenarios/brigittenau-v1.json.bin',route=>route.fulfill({status:200,contentType:'application/octet-stream',body:gzipSync(Buffer.from(JSON.stringify(scenario)))}));
 }
 await page.goto(process.env.WATERFIGHTER_URL??'http://127.0.0.1:5173/');await page.waitForFunction(()=>!document.querySelector('#run').disabled);
 await page.locator('[data-mode=dam]').click();

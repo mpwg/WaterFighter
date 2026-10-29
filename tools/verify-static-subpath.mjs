@@ -40,7 +40,7 @@ try {
   const source=await page.locator('a[href$="scenarios/DATENQUELLEN.md"]').getAttribute('href');
   const sourceResponse=await page.request.get(new URL(source,page.url()).href);
   if(!sourceResponse.ok())throw Error(`Quellenhinweis: HTTP ${sourceResponse.status()}`);
-  if(!requests.some(r=>r.path.endsWith('/scenarios/brigittenau-v1.json')&&r.status===200))throw Error('Szenario nicht geladen');
+  if(!requests.some(r=>r.path.endsWith('/scenarios/brigittenau-v1.json.bin')&&r.status===200))throw Error('Szenario nicht geladen');
   if(!requests.some(r=>/worker.*\.js$/.test(r.path)&&r.status===200))throw Error('Worker nicht geladen');
   if(errors.length||requests.some(r=>r.status!==200))throw Error(JSON.stringify({errors,requests}));
   console.log(JSON.stringify({browser:browser.version(),prefix,time,sourceStatus:sourceResponse.status(),requests},null,2));

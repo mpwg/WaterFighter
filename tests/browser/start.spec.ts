@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { gzipSync } from 'node:zlib';
 test('Szenario und Worker laden; Uhr pausiert und startet neu', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#message')).toHaveText('Wiener Szenario geladen. Die Wasserberechnung ist bereit.');
@@ -67,7 +68,7 @@ test('Gebäudeabriss verlangt Vorschau und Bestätigung', async ({page})=>{
 test('Eine verkürzte Runde zeigt das Ergebnis und erlaubt den Neustart', async ({page})=>{
   const scenario=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
   scenario.parameters.duration=2;
-  await page.route('**/scenarios/brigittenau-v1.json',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(scenario)}));
+  await page.route('**/scenarios/brigittenau-v1.json.bin',route=>route.fulfill({status:200,contentType:'application/octet-stream',body:gzipSync(Buffer.from(JSON.stringify(scenario)))}));
   await page.goto('/');await expect(page.locator('#run')).toBeEnabled();await page.locator('#run').click();
   await expect(page.locator('#result')).toBeVisible({timeout:15000});
   await expect(page.locator('#result-details')).toContainText('Flutschäden');
@@ -146,9 +147,16 @@ test('Zweiter Finger übernimmt keine laufende Werkzeugberührung',async({browse
 });
 
 test('Fehlendes Szenario zeigt eine verständliche Fehlermeldung',async({page})=>{
-  await page.route('**/scenarios/brigittenau-v1.json',route=>route.fulfill({status:404,body:'fehlt'}));await page.goto('/');
+  await page.route('**/scenarios/brigittenau-v1.json.bin',route=>route.fulfill({status:404,body:'fehlt'}));await page.goto('/');
   await expect(page.locator('#message')).toContainText('Szenario oder Grafik konnte nicht geladen werden: HTTP 404');
   await expect(page.locator('#state')).toHaveText('Fehler');await expect(page.locator('#run')).toBeDisabled();
+});
+
+test('Beschädigtes komprimiertes Szenario meldet einen Ladefehler',async({page})=>{
+  await page.route('**/scenarios/brigittenau-v1.json.bin',route=>route.fulfill({status:200,contentType:'application/octet-stream',body:'defekt'}));
+  await page.goto('/');await expect(page.locator('#state')).toHaveText('Fehler');
+  await expect(page.locator('#message')).toContainText('Szenario oder Grafik konnte nicht geladen werden');
+  await expect(page.locator('#run')).toBeDisabled();
 });
 
 test('Verlust des Grafikkontexts pausiert und weist auf einen Neustart hin',async({page})=>{

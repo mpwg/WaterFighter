@@ -124,7 +124,7 @@ canvas.addEventListener('pointermove',e=>{if(pointer?.id===e.pointerId && pointe
 canvas.addEventListener('pointerup',e=>{if(pointer?.id!==e.pointerId)return; if(pointer.modeRevision!==modeRevision){pointer=undefined;return;} if(mode!=='camera') selectAt(e.clientX,e.clientY); else if(Math.hypot(e.clientX-pointer.startX,e.clientY-pointer.startY)<5) message.textContent=world?.inspect(e.clientX,e.clientY)??'Karte ist noch nicht bereit.';pointer=undefined;});
 for(const event of ['pointercancel','lostpointercapture'] as const) canvas.addEventListener(event,e=>{if(pointer?.id===e.pointerId)pointer=undefined;});
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();if(round)worker?.postMessage({type:'pause',round});fail('Grafikkontext verloren. Bitte Seite neu laden.');});
-fetch(`${import.meta.env.BASE_URL}scenarios/brigittenau-v1.json`).then(async response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return validateScenario(await response.json());}).then(loaded=>{
+fetch(`${import.meta.env.BASE_URL}scenarios/brigittenau-v1.json.bin`).then(async response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);if(!response.body)throw new Error('Szenariodaten fehlen');return validateScenario(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).json());}).then(loaded=>{
   if(fatalError)return;
   scenario=loaded;app.querySelector<HTMLElement>('#target')!.textContent=loaded.parameters.damageTarget.toLocaleString('de-AT');world=new World(canvas,loaded); worker?.postMessage({type:'init',scenario:loaded});
 }).catch((error:unknown)=>fail(`Szenario oder Grafik konnte nicht geladen werden: ${error instanceof Error?error.message:String(error)}`));

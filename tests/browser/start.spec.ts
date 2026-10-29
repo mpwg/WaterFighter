@@ -189,3 +189,14 @@ test('Simulationsfehler nennt das Neuladen als Wiederherstellung', async ({page}
   await expect(page.locator('#message')).toContainText('Seite neu laden');
   await expect(page.locator('#run')).toBeDisabled();
 });
+
+
+for(const viewport of [{width:320,height:568},{width:390,height:844},{width:844,height:390}]) test(`Kartenansicht durch Menü ausblenden freilegen (${viewport.width}×${viewport.height})`,async({page})=>{
+  await page.setViewportSize(viewport);await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  const toggle=page.locator('#panel-toggle'),panel=page.locator('#game-panel');
+  await expect(toggle).toHaveAttribute('aria-expanded','true');await toggle.click();
+  await expect(panel).toBeHidden();await expect(toggle).toHaveAttribute('aria-expanded','false');
+  const box=await toggle.boundingBox();expect(box!.width).toBeGreaterThanOrEqual(44);expect(box!.height).toBeGreaterThanOrEqual(44);
+  expect(box!.x).toBeGreaterThanOrEqual(0);expect(box!.x+box!.width).toBeLessThanOrEqual(viewport.width);
+  await toggle.click();await expect(panel).toBeVisible();await expect(page.locator('#run')).toBeEnabled();
+});

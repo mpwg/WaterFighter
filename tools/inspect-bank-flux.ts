@@ -4,6 +4,11 @@ import {Game} from '../src/simulation/game';
 import {damPath} from '../src/simulation/path';
 import {validateScenario} from '../src/scenario';
 const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
+const candidate=process.argv.includes('--candidate');
+if(candidate){
+ scenario.parameters.inflowCurve=scenario.parameters.inflowCurve.map(([t,q])=>[t,q*0.75]);
+ scenario.parameters.inflowCells=Array.from({length:scenario.grid.width},(_,x)=>x).filter(x=>x<150&&scenario.waterMask[x]===1);
+}
 const game=new Game(scenario),s=game.solver,w=s.width,initial=s.volume();
 const mode=process.argv[2]??'baseline';
 if(mode==='bank') {
@@ -37,4 +42,4 @@ while(s.time<scenario.parameters.duration-1e-9){
  }});
  const actual=s.step(maxDt);if(actual!==dt)throw Error('Zeitschritt stimmt nicht');game.addInflow(t,actual);game.updateDamage(actual);
 }
-console.log(JSON.stringify({version:scenario.version,mode,initialVolume:initial,finalVolume:s.volume(),inflow:s.inflow,outflow:s.outflow,budget:game.budget,...game.totals(),bands:bands.map((rows,i)=>({rows,faces:faces[i].length,...totals[i],netIntoLand:totals[i].intoLand-totals[i].backToWater}))},null,2));
+console.log(JSON.stringify({version:scenario.version,candidate,mode,initialVolume:initial,finalVolume:s.volume(),inflow:s.inflow,outflow:s.outflow,budget:game.budget,...game.totals(),bands:bands.map((rows,i)=>({rows,faces:faces[i].length,...totals[i],netIntoLand:totals[i].intoLand-totals[i].backToWater}))},null,2));

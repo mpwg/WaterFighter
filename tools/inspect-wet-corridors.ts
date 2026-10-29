@@ -3,6 +3,11 @@ import {readFileSync} from 'node:fs';
 import {Game} from '../src/simulation/game';
 import {validateScenario} from '../src/scenario';
 const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
+const candidate=process.argv.includes('--candidate');
+if(candidate){
+ scenario.parameters.inflowCurve=scenario.parameters.inflowCurve.map(([t,q])=>[t,q*0.75]);
+ scenario.parameters.inflowCells=Array.from({length:scenario.grid.width},(_,x)=>x).filter(x=>x<150&&scenario.waterMask[x]===1);
+}
 const game=new Game(scenario),s=game.solver,w=s.width,h=s.height,threshold=0.05;
 function adjacent(i:number):[number,number][] {
  const x=i%w,y=Math.floor(i/w),out:[number,number][]=[];
@@ -37,4 +42,4 @@ const samples=[];for(const target of [80,120,160,200,240,300]){
  while(s.time<target-1e-9){const t=s.time,dt=s.step(Math.min(1,target-t));game.addInflow(t,dt);game.updateDamage(dt);}
  samples.push(inspect());
 }
-console.log(JSON.stringify({version:scenario.version,threshold,samples},null,2));
+console.log(JSON.stringify({version:scenario.version,candidate,threshold,samples},null,2));

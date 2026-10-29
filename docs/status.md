@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Eine [Live-Sichtprobe des südlichen Grabens](landgraben-live.md#südlicher-graben-in-einer-live-runde) zeigt in einer erfolgreichen Runde Strömungsmarker an drei Zeitpunkten; Teile der Trasse sind durch Gebäude oder Wasser schwer zu verfolgen. Die Kamera war testseitig fokussiert, menschliche Bedienung und echte Geräte bleiben offen.
+
 Für die getrennte Ableitung mit längerem Schutzdamm und Grabenbau bei 180 s erreicht eine streng auf der Trasse verfolgte Markierung aus dem östlichen Abschnitt den Westrand bis Rundenende nicht, auch wenn bereits vorhandenes Wasser einbezogen wird: [Diagnose](geodaten-voruntersuchung.md#wasserweg-beim-späten-eingriff-mit-längerem-schutzdamm). Die Ursache des Schadensnutzens und menschliche Bedienung bleiben offen.
 
 Eine [gestaffelte Produktionsrunde des südlichen Grabens](review-gebaeudevergleich.md#südlicher-graben-nach-flutbeginn-im-produktionsbrowser) setzte die exakte Trasse bei 02:34 in Pause und erreichte 37.728 Schaden sowie 6.540 Budgetrest. Eine automatisierte Suche mit Testkoordinaten war nötig; menschliche Platzierung und Geräteprüfung bleiben offen.

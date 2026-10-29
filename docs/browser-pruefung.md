@@ -520,7 +520,7 @@ Die Summe der `VmRSS`-Werte des Testprozesses und seiner Nachfahren betrug zu de
 
 Am 30. Oktober 2026 wurde `@babylonjs/core` von 9.33.0 auf 9.33.1 aktualisiert. `bun install --frozen-lockfile`, Produktionsbuild und 72 Vitest-Fälle bestanden; `bun outdated` meldete keine veralteten direkten Pakete und `bun audit` keine bekannten Schwachstellen unter 88 geprüften Paketen. Die festgelegten Versionen der Python-Geodaten- und Plotpakete entsprachen bei Abfrage den stabilen PyPI-Versionen.
 
-Sechs gezielte Fälle für Werkzeughinweise in kleinen Ansichten, getrennte Grabenplatzierung und sichtbare Grabentrasse bestanden auf dem Produktionsbuild in Google Chrome 156 unter Linux. Eine unmittelbar zuvor gestartete Gesamtsuite mit Babylon 9.33.0 wurde nach vier bestandenen Fällen bewusst beendet, um den Abhängigkeitsstand zu aktualisieren; sie ist kein Gesamtbeleg. Eine vollständige Browser-Suite für 9.33.1 und die echten Geräteprüfungen stehen noch aus.
+Sechs gezielte Fälle für Werkzeughinweise in kleinen Ansichten, getrennte Grabenplatzierung und sichtbare Grabentrasse bestanden auf dem Produktionsbuild in Google Chrome 156 unter Linux. Eine unmittelbar zuvor gestartete Gesamtsuite mit Babylon 9.33.0 wurde nach vier bestandenen Fällen bewusst beendet, um den Abhängigkeitsstand zu aktualisieren; sie ist kein Gesamtbeleg. Die vollständige Browser-Suite für 9.33.1 bestand anschließend im [gesonderten Durchgang](#vollständiger-browserdurchgang-mit-babylonjs-9331); echte Geräteprüfungen stehen noch aus.
 
 ### Gesamte Chromium-Suite mit Werkzeughinweisen
 

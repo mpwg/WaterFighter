@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Der wirtschaftlich sinnvolle Einzelabriss wurde in einer [vollständigen Produktionsrunde nach Flutbeginn](review-gebaeudevergleich.md#produktionsrunde-mit-späterem-einzelabriss) ausgeführt: Bei 03:03 war das Gebäude bereits beschädigt; die Runde erreichte das Ziel und der Neustart funktionierte. Die Auswahl nutzte Testkoordinaten, menschliches Auffinden und echte Geräte bleiben offen.
+
 Die Kartenverschiebung während der Grabenauswahl wurde auf Build `d38c0ca` auch in Firefox mit Maus und emuliertem Touch geprüft: [Prüfbeleg](browser-pruefung.md#firefox-runde-mit-schematischer-grabenlinie). Menschliche Bedienung und echte Geräte bleiben offen.
 
 Firefox 159 bestand auf dem isolierten Produktionsbuild `d38c0ca` einen automatisierten Werkzeugtest und eine unbehandelte vollständige 2×-Runde: [Prüfbeleg](browser-pruefung.md#firefox-runde-mit-schematischer-grabenlinie). Menschliche Abnahme, tatsächliches Safari und echte Geräte bleiben offen.

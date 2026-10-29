@@ -19,6 +19,14 @@ describe('Bauaktionen und Schäden',()=>{
     expect(g.apply('c',{kind:'trench',cells:[12]}).ok).toBe(false);
     expect(g.budget).toBe(10);expect([...g.solver.bed]).toEqual([...before]);
   });
+  it('erklärt Kartenrand, bestehende Dämme und Gebäude als unterschiedliche Hindernisse',()=>{
+    const g=new Game(scenario),budget=g.budget;
+    expect(g.preview({kind:'dam',faces:[{axis:'y',index:2}]})).toMatchObject({ok:false,reason:expect.stringContaining('Kartenrand')});
+    expect(g.preview({kind:'trench',cells:[12]})).toMatchObject({ok:false,reason:expect.stringContaining('Gebäude versperrt')});
+    expect(g.apply('dam',{kind:'dam',faces:[{axis:'x',index:1}]}).ok).toBe(true);
+    expect(g.preview({kind:'dam',faces:[{axis:'x',index:1}]})).toMatchObject({ok:false,reason:expect.stringContaining('bereits ein Damm')});
+    expect(g.budget).toBe(budget-scenario.parameters.damCostPerCell);
+  });
   it('erhält vorhandenes Wasser beim Ausheben und entfernt Gebäudegrenzen beim Abriss',()=>{
     const g=new Game(scenario);g.solver.h[0]=2;const v=g.solver.volume();const face=2*6+2;
     expect(g.solver.crestX[face]).toBeGreaterThan(100);

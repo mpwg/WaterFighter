@@ -174,3 +174,25 @@ Der zusätzliche Kontrollfall `dam2trench` ohne Abriss wird bei der verbindliche
 Beispielhaft sinkt im Vergleich `dam2` zu `combined` der modellierte Flutschaden an `w316294474-0` von 11.056 auf 1.297,98 und an `w219815193-0` von 10.418 auf 4.524,79. Das belegt eine veränderte Schadensverteilung, aber nicht für sich den vollständigen Wasserweg oder seine Ursache. Der separat nachgerechnete westliche Abfluss integriert vor jedem Schritt die nach außen gerichtete Randimpulsdichte; die globalen relativen Wasserbilanzfehler aller berechneten Runden liegen unter 1,6 × 10⁻¹³.
 
 Der linke Rand ist die westliche Ausschnittgrenze bei 3.900 m im Szenariokoordinatensystem; ein offener numerischer Rand entfernt Wasser aus dem Modell, ohne das Gebiet dahinter zu berechnen. Er ist eine experimentelle Spielannahme, kein belegter sicherer Abfluss oder reale Schutzempfehlung. Ein sichtbarer, zusammenhängender Ableitungsweg, die Empfindlichkeit gegenüber Platzierung und die Wirkung später Eingriffe sind noch zu prüfen. Die Kandidatenwerte sind kein Browser- oder Gerätetest und keine Freigabe einer Szenarioänderung.
+
+### Eingriffszeit und Abweichungen der Platzierung
+
+Auf demselben experimentellen Szenario mit offenem Westrand und 3 m Grabentiefe wurden die Varianten `dam2` und `combined` mit `bun tools/compare-review-strategies.ts FALL --at=SEKUNDEN` erneut berechnet. Das Skript führt bis zum angegebenen Zeitpunkt eine ungeschützte Flut aus und wendet dann alle Aktionen der jeweiligen Strategie unmittelbar hintereinander an. Das ist eine numerische Idealisierung; sie berücksichtigt weder menschliche Auswahl- und Bestätigungszeiten noch eine Pause zwischen einzelnen Aktionen.
+
+| Zeitpunkt | Bereits eingetretener Schaden | `dam2` Gesamtschaden | `combined` Gesamtschaden |
+| ---: | ---: | ---: | ---: |
+| Vorbereitung | 0 | 34.768,16 | 33.646,93 |
+| 30 s | 0 | 34.768,16 | 33.646,94 |
+| 60 s | 0 | 34.768,39 | 33.647,25 |
+| 90 s | 0 | 35.537,60 | 34.885,00 |
+| 120 s | 187,19 | 44.770,23 | 45.784,94 |
+| 130 s | 1.732,87 | 58.486,88 | nicht berechnet |
+| 140 s | 5.963,14 | 72.421,27 | nicht berechnet |
+| 150 s | 10.869,33 | 88.597,96 | 82.215,51 |
+| 180 s | 32.732,38 | 129.415,10 | nicht berechnet |
+
+Für `dam2` ist 120 s der späteste erfolgreich getestete Zeitpunkt; 130 s verfehlt das Ziel. Daraus folgt keine exakte universelle Zeitgrenze. Bei `combined` ist 120 s ebenfalls der späteste erfolgreich getestete Zeitpunkt, 150 s verfehlt das Ziel. Die Zahlen belegen eine spätere Eingriffswirkung im Modell, keine praktische Platzierbarkeit durch eine Person.
+
+Für `dam2` verschieben `--tip=-1` und `--tip=1` nur den Endpunkt des zweiten Dammabschnitts um eine Rasterzelle nach links beziehungsweise rechts. Beide Verläufe werden akzeptiert und ergeben bei Maßnahmen vor Flutbeginn 30.632,37 beziehungsweise 37.663,52 Schaden bei 8.840 beziehungsweise 8.760 Budgetrest. Verschiebt man dagegen den Anfangspunkt des ersten Abschnitts mit `--entry=-1` oder `--entry=1` beziehungsweise den gemeinsamen Eckpunkt mit `--junction=-1` oder `--junction=1`, erzeugt die aktuelle Pfadregel zuerst eine horizontale Kante auf dem oberen Kartenrand; diese vier Maßnahmen werden abgelehnt. Die Vorschau benennt diesen Grund jetzt ausdrücklich und empfiehlt innere Endpunkte.
+
+Für `combined` verschieben `--trench-row=-1` und `--trench-row=1` den ganzen Graben bei unveränderten Dämmen und Abriss um eine Rasterzeile. Beide werden akzeptiert, kosten weiterhin 600 und ergeben 48.078,44 beziehungsweise 44.897,16 Gesamtschaden statt 33.646,93. Alle berechneten relativen Wasserbilanzfehler liegen unter 1,5 × 10⁻¹³. Die Ergebnisse zeigen lokale Empfindlichkeit, prüfen aber nicht alle Verschiebungen und belegen keine natürliche Bedienung ohne Gitterkenntnis.

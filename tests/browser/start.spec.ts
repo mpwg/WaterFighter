@@ -69,6 +69,13 @@ test('Gebäudeabriss verlangt Vorschau und Bestätigung', async ({page})=>{
   await expect(page.locator('#damage-breakdown')).toHaveText('Flut 0 · Abriss 0');await expect(page.locator('#damage-total')).toContainText('Schaden 0 /');
 });
 
+test('Vorschau erklärt ein Gebäude als Hindernis für den Graben',async({page})=>{
+  await page.setViewportSize({width:1200,height:800});await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('[data-mode="trench"]').click();await page.mouse.click(600,320);await page.mouse.click(600,320);
+  await expect(page.locator('#preview-text')).toContainText('Ein Gebäude versperrt den Graben');
+  await expect(page.locator('#confirm')).toBeDisabled();await expect(page.locator('#budget')).toHaveText('10 000');
+});
+
 
 test('Eine verkürzte Runde zeigt das Ergebnis und erlaubt den Neustart', async ({page})=>{
   const scenario=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));

@@ -121,7 +121,9 @@ export class Game {
         const x=face.axis==='x'?face.index%(s.width+1):face.index%s.width;
         const y=face.axis==='x'?Math.floor(face.index/(s.width+1)):Math.floor(face.index/s.width);
         const valid=face.axis==='x'?x>0&&x<s.width&&y>=0&&y<s.height:x>=0&&x<s.width&&y>0&&y<s.height;
-        if(!valid||seen.has(key(face))||this.damFaces.has(key(face))) return {ok:false,reason:'Dammkante ungültig oder bereits bebaut.',budget:this.budget};
+        if(!valid) return {ok:false,reason:'Der Damm darf nicht auf dem Kartenrand verlaufen. Endpunkte weiter innen wählen.',budget:this.budget};
+        if(seen.has(key(face))) return {ok:false,reason:'Der Dammverlauf kreuzt sich selbst.',budget:this.budget};
+        if(this.damFaces.has(key(face))) return {ok:false,reason:'Hier steht bereits ein Damm. Endpunkte anders wählen.',budget:this.budget};
         const ends=face.axis==='x'?[[x,y],[x,y+1]]:[[x,y],[x+1,y]];
         if(previous && !ends.some(a=>previous!.some(b=>a[0]===b[0]&&a[1]===b[1]))) return {ok:false,reason:'Dammverlauf ist nicht zusammenhängend.',budget:this.budget};
         previous=ends; seen.add(key(face));
@@ -131,7 +133,10 @@ export class Game {
       if(!Array.isArray(action.cells)||!action.cells.length||action.cells.length>500) return {ok:false,reason:'Ungültiger Grabenverlauf.',budget:this.budget};
       const seen=new Set<number>(); let previous: number | undefined;
       for(const i of action.cells) {
-        if(!Number.isInteger(i)||i<0||i>=s.h.length||seen.has(i)||this.trenchCells.has(i)||this.occupied[i]) return {ok:false,reason:'Grabenzelle ungültig, bebaut oder bereits ausgehoben.',budget:this.budget};
+        if(!Number.isInteger(i)||i<0||i>=s.h.length) return {ok:false,reason:'Der Graben muss innerhalb der Karte liegen.',budget:this.budget};
+        if(seen.has(i)) return {ok:false,reason:'Der Grabenverlauf kreuzt sich selbst.',budget:this.budget};
+        if(this.trenchCells.has(i)) return {ok:false,reason:'Hier wurde bereits gegraben. Endpunkte anders wählen.',budget:this.budget};
+        if(this.occupied[i]) return {ok:false,reason:'Ein Gebäude versperrt den Graben. Verlauf ändern oder Gebäude abreißen.',budget:this.budget};
         if(previous!==undefined && Math.abs(i%s.width-previous%s.width)+Math.abs(Math.floor(i/s.width)-Math.floor(previous/s.width))!==1) return {ok:false,reason:'Grabenverlauf ist nicht zusammenhängend.',budget:this.budget};
         previous=i; seen.add(i);
       }

@@ -88,3 +88,31 @@ it('verarbeitet nach einem Fehler keine Aktion und lässt einen sauberen Neustar
   c.handle({type:'action',round:2,id:'new',action},1000);
   expect(messages.some(m=>m.type==='action-result' && m.round===2 && m.result.ok)).toBe(true);
 });
+
+it('erhält Wasser und berechnet alle drei laufenden Eingriffe genau einmal',()=>{
+  const wet={...scenario,buildings:[{id:'house',area:16,height:8,heightEstimated:true,polygon:{outer:[[8,8],[12,8],[12,12],[8,12],[8,8]],holes:[]}}]};
+  const messages:Response[]=[],c=new Controller(m=>messages.push(m));
+  c.handle({type:'init',scenario:wet},0);c.handle({type:'start',round:1},0);c.tick(1000);
+  let buffer=snapshots(messages)[0].buffer;c.handle({type:'recycle',round:1,buffer},1000);
+  let current=snapshots(messages).at(-1)!,volume=current.volume,budget=current.budget;
+  const actions=[
+    {kind:'dam' as const,faces:[{axis:'x' as const,index:7}]},
+    {kind:'trench' as const,cells:[0,1]},
+    {kind:'demolish' as const,buildingId:'house'},
+  ];
+  for(const [i,action] of actions.entries()){
+    const id=`running-${i}`;
+    c.handle({type:'preview',round:1,id,action},1000);
+    c.handle({type:'action',round:1,id,action},1000);
+    c.handle({type:'action',round:1,id,action},1000);
+    const replies=messages.filter((m):m is Extract<Response,{type:'action-result'}>=>m.type==='action-result'&&m.id===id);
+    expect(replies).toHaveLength(3);expect(replies[0].result.ok).toBe(true);
+    expect(replies[1].result).toEqual(replies[0].result);expect(replies[2].result).toEqual(replies[1].result);
+    const result=replies[1].result;if(!result.ok)throw Error(result.reason);
+    expect(result.budget).toBe(budget-result.cost);budget=result.budget;
+    buffer=current.buffer;c.handle({type:'recycle',round:1,buffer},1000);current=snapshots(messages).at(-1)!;
+    expect(current.running).toBe(true);expect(current.time).toBeCloseTo(1);
+    expect(current.budget).toBe(budget);expect(current.volume).toBeCloseTo(volume,10);
+    volume=current.volume;
+  }
+});

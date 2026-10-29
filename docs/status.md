@@ -20,6 +20,8 @@ Ein zusätzlicher Regeltest auf dem ausgelieferten Szenario 1.4 prüft den kurze
 
 Nach einer Bestätigung zeigt die Vorschau „Maßnahme wird ausgeführt“; Verwerfen und Werkzeugwechsel bleiben bis zur Workerantwort gesperrt. Ein Chromium-Test verzögert die Übermittlung künstlich und prüft die Sperre, das unveränderte Budget während des Wartens und die anschließende Ausführung. Produktionsbuild, 54 Vitest-Tests und zwei gezielte Chromium-Prüfungen bestanden; die Verzögerung ist ein Testaufbau und keine gemessene Geräte-Latenz.
 
+Die Wartephase wurde ergänzend in Chromium mit kontrolliert zurückgehaltener Aktion geprüft: Nach Ablehnung sind Verwerfen und Werkzeugwahl wieder verfügbar; nach Neustart beeinflusst eine erst danach zugestellte Aktion aus der alten Runde weder Budget noch neue Grabenvorschau. Alle drei Prüfungen dieser Datei und die Typprüfung bestanden. Die Ablehnung wurde durch eine testseitig veränderte Worker-Nachricht ausgelöst.
+
 Auf dem Produktionsbuild von Anwendungscode `803b812` bestanden alle 42 Chromium-Browserprüfungen unter Linux mit Softwaregrafik, einschließlich der Grabenvorschau und emulierten Touchbedienung. Die Prüfungen ersetzen keine vollständige menschliche Bedienung oder Abnahme auf echten Geräten.
 
 Eine passive Modellmarkierung am Eingang des experimentellen Ableitungsgrabens zeigt, dass ein Teil vier Querschnitte in Reihenfolge passiert und den offenen Modellrand erreicht; der Kontrolllauf ohne Graben zeigt dies nicht. Dieser Nachweis beschreibt den numerischen Ausschnitt, keine reale sichere Ableitung: [Solverbericht](solverbericht.md#markierter-verlauf-im-experimentellen-ableitungsgraben).

@@ -6,6 +6,10 @@
 
 Der Produktionsbuild des Anwendungscodes `2851271` mit Szenario `1.4-draft` bestand am 29. Oktober 2026 alle 62 Playwright-Chromium-Prüfungen unter Linux mit Softwaregrafik und einem Worker. Dazu gehören die direkte diagonale Dammvorschau in beiden Richtungen, ein gültig verschobener Referenzdamm, die Erklärung einer unzulässigen Randführung, Maus- und emulierte Touchbedienung sowie Neustarts. `bun run test --maxWorkers=1` bestand mit 63 Modelltests einschließlich einer erschöpfenden Pfadprüfung auf einem kleinen Raster; der Produktionsbuild bestand ebenfalls. Während des Browserlaufs liefen zeitweise numerische Modelluntersuchungen parallel; dies ist keine Leistungsmessung. Tatsächliche Mobilgeräte, Safari und menschliche Bedienung bleiben offen.
 
+### Vollständige Runde mit späteren Eingriffen
+
+Auf demselben Produktionsbuild wurden mit `tools/observe-staged-production.mjs` in Chrome 156.0.8078.73 unter Linux und Softwaregrafik zwei Dämme über die Oberfläche vor Beginn gesetzt. Bei 02:01 wurde pausiert, ein Gebäude abgerissen und ein Graben ausgehoben; während der Pause blieb die Uhr stehen. Nach Fortsetzen endete die 2×-Runde nach 164,104 s mit „Schadensziel erreicht“: 11.909 Flutschaden, 16.017 Abrissverlust, 27.926 Gesamtschaden und 6.598 Budgetrest. Es gab keine protokollierten Seitenfehler; der anschließende Neustart stellte Zeit, Budget und Schaden zurück. Die Klickpunkte sind Testkoordinaten bei 1600 × 1000; dies ist keine menschliche Bedien- oder Geräteprüfung. Die Kombination ist gegenüber zwei vorbereiteten Dämmen allein nicht wirtschaftlich vorteilhaft. Der hier geprüfte Abrissgraben ist nicht die numerisch besonders erfolgreiche Landgraben-Variante.
+
 ## Fehleranzeige bei ausgeblendetem Menü
 
 Ein kritischer Lade-, Worker- oder Grafikfehler öffnet das ausgeblendete Spielmenü, beendet den Worker und bietet dort eine Schaltfläche zum Neuladen. Eine Browserprüfung löst einen Grafikkontextverlust bei ausgeblendetem Menü aus, prüft die sichtbare Fehlermeldung und lädt über die Schaltfläche erfolgreich eine neue Vorbereitung. Die Prüfung simuliert das Ereignis und ersetzt keine Geräteprüfung eines tatsächlichen Grafikverlusts.

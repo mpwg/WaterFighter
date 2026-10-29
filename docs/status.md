@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Eine [aktuelle Live-Runde mit direkter Dammführung](landgraben-live.md#live-runde-mit-direkter-dammführung) zeigt Strömungsmarker am Graben bei 03:01 und 04:00 und endet mit 863 Schaden. Die Kamera war testseitig fokussiert; durchgehende Sichtbarkeit, menschliche Bedienung und echte Geräte bleiben offen.
+
 Der [Spieltestablauf](spieltest.md#produktionsbuild-für-ein-gerät-im-selben-netzwerk) enthält nun konkrete Schritte für eine Produktionsvorschau auf einer privaten Netzwerkadresse. Ein lokaler Abruf von HTML und Szenario sowie der Chromium-Start mit Worker über die eigene Adresse gelangen; Zugriff von einem zweiten Gerät und die menschliche Prüfung wurden nicht durchgeführt.
 
 Die neue Werkzeugverschiebung wurde zusätzlich in [Firefox 159](browser-pruefung.md#werkzeugverschiebung-in-firefox) mit Maus und emuliertem Touch geprüft; dabei blieb der erste Grabenpunkt erhalten. Der Lauf verwendete einen virtuellen Linux-Desktop und ersetzt keine Geräteabnahme.
@@ -92,7 +94,7 @@ Zusätzliche, auf 200 begrenzte Strömungsmarker tasten bestätigte Grabenzellen
 
 Die Strömungsanimation folgt nun dem vom Worker gemeldeten Rundenzustand und der Geschwindigkeit; bei Pause, Rundenende oder Fehler bleibt sie stehen. Der Produktionsbrowser-Test verglich zwei Bilder nach dem Pausieren: Der frühere Build zeigte eine Änderung, der korrigierte Build blieb gleich. Produktionsbuild, 64 Vitest-Tests und drei gezielte Chromium-Prüfungen für Pause und laufende Eingriffe bestanden; echte Geräte bleiben ungeprüft.
 
-Ein historischer [Live-Browserlauf mit Landgraben](landgraben-live.md) mit früherer Dammführung zeigt die Marker bei laufendem Worker zu zwei Zeitpunkten und erreicht nach drei Dämmen und Graben das Schadensziel. Kamera und Klickpunkte wurden testseitig gesetzt; menschliche Verständlichkeit und mobile Leistung bleiben offen.
+Ein [Live-Browserlauf mit Landgraben](landgraben-live.md#live-runde-mit-direkter-dammführung) mit direkter Dammführung zeigt die Marker bei laufendem Worker zu zwei Zeitpunkten und erreicht nach drei Dämmen und Graben das Schadensziel. Kamera und Klickpunkte wurden testseitig gesetzt; menschliche Verständlichkeit und mobile Leistung bleiben offen.
 
 Eine vollständige experimentelle 2×-Runde mit Grabenmarkierung bestand anschließend im Entwicklungsbrowser. Schematische Pfeile und eine Legende kennzeichnen inzwischen Zufluss und offene Modellränder; die experimentelle Referenzrunde wurde vor dieser Änderung gespielt: [Browserprüfung](browser-pruefung.md#flutrunde-mit-grabenmarkierung-und-modellrand-hinweise).
 

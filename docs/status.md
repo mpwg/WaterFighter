@@ -21,7 +21,7 @@ Der Produktionsbuild verwendet gezielte Babylon-Imports; Ausgangsansicht und Abr
 | AP 3 – Simulation | in Arbeit | Synthetische Solver- und Bilanztests, Sichtkontrolle der Dammöffnung, 600-s-Szenariolauf und Schrittweitenvergleich: [Solverbericht](solverbericht.md) | hohe lokale Tiefen einordnen und mobile Leistung prüfen |
 | AP 4 – Darstellung | in Arbeit | Szenarioansicht, Strömungsmarker, Worker-Snapshots und Maus-/Touch-Kamerasteuerung; 22 Chrome-Browserprüfungen einschließlich überlappender Berührungen | Strömungsanimation und Schadensanzeige auf tatsächlichen Geräten prüfen |
 | AP 5 – Werkzeuge/Schäden | in Arbeit | Worker-Regeln, Vorschau, Bestätigung, Budget und Schadenstests; drei Werkzeuge in Playwright-Chromium bedient | Wirkungsnachweise weiter abstimmen und Bedienung auf Geräten prüfen |
-| AP 6 – Spielrunde | in Arbeit | vollständige Browserrunden und erfolgreiche Dammstrategie; Werkzeugvergleiche im Szenario | Strategie auf echten Geräten prüfen; Werkzeugnutzen im Szenario belegen |
+| AP 6 – Spielrunde | in Arbeit | vollständige Browserrunden und erfolgreiche Dammstrategie; Werkzeugvergleiche im Szenario | Strategie auf echten Geräten prüfen; Werkzeugnutzen und Wirkungswege weiter einordnen |
 | AP 7 – Gesamtprüfung | offen | Chrome- und Firefox-Abläufe, vollständige Runden und Messverfahren dokumentiert | Safari, reale Geräte und verbleibende Kriterien prüfen |
 
 ### Bisherige Prüfungen
@@ -45,7 +45,7 @@ Der Produktionsbuild verwendet gezielte Babylon-Imports; Ausgangsansicht und Abr
 | Stabiler Solver und Bilanzfehler unter 0,1 % | offen | Geschlossenes Becken, bilanziertes Zu-/Abfluss-Testfeld, 600-s-Szenariolauf und Schrittweitenvergleich bestehen; Einordnung der hohen lokalen Tiefe und Geräteprüfung fehlen |
 | Plausible Flutwelle, Barrieren und Überströmung | offen | Symmetrische Welle, Dammöffnung und überströmbare Barriere numerisch geprüft; [synthetische Sichtkontrolle](solverbericht.md#sichtkontrolle-der-dammöffnung) vorhanden |
 | 2,5D-Ansicht, Touch-Modi und Fehlerbehandlung | offen | Karten- und Werkzeugmodi, Strömungsmarker und Zustandsabfrage vorhanden; tatsächliche Geräte und umfassende Fehlerprüfung fehlen |
-| Atomare Aktionen, Budget, Wassererhaltung und Schadenswertung | offen | Regel-, Worker- und hydraulische Tests einschließlich aller drei Eingriffe bei laufender Uhr und Werkzeugvergleiche im Szenario bestehen; Geräteprüfungen fehlen |
+| Atomare Aktionen, Budget, Wassererhaltung und Schadenswertung | offen | Regel-, Worker- und hydraulische Tests einschließlich aller drei Eingriffe bei laufender Uhr und Werkzeugvergleiche im Szenario einschließlich lokaler Abrissbilanz und Grabenfluss bestehen; Geräteprüfungen fehlen |
 | Vollständige Runde und bezahlbare erfolgreiche Strategie | offen | Version 1.3: ohne Maßnahmen numerisch 140.425,48 Schaden; vollständige automatisierte 2×-Browserrunde unter Bun mit Strategie 35.144 bei Budgetrest 2.600. Menschliche Gerätebedienung fehlt |
 | Neustart und Schutz vor alten/doppelten Nachrichten | offen | Uhr, Raster, Kamera, Werkzeugmodus und Aktionszustand sowie alte/doppelte Nachrichten in Tests geprüft; drei vollständige Neustartrunden auf Anwendungscode `40ff739` bestanden |
 | Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: 22 Headless-Abläufe; Firefox 159: virtuelle Desktop-Abläufe und vollständige 2×-Runde für Szenario 1.3 mit deaktivierter Firefox-Content-Sandbox; Safari und manuelle Abnahme offen |

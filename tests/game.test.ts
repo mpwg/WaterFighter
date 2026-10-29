@@ -86,8 +86,21 @@ it('erhält die aus Geländedaten abgeleiteten Kronen nach Eingriffen und Neusta
 
 it('senkt eine vermessene Krone, wenn ein Graben sie vollständig durchschneidet',()=>{
   const face={axis:'x' as const,index:1*6+2,crest:2};const g=new Game({...scenario,surveyCrests:[face]});
+  expect(g.preview({kind:'trench',cells:[6,7]})).toMatchObject({ok:true,loweredCrests:1});
+  expect(g.solver.crestX[face.index]).toBe(2);
   expect(g.apply('cut',{kind:'trench',cells:[6,7]}).ok).toBe(true);
   expect(g.solver.crestX[face.index]).toBeCloseTo(2-scenario.parameters.trenchDepth);
+});
+
+it('meldet eine Kantenabsenkung auch beim Anschluss an einen bestehenden Graben',()=>{
+  const face={axis:'y' as const,index:2*5+1,crest:2};const g=new Game({...scenario,surveyCrests:[face]});
+  expect(g.preview({kind:'trench',cells:[6]})).toEqual({ok:true,cost:25,budget:g.budget-25});
+  expect(g.apply('first',{kind:'trench',cells:[6]}).ok).toBe(true);
+  const before=g.budget,preview=g.preview({kind:'trench',cells:[11]});
+  expect(preview).toMatchObject({ok:true,loweredCrests:1});
+  expect(g.budget).toBe(before);expect(g.solver.crestY[face.index]).toBe(2);
+  expect(g.apply('second',{kind:'trench',cells:[11]})).toEqual(preview);
+  expect(g.solver.crestY[face.index]).toBeCloseTo(2-scenario.parameters.trenchDepth);
 });
 
 it('bewertet einen vollständigen Stadtabriss höher als das Schadensziel und über dem Budget',()=>{

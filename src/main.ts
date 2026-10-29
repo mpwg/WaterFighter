@@ -107,7 +107,7 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
     const pending=pendingPresentation.get(data.id);
     if(!data.preview && pending) {if(data.result.ok) pending.revision=data.revision;else pendingPresentation.delete(data.id);}
     if(data.id!==previewId) return;
-    if(data.preview) {confirm.disabled=!data.result.ok;previewText.textContent=data.result.ok?`${draft?describeDraft(draft)+' · ':''}Kosten: ${data.result.cost} · Budget danach: ${data.result.budget}`:data.result.reason;}
+    if(data.preview) {confirm.disabled=!data.result.ok;previewText.textContent=data.result.ok?`${draft?describeDraft(draft)+' · ':''}Kosten: ${data.result.cost} · Budget danach: ${data.result.budget}${data.result.loweredCrests?` · Senkt ${data.result.loweredCrests} modellierte ${data.result.loweredCrests===1?'Geländekante':'Geländekanten'}; der Wasserverlauf kann sich ändern.`:''}`:data.result.reason;}
     else {awaiting=false;if(data.result.ok){message.textContent=`Maßnahme bestätigt. Kosten: ${data.result.cost}.`;clearDraft();}else{previewText.textContent=data.result.reason;confirm.disabled=true;}}
   }
   else if(data.type==='result' && data.round===round && !fatalError) { running=false; finished=true; clearDraft();run.disabled=true; stateLabel.textContent='Beendet'; message.textContent='Die Runde ist beendet.';

@@ -4,7 +4,7 @@ import { damCrest } from './dam-height';
 
 export type Face = { axis: 'x' | 'y'; index: number };
 export type Action = { kind: 'dam'; faces: Face[] } | { kind: 'trench'; cells: number[] } | { kind: 'demolish'; buildingId: string };
-export type ActionResult = { ok: true; cost: number; budget: number } | { ok: false; reason: string; budget: number };
+export type ActionResult = { ok: true; cost: number; budget: number; loweredCrests?: number } | { ok: false; reason: string; budget: number };
 export interface BuildingStatus { id: string; value: number; damage: number; demolished: boolean; exposure: number }
 interface BuildingState extends Omit<BuildingStatus,'exposure'> { cells: number[]; neighbours: number[] }
 const key = (face: Face) => `${face.axis}:${face.index}`;
@@ -111,7 +111,7 @@ export class Game {
   }
   preview(action:Action):ActionResult {
     const p=this.scenario.parameters,s=this.solver;
-    let cost=0;
+    let cost=0,loweredCrests=0;
     if(!action || typeof action!=='object') return {ok:false,reason:'Ungültige Aktion.',budget:this.budget};
     if(action.kind==='dam') {
       if(!Array.isArray(action.faces)||!action.faces.length||action.faces.length>500) return {ok:false,reason:'Ungültiger Dammverlauf.',budget:this.budget};
@@ -141,13 +141,19 @@ export class Game {
         previous=i; seen.add(i);
       }
       cost=action.cells.length*p.trenchCostPerCell;
+      for(const face of this.scenario.surveyCrests) {
+        const x=face.axis==='x'?face.index%(s.width+1):face.index%s.width;
+        const y=face.axis==='x'?Math.floor(face.index/(s.width+1)):Math.floor(face.index/s.width);
+        const b=y*s.width+x,a=face.axis==='x'?b-1:b-s.width;
+        if((seen.has(a)||this.trenchCells.has(a)) && (seen.has(b)||this.trenchCells.has(b)) && !(this.trenchCells.has(a)&&this.trenchCells.has(b))) loweredCrests++;
+      }
     } else if(action.kind==='demolish') {
       const b=this.byId.get(action.buildingId);
       if(!b||b.demolished) return {ok:false,reason:'Gebäude nicht vorhanden oder bereits abgerissen.',budget:this.budget};
       cost=Math.ceil(b.value*p.demolitionCostFraction);
     } else return {ok:false,reason:'Unbekanntes Werkzeug.',budget:this.budget};
     if(cost>this.budget) return {ok:false,reason:'Budget reicht nicht aus.',budget:this.budget};
-    return {ok:true,cost,budget:this.budget-cost};
+    return {ok:true,cost,budget:this.budget-cost,...(loweredCrests?{loweredCrests}:{})};
   }
   hasProcessedAction(id:string):boolean { return this.actionResults.has(id); }
   apply(id:string,action:Action):ActionResult {

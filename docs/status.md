@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Eine [Suche nach nördlichen Landgräben](review-gebaeudevergleich.md#zwei-direkte-nördliche-gräben) fand zwei spielregelkonforme Kandidaten; einer senkt auf dem damaligen Stand `b5f2a8f` auch bei Eingriff nach 150 und 180 s den Schaden gegenüber drei vorbereiteten Dämmen deutlich. Der markierte Eintritt am östlichen Grabenende erreicht den Rand nicht nennenswert; räumlich getrennte Ableitung, menschliche Bedienbarkeit und Übertragbarkeit auf spätere Dammänderungen bleiben offen.
+
 Schräg gewählte Grabenendpunkte erzeugen jetzt eine direkte, zellverbundene Rasterführung statt eines rechtwinkligen Knicks. Die fünfteilige [Südweg-Näherung](geodaten-voruntersuchung.md#fünf-diagonal-geführte-grabenabschnitte) ist spielregelkonform, bringt jedoch in der numerischen Runde praktisch keinen Schadensnutzen; ein zweiter sinnvoller Weg bleibt offen. Beide Referenzstrategien wurden erneut berechnet. Auf dem isolierten Produktionsbuild `b5f2a8f` bestanden 60 Vitest-Tests und [alle 58 Chromium-Browserprüfungen](browser-pruefung.md#produktionsbuild-mit-diagonaler-grabenführung); spätere Änderungen und echte Geräte bleiben separat zu prüfen.
 
 Nach Geländeänderungen werden die Mesh-Grenzen für Gelände und Straßen aktualisiert. Ein Babylon-NullEngine-Test prüft die abgesenkten Grenzen nach einem Zustandsupdate und eine Geländeauswahl; ein konkreter Auswahl- oder Darstellungsfehler wurde dabei nicht reproduziert. Typprüfung und 58 Vitest-Tests bestanden auf dem damaligen gemeinsamen Arbeitsstand, der weitere uncommittete Änderungen enthielt. Eine erneute vollständige Browserprüfung dieses Commitstands steht aus.

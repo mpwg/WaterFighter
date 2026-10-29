@@ -1,5 +1,24 @@
 # Gebäudevergleich der Referenzstrategien
 
+## Aktueller Vergleich mit direkter Dammführung
+
+Die Dammvorschau folgt bei schrägen Endpunkten nun einer direkten, verbundenen Rasterlinie. Das Szenariopaket bleibt `1.4-draft`; die geänderte Pfadregel und die erweiterten Referenzaktionen gehören zum aktuellen Anwendungscode. `bun tools/reference-strategies.ts baseline`, `shield`, `land-divert` und `divert` berechnen die folgenden 300-s-Runden mit demselben Paket; alle Maßnahmen erfolgen vor Flutbeginn.
+
+| Variante | Flutschaden | Abrissverlust | Gesamtschaden | Budgetrest |
+| --- | ---: | ---: | ---: | ---: |
+| Ohne Eingriff | 138.852,13 | 0 | 138.852,13 | 10.000 |
+| Zwei Dämme (`shield`) | 25.821,81 | 0 | 25.821,81 | 8.800 |
+| Drei Dämme und Landgraben (`land-divert`) | 863,20 | 0 | 863,20 | 7.510 |
+| Zwei Dämme, Abriss und Graben (`divert`) | 11.916,79 | 16.017 | 27.933,79 | 6.598 |
+
+Die relativen Wasserbilanzfehler liegen unter 2,1 × 10⁻¹³. Die drei Dämme ohne Graben ergeben 23.574,17 Schaden bei 8.160 Budgetrest; der Landgraben kostet 650 und senkt den Schaden in diesem Kontrollvergleich um 22.710,97. Die Kombination mit Gebäudeabriss erreicht zwar weiterhin das Ziel, schneidet aber gegenüber den zwei Dämmen allein um 2.111,98 schlechter ab und kostet zusätzlich 2.202 Budgeteinheiten. Ihr Graben senkt gegenüber zwei Dämmen und Abriss ohne Graben (41.838,81) den Schaden um 13.905,02. Der separat geprüfte einzelne Abriss ohne Dämme bleibt unabhängig von der Dammführung wirtschaftlich sinnvoll; er ist unten dokumentiert. Die Schutzstrategien sind numerische Referenzen und keine menschliche Bedienprüfung. Der offene Modellrand ist eine Spielannahme, keine sichere reale Ableitung.
+
+Bei vorbereiteten drei Dämmen senkt derselbe Graben nach 150 s den Schaden auf 1.001,29 bei 7.510 Budgetrest; ohne ihn betragen Schaden und Restbudget 23.574,17 und 8.160. Die Aktion wird numerisch zum exakten Zeitpunkt gesetzt, ohne menschliche Auswahlzeit. Einzelne Verschiebungen des ersten Dammstarts, des gemeinsamen Knickpunkts und des zweiten Endpunkts um eine Zelle wurden auf der neuen Pfadregel ebenfalls berechnet: Alle sechs geprüften Varianten waren zulässig, lagen zwischen 8.809,29 und 29.029,15 Schaden und hielten das Ziel ein. Das ist keine Garantie für beliebige Platzierungen.
+
+## Historische Vergleiche mit rechtwinkliger Dammführung
+
+Die folgenden dammbasierten Tabellen und Bilder stammen aus dem früheren Anwendungscode `b526c29` beziehungsweise dessen Vorgängern. Ihr Szenariopaket ist ebenfalls `1.4-draft`, aber die damalige Dammroute verlief zuerst horizontal und dann vertikal. Sie sind nicht die aktuellen Referenzwerte; zur Reproduktion des damaligen Dammverlaufs muss der entsprechende ältere Anwendungscode verwendet werden. Abschnitte ohne Dämme, etwa der einzelne Abriss, sind von der Dammführung unabhängig.
+
 Stand: 29. Oktober 2026, ausgeliefertes Szenario `1.4-draft`. Drei vollständige numerische 300-s-Runden wurden mit `bun tools/reference-strategies.ts baseline`, `shield` und `divert` berechnet. Alle Eingriffe erfolgen vor Flutbeginn. Die IDs bezeichnen OSM-abgeleitete Grundrisse; die Zahlen sind Spielwerte, keine reale Gefahrenbewertung.
 
 | Gebäude | Ohne Eingriff: Flutschaden | Zwei Dämme: Flutschaden | Dämme, Abriss und Graben: Flutschaden |
@@ -129,3 +148,18 @@ Das sind numerisch exakt geplante Einzelaktionen mit fünf simulierten Sekunden 
 Die relativen Wasserbilanzfehler betragen höchstens 1,8 × 10⁻¹³. Der Graben kostet 650; bis zum getesteten Zeitpunkt 150 s übersteigt die Schadensminderung diese Kosten auch bei Addition der beiden getrennten Spielgrößen deutlich. Bei 180 s ist der Nutzen kleiner als die Kosten, ab 210 s verschlechtert sich das Ergebnis leicht. Alle Fälle bleiben wegen der vorbereiteten Dämme unter dem Ziel von 50.000. Die Werte zeigen einen möglichen wirtschaftlichen Eingriff während der Flut und eine zeitliche Grenze für diesen konkreten Verlauf; sie sind keine allgemeine Frist.
 
 Der Verlauf nutzt die in der [vorherigen Untersuchung](#graben-mit-drei-dammabschnitten) beschriebenen Land- und Gewässerzellen und den offenen Modellrand als Spielannahme. Die Aktion wird numerisch zum exakten Zeitpunkt vollständig ausgeführt; Platzierung, Bestätigung, Pause und menschliche Bedienzeit sind damit nicht nachgewiesen. Folgen außerhalb des Ausschnitts werden nicht berechnet.
+
+## Zwei direkte nördliche Gräben
+
+Eine geometrische Suche mit `bun tools/find-northern-trenches.ts` findet auf Szenario `1.4-draft` 73 jeweils einzeln gültige direkte Landgräben mit höchstens 100 Zellen zwischen dem offenen Westrand und einer landseitigen Nachbarzelle der Gewässermaske. Die Suche untersucht nur Endpunkte in den Spalten 1–109 und Zeilen 5–109 sowie westliche Startzeilen 0–99; sie bewertet weder Wirkung noch Durchfluss. Zwei Kandidaten wurden auf Anwendungscode `b5f2a8f` vor Beginn der 300-s-Runde mit `bun tools/compare-review-strategies.ts trench --route=X0,Y0,X1,Y1` und `dam3trench --route=X0,Y0,X1,Y1` verglichen. Im zweiten Fall werden die drei damaligen Referenzdämme vorbereitet. Die unveränderte Kontrolle ohne Maßnahmen ergibt 138.852,13 Schaden und 10.000 Budgetrest; die damalige Kontrolle mit drei Dämmen 34.792,87 und 8.160.
+
+| Graben | Kosten | Ohne Dämme: Schaden / Budgetrest | Mit drei Dämmen: Schaden / Budgetrest | Westabfluss mit Dämmen |
+| --- | ---: | ---: | ---: | ---: |
+| `(0,4) → (34,5)` | 900 | 120.062,95 / 9.100 | 20.609,27 / 7.260 | 520,85 m³ |
+| `(0,3) → (38,11)` | 1.175 | 92.075,76 / 8.825 | 10.630,52 / 6.985 | 521,71 m³ |
+
+Die relativen Wasserbilanzfehler liegen unter 3,20 × 10⁻¹³. Beim ersten Graben wird eine aus den Bruchlinien abgeleitete Kante abgesenkt, beim zweiten keine. Der zweite senkt gegenüber der Drei-Damm-Kontrolle den Gesamtschaden um 24.162,35 bei 1.175 zusätzlichen Budgetkosten. Im Vergleich zum ersten Kandidaten sinken unter anderem die Schäden von `r4257449-0` um 3.375,92 und von `w316294474-0` um 3.018,24. Diese Vergleiche zeigen Schutzwirkung im Spielmodell, nicht deren alleinige hydraulische Ursache; beide Trassen liegen im selben nördlichen Gebiet und sind kein Nachweis räumlich getrennter zweiter Ableitung.
+
+Für den zweiten Graben berechnet `bun tools/trace-land-retention.ts baseline --gates=x:2250,y:10867 --trench=0,3,38,11` ohne Dämme am östlichen Endpunkt 134,56 m³ markierten landwärtigen Eintritt. Davon treten vor der ersten Rückkehr in die Gewässermaske praktisch keine markierten Mengen unmittelbar am Modellrand aus; der relative Wasserbilanzfehler beträgt 1,04 × 10⁻¹³ und der Markierungsbilanzrest −1,44 × 10⁻¹¹ m³. Die Markierung verfolgt weder andere Eintritte noch reale Wasserteilchen. Insbesondere belegt der integrierte Westabfluss keinen zusammenhängenden Weg dieser markierten Menge und der Modellrand keine sicheren Folgen außerhalb der Karte.
+
+Ein weiterer Vergleich auf dem isolierten Stand `b5f2a8f` setzt denselben Graben erst nach drei vorbereiteten Dämmen: Bei 120, 150 beziehungsweise 180 s betragen die Gesamtschäden 10.666,06, 10.747,43 und 32.375,00; der Budgetrest ist jeweils 6.985. Die Kontrolle ohne Graben ergibt 34.792,87. Der relative Wasserbilanzfehler liegt unter 1,03 × 10⁻¹³. Die Aktion wird numerisch zum exakten Zeitpunkt gesetzt; Bedienzeit und menschliche Platzierung sind nicht geprüft. Für eine Wiederholung auf diesem historischen Stand ist die aktuelle `tools/compare-staged-trench.ts` mit `--route=0,3,38,11` in ein Archiv von `b5f2a8f` zu kopieren. Spätere Änderungen der Dammführung erfordern neue Kontrollläufe.

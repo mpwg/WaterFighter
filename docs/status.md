@@ -16,7 +16,11 @@ Eine passive Modellmarkierung am Eingang des experimentellen Ableitungsgrabens z
 
 Die experimentelle Kombination wurde außerdem über die Oberfläche im instrumentierten Entwicklungsbrowser gesetzt und in einer vollständigen 2×-Runde erfolgreich gespielt. Das Bedienfeld verdeckte zunächst das betroffene Gebäude; der Graben ist in der Übersicht schwer erkennbar. Der Test verwendete projizierte Koordinaten und ein testseitig verändertes Szenario, daher bleiben menschliche Bedienbarkeit, ein Produktionslauf und die Übernahme der Änderungen offen: [Browserprüfung](browser-pruefung.md#experimentelle-ableitungsstrategie-im-browser).
 
-Bestätigte Gräben werden nun anhand der Worker-Zellen braun auf dem Gelände markiert und beim Neustart entfernt. Ein neuer Vorbereitungs-Sichttest zeigt die Markierung bei ausgeblendetem Menü; sie bleibt in der Übersicht schmal und kann durch Wasser verdeckt werden. Vollständige Runden und echte Geräte nach dieser Änderung stehen noch aus: [Browserprüfung](browser-pruefung.md#bestätigte-gräben-sichtbar-machen).
+Bestätigte Gräben werden nun anhand der Worker-Zellen braun auf dem Gelände markiert und beim Neustart entfernt. Ein neuer Vorbereitungs-Sichttest zeigt die Markierung bei ausgeblendetem Menü; sie bleibt in der Übersicht schmal und kann durch Wasser verdeckt werden. Vollständige Produktionsrunden und echte Geräte nach dieser Änderung stehen noch aus: [Browserprüfung](browser-pruefung.md#bestätigte-gräben-sichtbar-machen).
+
+Eine vollständige experimentelle 2×-Runde mit Grabenmarkierung bestand anschließend im Entwicklungsbrowser. Schematische Pfeile und eine Legende kennzeichnen inzwischen Zufluss und offene Modellränder; ein vollständiger Lauf nach dieser weiteren Darstellungsänderung sowie echte Geräte bleiben offen: [Browserprüfung](browser-pruefung.md#flutrunde-mit-grabenmarkierung-und-modellrand-hinweise).
+
+Nach der Pfeiländerung bestanden Produktionsbuild, 49 Vitest-Tests und 33 Chrome-Browserprüfungen. Die Tests der Pfeilpositionen prüfen gruppierte Zuflusszellen, konfigurierte Modellränder und Richtung; sie ersetzen keine vollständige Runde oder Geräteprüfung.
 
 Auf diesem Stand bestanden Produktionsbuild, 46 Vitest-Tests und 32 Chrome-Browserprüfungen einschließlich der verständlichen Ablehnung eines durch ein Gebäude versperrten Grabens. Die Platzierungs- und Zeitvergleiche sind numerisch; sie ersetzen keine vollständige Runde auf echten Geräten.
 

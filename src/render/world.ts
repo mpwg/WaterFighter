@@ -18,6 +18,7 @@ import { visibleWaterIndices } from './water-indices';
 import { damCrest } from '../simulation/dam-height';
 import { groundRoads, terrainHeight } from './roads';
 import { buildingCondition } from './building-status';
+import { boundaryArrowLines, boundaryArrows } from './boundary-arrows';
 import type { Scenario } from '../scenario';
 import type { Action, BuildingStatus, Face } from '../simulation/game';
 
@@ -74,6 +75,15 @@ export class World {
     this.waterIndexBuffer=this.wetVertices.length<=65536?new Uint16Array(this.width*this.height*6):new Uint32Array(this.width*this.height*6);
     const waterMat=new StandardMaterial('water-material',this.scene); waterMat.diffuseColor=new Color3(0.21,0.58,0.72); waterMat.specularColor=new Color3(0.1,0.15,0.16); waterMat.backFaceCulling=false; waterMat.emissiveColor=new Color3(0.10,0.29,0.38); waterMat.useAlphaFromDiffuseTexture=false;
     this.water.material=waterMat;
+    // These schematic arrows identify model boundaries, not guaranteed real-world flow paths.
+    for(const kind of ['inflow','outflow'] as const){
+      const lines=boundaryArrows(scenario).filter(a=>a.kind===kind).flatMap(arrow=>{
+        const segments=boundaryArrowLines(arrow,this.width,this.height,this.cell);
+        const [a,b]=segments[0],height=terrainHeight((a[0]+b[0])/2,(a[1]+b[1])/2,this.width,this.height,this.cell,this.bed)+12;
+        return segments.map(segment=>segment.map(([x,y])=>new Vector3(x-this.width*this.cell/2,height,y-this.height*this.cell/2)));
+      });
+      if(lines.length){const mesh=CreateLineSystem(`boundary-${kind}`,{lines},this.scene);mesh.color=kind==='inflow'?new Color3(0.04,0.26,0.56):new Color3(0.55,0.12,0.48);mesh.isPickable=false;mesh.renderingGroupId=1;}
+    }
     // OSM road paths follow the rendered terrain; elevated crossings are omitted.
     const roadLines=groundRoads(scenario).map(points=>points.map(([x,y])=>new Vector3(x-this.width*this.cell/2,terrainHeight(x,y,this.width,this.height,this.cell,this.bed)+0.05,y-this.height*this.cell/2)));
     if(roadLines.length){

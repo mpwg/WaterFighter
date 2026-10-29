@@ -32,6 +32,8 @@ Die Kopfzeile zeigt laufend Gesamtschaden, Ziel sowie Flut- und Abrissverluste, 
 
 Bestätigte Dämme erscheinen als orange Linien und bestätigte Gräben als braune Geländeflächen. Überflutetes Wasser kann die Grabenmarkierung verdecken.
 
+Blaue Pfeile kennzeichnen die Zuflussbereiche; violette Pfeile markieren offene Modellränder, über die Wasser den Ausschnitt verlassen kann. Die Pfeile sind schematisch und keine Aussage über eine sichere reale Ableitung.
+
 Wenn eine Bauvorschau nicht zulässig ist, erklärt sie den Grund, etwa einen Kartenrand, einen bereits vorhandenen Damm oder ein Gebäude im geplanten Graben.
 
 ## Dokumentation

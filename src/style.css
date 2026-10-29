@@ -54,6 +54,8 @@ footer { position:absolute; bottom:16px; left:24px; max-width:min(500px,calc(100
 
 .credits { font:11px/1.35 system-ui,sans-serif; color:#143b38; }
 .credits a { font-weight:600; }
+.boundary-legend { margin-top:4px; font:600 11px/1.35 system-ui,sans-serif; }
+.inflow-key { color:#0a438f; } .outflow-key { color:#872377; }
 /* Keep source credits away from the controls at intermediate desktop heights. */
 @media (min-width:601px) and (min-height:501px) {
   footer { left:auto; right:24px; max-width:min(500px,calc(100vw - 380px)); max-height:150px; overflow:auto; }

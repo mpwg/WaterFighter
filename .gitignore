@@ -3,3 +3,6 @@ dist/
 playwright-report/
 test-results/
 raw-data/
+
+__pycache__/
+*.py[cod]

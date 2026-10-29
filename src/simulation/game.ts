@@ -60,6 +60,15 @@ export class Game {
   private rebuildCrests():void {
     const s=this.solver,w=s.width,h=s.height;
     s.crestX.fill(-Infinity);s.crestY.fill(-Infinity);
+    for(const face of this.scenario.surveyCrests) {
+      const field=face.axis==='x'?s.crestX:s.crestY;
+      const x=face.axis==='x'?face.index%(w+1):face.index%w;
+      const y=face.axis==='x'?Math.floor(face.index/(w+1)):Math.floor(face.index/w);
+      const a=face.axis==='x'?y*w+x-1:(y-1)*w+x, b=face.axis==='x'?a+1:y*w+x;
+      // A trench crossing the face cuts the surveyed crest as well as both cells.
+      const cut=this.trenchCells.has(a)&&this.trenchCells.has(b)?this.scenario.parameters.trenchDepth:0;
+      field[face.index]=Math.max(field[face.index],face.crest-cut);
+    }
     for(let y=0;y<h;y++) for(let x=1;x<w;x++) {
       const l=y*w+x-1,r=l+1;
       if(this.occupied[l] || this.occupied[r]) s.crestX[y*(w+1)+x]=Math.max(s.bed[l],s.bed[r])+1000;

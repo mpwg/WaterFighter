@@ -31,3 +31,9 @@ Am 29. Oktober 2026 wurde der Produktionsbuild von Commit `24c11cd` lokal ausgel
 Bei lokaler Prüfung waren weder `adb` noch `idevice_id`, Chrome, Firefox oder `xcrun` im Pfad; die sichtbaren USB-Geräte umfassen ein QEMU-Tablet und USB-Controller. Damit wurden hier keine echten iPhone- oder Android-Geräte und kein tatsächliches Safari festgestellt. Ein entfernter Gerätezugang wurde damit nicht ausgeschlossen.
 
 Die Referenzrunden wurden nach Aufnahme der Bruchkantengeometrien mit Szenario `1.1-draft` wiederholt; da diese noch nicht hydraulisch angewandt werden, blieben die Schadenswerte und die Strategiewirkung unverändert.
+
+## Szenario 1.2 und Browserstrategie
+
+`tools/observe-strategy-browser.mjs` platzierte die elf Referenzabschnitte im Vite-Entwicklungsbuild von Commit `32a839c` über Kartenklicks, Vorschauen und Bestätigungen. Eine testseitige Modul-Erweiterung projizierte die bekannten Gitterkoordinaten auf Bildschirmkoordinaten; das ist ein automatisierter Präzisionstest und kein Nachweis menschlicher Bedienung auf einem Smartphone. Die vollständige anschließende 2×-Runde endete nach 151,06 s mit 0 Schaden und 2.600 Budgetrest, ohne Seitenfehler.
+
+Nach Aufnahme der aus Bruchlinien abgeleiteten 291 Zellkanten wurden die Referenzrunden mit Version `1.2-draft` erneut numerisch berechnet: ohne Maßnahmen Schaden 322.771,10; mit der Strategie 0 und 2.600 Budgetrest. Die relativen Bilanzfehler lagen bei 5,95 × 10⁻¹⁵ beziehungsweise 9,84 × 10⁻¹⁴. Die Browserstrategie ist für die geänderte Version noch nicht vollständig wiederholt. Die Bruchlinien-Rasterung ist eine dokumentierte Näherung, keine geprüfte Information über Durchlässe.

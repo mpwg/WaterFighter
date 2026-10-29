@@ -2,7 +2,7 @@ import { describe,expect,it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { Game } from '../src/simulation/game';
 const base=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
-const scenario={...base,grid:{...base.grid,width:5,height:5,cellSize:4},terrain:Array(25).fill(0),bed:Array(25).fill(0),initialDepth:Array(25).fill(0),waterMask:Array(25).fill(0),parameters:{...base.parameters,inflowCells:[0],inflowCurve:[[0,0],[300,0]],outflowEdges:[]},buildings:[{id:'house',area:16,height:8,heightEstimated:true,polygon:{outer:[[8,8],[12,8],[12,12],[8,12],[8,8]],holes:[]}}]};
+const scenario={...base,grid:{...base.grid,width:5,height:5,cellSize:4},terrain:Array(25).fill(0),bed:Array(25).fill(0),initialDepth:Array(25).fill(0),waterMask:Array(25).fill(0),surveyCrests:[],parameters:{...base.parameters,inflowCells:[0],inflowCurve:[[0,0],[300,0]],outflowEdges:[]},buildings:[{id:'house',area:16,height:8,heightEstimated:true,polygon:{outer:[[8,8],[12,8],[12,12],[8,12],[8,8]],holes:[]}}]};
 
 describe('Bauaktionen und Schäden',()=>{
   it('berechnet Vorschau ohne Zustandsänderung, rechnet Bestätigung genau einmal ab',()=>{
@@ -63,4 +63,21 @@ it('nimmt kleine Gebäude ohne Zellmittelpunkt in Blockade und Schadenswertung a
   const g=new Game(small);expect(g.buildings[0].cells).toEqual([12]);
   expect(g.solver.crestX[2*6+2]).toBeGreaterThan(100);
   g.solver.h[11]=1;g.updateDamage(60);expect(g.totals().floodDamage).toBeGreaterThan(0);
+});
+
+it('erhält die aus Geländedaten abgeleiteten Kronen nach Eingriffen und Neustart',()=>{
+  const face={axis:'x' as const,index:1*6+2,crest:2};const cfg={...scenario,surveyCrests:[face]};
+  const g=new Game(cfg);expect(g.solver.crestX[face.index]).toBe(2);
+  expect(g.apply('dig',{kind:'trench',cells:[0]}).ok).toBe(true);
+  expect(g.solver.crestX[face.index]).toBe(2);
+  expect(g.apply('remove',{kind:'demolish',buildingId:'house'}).ok).toBe(true);
+  expect(g.solver.crestX[face.index]).toBe(2);
+  expect(new Game(cfg).solver.crestX[face.index]).toBe(2);
+});
+
+
+it('senkt eine vermessene Krone, wenn ein Graben sie vollständig durchschneidet',()=>{
+  const face={axis:'x' as const,index:1*6+2,crest:2};const g=new Game({...scenario,surveyCrests:[face]});
+  expect(g.apply('cut',{kind:'trench',cells:[6,7]}).ok).toBe(true);
+  expect(g.solver.crestX[face.index]).toBeCloseTo(2-scenario.parameters.trenchDepth);
 });

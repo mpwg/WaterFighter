@@ -11,6 +11,7 @@ npm ci
 npm run dev
 npm run typecheck
 npm test
+python3 tools/test-breakline-faces.py
 npm run build
 npm run test:browser
 ```

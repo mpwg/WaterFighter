@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { Controller } from '../src/simulation/controller';
 import type { Response } from '../src/protocol';
 const original = JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
-const scenario = { ...original, grid: { ...original.grid, width: 4, height: 4 }, terrain:Array(16).fill(0),bed:Array(16).fill(0),initialDepth:Array(16).fill(1),waterMask:Array(16).fill(1), parameters:{...original.parameters,duration:10,inflowCells:[0],inflowCurve:[[0,0],[10,0]],outflowEdges:[]} };
+const scenario = { ...original, grid: { ...original.grid, width: 4, height: 4 }, terrain:Array(16).fill(0),bed:Array(16).fill(0),initialDepth:Array(16).fill(1),waterMask:Array(16).fill(1),surveyCrests:[], parameters:{...original.parameters,duration:10,inflowCells:[0],inflowCurve:[[0,0],[10,0]],outflowEdges:[]} };
 function setup() { const messages:Response[]=[]; const c=new Controller(m=>messages.push(m)); c.handle({type:'init',scenario},0); return {c,messages}; }
 function snapshots(m:Response[]) { return m.filter((x):x is Extract<Response,{type:'snapshot'}>=>x.type==='snapshot'); }
 describe('Worker-Spieluhr', () => {

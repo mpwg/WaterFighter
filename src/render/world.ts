@@ -18,6 +18,7 @@ export class World {
   private readonly landPositions: Float32Array;
   private previewMesh?: LinesMesh;
   private damMesh?: LinesMesh;
+  private surveyMesh?: LinesMesh;
   private damSignature = '';
   private terrainRevision = -1;
   private readonly waterPositions: Float32Array;
@@ -43,6 +44,8 @@ export class World {
     this.waterPositions=new Float32Array(waterData.positions!); this.waterColors=new Float32Array(waterData.colors!);
     const waterMat=new StandardMaterial('water-material',this.scene); waterMat.diffuseColor=new Color3(0.21,0.58,0.72); waterMat.specularColor=new Color3(0.1,0.15,0.16); waterMat.backFaceCulling=false; waterMat.emissiveColor=new Color3(0.10,0.29,0.38); waterMat.useAlphaFromDiffuseTexture=false;
     this.water.material=waterMat;
+    // The survey-derived face elevations affect flow, so show them on the map as well.
+    this.updateSurveyRidges();
     // A fixed, bounded set of visual stream markers is updated from worker momentum.
     const count=Math.ceil(this.width/12)*Math.ceil(this.height/12);
     this.flowLines=MeshBuilder.CreateLineSystem('flow',{lines:Array.from({length:count},()=>[Vector3.Zero(),Vector3.Zero()]),updatable:true},this.scene);
@@ -93,6 +96,7 @@ export class World {
       this.landPositions[v*3+1]=this.bed[i];
     }
     this.land.updateVerticesData(VertexBuffer.PositionKind,this.landPositions);
+    this.updateSurveyRidges();
     for(const b of buildings) {const mesh=this.scene.getMeshByName(`building-${b.id}`); if(mesh) mesh.setEnabled(!b.demolished);}
     const signature=JSON.stringify(dams);
     if(signature!==this.damSignature) {
@@ -100,6 +104,20 @@ export class World {
       const lines=dams.map(([key,crest])=>{const [axis,raw]=key.split(':'),index=Number(raw); return this.facePoints({axis:axis as 'x'|'y',index},crest+0.5);});
       if(lines.length) {this.damMesh=MeshBuilder.CreateLineSystem('confirmed-dams',{lines},this.scene);this.damMesh.color=new Color3(0.75,0.29,0.12);this.damMesh.isPickable=false;}
     }
+  }
+  private updateSurveyRidges():void {
+    this.surveyMesh?.dispose();
+    const faces=this.scenario.surveyCrests;if(!faces.length)return;
+    const lines=faces.map(face=>{
+      const x=face.axis==='x'?face.index%(this.width+1):face.index%this.width;
+      const y=face.axis==='x'?Math.floor(face.index/(this.width+1)):Math.floor(face.index/this.width);
+      const a=face.axis==='x'?y*this.width+x-1:(y-1)*this.width+x,b=face.axis==='x'?a+1:y*this.width+x;
+      const depth=this.scenario.parameters.trenchDepth;
+      const cut=this.scenario.bed[a]-this.bed[a]>depth-1e-4 && this.scenario.bed[b]-this.bed[b]>depth-1e-4 ? depth : 0;
+      return this.facePoints(face,face.crest-cut+0.1);
+    });
+    this.surveyMesh=MeshBuilder.CreateLineSystem('survey-ridges',{lines},this.scene);
+    this.surveyMesh.color=new Color3(0.35,0.40,0.26);this.surveyMesh.isPickable=false;
   }
   private facePoints(face:Face,height:number):Vector3[] {
     const x=face.axis==='x'?face.index%(this.width+1):face.index%this.width;

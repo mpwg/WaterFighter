@@ -57,3 +57,15 @@ Die Summe der Stufen wich lokal um höchstens 5,69 × 10⁻¹⁴ m³ von der ein
 Bei 180 und 240 s ist Wasser am Graben sichtbar; die schmalen Strömungsmarker lassen sich im Einzelbild nicht zuverlässig verfolgen. Ihre Höhe wurde an die interpolierte Wasserfläche angepasst; ein durchgängig verständlicher Flutweg ist damit nicht nachgewiesen. Dies sind gerenderte numerische Einzelzustände, keine laufende Browserrunde und keine menschliche oder mobile Abnahme.
 
 Eine anschließende Untersuchung zeigte zwei Darstellungsursachen: Grabensamples bewegten sich bis zu zehn Meter von ihrer Zelle weg; außerdem behielt das dynamische Linienmesh seine ursprüngliche Begrenzung am Ursprung und konnte beim Verschieben der Kamera ausgeblendet werden. Die Animation bleibt nun näher an der Grabenzelle, und das begrenzte Linienmesh wird unabhängig von dieser veralteten Begrenzung gerendert. Die [erneute Ansicht bei 240 s](landgraben-stroemung.png) zeigt weiße Strömungsstriche am Graben und auf dem Wasser. Sie basiert auf demselben gespeicherten numerischen Zustand und derselben instrumentierten Kamera, nicht auf einer laufenden Runde. Ein Einzelbild beweist weder die Verständlichkeit der Bewegung noch die Sichtbarkeit auf echten Geräten; das Review-Kriterium bleibt offen.
+
+## Zeitpunkt der kombinierten Strategie
+
+Auf dem ausgelieferten Szenario `1.4-draft` berechnet `bun tools/compare-review-strategies.ts combined --at=SEKUNDEN` die zwei Dämme, den Abriss und den Graben unmittelbar nacheinander zum angegebenen Simulationszeitpunkt. Alle vier Aktionen wurden in den folgenden Läufen angenommen; der Budgetrest betrug jeweils 6.598.
+
+| Zeitpunkt | Gesamtschaden unmittelbar vor den Aktionen | Flutschaden am Ende | Abrissverlust | Gesamtschaden am Ende |
+| --- | ---: | ---: | ---: | ---: |
+| 60 s | 0 | 17.630,25 | 16.017 | 33.647,25 |
+| 120 s | 187,19 | 29.767,94 | 16.017 | 45.784,94 |
+| 150 s | 10.869,33 | 66.198,51 | 16.017 | 82.215,51 |
+
+Die relativen Wasserbilanzfehler lagen unter 1,41 × 10⁻¹³. Die ersten beiden Zeitpunkte bleiben unter dem Ziel von 50.000, der dritte nicht. Der vor den Aktionen bereits verbuchte Schaden wird durch den späteren Abriss eines betroffenen Gebäudes nicht zusätzlich zum Abrissverlust gezählt. Die Eingriffe erfolgen in diesem Vergleich idealisiert ohne Bedienzeit; die Werte belegen keine genaue Frist für menschliches Spielen und keine Gerätebedienung.

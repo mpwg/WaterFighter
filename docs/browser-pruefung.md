@@ -2,6 +2,10 @@
 
 **Versionsbezug:** Die folgenden historischen Dammrunden und Screenshots vor der direkten Dammführung verwendeten die frühere rechtwinklige Pfadregel. Sie belegen den jeweils genannten damaligen Build, nicht die neuen Referenzwerte; aktuelle Nachweise sind gesondert gekennzeichnet.
 
+## Karte im Werkzeugmodus verschieben
+
+Nach der Verbesserung der Platzierung lässt sich die Karte in allen Werkzeugmodi ziehen. Bei Damm und Graben bleibt ein bereits gewählter Startpunkt erhalten; gezogene Kontakte setzen keinen weiteren Punkt. Ein Produktionsbuild und 67 Modelltests bestanden. In Chromium mit Softwaregrafik bestanden gezielte Mausprüfungen in Hoch- und Querformat sowie Touch- und Mausprüfungen, die eine sichtbare Kartenverschiebung und die anschließende Endpunktauswahl prüfen. Ein erster erweiterter Touchlauf überschritt das bisherige 30-s-Testlimit; mit 90 s erlaubter Testdauer bestanden beide Verschiebungsfälle. Eine vollständige Suite auf diesem Anwendungsstand, unabhängige Spielpersonen und echte Geräte bleiben offen.
+
 ## Produktionsbuild mit direkter Dammführung
 
 Der Produktionsbuild des Anwendungscodes `2851271` mit Szenario `1.4-draft` bestand am 29. Oktober 2026 alle 62 Playwright-Chromium-Prüfungen unter Linux mit Softwaregrafik und einem Worker. Dazu gehören die direkte diagonale Dammvorschau in beiden Richtungen, ein gültig verschobener Referenzdamm, die Erklärung einer unzulässigen Randführung, Maus- und emulierte Touchbedienung sowie Neustarts. `bun run test --maxWorkers=1` bestand mit 63 Modelltests einschließlich einer erschöpfenden Pfadprüfung auf einem kleinen Raster; der Produktionsbuild bestand ebenfalls. Während des Browserlaufs liefen zeitweise numerische Modelluntersuchungen parallel; dies ist keine Leistungsmessung. Tatsächliche Mobilgeräte, Safari und menschliche Bedienung bleiben offen.

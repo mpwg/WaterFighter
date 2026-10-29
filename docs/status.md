@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Die Karte lässt sich jetzt auch bei gewähltem Bau- oder Abrisswerkzeug durch Ziehen verschieben; ein bereits gewählter Startpunkt bleibt erhalten. Ein gezogener Kontakt setzt keine Maßnahme. Produktionsbuild, 67 Modelltests sowie gezielte Maus- und emulierte Touchprüfungen bestanden; eine vollständige Browserprüfung dieses neuen Anwendungsstands und menschliche Geräteprüfung bleiben offen.
+
 Reguläre Strömungspfeile passen ihre Größe nun begrenzt an den Kartenmaßstab an; Pfeile im Graben bleiben zellnah. Eine [emulierte schmale Sichtprobe](browser-pruefung.md#strömungspfeile-in-schmaler-ansicht), alle 67 Modelltests und 63 Chromium-Browserprüfungen auf `870f345` bestehen; echte Geräte und menschliche Lesbarkeit bleiben offen.
 
 [Strömungsmarker](browser-pruefung.md#strömungsrichtung-an-den-markern) zeigen ihre lokale Richtung nun mit Pfeilspitzen. Eine Sichtprobe und alle 63 Chromium-Prüfungen auf dem isolierten Stand `b44c067` bestehen; Lesbarkeit und Leistung auf echten Geräten bleiben offen.

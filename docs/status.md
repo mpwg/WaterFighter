@@ -6,11 +6,13 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Eine [gestaffelte Produktionsrunde des südlichen Grabens](review-gebaeudevergleich.md#südlicher-graben-nach-flutbeginn-im-produktionsbrowser) setzte die exakte Trasse bei 02:34 in Pause und erreichte 37.728 Schaden sowie 6.540 Budgetrest. Eine automatisierte Suche mit Testkoordinaten war nötig; menschliche Platzierung und Geräteprüfung bleiben offen.
+
 Auf dem isolierten Build `0f3ee22` bestanden 81 von 82 Chromium-Fällen; der nach Zeitüberschreitung fehlgeschlagene Fall zur kleinen Statusansicht bestand bei isolierter Wiederholung. Die Ursache bleibt ungeklärt: [Prüfbeleg](browser-pruefung.md#gesamtsuite-nach-kompaktem-status). Spätere Änderungen, menschliche Bedienung und echte Geräte bleiben separat zu prüfen.
 
 Ein [strenger Markierungsvergleich](review-gebaeudevergleich.md#markierung-innerhalb-zweier-getrennter-grabentrassen) bilanziert Modellanteile, die ab den geprüften seitlichen Eintritten bis zu zwei 168 m voneinander entfernten Westaustritten innerhalb der jeweiligen, zellgetrennten Grabentrasse bleiben. Die Vergleichsrunden nutzen unterschiedliche Dammkonfigurationen. Herkunft ab Flusszufluss, reale Folgen jenseits des Modellrands und menschliche Nutzbarkeit bleiben offen.
 
-Eine [zweite erfolgreiche Referenzkombination](review-gebaeudevergleich.md#getrennter-südlicher-graben-mit-dammöffnung) nutzt einen zellgetrennten südlichen Graben und eine Dammöffnung. Sie erreicht das Ziel mit wirtschaftlichem Zusatznutzen; ein geordneter Modellanteil erreicht den Westrand. Eine vollständige Produktionsrunde bestand mit Testkoordinaten. Einzelne Zellabweichungen können das Ergebnis stark verschlechtern; menschliche Bedienung, echte Geräte und der gesamte Weg ab Flusszufluss bleiben offen.
+Eine [zweite erfolgreiche Referenzkombination](review-gebaeudevergleich.md#getrennter-südlicher-graben-mit-dammöffnung) nutzt einen zellgetrennten südlichen Graben und eine Dammöffnung. Sie erreicht das Ziel mit wirtschaftlichem Zusatznutzen; ein geordneter Modellanteil erreicht den Westrand. Vollständige Produktionsrunden vor und nach Flutbeginn bestanden mit Testkoordinaten. Einzelne Zellabweichungen können das Ergebnis stark verschlechtern; menschliche Bedienung, echte Geräte und der gesamte Weg ab Flusszufluss bleiben offen.
 
 Eine [zweite, räumlich getrennte Grabenvariante](geodaten-voruntersuchung.md#getrennter-westgraben-mit-verkürztem-damm-und-späterem-eingriff) erreicht mit verkürztem Damm numerisch das Ziel und vermindert den Schaden auch bei Eingriff zwischen 170 und 200 s stärker als ihre Kosten. Die Platzierung ist empfindlich; Wasserweg unter genau dieser Kombination, menschliche Bedienung und Geräteabnahme bleiben offen.
 

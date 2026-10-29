@@ -83,3 +83,9 @@ Der Seiten-Heap nach den Runden betrug 43.773.390 / 44.551.226 / 43.024.046 Byte
 ## Drei Runden nach Optimierung der Wasserdarstellung
 
 Der Produktionsbuild `3bbc7af`, Szenario `1.2-draft`, absolvierte am 29. Oktober 2026 drei ungeschützte 2×-Runden in Chrome 156.0.8078.73 unter Linux/Playwright mit Softwaregrafik. Pause, Zoom, Fortsetzen und Neustarts funktionierten; es gab keine protokollierten Seitenfehler. Die Runden dauerten 153,097 / 152,992 / 153,034 s und endeten jeweils mit 322.752 Schaden und 10.000 Budgetrest. Nach den Runden betrug der Seiten-Heap 73.456.545 / 74.860.001 / 73.885.765 Bytes, die RSS-Summe im Prozessbaum 1.465.413.632 / 1.457.942.528 / 1.474.433.024 Bytes bei je zehn Prozessen. Die Stichproben schwanken ohne durchgehend steigende Folge, schließen langsame Speicherprobleme aber nicht aus. Die automatisierte Desktopprüfung ersetzt keine Prüfung auf echten Geräten.
+
+## Firefox nach Wasseroptimierung
+
+Am 29. Oktober 2026 prüfte `tools/observe-firefox.mjs` den Produktionsbuild mit Anwendungscode `3bbc7af` und Szenario `1.2-draft` im offiziellen Firefox 159.0 über geckodriver 0.37.1 auf einem virtuellen Linux-X-Desktop mit Mesa-Softwaregrafik. Laden, Start, Pause und Neustart funktionierten; Vorschau und Bestätigung von Graben, Damm und Abriss waren bedienbar. Nach erneutem Neustart erreichte eine vollständige ungeschützte 2×-Runde nach 150,312 s das Ergebnis mit 322.753 Schaden und 10.000 Budgetrest.
+
+Vor der erfolgreichen Prüfung fehlte zunächst ein WebGL-Kontext. Nach Konfiguration des virtuellen X-Servers mit Mesa-Treiberpfad und Softwaregrafik funktionierte WebGL. In der verwendeten Testumgebung zeigte der Screenshot fehlende Schriftglyphen; die textliche Darstellung wurde daher nicht visuell abgenommen, obwohl die DOM-Texte per WebDriver geprüft wurden. Die automatisierten Klickpositionen hängen von der Fenstergröße ab. Dies ist keine manuelle Desktopabnahme und ersetzt weder Safari noch reale Mobilgeräte.

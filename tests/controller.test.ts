@@ -147,3 +147,18 @@ it('setzt nach Flut und allen drei Eingriffen den gesamten Workerzustand zurück
   const last=messages.filter((m):m is Extract<Response,{type:'action-result'}>=>m.type==='action-result').at(-1)!;
   expect(last.round).toBe(2);expect(last.result.ok).toBe(true);
 });
+
+it('verbindet überlappende Gräben im laufenden Worker ohne zweite Vertiefung',()=>{
+  const {c,messages}=setup();
+  c.handle({type:'start',round:1},0);c.tick(1000);
+  c.handle({type:'action',round:1,id:'first',action:{kind:'trench',cells:[0,1,2]}},1000);
+  c.handle({type:'action',round:1,id:'second',action:{kind:'trench',cells:[1,2,3]}},1000);
+  c.handle({type:'action',round:1,id:'second',action:{kind:'trench',cells:[1,2,3]}},1000);
+  const replies=messages.filter((m):m is Extract<Response,{type:'action-result'}>=>m.type==='action-result'&&m.id==='second');
+  expect(replies).toHaveLength(2);expect(replies[0].result).toMatchObject({ok:true,cost:25,reusedCells:2});
+  expect(replies[1].result).toEqual(replies[0].result);expect(replies.map(r=>r.revision)).toEqual([2,2]);
+  c.handle({type:'recycle',round:1,buffer:snapshots(messages)[0].buffer},1000);
+  const state=snapshots(messages).at(-1)!;const bed=new Float32Array(state.buffer,16*12,16);
+  expect(state.trenches).toEqual([0,1,2,3]);expect(state.budget).toBe(scenario.parameters.budget-100);
+  for(const cell of [0,1,2,3])expect(bed[cell]).toBeCloseTo(-scenario.parameters.trenchDepth);
+});

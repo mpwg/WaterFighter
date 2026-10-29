@@ -40,6 +40,8 @@ Blaue Pfeile kennzeichnen die Zuflussbereiche; violette Pfeile markieren offene 
 
 Der Szenarioentwurf `1.4-draft` verwendet einen offenen westlichen Modellrand und 3 m Grabentiefe als Spielannahmen. Wasser außerhalb des Ausschnitts wird nicht weiter simuliert. Die numerischen Referenzstrategien stehen in `tests/fixtures/review-strategies.json`; ihr [Gebäudevergleich](docs/review-gebaeudevergleich.md) erklärt Wirkung und Grenzen. Bilanz und Wertung lassen sich mit `bun tools/reference-strategies.ts baseline`, `shield`, `land-divert` beziehungsweise `divert` nachvollziehen. Schräge Damm- und Grabenverläufe folgen einer verbundenen Rasterlinie zwischen den ausgewählten Punkten.
 
+Gräben dürfen an bereits ausgehobene Zellen anschließen. Die Vorschau nennt die wiederverwendeten Zellen; Kosten und Vertiefung betreffen nur neue Zellen. Eine vollständig vorhandene Strecke wird abgelehnt.
+
 Wenn eine Bauvorschau nicht zulässig ist, erklärt sie den Grund, etwa einen Kartenrand, einen bereits vorhandenen Damm oder ein Gebäude im geplanten Graben. Eine zulässige Dammvorschau weist außerdem auf Kanten hin, die durch ein Gebäude bereits gesperrt sind und dort derzeit keine zusätzliche Sperre bewirken.
 
 Bei Damm und Graben markiert ein Kreuz den ersten gewählten Punkt. Die Grabenvorschau weist zusätzlich darauf hin, wenn der geplante Verlauf modellierte Geländekanten absenkt und dadurch den Wasserverlauf verändern kann.

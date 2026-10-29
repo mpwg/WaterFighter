@@ -132,3 +132,24 @@ it('warnt bei Dammkanten an Gebäuden und entfernt den Hinweis nach Abriss',()=>
   expect(g.preview(action)).toMatchObject({ok:true});
   expect(g.preview(action)).not.toHaveProperty('buildingBlockedFaces');
 });
+
+it('verbindet bestehende Gräben ohne erneute Vertiefung, Kosten oder Wasserverlust',()=>{
+  const g=new Game(scenario),initialBudget=g.budget;
+  g.solver.h[1]=1;g.solver.h[2]=0.5;
+  const volume=g.solver.volume();
+  const first={kind:'trench' as const,cells:[0,1,2]},second={kind:'trench' as const,cells:[1,2,3]};
+  expect(g.apply('first',first)).toMatchObject({ok:true,cost:75});
+  const beforeBed=[...g.solver.bed],beforeBudget=g.budget;
+  const preview=g.preview(second);
+  expect(preview).toMatchObject({ok:true,cost:25,reusedCells:2,budget:beforeBudget-25});
+  expect([...g.solver.bed]).toEqual(beforeBed);expect(g.budget).toBe(beforeBudget);
+  expect(g.apply('second',second)).toEqual(preview);
+  expect(g.apply('second',second)).toEqual(preview);
+  expect(g.budget).toBe(initialBudget-100);
+  for(const i of [0,1,2,3])expect(g.solver.bed[i]).toBeCloseTo(-scenario.parameters.trenchDepth);
+  expect(g.solver.volume()).toBe(volume);
+  expect(g.preview(second)).toMatchObject({ok:false,reason:expect.stringContaining('bereits gegraben')});
+  const bad=g.preview({kind:'trench',cells:[2,7,12]});
+  expect(bad).toMatchObject({ok:false,reason:expect.stringContaining('Gebäude versperrt')});
+  expect(g.budget).toBe(initialBudget-100);expect(g.solver.bed[7]).toBe(0);
+});

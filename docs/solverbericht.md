@@ -53,3 +53,5 @@ Der offizielle Firefox 159.0 wurde anschließend auf einem temporären virtuelle
 Ein erster Versuch mit drei aufeinanderfolgenden Chrome-Runden erreichte zwei Ergebnisse; während parallel weitere Tests und Simulationen liefen, wurde die Browserseite in der dritten Runde geschlossen. Die Ursache ist nicht festgestellt. Dieser Versuch belegt die Stabilitätsanforderung nicht und wird isoliert wiederholt.
 
 Für hochauflösende Darstellungen korrigiert `World.pick` die Zeigerkoordinaten so, dass Babylon seine Hardware-Skalierung nur einmal anwendet. Ein Vitest und `node tools/verify-highdpi-picking.mjs` (Vite-Entwicklungsserver, Playwright-Chromium, auf 0,5 gesetzte Hardware-Skalierung) prüfen eine Dammvorschau mit erwarteten 20 Zellkanten. Dies ist keine Abnahme eines realen Smartphones.
+
+Für `1.2-draft` betragen die Gebäudewerte insgesamt 1.058.683 und die Summe der einzelnen Abrisskosten 105.914. Damit überschreitet der vollständige Abriss sowohl das Schadensziel von 50.000 als auch das Budget von 10.000. Die Werte werden im Vitest anhand des ausgelieferten Szenarios geprüft.

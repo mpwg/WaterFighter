@@ -81,3 +81,11 @@ it('senkt eine vermessene Krone, wenn ein Graben sie vollständig durchschneidet
   expect(g.apply('cut',{kind:'trench',cells:[6,7]}).ok).toBe(true);
   expect(g.solver.crestX[face.index]).toBeCloseTo(2-scenario.parameters.trenchDepth);
 });
+
+it('bewertet einen vollständigen Stadtabriss höher als das Schadensziel und über dem Budget',()=>{
+  const g=new Game(base);
+  const totalValue=g.buildings.reduce((sum,b)=>sum+b.value,0);
+  const totalCost=g.buildings.reduce((sum,b)=>sum+Math.ceil(b.value*base.parameters.demolitionCostFraction),0);
+  expect(totalValue).toBeGreaterThan(base.parameters.damageTarget);
+  expect(totalCost).toBeGreaterThan(base.parameters.budget);
+});

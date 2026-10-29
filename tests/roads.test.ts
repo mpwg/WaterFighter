@@ -22,3 +22,15 @@ it('passt Straßendarstellung bei verändertem Gelände an',()=>{
  World.prototype.updateState.call(world,new Float32Array([2,0,0,3]),[],[],1);
  expect(positions[1]).toBeCloseTo(2.05);expect(positions[4]).toBeCloseTo(3.05);expect(update).toHaveBeenCalledOnce();
 });
+
+it('überträgt unverändertes Gelände bei anderen Aktionen nicht erneut und aktualisiert Gebäude',()=>{
+ const landUpdate=vi.fn(),roadUpdate=vi.fn(),surveyUpdate=vi.fn(),setEnabled=vi.fn();
+ const world={width:2,height:2,cell:4,bed:[0,0,0,0],terrainRevision:0,landPositions:new Float32Array(27),land:{updateVerticesData:landUpdate},roads:{updateVerticesData:roadUpdate},roadPositions:new Float32Array([-4,0,-4]),
+  scenario:{surveyCrests:[]},scene:{getMeshByName:()=>({setEnabled})},updateSurveyRidges:surveyUpdate,damSignature:'[]'} as any;
+ World.prototype.updateState.call(world,new Float32Array([0,0,0,0]),[{id:'house',value:1,damage:0,demolished:true}],[],1);
+ expect(landUpdate).not.toHaveBeenCalled();expect(roadUpdate).not.toHaveBeenCalled();expect(surveyUpdate).not.toHaveBeenCalled();
+ expect(setEnabled).toHaveBeenCalledWith(false);expect(world.currentBuildings.get('house').demolished).toBe(true);
+ World.prototype.updateState.call(world,new Float32Array([-1,0,0,0]),[{id:'house',value:1,damage:0,demolished:true}],[],2);
+ expect(landUpdate).toHaveBeenCalledOnce();expect(roadUpdate).toHaveBeenCalledOnce();expect(surveyUpdate).toHaveBeenCalledOnce();
+ expect(world.roadPositions[1]).toBeCloseTo(-0.95);
+});

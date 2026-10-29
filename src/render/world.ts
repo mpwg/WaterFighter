@@ -122,20 +122,23 @@ export class World {
     this.currentBuildings=new Map(buildings.map(b=>[b.id,b]));
     if(revision===this.terrainRevision) return;
     this.terrainRevision=revision;
-    this.bed=Array.from(bed);
-    for(let y=0;y<=this.height;y++) for(let x=0;x<=this.width;x++) {
-      const i=Math.min(y,this.height-1)*this.width+Math.min(x,this.width-1), v=y*(this.width+1)+x;
-      this.landPositions[v*3+1]=this.bed[i];
-    }
-    this.land.updateVerticesData(VertexBuffer.PositionKind,this.landPositions);
-    if(this.roads && this.roadPositions){
-      for(let i=0;i<this.roadPositions.length;i+=3) {
-        const x=this.roadPositions[i]+this.width*this.cell/2,y=this.roadPositions[i+2]+this.height*this.cell/2;
-        this.roadPositions[i+1]=terrainHeight(x,y,this.width,this.height,this.cell,this.bed)+0.05;
+    const bedChanged=this.bed.length!==bed.length || bed.some((value,i)=>value!==this.bed[i]);
+    if(bedChanged) {
+      this.bed=Array.from(bed);
+      for(let y=0;y<=this.height;y++) for(let x=0;x<=this.width;x++) {
+        const i=Math.min(y,this.height-1)*this.width+Math.min(x,this.width-1), v=y*(this.width+1)+x;
+        this.landPositions[v*3+1]=this.bed[i];
       }
-      this.roads.updateVerticesData(VertexBuffer.PositionKind,this.roadPositions);
+      this.land.updateVerticesData(VertexBuffer.PositionKind,this.landPositions);
+      if(this.roads && this.roadPositions){
+        for(let i=0;i<this.roadPositions.length;i+=3) {
+          const x=this.roadPositions[i]+this.width*this.cell/2,y=this.roadPositions[i+2]+this.height*this.cell/2;
+          this.roadPositions[i+1]=terrainHeight(x,y,this.width,this.height,this.cell,this.bed)+0.05;
+        }
+        this.roads.updateVerticesData(VertexBuffer.PositionKind,this.roadPositions);
+      }
+      this.updateSurveyRidges();
     }
-    this.updateSurveyRidges();
     for(const b of buildings) {const mesh=this.scene.getMeshByName(`building-${b.id}`); if(mesh) mesh.setEnabled(!b.demolished);}
     const signature=JSON.stringify(dams);
     if(signature!==this.damSignature) {

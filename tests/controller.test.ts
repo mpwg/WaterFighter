@@ -116,3 +116,33 @@ it('erhält Wasser und berechnet alle drei laufenden Eingriffe genau einmal',()=
     volume=current.volume;
   }
 });
+
+it('setzt nach Flut und allen drei Eingriffen den gesamten Workerzustand zurück',()=>{
+  const water=Array.from({length:16},(_,i)=>i<8?1:0.2);
+  const wet={...scenario,initialDepth:water,buildings:[{id:'house',area:16,height:8,heightEstimated:true,polygon:{outer:[[8,8],[12,8],[12,12],[8,12],[8,8]],holes:[]}}]};
+  const messages:Response[]=[],controller=new Controller(m=>messages.push(m));
+  controller.handle({type:'init',scenario:wet},0);
+  const initial=snapshots(messages).at(-1)!;
+  const initialField=[...new Float32Array(initial.buffer)],initialBuildings=structuredClone(initial.buildings);
+  controller.handle({type:'speed',round:1,speed:2},0);controller.handle({type:'start',round:1},0);controller.tick(500);
+  const actions=[
+    {kind:'dam' as const,faces:[{axis:'x' as const,index:1}]},
+    {kind:'trench' as const,cells:[0,1]},
+    {kind:'demolish' as const,buildingId:'house'},
+  ];
+  for(const [i,action] of actions.entries())controller.handle({type:'action',round:1,id:`action-${i}`,action},500);
+  const replies=messages.filter((m):m is Extract<Response,{type:'action-result'}>=>m.type==='action-result');
+  expect(replies).toHaveLength(3);expect(replies.every(r=>r.result.ok)).toBe(true);
+  controller.handle({type:'reset',round:1},500);
+  const reset=snapshots(messages).at(-1)!;
+  expect(reset.round).toBe(2);expect(reset.revision).toBe(0);expect(reset.time).toBe(0);
+  expect(reset.running).toBe(false);expect(reset.speed).toBe(1);expect(reset.backlog).toBe(0);
+  expect(reset.budget).toBe(initial.budget);expect(reset.buildings).toEqual(initialBuildings);expect(reset.dams).toEqual([]);
+  expect([...new Float32Array(reset.buffer)]).toEqual(initialField);
+  expect([reset.volume,reset.inflow,reset.outflow,reset.roundoffVolume]).toEqual([initial.volume,0,0,0]);
+  controller.handle({type:'action',round:1,id:'late',action:actions[1]},500);
+  expect(messages.filter(m=>m.type==='action-result')).toHaveLength(3);
+  controller.handle({type:'action',round:2,id:'action-1',action:actions[1]},500);
+  const last=messages.filter((m):m is Extract<Response,{type:'action-result'}>=>m.type==='action-result').at(-1)!;
+  expect(last.round).toBe(2);expect(last.result.ok).toBe(true);
+});

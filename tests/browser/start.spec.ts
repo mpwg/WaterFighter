@@ -332,3 +332,23 @@ test('Werkzeuge und Quellen bleiben im schmalen Querformat erreichbar',async({br
   await page.locator('[data-mode="demolish"]').tap();await expect(page.locator('[data-mode="demolish"]')).toHaveAttribute('aria-pressed','true');
   await context.close();
 });
+
+test('Neustart nach allen Werkzeugen und Flut stellt die Kartenansicht wieder her',async({page})=>{
+  await page.setViewportSize({width:1200,height:800});
+  await page.addInitScript(()=>window.addEventListener('waterfighter:diagnostics',event=>{(window as any).lastRound=(event as CustomEvent).detail.round;}));
+  await page.goto('/');await expect(page.locator('#budget')).toHaveText('10 000');
+  await page.waitForFunction(()=>(window as any).lastRound===1);await page.waitForTimeout(500);
+  const before=await page.screenshot();
+  for(const mode of ['trench','dam','demolish']){
+    await page.locator(`[data-mode="${mode}"]`).click();
+    if(mode==='demolish')await page.mouse.click(600,320);
+    else {await page.mouse.click(800,360);await page.mouse.click(850,385);}
+    await expect(page.locator('#confirm')).toBeEnabled();await page.locator('#confirm').click();await expect(page.locator('#preview')).toBeHidden();
+  }
+  await expect(page.locator('#budget')).not.toHaveText('10 000');await page.locator('#run').click();
+  await expect(page.locator('#time')).not.toHaveText('00:00',{timeout:10000});
+  await page.locator('#reset').click();await page.waitForFunction(()=>(window as any).lastRound===2);
+  await expect(page.locator('#time')).toHaveText('00:00');await expect(page.locator('#budget')).toHaveText('10 000');
+  await expect(page.locator('[data-mode="camera"]')).toHaveAttribute('aria-pressed','true');await page.waitForTimeout(500);
+  expect(await page.screenshot()).toEqual(before);
+});

@@ -269,8 +269,8 @@ export class World {
     for(let i=0;i<this.flowSamples.length;i++) {
       const a=this.flowSamples[i],speed=Math.hypot(a.vx,a.vy);
       if(speed<0.01)continue;
-      // Keep trench markers near their narrow sampled cell instead of drifting onto dry land.
-      const ux=a.vx/speed,uy=a.vy/speed,phase=((now*Math.min(speed,3)/5+i*.37)%1-.5)*this.cell*(i<regularCount?5:0.75);
+      // Keep each marker centre near the cell whose velocity it represents.
+      const ux=a.vx/speed,uy=a.vy/speed,phase=((now*Math.min(speed,3)/5+i*.37)%1-.5)*this.cell*0.75;
       const x=a.x+ux*phase,y=a.y+uy*phase;
       writeFlowArrow(positions,i*18,x,y,a.height,ux,uy,i<regularCount?length:Math.min(length,this.cell*1.5));
     }
@@ -287,8 +287,11 @@ export class World {
       let sampleIndex=0;
       for(let y=0;y<this.height;y+=12) for(let x=0;x<this.width;x+=12) {
         const i=y*this.width+x,h=depth[i];
-        const sample=this.flowSamples[sampleIndex++]??(this.flowSamples[this.flowSamples.length]={x:x*this.cell-this.width*this.cell/2,y:y*this.cell-this.height*this.cell/2,height:0,vx:0,vy:0});
-        sample.height=this.bed[i]+h+0.3;sample.vx=h>0.05?qx[i]/h:0;sample.vy=h>0.05?qy[i]/h:0;
+        const sample=this.flowSamples[sampleIndex++]??(this.flowSamples[this.flowSamples.length]={x:(x+.5)*this.cell-this.width*this.cell/2,y:(y+.5)*this.cell-this.height*this.cell/2,height:0,vx:0,vy:0});
+        // The cell centre is on the rendered water mesh diagonal from east to south.
+        const east=y*this.width+Math.min(x+1,this.width-1),south=Math.min(y+1,this.height-1)*this.width+x;
+        sample.height=(this.bed[east]+depth[east]+this.bed[south]+depth[south])/2+0.5;
+        sample.vx=h>0.05?qx[i]/h:0;sample.vy=h>0.05?qy[i]/h:0;
       }
       for(const i of this.flowTrenchCells) {
         const x=i%this.width,y=Math.floor(i/this.width),h=depth[i];

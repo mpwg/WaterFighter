@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+[Strömungsmarker](browser-pruefung.md#zellnahe-strömungsmarker) bewegen ihre Mittelpunkte nun nahe der jeweils abgetasteten Zelle; ihre Höhe folgt der gerenderten Wasseroberfläche am Zellmittelpunkt. Modelltests und gezielte Browserprüfungen bestanden; ein vollständiger Browserlauf und echte Geräte bleiben offen.
+
 Die Karte lässt sich jetzt auch bei gewähltem Bau- oder Abrisswerkzeug durch Ziehen verschieben; ein bereits gewählter Startpunkt bleibt erhalten. Ein gezogener Kontakt setzt keine Maßnahme. Produktionsbuild, 67 Modelltests sowie gezielte Maus- und emulierte Touchprüfungen bestanden; eine vollständige Browserprüfung dieses neuen Anwendungsstands und menschliche Geräteprüfung bleiben offen.
 
 Reguläre Strömungspfeile passen ihre Größe nun begrenzt an den Kartenmaßstab an; Pfeile im Graben bleiben zellnah. Eine [emulierte schmale Sichtprobe](browser-pruefung.md#strömungspfeile-in-schmaler-ansicht), alle 67 Modelltests und 63 Chromium-Browserprüfungen auf `870f345` bestehen; echte Geräte und menschliche Lesbarkeit bleiben offen.

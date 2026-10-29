@@ -82,3 +82,16 @@ it('enlarges overview flow arrows while keeping trench markers close to their ce
   expect(world.flowPositions[3]-world.flowPositions[0]).toBe(24);
   expect(world.flowPositions[21]-world.flowPositions[18]).toBeCloseTo(6,5);
 });
+
+it('keeps regular flow markers near the sampled cell centre and above the rendered surface',()=>{
+  const world={width:2,height:2,cell:4,zoom:180,canvas:{clientHeight:800},bed:[0,4,2,0],currentDepth:new Float32Array(4),flowSamples:[],flowTrenchCells:[],
+    wetVertices:new Uint8Array(9),waterIndexBuffer:new Uint16Array(24),wetTopologyReady:false,waterPositions:new Float32Array(27),waterColors:new Float32Array(36),
+    flowPositions:new Float32Array(18),flowLines:{updateVerticesData:vi.fn()},water:{setIndices:vi.fn(),updateVerticesData:vi.fn()}} as any;
+  World.prototype.updateWater.call(world,new Float32Array([1,2,3,4]),new Float32Array([2,0,0,0]),new Float32Array(4));
+  expect(world.flowSamples[0]).toMatchObject({x:-2,y:-2,height:6,vx:2,vy:0});
+  for(const time of [0,1,2,3,4]){
+    (World.prototype as any).animateFlow.call(world,time);
+    const centre=(world.flowPositions[0]+world.flowPositions[3])/2;
+    expect(Math.abs(centre+2)).toBeLessThanOrEqual(1.5);
+  }
+});

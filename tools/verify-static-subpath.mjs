@@ -5,7 +5,7 @@ import {resolve, sep} from 'node:path';
 import {gunzipSync} from 'node:zlib';
 import {chromium} from '@playwright/test';
 
-const root=resolve('dist'),prefix='/waterfighter/';
+const root=resolve(process.env.WATERFIGHTER_DIST??'dist'),prefix='/waterfighter/';
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json','.md':'text/markdown; charset=utf-8'};
 const requests=[];
 const server=createServer(async(req,res)=>{

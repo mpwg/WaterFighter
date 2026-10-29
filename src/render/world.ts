@@ -151,13 +151,13 @@ export class World {
         const i=Math.min(y,this.height-1)*this.width+Math.min(x,this.width-1), v=y*(this.width+1)+x;
         this.landPositions[v*3+1]=this.bed[i];
       }
-      this.land.updateVerticesData(VertexBuffer.PositionKind,this.landPositions);
+      this.land.updateVerticesData(VertexBuffer.PositionKind,this.landPositions,true);
       if(this.roads && this.roadPositions){
         for(let i=0;i<this.roadPositions.length;i+=3) {
           const x=this.roadPositions[i]+this.width*this.cell/2,y=this.roadPositions[i+2]+this.height*this.cell/2;
           this.roadPositions[i+1]=terrainHeight(x,y,this.width,this.height,this.cell,this.bed)+0.05;
         }
-        this.roads.updateVerticesData(VertexBuffer.PositionKind,this.roadPositions);
+        this.roads.updateVerticesData(VertexBuffer.PositionKind,this.roadPositions,true);
       }
       this.updateSurveyRidges();
     }

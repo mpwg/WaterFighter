@@ -1,6 +1,7 @@
 /** Track water marked at each inlet until its first return to the water mask or exit. */
 import {readFileSync} from 'node:fs';
 import {Game} from '../src/simulation/game';
+import {trenchPath} from '../src/simulation/path';
 import {validateScenario} from '../src/scenario';
 const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
 const mode=process.argv[2]??'baseline';
@@ -20,9 +21,19 @@ const gates=gateSpecs.map(spec=>{
  return {axis,index,sign,origin:[land%w,Math.floor(land/w)] as const};
 });
 if(mode!=='baseline'){const {axis,index}=gates[Number(mode)];const action=game.apply('probe',{kind:'dam',faces:[{axis,index}]});if(!action.ok)throw Error(action.reason);}
+const trenchArg=process.argv.find(a=>a.startsWith('--trench='));
+if(trenchArg){
+ const raw=trenchArg.slice(9).split(',');
+ if(raw.some(v=>!/^\d+$/.test(v)))throw Error('Graben: --trench=X0,Y0,X1,Y1');
+ const parts=raw.map(Number);
+ if(parts.length!==4||parts.some((v,i)=>!Number.isInteger(v)||v<0||v>=(i%2===0?w:h)))throw Error('Graben: --trench=X0,Y0,X1,Y1');
+ const result=game.apply('trench',{kind:'trench',cells:trenchPath([parts[0],parts[1]],[parts[2],parts[3]],w)});
+ if(!result.ok)throw Error(result.reason);
+}
 const dye=[new Float64Array(n),new Float64Array(n)],change=[new Float64Array(n),new Float64Array(n)];
 const tagged=[0,0],exited=[0,0],returned=[0,0],peakLand=[0,0];
 const origins=gates.map(g=>g.origin), distances=[8,16,32,64];
+const cellDistances=origins.map(([x,y])=>Float64Array.from({length:n},(_,i)=>Math.hypot(i%w-x,Math.floor(i/w)-y)*s.cellSize));
 const gateX=new Map(gates.flatMap((g,k)=>g.axis==='x'?[[g.index,k] as const]:[]));
 const gateY=new Map(gates.flatMap((g,k)=>g.axis==='y'?[[g.index,k] as const]:[]));
 const peakBeyond=origins.map(()=>distances.map(()=>0));
@@ -68,7 +79,7 @@ while(s.time<scenario.parameters.duration-1e-9){
   if(bound>1e-7)throw Error(`Tracer außerhalb der Wasserbilanz in Zelle ${i}: ${bound}`);
   if(!scenario.waterMask[i])for(let k=0;k<2;k++){
    land[k]+=dye[k][i];
-   const distance=Math.hypot(i%w-origins[k][0],Math.floor(i/w)-origins[k][1])*s.cellSize;
+   const distance=cellDistances[k][i];
    for(let j=0;j<distances.length;j++)if(distance>=distances[j])beyond[k][j]+=dye[k][i];
    if(dye[k][i]>=0.1)farthest[k]=Math.max(farthest[k],distance);
   }
@@ -76,4 +87,4 @@ while(s.time<scenario.parameters.duration-1e-9){
  for(let k=0;k<2;k++){peakLand[k]=Math.max(peakLand[k],land[k]);for(let j=0;j<distances.length;j++)peakBeyond[k][j]=Math.max(peakBeyond[k][j],beyond[k][j]);}
 }
 const markers=gates.map((gate,k)=>{const remaining=dye[k].reduce((a,b)=>a+b,0);return {gate,tagged:tagged[k],exited:exited[k],returned:returned[k],remaining,peakLand:peakLand[k],peakBeyond:distances.map((metres,j)=>({metres,volume:peakBeyond[k][j]})),farthestCellAtLeastPoint1M3:farthest[k],balanceError:remaining+exited[k]+returned[k]-tagged[k]};});
-console.log(JSON.stringify({scenario:scenario.version,mode,time:s.time,budget:game.budget,...game.totals(),markers,maxBoundError,waterBalance:Math.abs(s.volume()-initialVolume-s.inflow+s.outflow-s.roundoffVolume)/(initialVolume+s.inflow)},null,2));
+console.log(JSON.stringify({scenario:scenario.version,mode,trench:trenchArg??null,time:s.time,budget:game.budget,...game.totals(),markers,maxBoundError,waterBalance:Math.abs(s.volume()-initialVolume-s.inflow+s.outflow-s.roundoffVolume)/(initialVolume+s.inflow)},null,2));

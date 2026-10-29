@@ -28,7 +28,7 @@ Auf demselben Build bestand `bun tools/verify-firefox-pan.mjs` in Firefox 159.0 
 
 ## Gesamtsuite mit näherem Kartenzoom
 
-Auf dem isolierten Produktionsbuild `4dfe2e7` mit Babylon.js 9.33.1 bestanden am 30. Oktober 2026 alle 89 Playwright-Chromium-Fälle unter Linux mit Softwaregrafik und einem Worker in 12,1 Minuten. Die Suite enthält unter anderem Kartenverschiebung, Werkzeug- und Touchbedienung, Neustarts sowie die Grabenlinie. Zeitweise liefen weitere Untersuchungen parallel; die Laufzeit ist keine Leistungsmessung. Menschliche Zielgenauigkeit und Verständlichkeit, tatsächliches Safari und echte Mobilgeräte bleiben ungeprüft.
+Auf dem isolierten Produktionsbuild `4dfe2e7` mit Babylon.js 9.33.1 bestanden am 30. Oktober 2026 alle 89 Playwright-Chromium-Fälle unter Linux mit Softwaregrafik und einem Worker in 12,1 Minuten. Die Suite enthält unter anderem Kartenverschiebung, Werkzeug- und Touchbedienung, Neustarts sowie die Grabenlinie. Eine unabhängige Wiederholung auf dem isolierten Archiv `489e515` mit gleichem Anwendungscode bestand nach `bun install --frozen-lockfile` und `bun run build` ebenfalls alle 89 Fälle in 12,3 Minuten. Der erste Installationsversuch scheiterte an einer Speicherquote; nach Entfernen eigener abgeschlossener Testarchive gelang er. Zeitweise liefen weitere Untersuchungen parallel; die Laufzeiten sind keine Leistungsmessung. Menschliche Zielgenauigkeit und Verständlichkeit, tatsächliches Safari und echte Mobilgeräte bleiben ungeprüft.
 
 ## Karte im Werkzeugmodus verschieben
 

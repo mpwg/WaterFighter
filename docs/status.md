@@ -42,6 +42,8 @@ Die Spielhilfe erklärt nun, wie Zufluss, Dämme, Gräben und Pause bei der Plan
 
 Die Dachnormalen der Gebäude wurden korrigiert: Unbeschädigte Dächer erscheinen in der Produktionsansicht hell statt nahezu schwarz, wodurch die Zustandsfarben besser erkennbar sind. Build und 50 Vitest-Tests sowie Chromium-Prüfungen für Abriss und kombinierten Neustart bestanden; eine menschliche Beurteilung der Zustandsfarben bleibt offen.
 
+Die [Datenlizenz-Prüfung](datenlizenz-pruefung.md) ordnet Quellenhinweise und den maschinenlesbaren Download des zum Build gehörigen Szenariopakets ein. Die Lizenzprüfung der Datenkombination und die dauerhafte Bereitstellung bleiben offen.
+
 ## Arbeitspakete
 
 | Paket | Status | Tatsächlicher Nachweis | Nächster Schritt |

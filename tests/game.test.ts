@@ -153,3 +153,18 @@ it('verbindet bestehende Gräben ohne erneute Vertiefung, Kosten oder Wasserverl
   expect(bad).toMatchObject({ok:false,reason:expect.stringContaining('Gebäude versperrt')});
   expect(g.budget).toBe(initialBudget-100);expect(g.solver.bed[7]).toBe(0);
 });
+
+it('meldet eine neue Geländekantenabsenkung bei überlappender Grabenverlängerung nur einmal',()=>{
+  const face={axis:'y' as const,index:2*5+1,crest:2};
+  const g=new Game({...scenario,surveyCrests:[face]});
+  expect(g.apply('first',{kind:'trench',cells:[6]})).toMatchObject({ok:true,cost:25});
+  const extension={kind:'trench' as const,cells:[6,11]};
+  const preview=g.preview(extension);
+  expect(preview).toMatchObject({ok:true,cost:25,reusedCells:1,loweredCrests:1});
+  expect(g.solver.crestY[face.index]).toBe(2);
+  expect(g.apply('extend',extension)).toEqual(preview);
+  expect(g.solver.crestY[face.index]).toBeCloseTo(2-scenario.parameters.trenchDepth);
+  const next=g.preview({kind:'trench',cells:[6,11,16]});
+  expect(next).toMatchObject({ok:true,cost:25,reusedCells:2});
+  expect(next).not.toHaveProperty('loweredCrests');
+});

@@ -254,7 +254,8 @@ export class World {
     const point=this.pick(clientX,clientY);
     if(!point) return 'Keine Stelle auf der Karte ausgewählt.';
     const x=Math.max(0,Math.min(this.width-1,Math.floor(point.x/this.cell))),y=Math.max(0,Math.min(this.height-1,Math.floor(point.y/this.cell)));
-    return `Wassertiefe: ${(this.currentDepth[y*this.width+x]??0).toFixed(2)} m.`;
+    const i=y*this.width+x,depth=this.currentDepth[i]??0;
+    return depth>0.02?`Wassertiefe: ${depth.toFixed(2)} m · Wasserspiegel: ${(this.bed[i]+depth).toFixed(2)} m über Wiener Null.`:`Wassertiefe: ${depth.toFixed(2)} m (trocken oder sehr flach).`;
   }
   private animateFlow(now:number):void {
     const positions=this.flowPositions;positions.fill(0);

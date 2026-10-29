@@ -70,6 +70,8 @@ Für den integrierten Stand `5c2e0c4` bestanden Build, 52 Vitest-Tests, zwei Pyt
 
 Auf 320 × 480 CSS-Pixeln bleiben Zeit, Budget und Zustand nun einzeilig; die Quellenleiste liegt unter dem scrollbaren Werkzeugfeld. Werkzeugnamen passen in ihre mindestens 44 × 44 Pixel großen Schaltflächen; emulierte Treffflächen- und Vorschautests bestanden: [Browserprüfung](browser-pruefung.md#kompakte-statusanzeige-bei-320--480). Echte Geräte bleiben offen.
 
+Die Kartenabfrage nennt bei Wasser neben der Tiefe den Wasserspiegel über Wiener Null. Bei ausgeblendetem Menü erscheint die Abfrage mit Zeitstempel außerhalb des Werkzeugfelds; damit können Wasserstände beidseits eines Damms verglichen werden. Build, 55 Vitest-Tests und fünf gezielte Chromium-Prüfungen bestanden. Die Verständlichkeit für eine Testperson und die Geräteprüfung bleiben offen.
+
 ## Arbeitspakete
 
 | Paket | Status | Tatsächlicher Nachweis | Nächster Schritt |

@@ -7,4 +7,4 @@ const initial=solver.volume(), start=performance.now();
 const duration = Number(process.argv[2] ?? 60);
 solver.advance(duration);
 const seconds=(performance.now()-start)/1000;
-console.log(JSON.stringify({node:process.version,scenario:s.version,grid:[s.grid.width,s.grid.height],simulatedSeconds:solver.time,wallSeconds:seconds,steps:solver.steps,simSecondsPerWallSecond:solver.time/seconds,relativeVolumeError:Math.abs(solver.volume()-initial)/initial},null,2));
+console.log(JSON.stringify({runtime:typeof Bun!=='undefined'?`Bun ${Bun.version}`:`Node.js ${process.version}`,scenario:s.version,grid:[s.grid.width,s.grid.height],simulatedSeconds:solver.time,wallSeconds:seconds,steps:solver.steps,simSecondsPerWallSecond:solver.time/seconds,relativeVolumeError:Math.abs(solver.volume()-initial)/initial},null,2));

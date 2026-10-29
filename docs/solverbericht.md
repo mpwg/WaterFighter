@@ -126,3 +126,8 @@ Das Status- und Werkzeugmenü kann nun über „Menü ausblenden“ beziehungswe
 ## Übernommenes Szenario 1.3
 
 Die oben untersuchte Kandidatenkonfiguration ist nun das ausgelieferte `1.3-draft`. `npx tsx tools/check-scenario-balance.ts` bestätigt für die tatsächlich erzeugte Datei über 600 s denselben relativen Bilanzfehler von 1,79 × 10⁻¹³ und maximal 13,03 m Tiefe; alle Werte blieben endlich und nichtnegativ. Die tatsächlich ausgelieferte Version wurde mit `tools/observe-strategy-browser.mjs` in Chrome 156.0.8078.73 im Vite-Entwicklungsserver vollständig bei 2× gespielt: elf bestätigte Dammabschnitte, 35.144 Schaden, 2.600 Budgetrest, 150,846 s und keine protokollierten Seitenfehler. Die Projektion der Klickkoordinaten bleibt testseitig. Build, 33 Vitest-Tests, zwei Python-Tests und 19 Chrome-Browserprüfungen bestanden. Die vorherigen Einträge und die `--candidate`-Aufrufe beziehen sich auf den historischen Entwurf `1.2-draft`; die neue Version darf nicht nochmals mit 0,75 skaliert werden.
+
+
+## Szenariolauf mit Bun
+
+Am 29. Oktober 2026 wurde `bun tools/check-scenario-balance.ts` mit Bun 1.4.4 und Szenario `1.3-draft` über 600 simulierte Sekunden ausgeführt. Anfangsvolumen 499.584 m³, Zufluss 1.710.000 m³, Abfluss 1.815.115,06 m³, Endvolumen 394.468,94 m³; der relative Bilanzfehler betrug 1,79 × 10⁻¹³. Die minimale Tiefe war 0 m und die maximale 13,03 m. Der Lauf bestätigt die numerische Prüfung unter Bun, keine reale Hochwasservorhersage und keine mobile Geräteabnahme.

@@ -153,3 +153,24 @@ Am 29. Oktober 2026 zeichnete `bun tools/observe-live-flood.mjs` Szenario `1.3-d
 Die Aufnahmen bei [00:02](flutverlauf/002.png), [03:00](flutverlauf/180.png) und [04:45](flutverlauf/285.png) zeigen am linken Kartenrand Wasser auf zuvor trockenem Gelände und Strömungsmarker. Die Momentaufnahmen zeigen eine Veränderung des Wassers im bebauten Bereich, aber keine durchgehend beurteilte Animation oder ausreichende Erkennbarkeit auf kleinen echten Geräten. Die übrigen Aufnahmen und ihr Zeitprotokoll lagen lokal unter `/tmp/waterfighter-live-flood-rrRogM` und sind nicht eingecheckt.
 
 Zwei frühere Versuche wurden vorzeitig abgebrochen: beim ersten endeten Browser und Testserver nach Aufnahmen bis 02:45, beim zweiten wurde die Browserverbindung nach Aufnahmen bis 00:30 geschlossen, während der Server weiterlief. Die Ursache wurde nicht festgestellt. Vor dem dritten Versuch wurden nicht mehr benötigte lokale Testserver beendet; ein ursächlicher Zusammenhang ist damit nicht belegt. Der erfolgreiche Einzellauf schließt sporadische Probleme nicht aus und ersetzt keine Geräteabnahme.
+
+## Review-Kandidaten mit zusätzlichem westlichem Modellabfluss
+
+Am 29. Oktober 2026 wurden die in [review-steuerung-terra.md](review-steuerung-terra.md) vorgeschlagenen Varianten mit `bun tools/compare-review-strategies.ts FALL` unabhängig auf Linux mit Bun 1.4.4 über jeweils 300 simulierte Sekunden berechnet. Das Skript liest `1.3-draft` und die bestehende Dammreferenz, öffnet für alle Varianten außer `original` zusätzlich den linken Modellrand und setzt die Grabentiefe für die Versuche auf 3 m. Änderungen gelten nur im Speicher; das ausgelieferte Szenario und die Pipeline sind unverändert. Alle Maßnahmen werden vor Rundenbeginn ausgeführt. Das Schadensziel bleibt 50.000.
+
+| Fall | Flutschaden | Abrissverlust | Gesamtschaden | Budgetrest | Westlicher Modellabfluss |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `original` – Originalrand, ohne Eingriff | 140.425,48 | 0 | 140.425,48 | 10.000 | 0 m³ |
+| `open` – zusätzlicher Westrand, ohne Eingriff | 138.852,13 | 0 | 138.852,13 | 10.000 | 1.547,47 m³ |
+| `trench` – Westrand, Graben (0,4)–(25,4) | 113.264,38 | 0 | 113.264,38 | 9.350 | 4.581,80 m³ |
+| `dam3` – Westrand, erste drei Dammabschnitte | 34.792,87 | 0 | 34.792,87 | 8.160 | 0,01 m³ |
+| `dam3trench` – dieselben Dämme und Graben (0,4)–(25,4) | 21.600,61 | 0 | 21.600,61 | 7.510 | 618,65 m³ |
+| `dam2` – Westrand, erste zwei Dammabschnitte | 34.768,16 | 0 | 34.768,16 | 8.800 | 0,01 m³ |
+| `dam2demolish` – dieselben Dämme und Abriss | 34.768,16 | 16.017 | 50.785,16 | 7.198 | 0,01 m³ |
+| `combined` – dieselben Dämme, Abriss und Graben (0,10)–(23,10) | 17.629,93 | 16.017 | 33.646,93 | 6.598 | 460,59 m³ |
+
+Der zusätzliche Kontrollfall `dam2trench` ohne Abriss wird bei der verbindlichen Aktionsprüfung abgelehnt: Die ersten fünf Grabenzellen (0,10)–(4,10) sind vom Gebäude `w33581744-0` belegt. Dessen Abriss kostet 1.602 und zählt mit 16.017 vollständig zum Schaden; er ermöglicht den vorgeschlagenen Verlauf, verschlechtert aber allein gegenüber `dam2` die Wertung um 16.017. Der nachfolgende Graben kostet 600 und reduziert gegenüber `dam2demolish` den Gesamtschaden um 17.138,23; gegenüber `dam2` ergibt die vollständige Kombination 1.121,23 weniger Gesamtschaden bei 2.202 zusätzlichen Budgeteinheiten. Diese Kosten und Schäden sind unterschiedliche Spielgrößen. Ohne Abriss ist der vorgeschlagene Grabenverlauf nicht durchführbar; dies ist kein isolierter Abriss-Wirkungsnachweis.
+
+Beispielhaft sinkt im Vergleich `dam2` zu `combined` der modellierte Flutschaden an `w316294474-0` von 11.056 auf 1.297,98 und an `w219815193-0` von 10.418 auf 4.524,79. Das belegt eine veränderte Schadensverteilung, aber nicht für sich den vollständigen Wasserweg oder seine Ursache. Der separat nachgerechnete westliche Abfluss integriert vor jedem Schritt die nach außen gerichtete Randimpulsdichte; die globalen relativen Wasserbilanzfehler aller berechneten Runden liegen unter 1,6 × 10⁻¹³.
+
+Der linke Rand ist die westliche Ausschnittgrenze bei 3.900 m im Szenariokoordinatensystem; ein offener numerischer Rand entfernt Wasser aus dem Modell, ohne das Gebiet dahinter zu berechnen. Er ist eine experimentelle Spielannahme, kein belegter sicherer Abfluss oder reale Schutzempfehlung. Ein sichtbarer, zusammenhängender Ableitungsweg, die Empfindlichkeit gegenüber Platzierung und die Wirkung später Eingriffe sind noch zu prüfen. Die Kandidatenwerte sind kein Browser- oder Gerätetest und keine Freigabe einer Szenarioänderung.

@@ -8,6 +8,8 @@ Stand: 29. Oktober 2026.
 
 Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet die Flut im Worker und bietet alle drei Werkzeuge sowie Ergebnis und Neustart. Eine vollständige automatisierte Runde und eine erfolgreiche Dammstrategie sind belegt. Die Szenario- und Gesamtprüfungen bleiben in Arbeit; echte Mobilgeräte und Safari wurden nicht abgenommen. Eine öffentliche Veröffentlichung erfolgte nicht.
 
+Der [Review-Steuerungsauftrag](review-steuerung-terra.md) priorisiert Spielgefühl und zwei nachvollziehbare Schutzansätze. Die vorgeschlagenen kurzeren Damm- und Ableitungskandidaten samt Kontrollfällen wurden unabhängig numerisch verglichen; die Szenarioänderungen bleiben experimentell: [Solverbericht](solverbericht.md#review-kandidaten-mit-zusätzlichem-westlichem-modellabfluss).
+
 Das Projekt verwendet Bun 1.4.4 und `bun.lock`; ältere Prüfprotokolle nennen die damals ausgeführten npm-, npx- und pnpm-Befehle. Als Browserziel gelten aktuelle stabile Versionen, ohne gesonderte Unterstützung älterer Versionen. Nach der vorherigen pnpm-Umstellung bestanden eine saubere `pnpm ci`-Installation, Typprüfung, Build, 35 Vitest-Tests, zwei Python-Tests, 21 Chrome-Browserprüfungen und der statische Unterpfadtest; `pnpm audit` meldete keine bekannten Schwachstellen.
 
 Die Bun-Migration wurde mit einer Neuinstallation und ohne Node im PATH geprüft: Build, Typprüfung, 35 Vitest-Tests, zwei Python-Tests, 21 Chrome-Browserprüfungen, Entwicklungsserver, statischer Unterpfad und 600-s-Szenariolauf bestanden. `bun outdated` meldete keine veralteten direkten Pakete, `bun audit` keine bekannten Schwachstellen. Für Node-kompatible APIs bleibt `@types/node` als Typabhängigkeit erhalten.

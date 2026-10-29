@@ -196,3 +196,21 @@ Für `dam2` ist 120 s der späteste erfolgreich getestete Zeitpunkt; 130 s verfe
 Für `dam2` verschieben `--tip=-1` und `--tip=1` nur den Endpunkt des zweiten Dammabschnitts um eine Rasterzelle nach links beziehungsweise rechts. Beide Verläufe werden akzeptiert und ergeben bei Maßnahmen vor Flutbeginn 30.632,37 beziehungsweise 37.663,52 Schaden bei 8.840 beziehungsweise 8.760 Budgetrest. Verschiebt man dagegen den Anfangspunkt des ersten Abschnitts mit `--entry=-1` oder `--entry=1` beziehungsweise den gemeinsamen Eckpunkt mit `--junction=-1` oder `--junction=1`, erzeugt die aktuelle Pfadregel zuerst eine horizontale Kante auf dem oberen Kartenrand; diese vier Maßnahmen werden abgelehnt. Die Vorschau benennt diesen Grund jetzt ausdrücklich und empfiehlt innere Endpunkte.
 
 Für `combined` verschieben `--trench-row=-1` und `--trench-row=1` den ganzen Graben bei unveränderten Dämmen und Abriss um eine Rasterzeile. Beide werden akzeptiert, kosten weiterhin 600 und ergeben 48.078,44 beziehungsweise 44.897,16 Gesamtschaden statt 33.646,93. Alle berechneten relativen Wasserbilanzfehler liegen unter 1,5 × 10⁻¹³. Die Ergebnisse zeigen lokale Empfindlichkeit, prüfen aber nicht alle Verschiebungen und belegen keine natürliche Bedienung ohne Gitterkenntnis.
+
+### Markierter Verlauf im experimentellen Ableitungsgraben
+
+Am 29. Oktober 2026 berechnete `bun tools/trace-review-diversion.ts combined --ordered` und `bun tools/trace-review-diversion.ts dam2demolish --ordered` die beiden 300-s-Kandidaten mit offenem westlichem Modellrand und 3 m Grabentiefe. Beide beginnen mit denselben zwei Dammabschnitten und dem Abriss; nur `combined` enthält zusätzlich den Graben (0,10)–(23,10). Wasser, das die Kante zwischen (24,10) und (23,10) westwärts passiert, erhält eine passive Modellmarkierung, soweit es noch nicht markiert ist. Das Diagnoseprogramm rechnet die Massenflüsse vor jedem Zeitschritt separat aus dem Solverzustand nach; es verändert die eigentliche Simulation nicht.
+
+Die geordnete Auswertung teilt die Markierung in fünf Fortschrittsstufen: Sie steigt jeweils eine Stufe auf, wenn sie die Kanten bei x = 20, 15, 10 und 5 in Zeile 10 in genau dieser Reihenfolge westwärts passiert. An anderen Kanten und bei Rückströmung bleibt die Stufe erhalten. So wird erfasst, welcher markierte Modellanteil alle vier Querschnitte passiert hat, bevor er den westlichen Modellrand verlässt. Zwischen den Querschnitten ist der Verlauf nicht auf die Grabenzeile beschränkt. Die normale Markierungsbilanz und die Summe der Fortschrittsstufen wurden zusätzlich miteinander verglichen.
+
+| Größe | Mit Graben | Ohne Graben |
+| --- | ---: | ---: |
+| Am Eingang markiert | 302,4437 m³ | 302,4437 m³ |
+| Markierung am Westrand insgesamt | 81,5478 m³ | 0,000095 m³ |
+| Davon nach allen vier Querschnitten in Reihenfolge | 81,5478 m³ | 0 m³ |
+| Markierung am Rundenende im Modell | 220,8959 m³ | 302,4436 m³ |
+| Gesamtschaden | 33.646,93 | 50.785,16 |
+
+Im Grabenversuch wurden an den vier Querschnitten 257,47, 175,15, 134,22 und 103,89 m³ markierter westwärtiger Fluss integriert. Diese separaten Flusssummen können wiederholt bewegte Anteile enthalten und sind nicht mit dem geordneten Randabfluss gleichzusetzen. Der Bilanzrest der geordneten Markierung liegt in beiden Läufen unter 1,1 × 10⁻¹² m³; die größte lokale Abweichung zwischen Summe der Stufen und einfacher Markierung unter 9 × 10⁻¹⁵ m³. Die globalen relativen Wasserbilanzfehler liegen unter 2,3 × 10⁻¹⁴. Ein zusätzlicher `dam2`-Lauf ohne Abriss und Graben ergab bei dieser Markierung dieselben Werte wie der Kontrolllauf mit Abriss ohne Graben.
+
+Das ist ein nachverfolgter, geordneter **numerischer Modellanteil** und ein stärkerer Hinweis auf den vorgesehenen Ableitungsweg als einzelne Kantenflüsse. Rusanov-Diffusion und Zellmischung verhindern die Interpretation als reale Wasserteilchen. Der offene Rand entfernt Wasser aus dem Ausschnitt, sagt nichts über die Folgen außerhalb aus und ist weiterhin keine geprüfte reale Ableitung. Der Versuch beweist nicht, dass der gesamte schadensmindernde Effekt durch diesen markierten Anteil verursacht wird; ein Browserlauf und eine menschliche Spielprüfung der Kandidaten fehlen.

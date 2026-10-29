@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Für den Einzelabriss nach 180 s zeigt eine [lokale Wasserbilanz](review-gebaeudevergleich.md#wasserbilanz-am-später-abgerissenen-gebäude) im Vergleich zur geschlossenen Kontrolle den geöffneten und durchströmten Gebäudegrundriss. Die Summen verfolgen keine einzelnen Wasserteilchen und beweisen keine reale Schutzwirkung.
+
 Auf dem isolierten Produktionsbuild `d38c0ca` mit schematischer Grabenlinie bestanden [alle 85 Chromium-Fälle](browser-pruefung.md#gesamtsuite-mit-schematischer-grabenlinie). Menschliche Bedienung, tatsächliches Safari und echte Geräte bleiben offen.
 
 Ein [einzelner Abriss in einer erfolgreichen Dammstrategie](review-gebaeudevergleich.md#einzelabriss-in-einer-erfolgreichen-strategie) senkt den Gesamtschaden auch bei den geprüften Eingriffszeiten 120, 150 und 180 s stärker als seine Kosten; ein bereits beschädigtes Gebäude wird dabei nicht doppelt gewertet. Die Kombination mit dem späteren Westgraben ist für diesen Abriss dagegen ungünstig. Menschliche Bedienung und Geräteabnahme bleiben offen.

@@ -497,3 +497,9 @@ Ein erster Versuch mit weiter verlängerten Endpunkten wurde in beiden Formaten 
 ### Aktueller Produktionsbuild unter einem Unterpfad
 
 Ein isoliertes Git-Archiv von `7528e5b` wurde mit `bun --bun vite build --base /waterfighter/ --outDir /tmp/wf-subpath-build-7528e5b` gebaut. `WATERFIGHTER_DIST=/tmp/wf-subpath-build-7528e5b bun tools/verify-static-subpath.mjs` lieferte den Build unter `/waterfighter/` aus und bestand in Google Chrome 156.0.8078.73 unter Linux. Die Prüfung lud Szenario und Worker, bestätigte einen Damm, startete und pausierte die Uhr, setzte zurück und prüfte beide Szenariodownload-Links sowie den entpackten Inhalt bytegleich gegen die Szenariodatei. Alle 25 protokollierten Anfragen waren erfolgreich; Seitenfehler wurden nicht gemeldet. Anwendungscode, Szenario, Vite-Konfiguration und Paketlock stimmen mit `1f54165` überein. Dies belegt keine dauerhafte öffentliche Bereitstellung, Lizenzfreigabe oder Geräteabnahme.
+
+### Werkzeughinweise bei verborgenem Menü
+
+Bei ausgeblendetem Werkzeugmenü werden Hinweise zur Start- und Endpunktwahl, zum Verschieben, zu ungültigen Auswahlen und zu bestätigten Maßnahmen über der Karte angezeigt. Während eine Maßnahmenvorschau sichtbar ist, bleibt der zusätzliche Hinweis verborgen; im Kartenmodus bleibt die bestehende Wasser- und Gebäudeabfrage zuständig.
+
+Am 30. Oktober 2026 bestanden Produktionsbuild und 72 Modelltests. In Google Chrome 156 unter Linux bestanden 14 gezielte Vite-Browserfälle: Hinweise mit emuliertem Touch bei 320 × 480 und 480 × 320 CSS-Pixeln, Kartenabfrage, ungültige Gebäudeauswahl, Vorschauersatz, ausstehende Aktionen und Kartenverschiebung. Die kleinen Ansichten prüften auch die Trennung von Kopfzeile und Zoom sowie das Erreichen der Bestätigung. Die Prüfungen ersetzen weder menschliche Bedienung noch echte Geräte oder eine vollständige Browser-Suite dieses Stands.

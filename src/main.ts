@@ -22,8 +22,8 @@ damageSummary.innerHTML='<strong id="damage-total">Schaden – / –</strong><sp
 app.querySelector('.topbar h1')!.after(damageSummary);
 const damageTotal=damageSummary.querySelector<HTMLElement>('#damage-total')!,damageBreakdown=damageSummary.querySelector<HTMLElement>('#damage-breakdown')!;
 const panelToggle=app.querySelector<HTMLButtonElement>('#panel-toggle')!,gamePanel=app.querySelector<HTMLElement>('#game-panel')!,compactStatus=app.querySelector<HTMLElement>('#compact-status')!;
-const inspection=document.createElement('div');inspection.id='inspection';inspection.className='inspection';inspection.setAttribute('role','status');inspection.hidden=true;canvas.after(inspection);
-panelToggle.onclick=()=>{const open=panelToggle.getAttribute('aria-expanded')==='true';gamePanel.hidden=open;compactStatus.hidden=!open;inspection.hidden=!open||!inspection.textContent;panelToggle.setAttribute('aria-expanded',String(!open));panelToggle.textContent=open?'Menü anzeigen':'Menü ausblenden';};
+const inspection=document.createElement('div');inspection.id='inspection';inspection.className='inspection';inspection.setAttribute('role','status');inspection.hidden=true;const toolHint=document.createElement('div');toolHint.id='tool-hint';toolHint.className='inspection';toolHint.setAttribute('role','status');toolHint.hidden=true;canvas.after(inspection,toolHint);
+panelToggle.onclick=()=>{const open=panelToggle.getAttribute('aria-expanded')==='true';gamePanel.hidden=open;compactStatus.hidden=!open;inspection.hidden=!open||!inspection.textContent;panelToggle.setAttribute('aria-expanded',String(!open));panelToggle.textContent=open?'Menü anzeigen':'Menü ausblenden';syncToolHint();};
 const message=app.querySelector<HTMLParagraphElement>('#message')!;
 const reloadButton=document.createElement('button');
 reloadButton.textContent='Seite neu laden';reloadButton.hidden=true;reloadButton.onclick=()=>location.reload();message.after(reloadButton);
@@ -36,11 +36,16 @@ let mode:Mode='camera', modeRevision=0, first:{x:number;y:number}|undefined, dra
 const resultPanel=app.querySelector<HTMLElement>('#result')!, resultTitle=app.querySelector<HTMLElement>('#result-title')!, resultDetails=app.querySelector<HTMLElement>('#result-details')!;
 app.querySelector<HTMLButtonElement>('#again')!.onclick=()=>{if(round)worker?.postMessage({type:'reset',round});};
 const preview=app.querySelector<HTMLDivElement>('#preview')!,previewText=app.querySelector<HTMLElement>('#preview-text')!,confirm=app.querySelector<HTMLButtonElement>('#confirm')!,cancel=app.querySelector<HTMLButtonElement>('#cancel')!,budgetLabel=app.querySelector<HTMLElement>('#budget')!;
+function syncToolHint(){
+  toolHint.textContent=message.textContent;
+  toolHint.hidden=!gamePanel.hidden||mode==='camera'||!preview.hidden||finished||fatalError||!toolHint.textContent;
+}
+function setMessage(text:string){message.textContent=text;syncToolHint();}
 function setAwaiting(value:boolean) {awaiting=value;cancel.disabled=value;for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=value||fatalError;}
-function clearDraft() {first=undefined;draft=undefined;previewId='';setAwaiting(false);preview.hidden=true;confirm.disabled=true;world?.showPreview();}
-function chooseMode(next:Mode) { mode=next;modeRevision++;inspection.hidden=true;inspection.textContent='';clearDraft(); for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.setAttribute('aria-pressed',String(b.dataset.mode===mode)); message.textContent=mode==='camera'?'Karte verschieben und zoomen.':mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.'; }
+function clearDraft() {first=undefined;draft=undefined;previewId='';setAwaiting(false);preview.hidden=true;confirm.disabled=true;world?.showPreview();syncToolHint();}
+function chooseMode(next:Mode) { mode=next;modeRevision++;inspection.hidden=true;inspection.textContent='';clearDraft(); for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.setAttribute('aria-pressed',String(b.dataset.mode===mode)); setMessage(mode==='camera'?'Karte verschieben und zoomen.':mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.'); }
 for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.onclick=()=>chooseMode(b.dataset.mode as Mode);
-cancel.onclick=()=>{clearDraft();message.textContent=mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.';};
+cancel.onclick=()=>{clearDraft();setMessage(mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.');};
 confirm.onclick=()=>{if(!draft||!round||awaiting)return;setAwaiting(true);confirm.disabled=true;previewText.textContent='Maßnahme wird ausgeführt …';pendingPresentation.set(previewId,{round,confirmedAt:performance.now(),confirmedRunning:running,confirmedSpeed:speed,confirmedVisible:document.visibilityState==='visible'});worker?.postMessage({type:'action',round,id:previewId,action:draft});};
 function describeDraft(action:Action):string {
   if(!scenario)return '';
@@ -50,7 +55,7 @@ function describeDraft(action:Action):string {
   const building=scenario.buildings.find(b=>b.id===action.buildingId);
   return building?`Gebäudeverlust insgesamt: ${number(Math.round(building.area*p.buildingValuePerSquareMetre))}`:'Gebäudeabriss';
 }
-function showDraft(action:Action) {if(!round)return; draft=action;previewId=`${round}-${++serial}`;preview.hidden=false;confirm.disabled=true;previewText.textContent='Kosten werden geprüft …';world?.showPreview(action);worker?.postMessage({type:'preview',round,id:previewId,action});}
+function showDraft(action:Action) {if(!round)return; draft=action;previewId=`${round}-${++serial}`;preview.hidden=false;syncToolHint();confirm.disabled=true;previewText.textContent='Kosten werden geprüft …';world?.showPreview(action);worker?.postMessage({type:'preview',round,id:previewId,action});}
 function pathAction(a:{x:number;y:number},b:{x:number;y:number}):Action|undefined {
   if(!scenario)return; const {width:w,height:h,cellSize:c}=scenario.grid;
   if(mode==='trench') {
@@ -67,13 +72,13 @@ function selectAt(x:number,y:number) {
   if(!world||!scenario||awaiting||finished||fatalError)return;
   // A new map selection replaces the unconfirmed preview and its action.
   if(!preview.hidden)clearDraft();
-  if(mode==='demolish') {const hit=world.pick(x,y,true);if(hit?.buildingId) showDraft({kind:'demolish',buildingId:hit.buildingId});else message.textContent='Bitte ein Gebäude auswählen.';return;}
-  const hit=world.pick(x,y);if(!hit){message.textContent='Bitte innerhalb der Karte auswählen.';return;}
-  if(!first){first=hit;world.showStart(hit);message.textContent='Endpunkt auf der Karte antippen.';return;}
-  const action=pathAction(first,hit);first=undefined;if(action)showDraft(action);else {world.showPreview();message.textContent='Bitte einen längeren Verlauf wählen.';}
+  if(mode==='demolish') {const hit=world.pick(x,y,true);if(hit?.buildingId) showDraft({kind:'demolish',buildingId:hit.buildingId});else setMessage('Bitte ein Gebäude auswählen.');return;}
+  const hit=world.pick(x,y);if(!hit){setMessage('Bitte innerhalb der Karte auswählen.');return;}
+  if(!first){first=hit;world.showStart(hit);setMessage('Endpunkt auf der Karte antippen.');return;}
+  const action=pathAction(first,hit);first=undefined;if(action)showDraft(action);else {world.showPreview();setMessage('Bitte einen längeren Verlauf wählen.');}
 }
 let worker:Worker|undefined;
-function fail(text:string) { inspection.hidden=true;inspection.textContent='';compactStatus.hidden=true;pendingPresentation.clear(); fatalError=true; running=false; world?.setFlowRunning(false,speed);worker?.terminate(); run.disabled=true; reset.disabled=true; speedButton.disabled=true; for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=true; clearDraft(); resultPanel.hidden=true; gamePanel.hidden=false; gamePanel.scrollTop=0; panelToggle.setAttribute('aria-expanded','true'); panelToggle.textContent='Menü ausblenden'; message.textContent=text; stateLabel.textContent='Fehler'; reloadButton.hidden=false; }
+function fail(text:string) { inspection.hidden=true;inspection.textContent='';compactStatus.hidden=true;pendingPresentation.clear(); fatalError=true; running=false; world?.setFlowRunning(false,speed);worker?.terminate(); run.disabled=true; reset.disabled=true; speedButton.disabled=true; for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=true; clearDraft(); resultPanel.hidden=true; gamePanel.hidden=false; gamePanel.scrollTop=0; panelToggle.setAttribute('aria-expanded','true'); panelToggle.textContent='Menü ausblenden'; setMessage(text); stateLabel.textContent='Fehler'; reloadButton.hidden=false; }
 try {worker=new Worker(new URL('./worker.ts',import.meta.url),{type:'module'});}
 catch {fail('Der Worker konnte nicht gestartet werden. Bitte die Seite neu laden.');}
 if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
@@ -87,7 +92,7 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
     round=data.round; pendingPresentation.clear(); running=false; finished=false; speed=1; chooseMode('camera'); world?.resetView(); resultPanel.hidden=true; run.textContent='Simulation starten'; speedButton.textContent='1×';
     damageTotal.textContent=`Schaden 0 / ${scenario?.parameters.damageTarget.toLocaleString('de-AT')??'–'}`;damageBreakdown.textContent='Flut 0 · Abriss 0';
     run.disabled=false; reset.disabled=false; speedButton.disabled=false;
-    message.textContent='Wiener Szenario geladen. Die Wasserberechnung ist bereit.'; stateLabel.textContent='Vorbereitung'; timeLabel.textContent='00:00';compactStatus.textContent=`${timeLabel.textContent} · Budget ${budgetLabel.textContent} · ${stateLabel.textContent}`;
+    setMessage('Wiener Szenario geladen. Die Wasserberechnung ist bereit.'); stateLabel.textContent='Vorbereitung'; timeLabel.textContent='00:00';compactStatus.textContent=`${timeLabel.textContent} · Budget ${budgetLabel.textContent} · ${stateLabel.textContent}`;
   } else if(data.type==='snapshot') {
     if(data.round===round && world && !fatalError) {
       const n=data.buffer.byteLength/16;
@@ -104,7 +109,7 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
           window.dispatchEvent(new CustomEvent('waterfighter:action-displayed',{detail:{id,round,confirmedAt:pending.confirmedAt,confirmedRunning:pending.confirmedRunning,confirmedSpeed:pending.confirmedSpeed,confirmedVisible:pending.confirmedVisible,presentedAt,latencyMs:presentedAt-pending.confirmedAt}}));
         });
       }
-      if(data.backlog>2) message.textContent=`Simulation holt ${data.backlog.toFixed(1)} s Rückstand auf.`;
+      if(data.backlog>2) setMessage(`Simulation holt ${data.backlog.toFixed(1)} s Rückstand auf.`);
     }
     worker?.postMessage({type:'recycle',round:data.round,buffer:data.buffer},[data.buffer]);
   } else if(data.type==='action-result' && data.round===round) {
@@ -112,9 +117,9 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
     if(!data.preview && pending) {if(data.result.ok) pending.revision=data.revision;else pendingPresentation.delete(data.id);}
     if(data.id!==previewId) return;
     if(data.preview) {confirm.disabled=!data.result.ok;previewText.textContent=data.result.ok?`${draft?describeDraft(draft)+' · ':''}Kosten: ${data.result.cost} · Budget danach: ${data.result.budget}${data.result.loweredCrests?` · Senkt ${data.result.loweredCrests} modellierte ${data.result.loweredCrests===1?'Geländekante':'Geländekanten'}; der Wasserverlauf kann sich ändern.`:''}${data.result.buildingBlockedFaces?` · ${data.result.buildingBlockedFaces} ${data.result.buildingBlockedFaces===1?'Dammkante ist':'Dammkanten sind'} durch Gebäude bereits gesperrt.`:''}${data.result.reusedCells?` · ${data.result.reusedCells} ${data.result.reusedCells===1?'Zelle ist':'Zellen sind'} bereits ausgehoben und werden nicht erneut vertieft oder bezahlt.`:''}`:data.result.reason;}
-    else {setAwaiting(false);if(data.result.ok){message.textContent=`Maßnahme bestätigt. Kosten: ${data.result.cost}.`;clearDraft();}else{previewText.textContent=data.result.reason;confirm.disabled=true;}}
+    else {setAwaiting(false);if(data.result.ok){setMessage(`Maßnahme bestätigt. Kosten: ${data.result.cost}.`);clearDraft();}else{previewText.textContent=data.result.reason;confirm.disabled=true;}}
   }
-  else if(data.type==='result' && data.round===round && !fatalError) { running=false; finished=true; world?.setFlowRunning(false,speed);inspection.hidden=true;inspection.textContent='';clearDraft();run.disabled=true; stateLabel.textContent='Beendet';compactStatus.textContent=`${timeLabel.textContent} · Budget ${budgetLabel.textContent} · ${stateLabel.textContent}`; message.textContent='Die Runde ist beendet.';
+  else if(data.type==='result' && data.round===round && !fatalError) { running=false; finished=true; world?.setFlowRunning(false,speed);inspection.hidden=true;inspection.textContent='';clearDraft();run.disabled=true; stateLabel.textContent='Beendet';compactStatus.textContent=`${timeLabel.textContent} · Budget ${budgetLabel.textContent} · ${stateLabel.textContent}`; setMessage('Die Runde ist beendet.');
     const number=(n:number)=>Math.round(n).toLocaleString('de-AT');
     resultTitle.textContent=data.achieved?'Schadensziel erreicht':'Schadensziel verfehlt';
     resultDetails.textContent=`Flutschäden: ${number(data.floodDamage)} · Abrissverluste: ${number(data.demolitionLoss)} · Gesamtschaden: ${number(data.totalDamage)} · Ziel: höchstens ${number(data.target)} · Budgetrest: ${number(data.budget)}.`;
@@ -144,7 +149,7 @@ document.addEventListener('pointerup',e=>{const token=canvasPointers.get(e.point
 document.addEventListener('click',e=>{if(e instanceof PointerEvent && canvasPointers.delete(e.pointerId)){e.preventDefault();e.stopImmediatePropagation();}},true);
 canvas.addEventListener('pointerdown',e=>{if(pointer)return;pointer={id:e.pointerId,modeRevision,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,moved:false};canvas.setPointerCapture(e.pointerId);});
 canvas.addEventListener('pointermove',e=>{if(pointer?.id!==e.pointerId||pointer.modeRevision!==modeRevision)return;pointer.moved ||= Math.hypot(e.clientX-pointer.startX,e.clientY-pointer.startY)>=(mode==='camera'?5:8);if(mode==='camera'||pointer.moved){world?.pan(e.clientX-pointer.x,e.clientY-pointer.y);pointer.x=e.clientX;pointer.y=e.clientY;}});
-canvas.addEventListener('pointerup',e=>{if(pointer?.id!==e.pointerId)return; if(pointer.modeRevision!==modeRevision){pointer=undefined;return;} const moved=pointer.moved||Math.hypot(e.clientX-pointer.startX,e.clientY-pointer.startY)>=(mode==='camera'?5:8);if(mode!=='camera') {if(moved)message.textContent=mode==='demolish'?'Karte verschoben. Gebäude antippen.':first?'Karte verschoben. Endpunkt antippen.':'Karte verschoben. Startpunkt antippen.';else selectAt(e.clientX,e.clientY);} else if(!moved) {const text=world?.inspect(e.clientX,e.clientY)??'Karte ist noch nicht bereit.';message.textContent=text;inspection.textContent=`Stand ${timeLabel.textContent}: ${text}`;inspection.hidden=!gamePanel.hidden;}pointer=undefined;});
+canvas.addEventListener('pointerup',e=>{if(pointer?.id!==e.pointerId)return; if(pointer.modeRevision!==modeRevision){pointer=undefined;return;} const moved=pointer.moved||Math.hypot(e.clientX-pointer.startX,e.clientY-pointer.startY)>=(mode==='camera'?5:8);if(mode!=='camera') {if(moved)setMessage(mode==='demolish'?'Karte verschoben. Gebäude antippen.':first?'Karte verschoben. Endpunkt antippen.':'Karte verschoben. Startpunkt antippen.');else selectAt(e.clientX,e.clientY);} else if(!moved) {const text=world?.inspect(e.clientX,e.clientY)??'Karte ist noch nicht bereit.';setMessage(text);inspection.textContent=`Stand ${timeLabel.textContent}: ${text}`;inspection.hidden=!gamePanel.hidden;}pointer=undefined;});
 for(const event of ['pointercancel','lostpointercapture'] as const) canvas.addEventListener(event,e=>{if(pointer?.id===e.pointerId)pointer=undefined;});
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();if(round)worker?.postMessage({type:'pause',round});fail('Grafikkontext verloren. Bitte Seite neu laden.');});
 fetch(`${import.meta.env.BASE_URL}scenarios/brigittenau-v1.json.bin`).then(async response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);if(!response.body)throw new Error('Szenariodaten fehlen');return validateScenario(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).json());}).then(loaded=>{

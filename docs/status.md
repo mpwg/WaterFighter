@@ -1,10 +1,12 @@
 # WaterFighter – Status und Kriterienmatrix
 
-Stand: 29. Oktober 2026.
+Stand: 30. Oktober 2026.
 
 **Nächster Implementierungsauftrag für Terra:** [Review und Kurskorrektur zur Spielbarkeit](review-steuerung-terra.md). Nutzerpriorität: Vorbereitung und Eingriffe während der Flut gleichwertig verbessern; sinnvollen Werkzeugnutzen und sichtbares Schadensfeedback vor weiteren Detailoptimierungen belegen. Der Auftrag ist in Arbeit; vollständige Abnahme bleibt offen.
 
 ## Aktueller Stand
+
+Bei ausgeblendetem Menü bleiben nun auch Werkzeughinweise und Fehlermeldungen über der Karte sichtbar; während einer Vorschau werden sie ausgeblendet, damit deren Bedienelemente frei bleiben. Produktionsbuild, 72 Modelltests und 14 gezielte Chromium-Fälle bestanden: [Prüfbeleg](browser-pruefung.md#werkzeughinweise-bei-verborgenem-menü). Menschliche Bedienung, echte Geräte und eine vollständige Browser-Suite dieses Anwendungsstands bleiben offen.
 
 Der wirtschaftlich sinnvolle Einzelabriss wurde in einer [vollständigen Produktionsrunde nach Flutbeginn](review-gebaeudevergleich.md#produktionsrunde-mit-späterem-einzelabriss) ausgeführt: Bei 03:03 war das Gebäude bereits beschädigt; die Runde erreichte das Ziel und der Neustart funktionierte. Die Auswahl nutzte Testkoordinaten, menschliches Auffinden und echte Geräte bleiben offen.
 

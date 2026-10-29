@@ -63,7 +63,9 @@ export class ShallowWaterSolver {
 
   /** One step no larger than maxDt; caller may repeatedly call until target time. */
   step(maxDt: number): number {
+    if (!Number.isFinite(this.manning) || this.manning < 0) throw new Error('Ungültige Bodenreibung');
     const dt = this.stableStep(maxDt), factor = dt / this.cellSize, g = this.gravity;
+    let stepOutflow = 0;
     this.dh.fill(0); this.dx.fill(0); this.dy.fill(0);
     const h = this.h, qx = this.qx, qy = this.qy, bed = this.bed;
     const dh = this.dh, dx = this.dx, dy = this.dy;
@@ -86,8 +88,8 @@ export class ShallowWaterSolver {
       const fh = 0.5 * (nl + nr - wave * (ar - al));
       const fn = 0.5 * (nl * ul + 0.5*g*al*al + nr*ur + 0.5*g*ar*ar - wave*(nr-nl));
       const ft = 0.5 * (tl*ul + tr*ur - wave*(tr-tl));
-      if (left < 0) this.outflow += Math.max(0, -fh) * dt * this.cellSize;
-      if (right < 0) this.outflow += Math.max(0, fh) * dt * this.cellSize;
+      if (left < 0) stepOutflow += Math.max(0, -fh) * dt * this.cellSize;
+      if (right < 0) stepOutflow += Math.max(0, fh) * dt * this.cellSize;
       const correctionL = 0.5*g*(hl*hl-al*al), correctionR = 0.5*g*(hr*hr-ar*ar);
       if (left >= 0) {
         dh[left] -= factor*fh;
@@ -106,7 +108,6 @@ export class ShallowWaterSolver {
     for (let y=0; y<=this.height; y++) for (let x=0; x<this.width; x++) {
       face(y === 0 ? -1 : (y-1)*this.width+x, y === this.height ? -1 : y*this.width+x, 1, this.crestY[y*this.width+x], y === 0 ? this.openBoundary.top : y === this.height && this.openBoundary.bottom);
     }
-    if (!Number.isFinite(this.manning) || this.manning < 0) throw new Error('Ungültige Bodenreibung');
     // Validate before mutating cells, so an unstable step cannot leave a partially updated grid.
     for (let i=0; i<h.length; i++) {
       if (!Number.isFinite(h[i]+dh[i]) || h[i]+dh[i] < -1e-9 || !Number.isFinite(qx[i]+dx[i]) || !Number.isFinite(qy[i]+dy[i])) throw new Error(`Instabiler Zustand in Zelle ${i}`);
@@ -126,6 +127,7 @@ export class ShallowWaterSolver {
       }
       if (!Number.isFinite(qx[i]) || !Number.isFinite(qy[i])) throw new Error(`Instabiler Impuls in Zelle ${i}`);
     }
+    this.outflow += stepOutflow;
     this.time += dt; this.steps++;
     return dt;
   }

@@ -40,6 +40,20 @@ describe('Bilanzierte Randbedingungen', () => {
     expect(error/(initial+s.inflow)).toBeLessThan(0.001);
     expect(Math.min(...s.h)).toBeGreaterThanOrEqual(0);
   });
+  it('bilanziert bei einem verworfenen Schritt keinen Abfluss', () => {
+    const s=new ShallowWaterSolver(2,1,4,[0,0],[1,1]);
+    s.openBoundary.right=true; s.qx[1]=1; s.manning=-1;
+    const depth=[...s.h],momentum=[...s.qx],volume=s.volume();
+    expect(()=>s.step(0.1)).toThrow('Ungültige Bodenreibung');
+    expect(s.outflow).toBe(0);expect(s.time).toBe(0);expect(s.steps).toBe(0);
+    expect([...s.h]).toEqual(depth);expect([...s.qx]).toEqual(momentum);expect(s.volume()).toBe(volume);
+  });
+  it('übernimmt keinen Abfluss, wenn die Zustandsprüfung fehlschlägt', () => {
+    const s=new ShallowWaterSolver(2,1,4,[0,0],[1,1]);
+    s.openBoundary.right=true;s.qx[0]=NaN;s.qx[1]=1;
+    const depth=[...s.h];expect(()=>s.step(0.1)).toThrow('Instabiler Zustand');
+    expect(s.outflow).toBe(0);expect(s.time).toBe(0);expect(s.steps).toBe(0);expect([...s.h]).toEqual(depth);
+  });
   it('weist ungültige Zuflüsse zurück', () => {
     const s=new ShallowWaterSolver(3,3,4,Array(9).fill(0),Array(9).fill(0));
     expect(()=>s.addInflow(4,1)).toThrow();

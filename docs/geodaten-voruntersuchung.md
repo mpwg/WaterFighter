@@ -442,3 +442,18 @@ In beiden Läufen sind bei 180 s zunächst 318,77 m³ in diesem Abschnitt vorhan
 Ein zusätzlicher strenger Lauf mit `--entry=10,19 --seed-at` fand bei 180 s in diesem westlicheren Abschnitt zunächst kein Wasser. Ohne Graben trat dort bis Rundenende kein Anteil ein; mit Graben wurden 2,31 m³ später eintretendes Wasser markiert, von denen keines nach den Querungen bei x = 10 und 5 den Rand erreichte. Die Markierung erfasst nur die angegebenen Abschnitte und den Zeitraum ab 180 s; wiederholte Eintritte können erneut gezählt werden. Sie verfolgt keine realen Wasserteilchen und belegt weder, dass überhaupt kein Wasser den Modellrand erreicht, noch die Ursache der Schadensminderung. Ein vollständiger Weg des markierten Wassers aus dem östlichen Abschnitt bis zum Rand ist für diese späte Variante nicht nachgewiesen.
 
 Der bisherige Standardlauf `bun tools/trace-northern-route.ts trench --route=0,0,43,18 --entry=30,43` wurde nach Erweiterung der Optionen wiederholt und reproduziert die zuvor dokumentierten Markierungs- und Schadenswerte exakt. Die Typprüfung bestand.
+
+### Gebäudeschäden und gespeichertes Wasser nach dem späten Westgraben
+
+`bun tools/compare-partial-exposure.ts control` und `trench` vergleichen die Dammkombination mit dem 20-m-Schutzdamm; nur im zweiten Lauf wird der getrennte Westgraben bei 180 s ausgehoben. Beide Rechnungen halten für Stichproben bei 180, 210, 240, 270 und 300 s an. Das Wasservolumen bleibt beim Eingriff unverändert. Die relativen Wasserbilanzfehler liegen unter 5,35 × 10⁻¹⁴; jeweils ein zweiter Lauf reproduzierte die JSON-Ausgabe bytegleich.
+
+| Zeit | Schaden ohne Graben | Schaden mit Graben | Wasser in den vorgesehenen Grabenzellen ohne / mit Graben |
+| ---: | ---: | ---: | ---: |
+| 180 s | 5.563,04 | 5.563,04 | 323,63 / 323,63 m³ |
+| 240 s | 24.897,47 | 21.970,72 | 170,51 / 1.050,67 m³ |
+| 270 s | 37.353,30 | 29.763,89 | 83,52 / 987,69 m³ |
+| 300 s | 47.918,99 | 36.235,49 | 66,47 / 882,71 m³ |
+
+Bei 300 s entfallen 10.742,75 Schaden der Kontrolle auf `r9350494-0`; mit Graben hat dieses Gebäude keinen Schaden. Am Nachbargebäude `w1343275154-0` betragen die Schäden 5.225,88 beziehungsweise 4.428,80. Das größere Wasservolumen in den Grabenzellen ist mit einer Speicherwirkung vereinbar, beweist aber nicht, dass sie allein die Schadensminderung verursacht. Die Stichproben begrenzen die Zeitschritte anders als der frühere Vergleich und können geringfügig andere Endwerte ergeben.
+
+Die [Kontrollansicht](spaeter-westgraben-kontrolle.png) und die [Ansicht nach Grabenbau](spaeter-westgraben-mit-graben.png) zeigen die gespeicherten Zustände bei 270 s mit derselben testseitig fokussierten Kamera. Sie wurden mit dem Renderer von `99703e5`, Vite und Playwright-Chromium 156 unter Linux erzeugt; Menüs sind ausgeblendet. Die Bilder zeigen den Unterschied der modellierten Gebäudezustände und Wasserflächen zu diesem Zeitpunkt, keine menschliche Bedienung oder Verfolgung realer Wasserteilchen. Wiederholung: `bun tools/compare-partial-exposure.ts FALL --snapshot=/tmp/wf-partial-270-FALL.json` für beide Fälle, danach `bun tools/render-partial-exposure.mjs` gegen einen lokalen Vite-Server auf Port 5198. Eine sichere Ableitung außerhalb der Karte wird nicht berechnet.

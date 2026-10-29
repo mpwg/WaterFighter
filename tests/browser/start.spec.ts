@@ -76,3 +76,44 @@ test('Einführung und Zustandsabfrage sind erreichbar',async ({page})=>{
   await page.getByText('So wird gespielt').click();await expect(page.getByText(/Wassertiefe und Gebäudeschaden antippen/)).toBeVisible();
   await page.mouse.click(800,360);await expect(page.locator('#message')).toContainText(/Wassertiefe|Gebäude/);
 });
+
+test('Bedienfeld und Quellen überdecken sich bei mittlerer Fensterhöhe nicht',async({page})=>{
+  await page.setViewportSize({width:1200,height:600});await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  for(const selector of ['#run','#reset','#speed','[data-mode="dam"]']) {
+    const box=await page.locator(selector).boundingBox();expect(box).not.toBeNull();
+    expect(box!.y+box!.height).toBeLessThanOrEqual(600);
+    const hit=await page.evaluate(({x,y})=>document.elementFromPoint(x,y)?.closest('button')?.id||document.elementFromPoint(x,y)?.closest('button')?.getAttribute('data-mode'),{x:box!.x+box!.width/2,y:box!.y+box!.height/2});
+    expect(hit).toBe(selector==='[data-mode="dam"]'?'dam':selector.slice(1));
+  }
+});
+
+for (const device of [
+  {name:'Hochformat',width:390,height:844,start:[310,500],end:[350,510],building:[315,305]},
+  {name:'Querformat',width:844,height:390,start:[470,210],end:[520,220],building:[480,140]},
+]) test(`Bauwerkzeuge mit Touch im ${device.name}`,async({browser})=>{
+  test.setTimeout(90000);
+  const context=await browser.newContext({viewport:{width:device.width,height:device.height},isMobile:true,hasTouch:true});
+  const page=await context.newPage();await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  for(const mode of ['trench','dam','demolish']) {
+    await page.locator(`[data-mode="${mode}"]`).tap();
+    if(mode==='demolish')await page.touchscreen.tap(...device.building as [number,number]);
+    else {await page.touchscreen.tap(...device.start as [number,number]);await page.touchscreen.tap(...device.end as [number,number]);}
+    await expect(page.locator('#confirm')).toBeEnabled();await expect(page.locator('#preview-text')).toContainText('Kosten:');
+    await page.locator('#confirm').tap();await expect(page.locator('#message')).toContainText('Maßnahme bestätigt');
+    await page.locator('#reset').tap();await expect(page.locator('#budget')).toHaveText('10 000');
+  }
+  await context.close();
+});
+
+test('Fehlendes Szenario zeigt eine verständliche Fehlermeldung',async({page})=>{
+  await page.route('**/scenarios/brigittenau-v1.json',route=>route.fulfill({status:404,body:'fehlt'}));await page.goto('/');
+  await expect(page.locator('#message')).toContainText('Szenario oder Grafik konnte nicht geladen werden: HTTP 404');
+  await expect(page.locator('#state')).toHaveText('Fehler');await expect(page.locator('#run')).toBeDisabled();
+});
+
+test('Verlust des Grafikkontexts pausiert und weist auf einen Neustart hin',async({page})=>{
+  await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('canvas').dispatchEvent('webglcontextlost',{cancelable:true});
+  await expect(page.locator('#state')).toHaveText('Fehler');await expect(page.locator('#message')).toContainText('Bitte Seite neu laden');
+  await expect(page.locator('#run')).toBeDisabled();
+});

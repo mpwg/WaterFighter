@@ -87,3 +87,15 @@ describe('Barrieren und Bodenreibung', () => {
     expect(s.volume()).toBeCloseTo(volume,10);
   });
 });
+
+it('lässt eine Welle symmetrisch durch eine Dammöffnung laufen',()=>{
+  const w=30,h=21,mid=15,depth=Array.from({length:w*h},(_,i)=>i%w<mid?2:0);
+  const s=new ShallowWaterSolver(w,h,4,Array(w*h).fill(0),depth),volume=s.volume();
+  for(let y=0;y<h;y++) if(y!==10)s.crestX[y*(w+1)+mid]=10;
+  s.advance(6);
+  expect(s.h[10*w+mid+1]).toBeGreaterThan(0.1);
+  expect(s.h[10*w+mid+1]).toBeGreaterThan(s.h[2*w+mid+1]);
+  expect(s.qx[10*w+mid+1]).toBeGreaterThan(0);
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++)expect(Math.abs(s.h[y*w+x]-s.h[(h-1-y)*w+x])).toBeLessThan(1e-11);
+  expect(Math.abs(s.volume()-volume)/volume).toBeLessThan(0.001);
+});

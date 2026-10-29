@@ -14,7 +14,7 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | AP 2 – Wiener Geodaten | in Arbeit | DGM und OSM bezogen, vorläufiges Szenariopaket zweimal bytegleich erzeugt und im Browser geladen: [Voruntersuchung](geodaten-voruntersuchung.md) | Bruchkanten-Näherung und Durchlässe prüfen, zwei Wasserwege und Lizenzpflichten belegen |
 | AP 3 – Simulation | in Arbeit | Synthetische Solver- und Bilanztests; früher Desktop-Leistungstest auf Szenarioentwurf: [Solverbericht](solverbericht.md) | Zuflusskurve, Dammöffnung, Spielintegration und mobile Leistung prüfen |
 | AP 4 – Darstellung | in Arbeit | Szenarioansicht und Worker-Snapshots, Maus-/Touch-Kamerasteuerung; zwei Playwright-Chromium-Abläufe | Strömungsanimation und Schadensanzeige auf tatsächlichen Geräten prüfen |
-| AP 5 – Werkzeuge/Schäden | in Arbeit | Worker-Regeln, Vorschau, Bestätigung, Budget und Schadenstests; drei Werkzeuge in Playwright-Chromium bedient | Werkzeugnutzen im Wiener Szenario und Bedienung auf Geräten prüfen |
+| AP 5 – Werkzeuge/Schäden | in Arbeit | Worker-Regeln, Vorschau, Bestätigung, Budget und Schadenstests; drei Werkzeuge in Playwright-Chromium bedient | Wirkungsnachweise weiter abstimmen und Bedienung auf Geräten prüfen |
 | AP 6 – Spielrunde | in Arbeit | Ergebnisanzeige und numerische Referenzstrategie; verkürzter Browserablauf | Strategie auf echten Geräten prüfen; Werkzeugnutzen im Szenario belegen |
 | AP 7 – Gesamtprüfung | offen | Abnahmeverfahren spezifiziert | Browser und reale Geräte prüfen |
 
@@ -23,7 +23,7 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 - Node.js 24.22.0, npm 12.2.0; Vite 8.3.5, Babylon.js 9.33.0, Vitest 5.0.5 und Playwright 1.64.1 sind in der Lockdatei festgelegt.
 - `npm run build` und `npm test` bestanden (ein Protokolltest); `npm run dev` startete und lieferte HTML über HTTP.
 - `npm run test:browser` scheiterte zunächst an fehlenden Systembibliotheken. Nach temporärem Entpacken der Ubuntu-Bibliotheken unter `/tmp/waterfighter-libs` bestand `LD_LIBRARY_PATH=/tmp/waterfighter-libs/root/usr/lib/x86_64-linux-gnu npm run test:browser` in Playwright-Chromium; Worker-Meldung und Canvas waren sichtbar. Ein Screenshot der Entwickleransicht zeigte die grüne Fläche. Das ist keine Desktop-Browserabnahme.
-- `gdalinfo` ist auf diesem Rechner nicht vorhanden; Rasterio verwendet GDAL 3.12.2. Die Voruntersuchung dokumentiert Rohdatenprüfsummen und zwei bytegleiche Pipeline-Läufe. Build, 26 Vitest-Tests, zwei Python-Tests und sechs Playwright-Chromium-Tests bestanden nach Einbindung des Szenarioladers und des Solvers. Geräteverfügbarkeit ist noch zu prüfen.
+- `gdalinfo` ist auf diesem Rechner nicht vorhanden; Rasterio verwendet GDAL 3.12.2. Die Voruntersuchung dokumentiert Rohdatenprüfsummen und zwei bytegleiche Pipeline-Läufe. Build, 27 Vitest-Tests, zwei Python-Tests und elf Playwright-Chromium-Tests bestanden nach Einbindung des Szenarioladers und des Solvers. Geräteverfügbarkeit ist noch zu prüfen.
 
 ## Kriterienmatrix
 
@@ -37,15 +37,15 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | Reproduzierbares reales Wiener Szenario | offen | Version 1.2-draft mit approximierten Bruchlinien; Orthofotoüberlagerung geprüft, Durchlässe, Eignung und Lizenzpflichten offen |
 | Ausrichtung, Höhenbezug, Datenlücken und Quellen geprüft | offen | Orthofotoüberlagerung, Höhenbezug und endliche Rasterwerte geprüft; fachliche Datenlücken und Bruchkanteninterpretation offen |
 | Stabiler Solver und Bilanzfehler unter 0,1 % | offen | Geschlossenes Becken und bilanziertes Zu-/Abfluss-Testfeld bestehen; vollständige Stabilitäts- und Integrationsprüfung fehlt |
-| Plausible Flutwelle, Barrieren und Überströmung | offen | Symmetrische Welle und überströmbare Barriere numerisch geprüft; Dammöffnung und visuelle Kontrolle fehlen |
+| Plausible Flutwelle, Barrieren und Überströmung | offen | Symmetrische Welle, Dammöffnung und überströmbare Barriere numerisch geprüft; visuelle Wellenkontrolle fehlt |
 | 2,5D-Ansicht, Touch-Modi und Fehlerbehandlung | offen | Karten- und Werkzeugmodi, Strömungsmarker und Zustandsabfrage vorhanden; tatsächliche Geräte und umfassende Fehlerprüfung fehlen |
-| Atomare Aktionen, Budget, Wassererhaltung und Schadenswertung | offen | Regel-, Worker- und synthetische hydraulische Tests bestehen; Wirkungsnachweise im Szenario und Geräteprüfungen fehlen |
+| Atomare Aktionen, Budget, Wassererhaltung und Schadenswertung | offen | Regel-, Worker- und hydraulische Tests sowie Werkzeugvergleiche im Szenario bestehen; Geräteprüfungen fehlen |
 | Vollständige Runde und bezahlbare erfolgreiche Strategie | offen | Version 1.2: ohne Maßnahmen 322.771,10 Schaden; vollständige automatisierte 2×-Browserrunde mit Strategie 0 bei Budgetrest 2.600. Menschliche Gerätebedienung fehlt |
 | Neustart und Schutz vor alten/doppelten Nachrichten | offen | Uhr, Raster und Aktionszustand sowie alte/doppelte Nachrichten in Tests geprüft; vollständige Runden fehlen |
-| Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: sechs Headless-Abläufe; Firefox 159: kein WebGL-Kontext in dieser Umgebung; Safari nicht lokal verfügbar |
+| Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: Headless-Abläufe; Firefox 159: virtuelle Desktop-Abläufe und vollständige 2×-Runde; Safari und manuelle Abnahme offen |
 | Echte iPhone-/Android-Abnahme | nicht prüfbar | Lokal kein Smartphone sichtbar und `adb`/`idevice_id` fehlen; Zugang zu echten Geräten bereitstellen |
 | Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Keine echten Smartphones lokal erreichbar; Messung auf beiden Geräten erforderlich |
-| Drei stabile aufeinanderfolgende Runden | offen | Keine Laufzeitprüfung |
+| Drei stabile aufeinanderfolgende Runden | offen | Erster Versuch nach zwei Runden in der dritten geschlossen; Ursache ungeklärt, isolierte Wiederholung erforderlich |
 | Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Build vorhanden; vollständige Quellen- und Lizenzprüfung fehlt |
 
 „Offen“ bedeutet hier, dass die Arbeit noch auszuführen ist. „Nicht prüfbar“ darf erst eingetragen werden, wenn ein konkretes Hindernis ermittelt und beschrieben wurde. Untersuchte, aber nicht erreichbare reale Geräte wären ein solcher Fall; ihr Fehlen wird aktuell nicht behauptet.

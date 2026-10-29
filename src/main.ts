@@ -9,7 +9,8 @@ import './style.css';
 const app = document.querySelector<HTMLDivElement>('#app')!;
 app.innerHTML = `<canvas aria-label="Kartenansicht des Wiener Szenarioentwurfs"></canvas>
   <header class="topbar"><div><span class="eyebrow">WIEN · BRIGITTENAU</span><h1>WaterFighter</h1></div><span class="badge">ENTWURF</span></header>
-  <section class="panel" aria-label="Simulationsstatus"><span class="eyebrow">SZENARIOENTWURF</span><h2>Schütze das Viertel.</h2><p>Schütze das Viertel mit Dämmen, Gräben und gezieltem Abriss. Plane ohne Zeitdruck und starte dann die Flut. Ziel: höchstens <span id="target">–</span> Schaden.</p><p id="message" role="status">Szenario wird geladen …</p><div class="readouts"><div><span>ZEIT</span><strong id="time">00:00</strong></div><div><span>BUDGET</span><strong id="budget">–</strong></div><div><span>ZUSTAND</span><strong id="state">Lädt</strong></div></div><div class="tools" aria-label="Werkzeuge"><button data-mode="camera" aria-pressed="true">Karte</button><button data-mode="dam" aria-pressed="false">Damm</button><button data-mode="trench" aria-pressed="false">Graben</button><button data-mode="demolish" aria-pressed="false">Abriss</button></div><div id="preview" class="preview" hidden><p id="preview-text"></p><button id="confirm" disabled>Bestätigen</button> <button id="cancel">Verwerfen</button></div><div class="actions"><button id="run" disabled>Simulation starten</button><button id="reset" disabled>Neustart</button><button id="speed" disabled>1×</button></div></section>
+  <section class="panel" aria-label="Simulationsstatus"><span class="eyebrow">SZENARIOENTWURF</span><h2>Schütze das Viertel.</h2><p>Schütze das Viertel mit Dämmen, Gräben und gezieltem Abriss. Plane ohne Zeitdruck und starte dann die Flut. Ziel: höchstens <span id="target">–</span> Schaden.</p><p id="message" role="status">Szenario wird geladen …</p><div class="readouts"><div><span>ZEIT</span><strong id="time">00:00</strong></div><div><span>BUDGET</span><strong id="budget">–</strong></div><div><span>ZUSTAND</span><strong id="state">Lädt</strong></div></div><div class="tools" aria-label="Werkzeuge"><button data-mode="camera" aria-pressed="true">Karte</button><button data-mode="dam" aria-pressed="false">Damm</button><button data-mode="trench" aria-pressed="false">Graben</button><button data-mode="demolish" aria-pressed="false">Abriss</button></div><div class="actions"><button id="run" disabled>Simulation starten</button><button id="reset" disabled>Neustart</button><button id="speed" disabled>1×</button></div></section>
+  <div id="preview" class="preview" hidden><p id="preview-text"></p><button id="confirm" disabled>Bestätigen</button> <button id="cancel">Verwerfen</button></div>
   <section id="result" class="result" role="dialog" aria-labelledby="result-title" hidden><span class="eyebrow">RUNDE BEENDET</span><h2 id="result-title"></h2><p id="result-details"></p><button id="again">Neue Runde</button></section>
   <div class="map-controls" aria-label="Kartensteuerung"><button id="zoom-in" aria-label="Vergrößern">+</button><button id="zoom-out" aria-label="Verkleinern">−</button></div>
   <footer><div class="credits">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap-Mitwirkende</a> · Datenquelle: <a href="https://data.wien.gv.at/">Stadt Wien – data.wien.gv.at</a></div><details class="help"><summary>So wird gespielt</summary><p>Im Kartenmodus verschieben oder eine Stelle für Wassertiefe und Gebäudeschaden antippen. Mit + und − zoomen. Für Damm und Graben jeweils Start und Ende, für Abriss ein Gebäude wählen. Kosten prüfen und bestätigen. Die Flut ist pausierbar; 1×/2× ändert die Geschwindigkeit.</p></details><span>Verschieben: Karte ziehen · Zoom: + / −</span><details><summary>Quellen & Hinweise</summary><p>OSM-Daten und abgeleitete Geometrien: <a href="https://opendatacommons.org/licenses/odbl/1-0/">ODbL 1.0</a>. Wiener Geländedaten: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Gewässersohle und Spielereignis sind vereinfacht; keine Hochwasserprognose. <a href="${import.meta.env.BASE_URL}scenarios/DATENQUELLEN.md">Datenquellen und Änderungen</a>.</p></details></footer>`;
@@ -18,7 +19,7 @@ const message=app.querySelector<HTMLParagraphElement>('#message')!;
 const run=app.querySelector<HTMLButtonElement>('#run')!, reset=app.querySelector<HTMLButtonElement>('#reset')!, speedButton=app.querySelector<HTMLButtonElement>('#speed')!;
 const timeLabel=app.querySelector<HTMLElement>('#time')!, stateLabel=app.querySelector<HTMLElement>('#state')!;
 type Mode='camera'|'dam'|'trench'|'demolish';
-let world:World|undefined, scenario:Scenario|undefined, round=0, running=false, finished=false, speed:1|2=1;
+let world:World|undefined, scenario:Scenario|undefined, round=0, running=false, finished=false, fatalError=false, speed:1|2=1;
 let mode:Mode='camera', first:{x:number;y:number}|undefined, draft:Action|undefined, previewId='', serial=0, awaiting=false;
 const resultPanel=app.querySelector<HTMLElement>('#result')!, resultTitle=app.querySelector<HTMLElement>('#result-title')!, resultDetails=app.querySelector<HTMLElement>('#result-details')!;
 app.querySelector<HTMLButtonElement>('#again')!.onclick=()=>{if(round)worker.postMessage({type:'reset',round});};
@@ -42,22 +43,22 @@ function pathAction(a:{x:number;y:number},b:{x:number;y:number}):Action|undefine
   }
 }
 function selectAt(x:number,y:number) {
-  if(!world||!scenario||awaiting||finished)return;
+  if(!world||!scenario||awaiting||finished||fatalError)return;
   if(mode==='demolish') {const hit=world.pick(x,y,true);if(hit?.buildingId) showDraft({kind:'demolish',buildingId:hit.buildingId});else message.textContent='Bitte ein Gebäude auswählen.';return;}
   const hit=world.pick(x,y);if(!hit){message.textContent='Bitte innerhalb der Karte auswählen.';return;}
   if(!first){first=hit;message.textContent='Endpunkt auf der Karte antippen.';return;}
   const action=pathAction(first,hit);first=undefined;if(action)showDraft(action);else message.textContent='Bitte einen längeren Verlauf wählen.';
 }
 const worker=new Worker(new URL('./worker.ts',import.meta.url),{type:'module'});
-function fail(text:string) { running=false; run.disabled=true; speedButton.disabled=true; message.textContent=text; stateLabel.textContent='Fehler'; }
+function fail(text:string) { fatalError=true; running=false; run.disabled=true; reset.disabled=true; speedButton.disabled=true; for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=true; clearDraft(); message.textContent=text; stateLabel.textContent='Fehler'; }
 worker.onmessage=(event:MessageEvent<Response>)=>{
   const data=event.data;
-  if(isReady(data)) {
+  if(isReady(data) && !fatalError) {
     round=data.round; running=false; finished=false; speed=1; clearDraft(); resultPanel.hidden=true; run.textContent='Simulation starten'; speedButton.textContent='1×';
     run.disabled=false; reset.disabled=false; speedButton.disabled=false;
     message.textContent='Wiener Szenario geladen. Die Wasserberechnung ist bereit.'; stateLabel.textContent='Vorbereitung'; timeLabel.textContent='00:00';
   } else if(data.type==='snapshot') {
-    if(data.round===round && world) {
+    if(data.round===round && world && !fatalError) {
       const n=data.buffer.byteLength/16;
       world.updateState(new Float32Array(data.buffer,n*12,n),data.buildings,data.dams,data.revision); world.updateWater(new Float32Array(data.buffer,0,n),new Float32Array(data.buffer,n*4,n),new Float32Array(data.buffer,n*8,n)); budgetLabel.textContent=Math.round(data.budget).toLocaleString('de-AT'); running=data.running;
       const seconds=Math.floor(data.time); timeLabel.textContent=`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;
@@ -69,7 +70,7 @@ worker.onmessage=(event:MessageEvent<Response>)=>{
     if(data.preview) {confirm.disabled=!data.result.ok;previewText.textContent=data.result.ok?`Kosten: ${data.result.cost} · Budget danach: ${data.result.budget}`:data.result.reason;}
     else {awaiting=false;if(data.result.ok){message.textContent=`Maßnahme bestätigt. Kosten: ${data.result.cost}.`;clearDraft();}else{previewText.textContent=data.result.reason;confirm.disabled=true;}}
   }
-  else if(data.type==='result' && data.round===round) { running=false; finished=true; clearDraft();run.disabled=true; stateLabel.textContent='Beendet'; message.textContent='Die Runde ist beendet.';
+  else if(data.type==='result' && data.round===round && !fatalError) { running=false; finished=true; clearDraft();run.disabled=true; stateLabel.textContent='Beendet'; message.textContent='Die Runde ist beendet.';
     const number=(n:number)=>Math.round(n).toLocaleString('de-AT');
     resultTitle.textContent=data.achieved?'Schadensziel erreicht':'Schadensziel verfehlt';
     resultDetails.textContent=`Flutschäden: ${number(data.floodDamage)} · Abrissverluste: ${number(data.demolitionLoss)} · Gesamtschaden: ${number(data.totalDamage)} · Ziel: höchstens ${number(data.target)} · Budgetrest: ${number(data.budget)}.`;

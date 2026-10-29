@@ -41,6 +41,7 @@ export class World {
   private readonly land: Mesh;
   private readonly landPositions: Float32Array;
   private previewMesh?: LinesMesh;
+  private previewStart?: {x:number;y:number};
   private damMesh?: LinesMesh;
   private trenchMesh?: Mesh;
   private readonly trenchMaterial: StandardMaterial;
@@ -215,22 +216,27 @@ export class World {
   }
   showStart(point:{x:number;y:number}):void {
     this.showPreview();
+    this.previewStart=point;
     const x=point.x-this.width*this.cell/2,y=point.y-this.height*this.cell/2;
+    const h=this.startHeight(point),r=this.cell*1.5;
+    this.previewMesh=CreateLineSystem('preview-start',{lines:[
+      [new Vector3(x-r,h,y),new Vector3(x+r,h,y)],
+      [new Vector3(x,h,y-r),new Vector3(x,h,y+r)],
+    ],updatable:true},this.scene);
+    this.previewMesh.color=new Color3(1,0.38,0.08);this.previewMesh.isPickable=false;
+    this.previewMesh.alwaysSelectAsActiveMesh=true;
+  }
+  private startHeight(point:{x:number;y:number}):number {
     const cx=Math.max(0,Math.min(this.width-1,Math.floor(point.x/this.cell))),cy=Math.max(0,Math.min(this.height-1,Math.floor(point.y/this.cell)));
     let surface=terrainHeight(point.x,point.y,this.width,this.height,this.cell,this.bed);
     for(const dx of [0,1]) for(const dy of [0,1]) {
       const i=Math.min(cy+dy,this.height-1)*this.width+Math.min(cx+dx,this.width-1);
       surface=Math.max(surface,this.bed[i]+this.currentDepth[i]);
     }
-    const h=surface+1.5,r=this.cell*1.5;
-    this.previewMesh=CreateLineSystem('preview-start',{lines:[
-      [new Vector3(x-r,h,y),new Vector3(x+r,h,y)],
-      [new Vector3(x,h,y-r),new Vector3(x,h,y+r)],
-    ]},this.scene);
-    this.previewMesh.color=new Color3(1,0.38,0.08);this.previewMesh.isPickable=false;
+    return surface+1.5;
   }
   showPreview(action?:Action):void {
-    this.previewMesh?.dispose(); this.previewMesh=undefined;
+    this.previewMesh?.dispose(); this.previewMesh=undefined;this.previewStart=undefined;
     for(const m of this.scene.meshes) if(m.metadata?.buildingId) m.renderOverlay=false;
     if(!action)return;
     if(action.kind==='demolish') {const m=this.scene.getMeshByName(`building-${action.buildingId}`); if(m){m.renderOverlay=true;m.overlayColor=new Color3(1,0.3,0.1);m.overlayAlpha=0.55;}return;}
@@ -267,6 +273,10 @@ export class World {
   updateWater(depth:Float32Array, qx?:Float32Array, qy?:Float32Array): void {
     if(depth.length!==this.width*this.height) throw new Error('Ungültiger Wasser-Snapshot');
     this.currentDepth.set(depth);
+    if(this.previewStart && this.previewMesh) {
+      const positions=this.previewMesh.getVerticesData(VertexBuffer.PositionKind),height=this.startHeight(this.previewStart);
+      if(positions) {for(let i=1;i<positions.length;i+=3)positions[i]=height;this.previewMesh.updateVerticesData(VertexBuffer.PositionKind,positions);}
+    }
     if(qx && qy) {
       let sampleIndex=0;
       for(let y=0;y<this.height;y+=12) for(let x=0;x<this.width;x+=12) {

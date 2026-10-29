@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Ein [einzelner Abriss in einer erfolgreichen Dammstrategie](review-gebaeudevergleich.md#einzelabriss-in-einer-erfolgreichen-strategie) senkt den Gesamtschaden auch bei den geprüften Eingriffszeiten 120, 150 und 180 s stärker als seine Kosten; ein bereits beschädigtes Gebäude wird dabei nicht doppelt gewertet. Die Kombination mit dem späteren Westgraben ist für diesen Abriss dagegen ungünstig. Menschliche Bedienung und Geräteabnahme bleiben offen.
+
 Auch bei vier geprüften Einzelendpunkt-Abweichungen des 20-m-Schutzdamms erreicht der spätere getrennte Graben numerisch das Ziel und spart mehr Schaden als seine Kosten: [Vergleich](geodaten-voruntersuchung.md#einzelne-endpunktabweichungen-des-schutzdamms). Menschliche Platzierung und echte Geräte bleiben offen.
 
 Der 20-m-Schutzdamm der getrennten Grabenvariante wurde jeweils um eine Zelle in vier Richtungen verschoben. Alle vier Grabenrunden erreichen das Ziel; in einer ist die Schadensminderung kleiner als die Grabenkosten: [Vergleich](geodaten-voruntersuchung.md#platzierungsabweichungen-des-20-m-schutzdamms). Unabhängige Endpunktabweichungen und menschliche Bedienung bleiben offen.

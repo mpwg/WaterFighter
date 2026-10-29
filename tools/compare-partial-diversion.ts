@@ -24,14 +24,29 @@ if(westClosed)scenario.parameters.outflowEdges=scenario.parameters.outflowEdges.
 const g=new Game(scenario),s=g.solver,initial=s.volume();
 const actions:Action[]=[{kind:'dam',faces:damPath([26,0],[26,10],s.width)},{kind:'dam',faces:damPath([26,10],[26+length,10+length],s.width)},{kind:'dam',faces:damPath([43-guardRadius+guardX,28+guardY+startRow],[44+guardRadius+guardX,28+guardY+endRow],s.width)}];
 const results=actions.map((a,i)=>{const result=g.apply(`dam-${i}`,a);if(!result.ok)throw Error(`Damm ${i}: ${result.reason}`);return result;});
+const demolitionArg=process.argv.find(a=>a.startsWith('--demolish='));
+const demolitionId=demolitionArg?demolitionArg.slice(11):null;
+if(demolitionArg&&!demolitionId)throw Error('Gebäudekennung fehlt');
+const demolitionAtArg=process.argv.find(a=>a.startsWith('--demolish-at='));
+const demolitionAtRaw=demolitionAtArg?demolitionAtArg.slice(14):'0';
+if(!/^\d+(?:\.\d+)?$/.test(demolitionAtRaw)||Number(demolitionAtRaw)>=scenario.parameters.duration||(demolitionAtArg&&!demolitionId))throw Error('Ungültiger Abrisszeitpunkt');
+const demolitionAt=Number(demolitionAtRaw);
+let demolition:ReturnType<Game['apply']>|null=null,demolitionTime:number|null=null;
+let demolitionPrior:ReturnType<Game['status']>[number]|null=null,demolitionVolumeBefore:number|null=null,demolitionVolumeAfter:number|null=null;
+function demolish(){
+ if(!demolitionId)throw Error('Gebäudekennung fehlt');demolitionTime=s.time;
+ demolitionPrior=g.status().find(building=>building.id===demolitionId)??null;demolitionVolumeBefore=s.volume();
+ demolition=g.apply('demolish',{kind:'demolish',buildingId:demolitionId});if(!demolition.ok)throw Error(demolition.reason);demolitionVolumeAfter=s.volume();
+}
+if(demolitionId&&demolitionAt===0)demolish();
 let westOutflow=0;
 let trench:ReturnType<Game['apply']>|null=null,actionTime:number|null=null,volumeBefore:number|null=null,volumeAfter:number|null=null;
 function dig(){volumeBefore=s.volume();actionTime=s.time;trench=g.apply('trench',{kind:'trench',cells:trenchPath([0,46],[47,26],s.width)});if(!trench.ok)throw Error(trench.reason);volumeAfter=s.volume();}
 if(mode==='trench'&&at===0)dig();
 while(s.time<scenario.parameters.duration-1e-9){
- const t=s.time,until=mode==='trench'&&trench===null?at-t:Infinity;
+ const t=s.time,untilTrench=mode==='trench'&&trench===null?at-t:Infinity,untilDemolition=demolitionId&&demolition===null?demolitionAt-t:Infinity;
  let westRate=0;if(s.openBoundary.left)for(let y=0;y<s.height;y++)westRate+=Math.max(0,-s.qx[y*s.width])*s.cellSize;
- const dt=s.step(Math.min(1,scenario.parameters.duration-t,until));westOutflow+=westRate*dt;
- g.addInflow(t,dt);g.updateDamage(dt);if(mode==='trench'&&trench===null&&s.time>=at-1e-9)dig();
+ const dt=s.step(Math.min(1,scenario.parameters.duration-t,untilTrench,untilDemolition));westOutflow+=westRate*dt;
+ g.addInflow(t,dt);g.updateDamage(dt);if(demolitionId&&demolition===null&&s.time>=demolitionAt-1e-9)demolish();if(mode==='trench'&&trench===null&&s.time>=at-1e-9)dig();
 }
-console.log(JSON.stringify({scenario:scenario.version,length,mode,at,guardRadius,guardShift:[guardX,guardY],startRow,endRow,westClosed,actionTime,results,trench,volumeBefore,volumeAfter,westOutflow,budget:g.budget,...g.totals(),relativeBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow)},null,2));
+console.log(JSON.stringify({scenario:scenario.version,length,mode,at,guardRadius,guardShift:[guardX,guardY],startRow,endRow,westClosed,actionTime,results,demolitionId,demolitionAt,demolitionTime,demolitionPrior,demolitionVolumeBefore,demolitionVolumeAfter,demolition,trench,volumeBefore,volumeAfter,westOutflow,budget:g.budget,...g.totals(),...(process.argv.includes('--buildings')?{buildings:g.status()}:{}),relativeBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow)},null,2));

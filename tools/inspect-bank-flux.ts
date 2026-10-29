@@ -1,9 +1,19 @@
 /** Recalculate Rusanov mass flux on selected western-bank faces before each solver step. */
 import {readFileSync} from 'node:fs';
 import {Game} from '../src/simulation/game';
+import {damPath} from '../src/simulation/path';
 import {validateScenario} from '../src/scenario';
 const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
-const game=new Game(scenario),s=game.solver,w=s.width;
+const game=new Game(scenario),s=game.solver,w=s.width,initial=s.volume();
+const mode=process.argv[2]??'baseline';
+if(mode==='bank') {
+ const fixture=JSON.parse(readFileSync('tests/fixtures/strategy.json','utf8'));
+ if(fixture.scenario!==scenario.version)throw Error('Szenarioversion stimmt nicht');
+ for(const [i,segment] of fixture.segments.entries()) {
+  const result=game.apply(`bank-${i}`,{kind:'dam',faces:damPath(segment[0],segment[1],w)});
+  if(!result.ok)throw Error(result.reason);
+ }
+} else if(mode!=='baseline')throw Error('Argument: baseline | bank');
 const bands=[[0,49],[50,119]] as const;
 const faces=bands.map(([y0,y1])=>{
  const list:{l:number;r:number;crest:number}[]=[];
@@ -27,4 +37,4 @@ while(s.time<scenario.parameters.duration-1e-9){
  }});
  const actual=s.step(maxDt);if(actual!==dt)throw Error('Zeitschritt stimmt nicht');game.addInflow(t,actual);game.updateDamage(actual);
 }
-console.log(JSON.stringify({version:scenario.version,bands:bands.map((rows,i)=>({rows,faces:faces[i].length,...totals[i],netIntoLand:totals[i].intoLand-totals[i].backToWater}))},null,2));
+console.log(JSON.stringify({version:scenario.version,mode,initialVolume:initial,finalVolume:s.volume(),inflow:s.inflow,outflow:s.outflow,budget:game.budget,...game.totals(),bands:bands.map((rows,i)=>({rows,faces:faces[i].length,...totals[i],netIntoLand:totals[i].intoLand-totals[i].backToWater}))},null,2));

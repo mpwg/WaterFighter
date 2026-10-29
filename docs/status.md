@@ -94,6 +94,8 @@ Die Kartenabfrage nennt bei Wasser neben der Tiefe den Wasserspiegel über Wiene
 
 Karten- und Werkzeugauswahl berücksichtigen bei Überflutung nun die sichtbare Wasseroberfläche. Der Neustart stellt zusätzlich die ursprünglichen Kamerawinkel wieder her. Für Commit `6187434` bestanden Build, 58 Vitest-Tests, zwei Python-Tests und 57 Chromium-Prüfungen; [Diagnose und integrierte Prüfungen](browser-pruefung.md#auswahl-auf-erhöhtem-wasser-und-kameraneustart) beschreiben die Grenzen. Echte Geräte und menschliche Platzierung bleiben offen.
 
+Die Dammvorschau weist auf Kanten hin, die durch ein Gebäude bereits gesperrt sind. Die Aktion bleibt bestätigbar, etwa wenn das Gebäude später abgerissen werden soll; die Vorschau selbst verändert weder Budget noch Gelände. Build, 61 Vitest-Tests, zwei Python-Tests und drei gezielte Chromium-Prüfungen bestanden. Echte Geräte und menschliche Verständlichkeit bleiben offen.
+
 ## Arbeitspakete
 
 | Paket | Status | Tatsächlicher Nachweis | Nächster Schritt |

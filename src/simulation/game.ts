@@ -4,7 +4,7 @@ import { damCrest } from './dam-height';
 
 export type Face = { axis: 'x' | 'y'; index: number };
 export type Action = { kind: 'dam'; faces: Face[] } | { kind: 'trench'; cells: number[] } | { kind: 'demolish'; buildingId: string };
-export type ActionResult = { ok: true; cost: number; budget: number; loweredCrests?: number } | { ok: false; reason: string; budget: number };
+export type ActionResult = { ok: true; cost: number; budget: number; loweredCrests?: number; buildingBlockedFaces?: number } | { ok: false; reason: string; budget: number };
 export interface BuildingStatus { id: string; value: number; damage: number; demolished: boolean; exposure: number }
 interface BuildingState extends Omit<BuildingStatus,'exposure'> { cells: number[]; neighbours: number[] }
 const key = (face: Face) => `${face.axis}:${face.index}`;
@@ -111,7 +111,7 @@ export class Game {
   }
   preview(action:Action):ActionResult {
     const p=this.scenario.parameters,s=this.solver;
-    let cost=0,loweredCrests=0;
+    let cost=0,loweredCrests=0,buildingBlockedFaces=0;
     if(!action || typeof action!=='object') return {ok:false,reason:'Ungültige Aktion.',budget:this.budget};
     if(action.kind==='dam') {
       if(!Array.isArray(action.faces)||!action.faces.length||action.faces.length>500) return {ok:false,reason:'Ungültiger Dammverlauf.',budget:this.budget};
@@ -124,6 +124,8 @@ export class Game {
         if(!valid) return {ok:false,reason:'Der Damm darf nicht auf dem Kartenrand verlaufen. Endpunkte weiter innen wählen.',budget:this.budget};
         if(seen.has(key(face))) return {ok:false,reason:'Der Dammverlauf kreuzt sich selbst.',budget:this.budget};
         if(this.damFaces.has(key(face))) return {ok:false,reason:'Hier steht bereits ein Damm. Endpunkte anders wählen.',budget:this.budget};
+        const b=y*s.width+x,a=face.axis==='x'?b-1:b-s.width;
+        if((this.occupied[a]||this.occupied[b]) && p.damHeight<=1000) buildingBlockedFaces++;
         const ends=face.axis==='x'?[[x,y],[x,y+1]]:[[x,y],[x+1,y]];
         if(previous && !ends.some(a=>previous!.some(b=>a[0]===b[0]&&a[1]===b[1]))) return {ok:false,reason:'Dammverlauf ist nicht zusammenhängend.',budget:this.budget};
         previous=ends; seen.add(key(face));
@@ -153,7 +155,7 @@ export class Game {
       cost=Math.ceil(b.value*p.demolitionCostFraction);
     } else return {ok:false,reason:'Unbekanntes Werkzeug.',budget:this.budget};
     if(cost>this.budget) return {ok:false,reason:'Budget reicht nicht aus.',budget:this.budget};
-    return {ok:true,cost,budget:this.budget-cost,...(loweredCrests?{loweredCrests}:{})};
+    return {ok:true,cost,budget:this.budget-cost,...(loweredCrests?{loweredCrests}:{}),...(buildingBlockedFaces?{buildingBlockedFaces}:{})};
   }
   hasProcessedAction(id:string):boolean { return this.actionResults.has(id); }
   apply(id:string,action:Action):ActionResult {

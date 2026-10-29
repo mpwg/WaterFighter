@@ -122,3 +122,13 @@ it('bewertet einen vollständigen Stadtabriss höher als das Schadensziel und ü
   expect(totalValue).toBeGreaterThan(base.parameters.damageTarget);
   expect(totalCost).toBeGreaterThan(base.parameters.budget);
 });
+
+it('warnt bei Dammkanten an Gebäuden und entfernt den Hinweis nach Abriss',()=>{
+  const g=new Game(scenario),face={axis:'x' as const,index:2*6+2},action={kind:'dam' as const,faces:[face]};
+  const before=g.budget,crest=g.solver.crestX[face.index];
+  expect(g.preview(action)).toMatchObject({ok:true,buildingBlockedFaces:1});
+  expect(g.budget).toBe(before);expect(g.damFaces.size).toBe(0);expect(g.solver.crestX[face.index]).toBe(crest);
+  expect(g.apply('remove-building',{kind:'demolish',buildingId:'house'}).ok).toBe(true);
+  expect(g.preview(action)).toMatchObject({ok:true});
+  expect(g.preview(action)).not.toHaveProperty('buildingBlockedFaces');
+});

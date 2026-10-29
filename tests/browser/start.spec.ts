@@ -41,6 +41,8 @@ test('Graben und Damm vorschauen, bestätigen und neu starten', async ({page})=>
     await page.mouse.click(800,360); await page.mouse.click(850,385);
     await expect(page.locator('#confirm')).toBeEnabled();
     await expect(page.locator('#preview-text')).toContainText('Kosten:');
+    await expect(page.locator('#preview-text')).toContainText(mode==='trench'?'Geländeabsenkung:':'Dammhöhe:');
+    await expect(page.locator('#preview-text')).toContainText('Budget danach:');
     await expect(page.locator('#budget')).toHaveText('10 000');
     await page.locator('#confirm').click();
     await expect(page.locator('#message')).toContainText('Maßnahme bestätigt');
@@ -55,6 +57,8 @@ test('Gebäudeabriss verlangt Vorschau und Bestätigung', async ({page})=>{
   await page.setViewportSize({width:1200,height:800});await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
   await page.locator('[data-mode="demolish"]').click();await page.mouse.click(600,320);
   await expect(page.locator('#confirm')).toBeEnabled();await expect(page.locator('#budget')).toHaveText('10 000');
+  await expect(page.locator('#preview-text')).toContainText('Gebäudeverlust insgesamt:');
+  await expect(page.locator('#preview-text')).toContainText('Budget danach:');
   await page.locator('#confirm').click();await expect(page.locator('#message')).toContainText('Maßnahme bestätigt');
   await expect(page.locator('#budget')).not.toHaveText('10 000');
 });

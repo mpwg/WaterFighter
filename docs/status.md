@@ -20,7 +20,7 @@ Der Produktionsbuild verwendet gezielte Babylon-Imports; Ausgangsansicht und Abr
 | AP 2 – Wiener Geodaten | in Arbeit | DGM und OSM bezogen, vorläufiges Szenariopaket zweimal bytegleich erzeugt und im Browser geladen: [Voruntersuchung](geodaten-voruntersuchung.md) | Bruchkanten und Durchlässe fachlich einordnen, Wasserwege und Lizenzpflichten belegen |
 | AP 3 – Simulation | in Arbeit | Synthetische Solver- und Bilanztests einschließlich verworfener Schritte, Sichtkontrolle der Dammöffnung, 600-s-Szenariolauf und Schrittweitenvergleich: [Solverbericht](solverbericht.md) | hohe lokale Tiefen einordnen und mobile Leistung prüfen |
 | AP 4 – Darstellung | in Arbeit | Szenarioansicht, Strömungsmarker, Worker-Snapshots und Maus-/Touch-Kamerasteuerung; 22 Chrome-Browserprüfungen einschließlich überlappender Berührungen | Strömungsanimation und Schadensanzeige auf tatsächlichen Geräten prüfen |
-| AP 5 – Werkzeuge/Schäden | in Arbeit | Worker-Regeln, Vorschau, Bestätigung, Budget und Schadenstests; drei Werkzeuge in Playwright-Chromium bedient | Wirkungsnachweise weiter abstimmen und Bedienung auf Geräten prüfen |
+| AP 5 – Werkzeuge/Schäden | in Arbeit | Worker-Regeln, Vorschau mit Maßnahmendetails, Bestätigung, Budget und Schadenstests; drei Werkzeuge in Playwright-Chromium bedient | Wirkungsnachweise weiter abstimmen und Bedienung auf Geräten prüfen |
 | AP 6 – Spielrunde | in Arbeit | vollständige Browserrunden und erfolgreiche Dammstrategie; Werkzeugvergleiche im Szenario | Strategie auf echten Geräten prüfen; Werkzeugnutzen und Wirkungswege weiter einordnen |
 | AP 7 – Gesamtprüfung | offen | Chrome- und Firefox-Abläufe, vollständige Runden und Messverfahren dokumentiert | Safari, reale Geräte und verbleibende Kriterien prüfen |
 

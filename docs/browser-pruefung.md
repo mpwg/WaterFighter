@@ -155,3 +155,7 @@ Am 29. Oktober 2026 wurden die Diagnosewerkzeuge auf die gezielten Babylon-Impor
 ## Mehrfinger-Eingabe
 
 Am 29. Oktober 2026 wurde die Pointer-Zuordnung korrigiert: Ein weiterer Kontakt übernimmt eine laufende Kartenberührung nicht, und nur deren eigener Abschluss, Abbruch oder Verlust der Pointer-Capture beendet sie. Ein Chrome-156-Test sendet zwei überlappende Touchkontakte und hebt den zweiten zuerst ab; erst das Abheben des ersten setzt den Startpunkt, danach lässt sich der Endpunkt wählen und eine Dammvorschau erzeugen. Auf dem geänderten Produktionsbuild bestanden 22 Chrome-Browserprüfungen, Build und 35 Vitest-Tests mit Bun 1.4.4. Dies ist ein automatisierter Test unter Linux und keine Abnahme auf einem echten Touchgerät; weitere Mehrfinger-Gesten werden nicht angeboten.
+
+## Maßnahmendetails in der Vorschau
+
+Die Vorschau zeigt zusätzlich zu Kosten und verbleibendem Budget die Dammhöhe über der höheren benachbarten Sohle beziehungsweise die Geländeabsenkung des Grabens. Bei einem Gebäudeabriss nennt sie den vollständigen Gebäudeverlust; dieser ersetzt bereits verbuchten Flutschaden des Gebäudes und wird nicht zu ihm addiert. Die Werte stammen aus dem geladenen Szenario. Die Browserprüfungen kontrollieren alle drei Angaben sowie Vorschau und Bestätigung; die bestehenden Touch-Abläufe im simulierten Hoch- und Querformat bestehen auch mit dem längeren Text. Am 29. Oktober 2026 bestanden Build, 37 Vitest-Tests, 22 Chrome-156-Browserprüfungen und der statische Unterpfadtest unter Bun 1.4.4. Echte Geräte und Safari bleiben ungeprüft.

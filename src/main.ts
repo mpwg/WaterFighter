@@ -32,6 +32,14 @@ function chooseMode(next:Mode) { mode=next;clearDraft(); for(const b of app.quer
 for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.onclick=()=>chooseMode(b.dataset.mode as Mode);
 app.querySelector<HTMLButtonElement>('#cancel')!.onclick=clearDraft;
 confirm.onclick=()=>{if(!draft||!round||awaiting)return;awaiting=true;confirm.disabled=true;pendingPresentation.set(previewId,{round,confirmedAt:performance.now(),confirmedRunning:running,confirmedSpeed:speed,confirmedVisible:document.visibilityState==='visible'});worker?.postMessage({type:'action',round,id:previewId,action:draft});};
+function describeDraft(action:Action):string {
+  if(!scenario)return '';
+  const p=scenario.parameters, number=(n:number)=>n.toLocaleString('de-AT');
+  if(action.kind==='dam')return `Dammhöhe: ${number(p.damHeight)} m über der höheren Sohle`;
+  if(action.kind==='trench')return `Geländeabsenkung: ${number(p.trenchDepth)} m`;
+  const building=scenario.buildings.find(b=>b.id===action.buildingId);
+  return building?`Gebäudeverlust insgesamt: ${number(Math.round(building.area*p.buildingValuePerSquareMetre))}`:'Gebäudeabriss';
+}
 function showDraft(action:Action) {if(!round)return; draft=action;previewId=`${round}-${++serial}`;preview.hidden=false;confirm.disabled=true;previewText.textContent='Kosten werden geprüft …';world?.showPreview(action);worker?.postMessage({type:'preview',round,id:previewId,action});}
 function pathAction(a:{x:number;y:number},b:{x:number;y:number}):Action|undefined {
   if(!scenario)return; const {width:w,height:h,cellSize:c}=scenario.grid;
@@ -84,7 +92,7 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
     const pending=pendingPresentation.get(data.id);
     if(!data.preview && pending) {if(data.result.ok) pending.revision=data.revision;else pendingPresentation.delete(data.id);}
     if(data.id!==previewId) return;
-    if(data.preview) {confirm.disabled=!data.result.ok;previewText.textContent=data.result.ok?`Kosten: ${data.result.cost} · Budget danach: ${data.result.budget}`:data.result.reason;}
+    if(data.preview) {confirm.disabled=!data.result.ok;previewText.textContent=data.result.ok?`${draft?describeDraft(draft)+' · ':''}Kosten: ${data.result.cost} · Budget danach: ${data.result.budget}`:data.result.reason;}
     else {awaiting=false;if(data.result.ok){message.textContent=`Maßnahme bestätigt. Kosten: ${data.result.cost}.`;clearDraft();}else{previewText.textContent=data.result.reason;confirm.disabled=true;}}
   }
   else if(data.type==='result' && data.round===round && !fatalError) { running=false; finished=true; clearDraft();run.disabled=true; stateLabel.textContent='Beendet'; message.textContent='Die Runde ist beendet.';

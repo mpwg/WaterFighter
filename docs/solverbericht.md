@@ -226,3 +226,5 @@ Die zuvor verglichenen Spielannahmen sind in `1.4-draft` übernommen. `tests/fix
 | Zwei Dämme, Gebäudeabriss und Graben | 17.629,93 | 16.017 | 33.646,93 | 6.598 |
 
 Die relativen Wasserbilanzfehler der drei Läufe liegen unter 8,4 × 10⁻¹⁴. Beide Strategien erreichen das unveränderte Ziel 50.000. Der Graben und der Modellrand sind Spielannahmen; der Randabfluss wird außerhalb des Ausschnitts nicht weiter berechnet. Die obigen Kontrollversuche, Markierungen und Zeitpunktvergleiche stammen aus dem numerisch gleich parametrierten Kandidaten auf Basis `1.3-draft`; sie sind keine neue Geräte- oder Humanprüfung.
+
+Der Zehn-Minuten-Lauf `bun tools/check-scenario-balance.ts` auf dem gelieferten `1.4-draft` berechnete 6.492 Schritte in 37,18 s auf diesem Linux-Rechner. Die Wassertiefen lagen zwischen 0 und 13,0305 m; alle geprüften Tiefen und Impulse blieben endlich. Der relative Bilanzfehler betrug 8,42 × 10⁻¹⁴. Die maximale Tiefe bleibt eine nicht real kalibrierte Modellgröße; der Test ist kein Leistungsnachweis für mobile Geräte.

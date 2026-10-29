@@ -34,6 +34,8 @@ Bestätigte Dämme erscheinen als orange Linien und bestätigte Gräben als brau
 
 Blaue Pfeile kennzeichnen die Zuflussbereiche; violette Pfeile markieren offene Modellränder, über die Wasser den Ausschnitt verlassen kann. Die Pfeile sind schematisch und keine Aussage über eine sichere reale Ableitung.
 
+Der Szenarioentwurf `1.4-draft` verwendet einen offenen westlichen Modellrand und 3 m Grabentiefe als Spielannahmen. Wasser außerhalb des Ausschnitts wird nicht weiter simuliert. Zwei numerische Referenzstrategien stehen in `tests/fixtures/review-strategies.json`; ihr [Gebäudevergleich](docs/review-gebaeudevergleich.md) erklärt Wirkung und Grenzen. Bilanz und Wertung lassen sich mit `bun tools/reference-strategies.ts baseline`, `shield` beziehungsweise `divert` nachvollziehen.
+
 Wenn eine Bauvorschau nicht zulässig ist, erklärt sie den Grund, etwa einen Kartenrand, einen bereits vorhandenen Damm oder ein Gebäude im geplanten Graben.
 
 ## Dokumentation

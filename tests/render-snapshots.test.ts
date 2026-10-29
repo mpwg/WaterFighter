@@ -14,3 +14,27 @@ it('bewahrt die Wasserabfrage beim Wiederverwenden des Snapshot-Puffers und aktu
   expect(world.currentDepth[0]).toBe(0);expect(world.flowSamples).toBe(samples);expect(world.flowSamples[0]).toBe(first);
   expect(first.vx).toBe(0);expect(first.vy).toBe(0);
 });
+
+it('zeigt die Dammvorschau auf der später bestätigten Krone bei unebenem Gelände',async()=>{
+  const {NullEngine}=await import('@babylonjs/core/Engines/nullEngine');
+  const {Scene}=await import('@babylonjs/core/scene');
+  const {VertexBuffer}=await import('@babylonjs/core/Buffers/buffer');
+  const {Game}=await import('../src/simulation/game');
+  const {readFileSync}=await import('node:fs');
+  const base=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
+  const bed=[5,2,1,0];
+  const scenario={...base,grid:{...base.grid,width:2,height:2},bed,terrain:bed,initialDepth:[0,0,0,0],waterMask:[0,0,0,0],buildings:[],surveyCrests:[],parameters:{...base.parameters,inflowCells:[0]}};
+  const game=new Game(scenario),engine=new NullEngine(),scene=new Scene(engine);
+  const faces=[{axis:'x' as const,index:1},{axis:'y' as const,index:2}];
+  const world={width:2,height:2,cell:4,bed:[...bed],scenario,scene,facePoints:(World.prototype as any).facePoints} as any;
+  try {
+    World.prototype.showPreview.call(world,{kind:'dam',faces});
+    const positions=world.previewMesh.getVerticesData(VertexBuffer.PositionKind);
+    for(const [index,face] of faces.entries()){
+      const result=game.apply(`dam-${index}`,{kind:'dam',faces:[face]});expect(result.ok).toBe(true);
+      expect(game.damFaces.get(`${face.axis}:${face.index}`)).toBe(9);
+      expect(positions[index*6+1]).toBeCloseTo(9.5);
+      expect(positions[index*6+4]).toBeCloseTo(9.5);
+    }
+  } finally {scene.dispose();engine.dispose();}
+});

@@ -15,6 +15,7 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { VertexBuffer } from '@babylonjs/core/Buffers/buffer';
 import earcut from 'earcut';
 import { visibleWaterIndices } from './water-indices';
+import { damCrest } from '../simulation/dam-height';
 import type { Scenario } from '../scenario';
 import type { Action, BuildingStatus, Face } from '../simulation/game';
 
@@ -159,7 +160,7 @@ export class World {
     if(!action)return;
     if(action.kind==='demolish') {const m=this.scene.getMeshByName(`building-${action.buildingId}`); if(m){m.renderOverlay=true;m.overlayColor=new Color3(1,0.3,0.1);m.overlayAlpha=0.55;}return;}
     let lines:Vector3[][]=[];
-    if(action.kind==='dam') lines=action.faces.map(face=>{const i=face.axis==='x'?Math.floor(face.index/(this.width+1))*this.width+Math.min(this.width-1,face.index%(this.width+1)):Math.min(this.height-1,Math.floor(face.index/this.width))*this.width+face.index%this.width;return this.facePoints(face,this.bed[i]+this.scenario.parameters.damHeight+1);});
+    if(action.kind==='dam') lines=action.faces.map(face=>this.facePoints(face,damCrest(face,this.width,this.height,this.bed,this.scenario.parameters.damHeight)+0.5));
     else lines=action.cells.map(i=>{const x=i%this.width,y=Math.floor(i/this.width),h=this.bed[i]+1;return [new Vector3((x+.2)*this.cell-this.width*this.cell/2,h,(y+.5)*this.cell-this.height*this.cell/2),new Vector3((x+.8)*this.cell-this.width*this.cell/2,h,(y+.5)*this.cell-this.height*this.cell/2)];});
     if(lines.length){this.previewMesh=CreateLineSystem('preview',{lines},this.scene);this.previewMesh.color=new Color3(1,0.38,0.08);this.previewMesh.isPickable=false;}
   }

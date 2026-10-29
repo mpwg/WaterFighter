@@ -1,5 +1,6 @@
 import type { Building, Scenario } from '../scenario';
 import { ShallowWaterSolver } from './solver';
+import { damCrest } from './dam-height';
 
 export type Face = { axis: 'x' | 'y'; index: number };
 export type Action = { kind: 'dam'; faces: Face[] } | { kind: 'trench'; cells: number[] } | { kind: 'demolish'; buildingId: string };
@@ -151,10 +152,7 @@ export class Game {
     if(!result.ok) return result;
     const s=this.solver,p=this.scenario.parameters;
     if(action.kind==='dam') for(const face of action.faces) {
-      let a:number,b:number;
-      if(face.axis==='x') {const y=Math.floor(face.index/(s.width+1)),x=face.index%(s.width+1);a=y*s.width+x-1;b=a+1;}
-      else {const y=Math.floor(face.index/s.width),x=face.index%s.width;a=(y-1)*s.width+x;b=y*s.width+x;}
-      this.damFaces.set(key(face),Math.max(s.bed[a],s.bed[b])+p.damHeight);
+      this.damFaces.set(key(face),damCrest(face,s.width,s.height,s.bed,p.damHeight));
     }
     else if(action.kind==='trench') for(const i of action.cells) {s.bed[i]-=p.trenchDepth;this.trenchCells.add(i);}
     else {const b=this.byId.get(action.buildingId)!;b.demolished=true;for(const i of b.cells)this.occupied[i]--;}

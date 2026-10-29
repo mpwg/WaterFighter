@@ -133,6 +133,13 @@ speedButton.onclick=()=>{ if(!round)return; speed=speed===1?2:1; speedButton.tex
 app.querySelector<HTMLButtonElement>('#zoom-in')!.onclick=()=>world?.setZoom(0.8);
 app.querySelector<HTMLButtonElement>('#zoom-out')!.onclick=()=>world?.setZoom(1.25);
 let pointer: {id:number;modeRevision:number;x:number;y:number;startX:number;startY:number;moved:boolean}|undefined;
+// A preview can appear beneath the finger during pointerup. Suppress the
+// associated click so it cannot activate a newly appeared preview button.
+const canvasPointers=new Map<number,symbol>();
+document.addEventListener('pointerdown',e=>{if(e.target===canvas)canvasPointers.set(e.pointerId,Symbol());else canvasPointers.delete(e.pointerId);},true);
+document.addEventListener('pointercancel',e=>canvasPointers.delete(e.pointerId),true);
+document.addEventListener('pointerup',e=>{const token=canvasPointers.get(e.pointerId);if(token)setTimeout(()=>{if(canvasPointers.get(e.pointerId)===token)canvasPointers.delete(e.pointerId);},1000);},true);
+document.addEventListener('click',e=>{if(e instanceof PointerEvent && canvasPointers.delete(e.pointerId)){e.preventDefault();e.stopImmediatePropagation();}},true);
 canvas.addEventListener('pointerdown',e=>{if(pointer)return;pointer={id:e.pointerId,modeRevision,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,moved:false};canvas.setPointerCapture(e.pointerId);});
 canvas.addEventListener('pointermove',e=>{if(pointer?.id!==e.pointerId||pointer.modeRevision!==modeRevision)return;pointer.moved ||= Math.hypot(e.clientX-pointer.startX,e.clientY-pointer.startY)>=(mode==='camera'?5:8);if(mode==='camera'){world?.pan(e.clientX-pointer.x,e.clientY-pointer.y);pointer.x=e.clientX;pointer.y=e.clientY;}});
 canvas.addEventListener('pointerup',e=>{if(pointer?.id!==e.pointerId)return; if(pointer.modeRevision!==modeRevision){pointer=undefined;return;} const moved=pointer.moved||Math.hypot(e.clientX-pointer.startX,e.clientY-pointer.startY)>=(mode==='camera'?5:8);if(mode!=='camera') {if(moved)message.textContent=mode==='demolish'?'Bitte das Gebäude antippen.':first?'Endpunkt nicht gesetzt. Bitte antippen.':'Bitte Start und Ende einzeln antippen.';else selectAt(e.clientX,e.clientY);} else if(!moved) {const text=world?.inspect(e.clientX,e.clientY)??'Karte ist noch nicht bereit.';message.textContent=text;inspection.textContent=`Stand ${timeLabel.textContent}: ${text}`;inspection.hidden=!gamePanel.hidden;}pointer=undefined;});

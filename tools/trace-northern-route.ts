@@ -8,7 +8,11 @@ const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigit
 const fixture=JSON.parse(readFileSync('tests/fixtures/strategy.json','utf8'));
 if(scenario.version!==fixture.scenario||!scenario.parameters.outflowEdges.includes('left'))throw Error('Szenario passt nicht');
 const game=new Game(scenario),s=game.solver,w=s.width,h=s.height,n=w*h,area=s.cellSize**2,initial=s.volume();
-for(const [i,segment] of fixture.segments.slice(0,3).entries()){const r=game.apply(`dam-${i}`,{kind:'dam',faces:damPath(segment[0],segment[1],w)});if(!r.ok)throw Error(r.reason);}
+const damsArg=process.argv.find(a=>a.startsWith('--dams='));
+const damsRaw=damsArg?damsArg.slice(7):'3';
+if(!/^[0-3]$/.test(damsRaw))throw Error('--dams muss 0, 1, 2 oder 3 sein');
+const dams=Number(damsRaw);
+for(const [i,segment] of fixture.segments.slice(0,dams).entries()){const r=game.apply(`dam-${i}`,{kind:'dam',faces:damPath(segment[0],segment[1],w)});if(!r.ok)throw Error(r.reason);}
 const routeArg=process.argv.find(a=>a.startsWith('--route='));
 const rawCoordinates=routeArg?routeArg.slice(8).split(','):['0','3','38','11'];
 const coordinates=rawCoordinates.map(Number);
@@ -60,4 +64,4 @@ while(s.time<scenario.parameters.duration-1e-9){
  for(let i=0;i<n;i++){let total=0;for(let k=0;k<stages.length;k++){stages[k][i]+=changes[k][i];total+=stages[k][i];maxBound=Math.max(maxBound,-stages[k][i]);}maxBound=Math.max(maxBound,total-s.h[i]*area);if(maxBound>1e-7)throw Error(`Markierung außerhalb Wasserbilanz ${i}: ${maxBound}`);}
 }
 const remaining=stages.map(stage=>stage.reduce((a,b)=>a+b,0));
-console.log(JSON.stringify({scenario:scenario.version,mode,route:coordinates,entry:[entryMin,entryMax],sections,tagged,orderedWest,returned,otherExit,remaining,balanceError:orderedWest+returned+otherExit+remaining.reduce((a,b)=>a+b,0)-tagged,maxBound,budget:game.budget,...game.totals(),waterBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow)},null,2));
+console.log(JSON.stringify({scenario:scenario.version,mode,dams,route:coordinates,entry:[entryMin,entryMax],sections,tagged,orderedWest,returned,otherExit,remaining,balanceError:orderedWest+returned+otherExit+remaining.reduce((a,b)=>a+b,0)-tagged,maxBound,budget:game.budget,...game.totals(),waterBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow)},null,2));

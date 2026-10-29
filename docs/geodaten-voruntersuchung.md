@@ -379,3 +379,21 @@ Auf einem isolierten Archiv `42da208` wurden die drei neuen Wege mit `bun tools/
 | `(0,46) → (46,25)` | 1.700 | 3 | 23.615,57 | 6.460 |
 
 Die relativen Wasserbilanzfehler liegen unter 1,16 × 10⁻¹³. Der erste Graben erzeugt in diesem Vergleich wesentlich mehr Schaden; die beiden anderen verändern ihn nur geringfügig zum Schlechteren und kosten zusätzlich Budget. Keine der drei ist damit ein wirtschaftlich nützlicher zweiter Schutzweg in dieser Kombination. Die Rechnungen trennen die Wirkung einzelner abgesenkter Kanten nicht und schließen andere, anders zusammengesetzte Wege oder Szenarioanpassungen nicht aus. Menschliche Platzierung, der durchgängige Wasserverlauf und reale Folgen außerhalb des Modellrands bleiben ungeprüft.
+
+
+### Südlicher Westgraben ohne und mit Referenzdämmen
+
+Der direkte Graben `(0,46) → (47,26)` umfasst 68 Landzellen und teilt keine Zelle mit dem Referenzgraben `(0,4) → (25,4)`. Er kostet 1.700. Auf einem isolierten Archiv von `42da208` wurden beide Konfigurationen ohne Dämme und mit je einem, zwei oder drei vorbereiteten Referenzdammabschnitten mit `bun tools/compare-review-strategies.ts` über 300 s berechnet. Für die Grabenläufe wurde jeweils `--route=0,46,47,26` verwendet; die Fälle heißen `trench`, `dam1trench`, `dam2trench` und `dam3trench`. Die Kontrollen heißen `open`, `dam1`, `dam2` und `dam3`. Alle Aktionen waren zulässig.
+
+| Dämme | Kontrolle: Gesamtschaden | Mit Graben: Gesamtschaden | Budgetrest mit Graben |
+| ---: | ---: | ---: | ---: |
+| 0 | 138.852,13 | 134.891,03 | 8.300 |
+| 1 | 95.273,07 | 126.966,76 | 7.900 |
+| 2 | 25.821,81 | 66.360,93 | 7.100 |
+| 3 | 23.574,17 | 23.612,52 | 6.460 |
+
+Ohne Dämme senkt der Graben den Schaden um 3.961,10; auch nach Addition seiner Kosten bleibt eine Verbesserung von 2.261,10. Er verfehlt damit aber allein das Ziel von 50.000 deutlich. Bei einem oder zwei Dämmen erhöht er den Schaden erheblich; bei drei Dämmen verbessert er ihn ebenfalls nicht. Die relativen Wasserbilanzfehler der neuen Vergleichsläufe lagen unter 1,87 × 10⁻¹³. Die Wirkung hängt somit von der Dammkombination ab; die Tabelle isoliert nicht den Beitrag der fünf abgesenkten Geländekanten.
+
+Mit `bun tools/trace-northern-route.ts control --dams=0 --route=0,46,47,26 --entry=30,47` und dem entsprechenden Fall `trench` wurde anschließend seitlicher Eintritt im östlichen Trassenbereich markiert. Die Stufen verlangen westwärts gerichtete Querungen der Trassenkanten bei x = 30, 20, 10 und 5 in dieser Reihenfolge vor einem Austritt am Westrand; bei Rückkehr in die Gewässermaske endet die Markierung. Ohne Graben erreichten 0 m³ nach allen vier Querungen den Rand, mit Graben 921,36 m³. Die markierten Eintritte betrugen 15.363,24 beziehungsweise 19.790,68 m³; davon kehrten 14.307,52 beziehungsweise 16.749,77 m³ ins Gewässer zurück. Die Beträge der Markierungsbilanzreste lagen unter 4,01 × 10⁻¹⁰ m³, die relativen Wasserbilanzfehler unter 1,05 × 10⁻¹³.
+
+Dies belegt einen geordneten Modellanteil für einen zellgetrennten Graben und wirtschaftlichen Nutzen ohne Dämme. Zwischen den Querschnitten kann die Markierung die Grabenzeile verlassen; der Austritt wird am gesamten Westrand gezählt. Die Rechnung beweist daher weder einen überall getrennten Wasserweg noch eine sichere reale Ableitung. Wiederholte Eintritte können erneut markiert werden; die Zahlen sind keine Verfolgung realer Wasserteilchen. Eine zweite erfolgreiche Gesamtstrategie, menschliche Bedienbarkeit und Folgen jenseits des Modellrands bleiben offen.

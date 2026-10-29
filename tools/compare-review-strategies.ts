@@ -11,6 +11,8 @@ const cases:Record<string,{left:boolean;depth:number;dams:number;trench?:[[numbe
  original:{left:false,depth:0.8,dams:0},
  open:{left:true,depth:3,dams:0},
  trench:{left:true,depth:3,dams:0,trench:[[0,4],[25,4]]},
+ dam1:{left:true,depth:3,dams:1},
+ dam1trench:{left:true,depth:3,dams:1,trench:[[0,4],[25,4]]},
  dam3:{left:true,depth:3,dams:3},
  dam3trench:{left:true,depth:3,dams:3,trench:[[0,4],[25,4]]},
  dam2:{left:true,depth:3,dams:2},

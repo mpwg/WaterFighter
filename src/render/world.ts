@@ -258,7 +258,10 @@ export class World {
         const x=i%this.width,y=Math.floor(i/this.width),h=depth[i];
         const sample=this.flowSamples[sampleIndex++]??(this.flowSamples[this.flowSamples.length]={x:0,y:0,height:0,vx:0,vy:0});
         sample.x=(x+.5)*this.cell-this.width*this.cell/2;sample.y=(y+.5)*this.cell-this.height*this.cell/2;
-        sample.height=this.bed[i]+h+0.3;sample.vx=h>0.05?qx[i]/h:0;sample.vy=h>0.05?qy[i]/h:0;
+        // The centre lies on the water mesh's diagonal between its east and south vertices.
+        const east=y*this.width+Math.min(x+1,this.width-1),south=Math.min(y+1,this.height-1)*this.width+x;
+        sample.height=(this.bed[east]+depth[east]+this.bed[south]+depth[south])/2+0.5;
+        sample.vx=h>0.05?qx[i]/h:0;sample.vy=h>0.05?qy[i]/h:0;
       }
       this.flowSamples.length=sampleIndex;
     }

@@ -62,7 +62,7 @@ it('zeigt Strömung in bestätigten Grabenzellen und entfernt ihre Marker nach N
     flowPositions:new Float32Array(12),flowLines:{updateVerticesData:vi.fn()},water:{setIndices:vi.fn(),updateVerticesData:vi.fn()}} as any;
   const depth=new Float32Array([0,1,0,0]),qx=new Float32Array([0,-2,0,0]),qy=new Float32Array(4);
   World.prototype.updateWater.call(world,depth,qx,qy);
-  expect(world.flowSamples).toHaveLength(2);expect(world.flowSamples[1]).toMatchObject({x:2,y:-2,vx:-2,vy:0});
+  expect(world.flowSamples).toHaveLength(2);expect(world.flowSamples[1]).toMatchObject({x:2,y:-2,height:1,vx:-2,vy:0});
   (World.prototype as any).animateFlow.call(world,1);expect([...world.flowPositions.slice(6)]).not.toEqual([0,0,0,0,0,0]);
   world.flowTrenchCells=[];World.prototype.updateWater.call(world,depth,qx,qy);
   expect(world.flowSamples).toHaveLength(1);

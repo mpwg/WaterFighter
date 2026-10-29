@@ -219,6 +219,18 @@ An Kante `y:24918` steigt der integrierte markierte Eintritt gegenüber 1.260,99
 
 Die Diagnose wurde zur schnelleren Wiederholung um vorberechnete Zellabstände und eine optional bestätigte Grabenaktion ergänzt; der vorherige Standardlauf reproduziert alle Markierungs- und Bilanzwerte exakt. Andere Grabenverläufe und Kombinationen bleiben ungetestet.
 
+### Wiederholung der südlichen Gräben mit Version 1.4
+
+Die obigen drei Läufe wurden auf dem ausgelieferten `1.4-draft` wiederholt: `bun tools/trace-land-retention.ts baseline --gates=y:10867,y:24918` und derselbe Befehl mit `--trench=118,124,102,124` beziehungsweise `--trench=118,124,115,145`. Die Gräben sind nun 3 m tief; der westliche Modellrand ist offen. Die Angaben betreffen die Markierung an der südlichen Eintrittskante `y:24918` über die volle 300-s-Runde:
+
+| Variante | Kosten | Markierter Eintritt | Höchstes gleichzeitiges markiertes Volumen an Land | Höchstes gleichzeitiges Volumen ab 32 m Abstand | Größter Abstand einer Zelle mit mindestens 0,1 m³ | Gesamtschaden |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Ohne Graben | 0 | 1.260,99 m³ | 18,22 m³ | 0 m³ | 4 m | 138.852,13 |
+| Nach Westen | 425 | 4.918,12 m³ | 165,28 m³ | 0,19 m³ | 32 m | 138.852,13 |
+| Nach Süden | 625 | 4.856,09 m³ | 193,51 m³ | 20,82 m³ | 37,95 m | 138.852,13 |
+
+Die relativen Wasserbilanzfehler lagen unter 1,33 × 10⁻¹³ und die Markierungsbilanzreste unter 1,82 × 10⁻¹¹ m³. Anders als bei der früheren Grabentiefe zeigen diese Läufe eine längere markierte Landpassage, besonders für die südliche Variante; der Gesamtschaden ändert sich jedoch um weniger als 0,01. Die Entfernung ist eine Luftlinie, keine verfolgte Weglänge; wiederholte Markierung und numerische Durchmischung gelten weiterhin. Ohne nachgewiesenen Abflussweg und Nutzen für das Schutzziel ist damit noch keine zweite sinnvolle Ableitung belegt.
+
 ## Übernahme der Spielparameter in Version 1.4
 
 Die zuvor nur experimentell untersuchten Parameter sind ab `1.4-draft` im gelieferten Szenario: 3 m Grabentiefe und ein zusätzlich offener westlicher Modellrand. Sie stehen mit ihrer Erläuterung in `tools/scenario-adjustments.json` und werden von `tools/build-scenario.py` in das Szenariopaket übernommen. Gelände, Gebäude, Rohdaten und das Schadensziel 50.000 bleiben unverändert. Der offene Rand entfernt Wasser aus dem berechneten Ausschnitt; das Gebiet dahinter wird nicht berechnet. Die Öffnung ist eine Spielvereinfachung, keine Aussage über reale Schadensvermeidung.

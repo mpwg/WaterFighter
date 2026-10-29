@@ -12,7 +12,7 @@ Die neue Werkzeugverschiebung wurde zusätzlich in [Firefox 159](browser-pruefun
 
 Ein [gezielter Produktionsbrowsertest](browser-pruefung.md#referenzgraben-nach-verschieben-und-vergrößern) setzt den Referenzgraben nach Verschieben und Vergrößern exakt über die 26 vorgesehenen Rasterzellen. Der Test verwendet projizierte Koordinaten; menschliche Platzierung und echte Geräte bleiben offen.
 
-[Strömungsmarker](browser-pruefung.md#zellnahe-strömungsmarker) bewegen ihre Mittelpunkte nun nahe der jeweils abgetasteten Zelle; ihre Höhe folgt der gerenderten Wasseroberfläche am Zellmittelpunkt. Modelltests und gezielte Browserprüfungen bestanden; ein vollständiger Browserlauf und echte Geräte bleiben offen.
+[Strömungsmarker](browser-pruefung.md#zellnahe-strömungsmarker) bewegen ihre Mittelpunkte nun nahe der jeweils abgetasteten Zelle; ihre Höhe folgt der gerenderten Wasseroberfläche am Zellmittelpunkt. Auf `64ba8bd` bestanden 68 Modelltests und 64 Chromium-Prüfungen; spätere Änderungen und echte Geräte bleiben separat zu prüfen.
 
 Die Karte lässt sich jetzt auch bei gewähltem Bau- oder Abrisswerkzeug durch Ziehen verschieben; ein bereits gewählter Startpunkt bleibt erhalten. Ein gezogener Kontakt setzt keine Maßnahme. Auf Anwendungscode `4a54de4` bestanden Produktionsbuild, 67 Modelltests und alle 64 Chromium-Prüfungen einschließlich Maus und emuliertem Touch. Spätere Renderänderungen und menschliche Geräteprüfung bleiben offen.
 

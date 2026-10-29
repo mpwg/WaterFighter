@@ -59,17 +59,17 @@ it('zeichnet nur bestätigte Grabenzellen und entfernt die Markierung beim Neust
 it('zeigt Strömung in bestätigten Grabenzellen und entfernt ihre Marker nach Neustart',()=>{
   const world={width:2,height:2,cell:4,bed:[0,0,0,0],currentDepth:new Float32Array(4),flowSamples:[],flowTrenchCells:[1],
     wetVertices:new Uint8Array(9),waterIndexBuffer:new Uint16Array(24),wetTopologyReady:false,waterPositions:new Float32Array(27),waterColors:new Float32Array(36),
-    flowPositions:new Float32Array(12),flowLines:{updateVerticesData:vi.fn()},water:{setIndices:vi.fn(),updateVerticesData:vi.fn()}} as any;
+    flowPositions:new Float32Array(36),flowLines:{updateVerticesData:vi.fn()},water:{setIndices:vi.fn(),updateVerticesData:vi.fn()}} as any;
   const depth=new Float32Array([0,1,0,0]),qx=new Float32Array([0,-2,0,0]),qy=new Float32Array(4);
   World.prototype.updateWater.call(world,depth,qx,qy);
   expect(world.flowSamples).toHaveLength(2);expect(world.flowSamples[1]).toMatchObject({x:2,y:-2,height:1,vx:-2,vy:0});
-  (World.prototype as any).animateFlow.call(world,1);expect([...world.flowPositions.slice(6)]).not.toEqual([0,0,0,0,0,0]);
+  (World.prototype as any).animateFlow.call(world,1);expect([...world.flowPositions.slice(18)]).not.toEqual(Array(18).fill(0));
   for(const t of [0,1,2,3,4]){
     (World.prototype as any).animateFlow.call(world,t);
-    const centre=(world.flowPositions[6]+world.flowPositions[9])/2;
+    const centre=(world.flowPositions[18]+world.flowPositions[21])/2;
     expect(Math.abs(centre-2)).toBeLessThanOrEqual(1.5);
   }
   world.flowTrenchCells=[];World.prototype.updateWater.call(world,depth,qx,qy);
   expect(world.flowSamples).toHaveLength(1);
-  (World.prototype as any).animateFlow.call(world,1);expect([...world.flowPositions.slice(6)]).toEqual([0,0,0,0,0,0]);
+  (World.prototype as any).animateFlow.call(world,1);expect([...world.flowPositions.slice(18)]).toEqual(Array(18).fill(0));
 });

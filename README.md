@@ -32,7 +32,7 @@ Die Kopfzeile zeigt laufend Gesamtschaden, Ziel sowie Flut- und Abrissverluste, 
 
 Bestätigte Dämme erscheinen als orange Linien und bestätigte Gräben als braune Geländeflächen. Schräge Gräben folgen rasterverbunden der Verbindung zwischen den beiden gewählten Punkten; die Vorschau zeigt den tatsächlichen Verlauf. Überflutetes Wasser kann die Grabenmarkierung verdecken.
 
-Strömungsmarker werden auch entlang bestätigter Gräben angezeigt, wenn dort genügend Wasser und Strömung vorhanden sind. Sie zeigen den berechneten Zustand und können in der Übersicht schwer erkennbar sein.
+Weiße Strömungspfeile zeigen die berechnete Richtung und erscheinen auch entlang bestätigter Gräben, wenn dort genügend Wasser und Strömung vorhanden sind. Sie zeigen den berechneten Zustand und können in der Übersicht schwer erkennbar sein.
 
 Blaue Pfeile kennzeichnen die Zuflussbereiche; violette Pfeile markieren offene Modellränder, über die Wasser den Ausschnitt verlassen kann. Die Pfeile sind schematisch und keine Aussage über eine sichere reale Ableitung.
 

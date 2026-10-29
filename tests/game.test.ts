@@ -103,6 +103,18 @@ it('meldet eine Kantenabsenkung auch beim Anschluss an einen bestehenden Graben'
   expect(g.solver.crestY[face.index]).toBeCloseTo(2-scenario.parameters.trenchDepth);
 });
 
+it('meldet die zwei untersuchten Geländekanten im ausgelieferten Szenario',()=>{
+  expect(base.version).toBe('1.4-draft');
+  const g=new Game(base),action={kind:'trench' as const,cells:[7036,7037,7038]};
+  const before=[g.solver.crestX[7072],g.solver.crestX[7073]];
+  const preview=g.preview(action);
+  expect(preview).toMatchObject({ok:true,loweredCrests:2});
+  expect([g.solver.crestX[7072],g.solver.crestX[7073]]).toEqual(before);
+  expect(g.apply('reference',action)).toEqual(preview);
+  expect(g.solver.crestX[7072]).toBeCloseTo(before[0]-base.parameters.trenchDepth);
+  expect(g.solver.crestX[7073]).toBeCloseTo(before[1]-base.parameters.trenchDepth);
+});
+
 it('bewertet einen vollständigen Stadtabriss höher als das Schadensziel und über dem Budget',()=>{
   const g=new Game(base);
   const totalValue=g.buildings.reduce((sum,b)=>sum+b.value,0);

@@ -32,3 +32,37 @@ test('Grabenhinweis erscheint vor der Bestätigung, wenn eine Geländekante abge
   await page.locator('#confirm').click();await expect(page.locator('#message')).toContainText('Maßnahme bestätigt');
   await expect(page.locator('#budget')).not.toHaveText('10 000');
 });
+
+for(const viewport of [{width:480,height:320},{width:320,height:480}]) test(`Grabenhinweis und Bestätigung bleiben bei ${viewport.width}×${viewport.height} erreichbar`,async({browser})=>{
+  const context=await browser.newContext({viewport,isMobile:true,hasTouch:true}),page=await context.newPage();
+  await page.addInitScript(()=>{
+    const Original=window.Worker;
+    window.Worker=class extends Original {
+      override postMessage(message:any,options?:any) {
+        if(message?.type==='preview'&&message.action?.kind==='trench') (window as any).previewCells=message.action.cells;
+        return super.postMessage(message,options);
+      }
+    };
+  });
+  const select=async()=>{
+    await page.locator('[data-mode="trench"]').tap();await page.locator('#panel-toggle').tap();
+    await page.touchscreen.tap(viewport.width/2,viewport.height*.47);await page.touchscreen.tap(viewport.width/2+30,viewport.height*.52);
+    await expect(page.locator('#confirm')).toBeEnabled();
+  };
+  await page.goto('/');await expect(page.locator('#run')).toBeEnabled();await select();
+  const cells:number[]=await page.evaluate(()=>(window as any).previewCells);expect(cells.length).toBeGreaterThan(1);
+  const scenario=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
+  const w:number=scenario.grid.width,a=cells[0],b=cells[1];
+  scenario.surveyCrests=[Math.abs(a-b)===1?{axis:'x',index:Math.floor(a/w)*(w+1)+Math.max(a%w,b%w),crest:10}:{axis:'y',index:Math.max(a,b),crest:10}];
+  await page.route('**/scenarios/brigittenau-v1.json.bin',route=>route.fulfill({status:200,contentType:'application/octet-stream',body:gzipSync(Buffer.from(JSON.stringify(scenario)))}));
+  await page.reload();await expect(page.locator('#run')).toBeEnabled();await select();
+  await expect(page.locator('#preview-text')).toContainText('Senkt 1 modellierte Geländekante');
+  for(const selector of ['#confirm','#cancel']) {
+    const box=await page.locator(selector).boundingBox();expect(box).not.toBeNull();
+    expect(box!.x).toBeGreaterThanOrEqual(0);expect(box!.y).toBeGreaterThanOrEqual(0);
+    expect(box!.x+box!.width).toBeLessThanOrEqual(viewport.width);expect(box!.y+box!.height).toBeLessThanOrEqual(viewport.height);
+    expect(await page.evaluate(({x,y})=>document.elementFromPoint(x,y)?.id,{x:box!.x+box!.width/2,y:box!.y+box!.height/2})).toBe(selector.slice(1));
+  }
+  await page.locator('#confirm').tap();await expect(page.locator('#preview')).toBeHidden();
+  await context.close();
+});

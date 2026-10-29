@@ -316,3 +316,19 @@ for(const viewport of [{width:320,height:480},{width:480,height:320}]) test(`Vor
   await expect(page.locator('#budget')).not.toHaveText('10 000');
   await context.close();
 });
+
+test('Werkzeuge und Quellen bleiben im schmalen Querformat erreichbar',async({browser})=>{
+  const viewport={width:480,height:320},context=await browser.newContext({viewport,isMobile:true,hasTouch:true}),page=await context.newPage();
+  await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  for(const selector of ['[data-mode="camera"]','[data-mode="dam"]','[data-mode="trench"]','[data-mode="demolish"]','#run','#reset','#speed']){
+    const button=page.locator(selector);await button.scrollIntoViewIfNeeded();const box=await button.boundingBox();expect(box).not.toBeNull();
+    expect(box!.width).toBeGreaterThanOrEqual(44);expect(box!.height).toBeGreaterThanOrEqual(44);
+    const hit=await page.evaluate(({x,y})=>document.elementFromPoint(x,y)?.closest('button')?.outerHTML,{x:box!.x+box!.width/2,y:box!.y+box!.height/2});
+    expect(hit).toBe(await button.evaluate(element=>element.outerHTML));
+  }
+  const credit=page.locator('.credits a').first(),box=await credit.boundingBox();expect(box).not.toBeNull();
+  const hit=await page.evaluate(({x,y})=>document.elementFromPoint(x,y)?.closest('a')?.getAttribute('href'),{x:box!.x+box!.width/2,y:box!.y+box!.height/2});
+  expect(hit).toBe(await credit.getAttribute('href'));
+  await page.locator('[data-mode="demolish"]').tap();await expect(page.locator('[data-mode="demolish"]')).toHaveAttribute('aria-pressed','true');
+  await context.close();
+});

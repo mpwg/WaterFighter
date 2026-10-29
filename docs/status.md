@@ -46,7 +46,7 @@ Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet di
 | Echte iPhone-/Android-Abnahme | nicht prüfbar | Lokal kein Smartphone sichtbar und `adb`/`idevice_id` fehlen; Zugang zu echten Geräten bereitstellen |
 | Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Messskript und [Verfahren](mobil-messung.md) vorhanden; keine echten Smartphones lokal erreichbar |
 | Drei stabile aufeinanderfolgende Runden | offen | Drei 2×-Runden auf Anwendungscode `40ff739` bestanden; JS-Heap und Prozessbaum-RSS stichprobenartig erfasst, vollständige Bedienung und Langzeit-Lecks nicht ausgeschlossen: [Browserprüfung](browser-pruefung.md) |
-| Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Build vorhanden; vollständige Quellen- und Lizenzprüfung fehlt |
+| Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Produktionsbuild unter Unterpfad einschließlich Worker und Szenario geprüft; vollständige Lizenzprüfung fehlt |
 
 „Offen“ bedeutet hier, dass die Arbeit noch auszuführen ist. „Nicht prüfbar“ darf erst eingetragen werden, wenn ein konkretes Hindernis ermittelt und beschrieben wurde. Die lokale Gerätesuche ist unten dokumentiert; ein entfernter Gerätezugang wurde nicht ausgeschlossen.
 

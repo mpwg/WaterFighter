@@ -78,6 +78,8 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
   const data=event.data;
   if(!data || typeof data!=='object' || !['ready','snapshot','action-result','result','error'].includes(data.type) || (data.type==='ready' && !isReady(data))) throw new Error('Ungültiges Worker-Protokoll');
   if(isReady(data) && !fatalError) {
+    if(data.round<=round)return;
+    if(data.round!==round+1 || data.scenarioId!==scenario?.id)throw new Error('Ungültige Rundenfolge');
     round=data.round; pendingPresentation.clear(); running=false; finished=false; speed=1; chooseMode('camera'); world?.resetView(); resultPanel.hidden=true; run.textContent='Simulation starten'; speedButton.textContent='1×';
     damageTotal.textContent=`Schaden 0 / ${scenario?.parameters.damageTarget.toLocaleString('de-AT')??'–'}`;damageBreakdown.textContent='Flut 0 · Abriss 0';
     run.disabled=false; reset.disabled=false; speedButton.disabled=false;

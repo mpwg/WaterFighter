@@ -9,6 +9,7 @@ const mode=process.argv[2];
 if(!['baseline','0','1'].includes(mode)) throw Error('Aufruf: bun tools/evaluate-land-corridor.ts baseline|0|1');
 const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
 const game=new Game(scenario),solver=game.solver,w=solver.width,initial=solver.volume();
+const avoidSensitive=process.argv.includes('--avoid-sensitive-all')?'all':process.argv.includes('--avoid-sensitive')?'initial':'none';
 const dams=process.argv.includes('--dams')?2:0;
 if(dams) {
   const fixture=JSON.parse(readFileSync('tests/fixtures/strategy.json','utf8')) as {scenario:string;segments:[[number,number],[number,number]][]};
@@ -20,7 +21,7 @@ if(dams) {
 }
 let cells=0,segments=0;
 if(mode!=='baseline') {
-  const search=spawnSync(process.execPath,['tools/find-land-routes.ts'],{encoding:'utf8'});
+  const search=spawnSync(process.execPath,['tools/find-land-routes.ts',...(avoidSensitive==='all'?['--avoid-sensitive-all']:avoidSensitive==='initial'?['--avoid-sensitive']:[])],{encoding:'utf8'});
   if(search.status!==0) throw Error(`Korridorsuche fehlgeschlagen: ${search.stderr}`);
   const route=JSON.parse(search.stdout).routes[Number(mode)] as {path:[number,number][]}|null;
   if(!route) throw Error('Korridor nicht gefunden');
@@ -58,4 +59,4 @@ while(solver.time<scenario.parameters.duration-1e-9) {
   if(solver.step(maxDt)!==dt) throw Error('Zeitschritt stimmt nicht');
   game.addInflow(t,dt);game.updateDamage(dt);
 }
-console.log(JSON.stringify({scenario:scenario.version,mode,dams,cells,segments,cutSurveyCrests,retainCrests,budget:game.budget,...game.totals(),westOutflow,relativeBalance:Math.abs(solver.volume()-initial-solver.inflow+solver.outflow-solver.roundoffVolume)/(initial+solver.inflow),...(process.argv.includes('--buildings')?{buildings:game.status()}: {})},null,2));
+console.log(JSON.stringify({scenario:scenario.version,mode,dams,avoidSensitive,cells,segments,cutSurveyCrests,retainCrests,budget:game.budget,...game.totals(),westOutflow,relativeBalance:Math.abs(solver.volume()-initial-solver.inflow+solver.outflow-solver.roundoffVolume)/(initial+solver.inflow),...(process.argv.includes('--buildings')?{buildings:game.status()}: {})},null,2));

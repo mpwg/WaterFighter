@@ -235,3 +235,16 @@ Eine zweite Markierung betrachtet seitliche Eintritte in Trassenzellen mit `x = 
 | Drei Dämme und Graben | 5.936,30 m³ | 5.208,24 m³ | 198,49 m³ | 529,58 m³ |
 
 Die Markierungsbilanzreste betragen höchstens 2,98 × 10⁻¹⁰ m³, die relativen Wasserbilanzfehler höchstens 1,52 × 10⁻¹³. Der Kontrolllauf endet mit 23.574,17 Schaden, die Grabenrunde mit 808,69. Dieser Versuch belegt einen geordneten **Modellanteil ab dem mittleren Trassenabschnitt**, nicht vom östlichen Eintritt und nicht zwingend entlang jeder dazwischenliegenden Zelle. Zwischen den drei Querschnitten kann sich die Markierung außerhalb der Trasse bewegen. Nach Rückkehr in die Gewässermaske kann dieselbe Modellmenge erneut markiert werden; die Summe der Eintritte zählt daher keine eindeutigen Wasserteilchen. Die Rechnung belegt weder allein die Ursache der Schadensminderung noch reale Folgen jenseits des offenen Modellrands.
+
+### Weiter östlicher Eintritt und Verhältnis der zwei Trassen
+
+Die Markierungsrechnung wurde mit `--entry=25,29 --sections=25,20,10,5` für beide Fälle wiederholt. Seitlich in Trassenzellen `x = 25…29` eintretende Modellmengen müssen dabei die vier genannten Trassenkanten westwärts in dieser Reihenfolge passieren, bevor ihr Austritt am Westrand gezählt wird; bei Rückkehr in die Gewässermaske endet die Markierung.
+
+| Fall | Markierte Eintritte | Rückkehr ins Gewässer | Nach vier Kanten am Westrand ausgetreten | Noch im Modell |
+| --- | ---: | ---: | ---: | ---: |
+| Drei Dämme, kein Graben | 4.567,40 m³ | 4.261,90 m³ | 0 m³ | 305,50 m³ |
+| Drei Dämme und diagonaler Graben | 5.531,12 m³ | 5.208,24 m³ | 22,85 m³ | 299,23 m³ |
+
+Die Markierungsbilanzreste liegen betragsmäßig unter 3,39 × 10⁻¹⁰ m³, die relativen Wasserbilanzfehler unter 1,52 × 10⁻¹³. Die Berechnung belegt diesen geordneten Modellanteil ab dem betrachteten mittleren bis östlichen Teil der Trasse; zwischen den Kanten kann er sich außerhalb des Grabens bewegen. Sie belegt keinen Durchgang vom östlichsten Eingang, keine eindeutig unterscheidbaren Wasserteilchen und keine realen Folgen außerhalb des Modells. Wiederholte Markierung nach Rückkehr ins Gewässer ist möglich.
+
+`bun tools/compare-diversion-paths.ts` vergleicht den früheren Landgraben `(0,4) → (25,4)` mit dem diagonalen Graben `(0,3) → (38,11)`. Die 26 beziehungsweise 47 Zellen umfassenden Trassen teilen die sechs Zellen `(2,4)` bis `(7,4)`. Bei vorbereiteten drei Dämmen ist jede für sich zulässig; nach Bestätigung einer Trasse lehnt der Worker die andere in beiden Reihenfolgen wegen bereits gegrabener Zellen ab. Sie sind damit alternative Maßnahmen mit gemeinsamem Abschnitt, keine unverändert gleichzeitig ausführbaren, vollständig getrennten Wege. Das sagt nichts über andere mögliche Trassen oder eine reale Ableitung aus.

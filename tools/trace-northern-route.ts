@@ -20,7 +20,12 @@ const parts=entryArg?entryArg.slice(8).split(','):[String(Math.min(30,coordinate
 if(parts.length!==2||parts.some(v=>!/^\d+$/.test(v)))throw Error('Eintrittsbereich: --entry=MIN,MAX');
 const [entryMin,entryMax]=parts.map(Number);
 if(entryMin>entryMax||entryMin<5||entryMax>coordinates[2])throw Error('Eintrittsbereich muss zwischen 5 und dem östlichen Endpunkt liegen');
-const sections=[30,20,10,5].filter(x=>x<=entryMin),stages=Array.from({length:sections.length+1},()=>new Float64Array(n)),changes=stages.map(()=>new Float64Array(n));
+const sectionsArg=process.argv.find(a=>a.startsWith('--sections='));
+const rawSections=sectionsArg?sectionsArg.slice(11).split(','):null;
+if(rawSections&&(!rawSections.length||rawSections.some(v=>!/^\d+$/.test(v))))throw Error('Ungültige Querschnitte');
+const sections=rawSections?rawSections.map(Number):[30,20,10,5].filter(x=>x<=entryMin);
+if(!sections.length||sections.some((x,i)=>x<1||x>entryMin||(i>0&&x>=sections[i-1])||!cells.some(c=>c%w===x&&route.has(c-1))))throw Error('Querschnitte müssen absteigend und auf der Trasse liegen');
+const stages=Array.from({length:sections.length+1},()=>new Float64Array(n)),changes=stages.map(()=>new Float64Array(n));
 let tagged=0,returned=0,otherExit=0,orderedWest=0,maxBound=0;
 function flux(a:number,b:number,axis:'x'|'y',crest:number){
  const ha=s.h[a],hb=s.h[b],z=Math.max(s.bed[a],s.bed[b],crest),aa=Math.max(0,ha+s.bed[a]-z),ab=Math.max(0,hb+s.bed[b]-z),q=axis==='x'?s.qx:s.qy;

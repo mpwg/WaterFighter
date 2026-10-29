@@ -4,7 +4,7 @@
 import { chromium } from 'playwright';
 import { readFileSync, writeFileSync } from 'node:fs';
 const segments=JSON.parse(readFileSync('tests/fixtures/strategy.json','utf8')).segments;
-const browser=await chromium.launch();
+const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined});
 const page=await browser.newPage({viewport:{width:1600,height:1000}});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
 await page.route('**/src/main.ts*',async route=>{const response=await route.fetch();const body=await response.text();await route.fulfill({response,body:body+'\nexport { world };\n'});});
@@ -35,6 +35,7 @@ const budget=await page.locator('#budget').textContent();
 if(budget.replace(/\s/g,'')!=='2600')throw new Error(`Strategie wurde ungenau platziert: Budget ${budget}`);
 await page.locator('#speed').click();const start=Date.now();await page.locator('#run').click();
 await page.waitForFunction(()=>!document.querySelector('#result').hidden,null,{timeout:240000});
-const report={budget,title:await page.locator('#result-title').textContent(),details:await page.locator('#result-details').textContent(),wallSeconds:(Date.now()-start)/1000,errors};
+const report={browser:browser.version(),budget,title:await page.locator('#result-title').textContent(),details:await page.locator('#result-details').textContent(),wallSeconds:(Date.now()-start)/1000,errors};
+if(report.title!=='Schadensziel erreicht' || errors.length)throw new Error(`Strategie fehlgeschlagen: ${JSON.stringify(report)}`);
 await page.screenshot({path:'/tmp/waterfighter-strategy-browser.png'});writeFileSync('/tmp/waterfighter-strategy-browser.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 await browser.close();

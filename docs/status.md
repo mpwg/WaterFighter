@@ -40,7 +40,7 @@ Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet di
 | Plausible Flutwelle, Barrieren und Überströmung | offen | Symmetrische Welle, Dammöffnung und überströmbare Barriere numerisch geprüft; [synthetische Sichtkontrolle](solverbericht.md#sichtkontrolle-der-dammöffnung) vorhanden |
 | 2,5D-Ansicht, Touch-Modi und Fehlerbehandlung | offen | Karten- und Werkzeugmodi, Strömungsmarker und Zustandsabfrage vorhanden; tatsächliche Geräte und umfassende Fehlerprüfung fehlen |
 | Atomare Aktionen, Budget, Wassererhaltung und Schadenswertung | offen | Regel-, Worker- und hydraulische Tests sowie Werkzeugvergleiche im Szenario bestehen; Geräteprüfungen fehlen |
-| Vollständige Runde und bezahlbare erfolgreiche Strategie | offen | Version 1.2: ohne Maßnahmen 322.771,10 Schaden; vollständige automatisierte 2×-Browserrunde mit Strategie 0 bei Budgetrest 2.600. Menschliche Gerätebedienung fehlt |
+| Vollständige Runde und bezahlbare erfolgreiche Strategie | offen | Version 1.2: ohne Maßnahmen 322.771,10 Schaden; vollständige automatisierte 2×-Browserrunde auf Anwendungscode `4dcd6f6` mit Strategie 0 bei Budgetrest 2.600. Menschliche Gerätebedienung fehlt |
 | Neustart und Schutz vor alten/doppelten Nachrichten | offen | Uhr, Raster, Kamera, Werkzeugmodus und Aktionszustand sowie alte/doppelte Nachrichten in Tests geprüft; drei vollständige Neustartrunden auf Anwendungscode `40ff739` bestanden |
 | Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: 16 Headless-Abläufe; Firefox 159: virtuelle Desktop-Abläufe und vollständige 2×-Runde; Safari und manuelle Abnahme offen |
 | Echte iPhone-/Android-Abnahme | nicht prüfbar | Lokal kein Smartphone sichtbar und `adb`/`idevice_id` fehlen; Zugang zu echten Geräten bereitstellen |

@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Nach dem Verwerfen einer Maßnahmenvorschau fordert der Hinweis wieder zur passenden ersten Auswahl auf. Produktionsbuild, 71 Modelltests und vier gezielte Chromium-Fälle für Vorschauersatz und Verwerfen bestanden; eine vollständige Browser-Suite dieses Anwendungsstands und echte Geräte bleiben offen.
+
 [Angeschlossene Gräben](browser-pruefung.md#grabenanschluss-nach-flutbeginn) wurden auch bei laufender Flut und in Pause im Produktionsbrowser geprüft: Nur neue Zellen wurden berechnet, und die Uhr blieb in der Pause stehen. Die kurzen automatisierten Tests ersetzen keine vollständige menschliche Runde oder Geräteprüfung.
 
 Eine [vollständige Landgraben-Runde im emulierten Hochformat](landgraben-live.md#live-runde-im-emulierten-hochformat) erreichte nach Touch-Platzierung und testseitiger Kamerafokussierung das Ziel; bei 03:00 und 04:00 zeigen alle 13 abgetasteten Grabenmarker Strömung. Ein echtes Smartphone und menschliches Auffinden der zunächst außerhalb des Ausschnitts liegenden Stelle bleiben offen.

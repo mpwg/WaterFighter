@@ -40,7 +40,7 @@ function setAwaiting(value:boolean) {awaiting=value;cancel.disabled=value;for(co
 function clearDraft() {first=undefined;draft=undefined;previewId='';setAwaiting(false);preview.hidden=true;confirm.disabled=true;world?.showPreview();}
 function chooseMode(next:Mode) { mode=next;modeRevision++;inspection.hidden=true;inspection.textContent='';clearDraft(); for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.setAttribute('aria-pressed',String(b.dataset.mode===mode)); message.textContent=mode==='camera'?'Karte verschieben und zoomen.':mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.'; }
 for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.onclick=()=>chooseMode(b.dataset.mode as Mode);
-cancel.onclick=clearDraft;
+cancel.onclick=()=>{clearDraft();message.textContent=mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.';};
 confirm.onclick=()=>{if(!draft||!round||awaiting)return;setAwaiting(true);confirm.disabled=true;previewText.textContent='Maßnahme wird ausgeführt …';pendingPresentation.set(previewId,{round,confirmedAt:performance.now(),confirmedRunning:running,confirmedSpeed:speed,confirmedVisible:document.visibilityState==='visible'});worker?.postMessage({type:'action',round,id:previewId,action:draft});};
 function describeDraft(action:Action):string {
   if(!scenario)return '';

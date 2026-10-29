@@ -39,3 +39,33 @@ test('Touch ersetzt eine offene Vorschau durch eine neue Auswahl',async({browser
     await expect(page.locator('#budget')).not.toHaveText('10 000');
   } finally {await context.close();}
 });
+
+test('Verwerfen fordert zu einer neuen Startpunktwahl auf',async({page})=>{
+  await page.setViewportSize({width:1200,height:800});
+  await page.goto('/');
+  await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('[data-mode="trench"]').click();
+  await page.mouse.click(800,360);
+  await page.mouse.click(850,385);
+  await expect(page.locator('#confirm')).toBeEnabled();
+  await page.locator('#cancel').click();
+  await expect(page.locator('#preview')).toBeHidden();
+  await expect(page.locator('#message')).toHaveText('Start und Ende auf der Karte antippen.');
+  await expect(page.locator('#budget')).toHaveText('10 000');
+  await page.mouse.click(800,360);
+  await expect(page.locator('#message')).toHaveText('Endpunkt auf der Karte antippen.');
+  await page.mouse.click(850,385);
+  await expect(page.locator('#confirm')).toBeEnabled();
+});
+
+test('nach verworfenem Abriss fordert der Hinweis zur Gebäudeauswahl auf',async({page})=>{
+  await page.setViewportSize({width:1200,height:800});
+  await page.goto('/');
+  await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('[data-mode="demolish"]').click();
+  await page.mouse.click(600,320);
+  await expect(page.locator('#confirm')).toBeEnabled();
+  await page.locator('#cancel').click();
+  await expect(page.locator('#message')).toHaveText('Gebäude auf der Karte antippen.');
+  await expect(page.locator('#budget')).toHaveText('10 000');
+});

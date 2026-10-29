@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import {trenchPath} from '../../src/simulation/path';
 
 test('ein schräger Graben folgt den Endpunkten und wird verbindlich bestätigt', async ({ page }) => {
   await page.addInitScript(() => {
@@ -26,4 +27,30 @@ test('ein schräger Graben folgt den Endpunkten und wird verbindlich bestätigt'
   await page.locator('#confirm').click();
   await expect(page.locator('#message')).toContainText('Maßnahme bestätigt');
   await expect(page.locator('#budget')).not.toHaveText('10 000');
+});
+
+test('diagonaler Graben bis zur Kartenecke lässt sich auswählen und bestätigen',async({page})=>{
+  await page.addInitScript(()=>{
+    const Original=window.Worker;
+    window.Worker=class extends Original {
+      override postMessage(message:any,options?:any){
+        if(message?.type==='preview'&&message.action?.kind==='trench')(window as any).diagonalCells=message.action.cells;
+        return super.postMessage(message,options);
+      }
+    };
+  });
+  await page.setViewportSize({width:1600,height:1000});
+  await page.goto('/');
+  await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('[data-mode="trench"]').click();
+  await page.locator('#panel-toggle').click();
+  // Projected cell centres on scenario 1.4, measured at the initial camera position.
+  await page.mouse.click(297.45,495.02);
+  await page.mouse.click(451.50,526.80);
+  await expect(page.locator('#confirm')).toBeEnabled();
+  expect(await page.evaluate(()=>(window as any).diagonalCells)).toEqual(trenchPath([0,0],[43,18],200));
+  await expect(page.locator('#preview-text')).toContainText('Kosten: 1550');
+  await expect(page.locator('#budget')).toHaveText('10 000');
+  await page.locator('#confirm').click();
+  await expect(page.locator('#budget')).toHaveText('8 450');
 });

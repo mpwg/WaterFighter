@@ -11,7 +11,7 @@ Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet di
 | Paket | Status | Tatsächlicher Nachweis | Nächster Schritt |
 | --- | --- | --- | --- |
 | AP 1 – Projektgrundlage | geprüft | Build, Typprüfung, Protokolltest, Entwicklungsserver und Browserlauf bestanden; Szene visuell geprüft | Bei Änderungen erneut prüfen |
-| AP 2 – Wiener Geodaten | in Arbeit | DGM und OSM bezogen, vorläufiges Szenariopaket zweimal bytegleich erzeugt und im Browser geladen: [Voruntersuchung](geodaten-voruntersuchung.md) | Bruchkanten-Näherung und Durchlässe prüfen, Bruchkanten und Durchlässe fachlich einordnen, Wasserwege und Lizenzpflichten belegen |
+| AP 2 – Wiener Geodaten | in Arbeit | DGM und OSM bezogen, vorläufiges Szenariopaket zweimal bytegleich erzeugt und im Browser geladen: [Voruntersuchung](geodaten-voruntersuchung.md) | Bruchkanten und Durchlässe fachlich einordnen, Wasserwege und Lizenzpflichten belegen |
 | AP 3 – Simulation | in Arbeit | Synthetische Solver- und Bilanztests, Sichtkontrolle der Dammöffnung und 600-s-Szenariolauf: [Solverbericht](solverbericht.md) | hohe lokale Tiefen einordnen und mobile Leistung prüfen |
 | AP 4 – Darstellung | in Arbeit | Szenarioansicht, Strömungsmarker, Worker-Snapshots und Maus-/Touch-Kamerasteuerung; 14 Chrome-Browserprüfungen | Strömungsanimation und Schadensanzeige auf tatsächlichen Geräten prüfen |
 | AP 5 – Werkzeuge/Schäden | in Arbeit | Worker-Regeln, Vorschau, Bestätigung, Budget und Schadenstests; drei Werkzeuge in Playwright-Chromium bedient | Wirkungsnachweise weiter abstimmen und Bedienung auf Geräten prüfen |
@@ -34,7 +34,7 @@ Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet di
 | Goal-Übergabe dokumentiert | erfüllt | `goal-auftrag.md` |
 | Historische Untersuchung erhalten; README aktualisiert | erfüllt | `archiv/enginevergleich-3d.md`, `../README.md` |
 | Build, Typprüfung, Entwicklungsserver und Worker-Start | erfüllt | Build, Server, Protokolltest und Worker-Initialisierung in Playwright-Chromium geprüft |
-| Reproduzierbares reales Wiener Szenario | offen | Version 1.2-draft mit approximierten Bruchlinien; Orthofotoüberlagerung geprüft, Durchlässe, Eignung und Lizenzpflichten offen |
+| Reproduzierbares reales Wiener Szenario | offen | Version 1.2-draft mit approximierten Bruchlinien; Orthofotoüberlagerung geprüft, Kreuzungsstellen geometrisch untersucht; Durchlässe, Eignung und Lizenzpflichten offen |
 | Ausrichtung, Höhenbezug, Datenlücken und Quellen geprüft | offen | Orthofotoüberlagerung, Höhenbezug und endliche Rasterwerte geprüft; fachliche Datenlücken und Bruchkanteninterpretation offen |
 | Stabiler Solver und Bilanzfehler unter 0,1 % | offen | Geschlossenes Becken, bilanziertes Zu-/Abfluss-Testfeld und 600-s-Szenariolauf bestehen; Einordnung der hohen lokalen Tiefe und Geräteprüfung fehlen |
 | Plausible Flutwelle, Barrieren und Überströmung | offen | Symmetrische Welle, Dammöffnung und überströmbare Barriere numerisch geprüft; [synthetische Sichtkontrolle](solverbericht.md#sichtkontrolle-der-dammöffnung) vorhanden |

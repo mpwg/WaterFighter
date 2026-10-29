@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Nach Geländeänderungen werden die Mesh-Grenzen für Gelände und Straßen aktualisiert. Ein Babylon-NullEngine-Test prüft die abgesenkten Grenzen nach einem Zustandsupdate und eine Geländeauswahl; ein konkreter Auswahl- oder Darstellungsfehler wurde dabei nicht reproduziert. Typprüfung und 58 Vitest-Tests bestanden auf dem damaligen gemeinsamen Arbeitsstand, der weitere uncommittete Änderungen enthielt. Eine erneute vollständige Browserprüfung dieses Commitstands steht aus.
+
 Der spielbare Prototyp lädt ein vorläufiges Wiener Szenariopaket, berechnet die Flut im Worker und bietet alle drei Werkzeuge sowie Ergebnis und Neustart. Eine vollständige automatisierte Runde und eine erfolgreiche Dammstrategie sind belegt. Die Szenario- und Gesamtprüfungen bleiben in Arbeit; echte Mobilgeräte und Safari wurden nicht abgenommen. Eine öffentliche Veröffentlichung erfolgte nicht.
 
 Der [Review-Steuerungsauftrag](review-steuerung-terra.md) priorisiert Spielgefühl und zwei nachvollziehbare Schutzansätze. Die vorgeschlagenen kürzeren Damm- und Ableitungskandidaten samt Kontrollfällen wurden unabhängig numerisch verglichen; der offene Westrand und die 3-m-Grabentiefe wurden als dokumentierte Spielannahmen in den Entwurf 1.4 übernommen: [Solverbericht](solverbericht.md#review-kandidaten-mit-zusätzlichem-westlichem-modellabfluss).

@@ -42,10 +42,10 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | Atomare Aktionen, Budget, Wassererhaltung und Schadenswertung | offen | Regel-, Worker- und hydraulische Tests sowie Werkzeugvergleiche im Szenario bestehen; Geräteprüfungen fehlen |
 | Vollständige Runde und bezahlbare erfolgreiche Strategie | offen | Version 1.2: ohne Maßnahmen 322.771,10 Schaden; vollständige automatisierte 2×-Browserrunde mit Strategie 0 bei Budgetrest 2.600. Menschliche Gerätebedienung fehlt |
 | Neustart und Schutz vor alten/doppelten Nachrichten | offen | Uhr, Raster und Aktionszustand sowie alte/doppelte Nachrichten in Tests geprüft; vollständige Runden fehlen |
-| Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: Headless-Abläufe; Firefox 159: virtuelle Desktop-Abläufe und vollständige 2×-Runde; Safari und manuelle Abnahme offen |
+| Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: elf Headless-Abläufe; Firefox 159: virtuelle Desktop-Abläufe und vollständige 2×-Runde; Safari und manuelle Abnahme offen |
 | Echte iPhone-/Android-Abnahme | nicht prüfbar | Lokal kein Smartphone sichtbar und `adb`/`idevice_id` fehlen; Zugang zu echten Geräten bereitstellen |
 | Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Keine echten Smartphones lokal erreichbar; Messung auf beiden Geräten erforderlich |
-| Drei stabile aufeinanderfolgende Runden | offen | Erster Versuch nach zwei Runden in der dritten geschlossen; Ursache ungeklärt, isolierte Wiederholung erforderlich |
+| Drei stabile aufeinanderfolgende Runden | offen | Drei 2×-Runden im vorigen Build bestanden; JS-Heap ohne fortlaufenden Anstieg, Prozessspeicher und endgültiger Build offen: [Browserprüfung](browser-pruefung.md) |
 | Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Build vorhanden; vollständige Quellen- und Lizenzprüfung fehlt |
 
 „Offen“ bedeutet hier, dass die Arbeit noch auszuführen ist. „Nicht prüfbar“ darf erst eingetragen werden, wenn ein konkretes Hindernis ermittelt und beschrieben wurde. Untersuchte, aber nicht erreichbare reale Geräte wären ein solcher Fall; ihr Fehlen wird aktuell nicht behauptet.

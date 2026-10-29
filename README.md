@@ -46,6 +46,7 @@ Wenn eine Bauvorschau nicht zulässig ist, erklärt sie den Grund, etwa einen Ka
 - [Umsetzungsplan](docs/umsetzungsplan.md): Architektur, Arbeitspakete und Abnahmekriterien.
 - [Status und Kriterienmatrix](docs/status.md): Fortschritt und tatsächliche Nachweise.
 - [Browser- und Stabilitätsprüfung](docs/browser-pruefung.md): ausgeführte Browserläufe und ihre Grenzen.
+- [Spieltest ohne Testkoordinaten](docs/spieltest.md): Ablauf und Beobachtungsbogen für die noch offene Prüfung mit einer Person.
 - [Mobil-Messverfahren](docs/mobil-messung.md): Vorbereitung der noch ausstehenden Geräteabnahme.
 - [Goal-Auftrag](docs/goal-auftrag.md): Implementierungsauftrag.
 - [Historischer 3D-Enginevergleich](docs/archiv/enginevergleich-3d.md): früherer Ansatz, keine Architekturvorgabe.

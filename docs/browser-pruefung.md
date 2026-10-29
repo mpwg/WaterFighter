@@ -2,6 +2,10 @@
 
 **Versionsbezug:** Die folgenden historischen Dammrunden und Screenshots vor der direkten Dammführung verwendeten die frühere rechtwinklige Pfadregel. Sie belegen den jeweils genannten damaligen Build, nicht die neuen Referenzwerte; aktuelle Nachweise sind gesondert gekennzeichnet.
 
+## Produktionsbuild mit direkter Dammführung
+
+Der Produktionsbuild des Anwendungscodes `2851271` mit Szenario `1.4-draft` bestand am 29. Oktober 2026 alle 62 Playwright-Chromium-Prüfungen unter Linux mit Softwaregrafik und einem Worker. Dazu gehören die direkte diagonale Dammvorschau in beiden Richtungen, ein gültig verschobener Referenzdamm, die Erklärung einer unzulässigen Randführung, Maus- und emulierte Touchbedienung sowie Neustarts. `bun run test --maxWorkers=1` bestand mit 63 Modelltests einschließlich einer erschöpfenden Pfadprüfung auf einem kleinen Raster; der Produktionsbuild bestand ebenfalls. Während des Browserlaufs liefen zeitweise numerische Modelluntersuchungen parallel; dies ist keine Leistungsmessung. Tatsächliche Mobilgeräte, Safari und menschliche Bedienung bleiben offen.
+
 ## Fehleranzeige bei ausgeblendetem Menü
 
 Ein kritischer Lade-, Worker- oder Grafikfehler öffnet das ausgeblendete Spielmenü, beendet den Worker und bietet dort eine Schaltfläche zum Neuladen. Eine Browserprüfung löst einen Grafikkontextverlust bei ausgeblendetem Menü aus, prüft die sichtbare Fehlermeldung und lädt über die Schaltfläche erfolgreich eine neue Vorbereitung. Die Prüfung simuliert das Ereignis und ersetzt keine Geräteprüfung eines tatsächlichen Grafikverlusts.

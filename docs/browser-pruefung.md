@@ -191,3 +191,7 @@ Für einen begrenzten Latenzvergleich wurde derselbe Damm in sechs neuen Browser
 ## Beschädigte Worker-Nachrichten
 
 Die Oberfläche fängt Fehler bei der Verarbeitung von Worker-Nachrichten ab, beendet den Worker und zeigt einen Hinweis zum Neuladen. Eine ungültige Initialisierungsantwort wird ebenfalls als Fehler behandelt. Drei Chrome-Tests injizieren nach dem Laden einen leeren Nachrichteninhalt, eine `ready`-Antwort mit falscher Protokollversion und einen Snapshot ohne verwendbaren Puffer. Vor der Änderung blieb die Oberfläche in diesen Fällen im Vorbereitungszustand; danach zeigen alle drei Fälle den Fehlerzustand und deaktivieren den Start. Die Prüfung deckt keine vollständige Validierung aller denkbaren Nachrichtenfelder ab. Am 29. Oktober 2026 bestanden Build, 42 Vitest-Tests und 26 Chrome-156-Browserprüfungen unter Bun 1.4.4. Safari und reale Geräte bleiben ungeprüft.
+
+## Vorschau bei kleinen Ansichten
+
+Bei einer Ansicht von 320 × 480 CSS-Pixeln konnte die Vorschau zuvor rechts aus dem sichtbaren Bereich ragen. Die Positionierung begrenzt sie nun auf die verfügbare Breite. Zwei Chrome-156-Tests emulieren Touch bei 320 × 480 und 480 × 320 CSS-Pixeln: Nach Werkzeugwahl und Ausblenden des Menüs wählen sie zwei Kartenpunkte, prüfen Sichtbarkeit, Treffpunkt und mindestens 44 × 44 CSS-Pixel für Bestätigen und Verwerfen und bestätigen anschließend den Damm. Am 29. Oktober 2026 bestanden Build, 42 Vitest-Tests und 28 Chrome-Browserprüfungen unter Bun 1.4.4. Die emulierten Ansichten ersetzen keine echte Geräteabnahme.

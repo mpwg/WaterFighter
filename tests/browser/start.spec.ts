@@ -286,3 +286,25 @@ for(const bad of [
   await expect(page.locator('#run')).toBeDisabled();
   expect(await page.evaluate(()=>(window as any).workerTerminated)).toBe(true);
 });
+
+for(const viewport of [{width:320,height:480},{width:480,height:320}]) test(`Vorschau bleibt bei kleiner Ansicht erreichbar (${viewport.width}×${viewport.height})`,async({browser})=>{
+  const context=await browser.newContext({viewport,isMobile:true,hasTouch:true}),page=await context.newPage();
+  await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('[data-mode="dam"]').tap();await page.locator('#panel-toggle').tap();
+  await page.touchscreen.tap(viewport.width/2,viewport.height*.47);
+  await page.touchscreen.tap(viewport.width/2+30,viewport.height*.52);
+  await expect(page.locator('#confirm')).toBeEnabled();
+  const previewBox=await page.locator('#preview').boundingBox();expect(previewBox).not.toBeNull();
+  expect(previewBox!.x).toBeGreaterThanOrEqual(0);expect(previewBox!.x+previewBox!.width).toBeLessThanOrEqual(viewport.width);
+  for(const selector of ['#confirm','#cancel']){
+    const box=await page.locator(selector).boundingBox();expect(box).not.toBeNull();
+    expect(box!.x).toBeGreaterThanOrEqual(0);expect(box!.y).toBeGreaterThanOrEqual(0);
+    expect(box!.x+box!.width).toBeLessThanOrEqual(viewport.width);expect(box!.y+box!.height).toBeLessThanOrEqual(viewport.height);
+    expect(box!.width).toBeGreaterThanOrEqual(44);expect(box!.height).toBeGreaterThanOrEqual(44);
+    const hit=await page.evaluate(({x,y})=>document.elementFromPoint(x,y)?.id,{x:box!.x+box!.width/2,y:box!.y+box!.height/2});
+    expect(hit).toBe(selector.slice(1));
+  }
+  await page.locator('#confirm').tap();await expect(page.locator('#preview')).toBeHidden();
+  await expect(page.locator('#budget')).not.toHaveText('10 000');
+  await context.close();
+});

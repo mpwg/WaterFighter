@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Auf Stand `bc6c8ed` bestanden 70 Modelltests und drei gezielte Chromium-Fälle zum Anschluss von Gräben und Ersetzen der Vorschau: [Prüfbeleg](browser-pruefung.md#vorschauersatz-und-angeschlossene-gräben). Eine vollständige Browser-Suite und echte Geräte für diesen Stand bleiben offen.
+
 Die Geodatenpipeline erzeugte das ausgelieferte Szenario erneut bytegleich aus den lokal gesicherten Rohdaten; Prüfsumme, Versionen und Grenzen stehen in der [Geodaten-Voruntersuchung](geodaten-voruntersuchung.md#erneuter-isolierter-szenariobuild).
 
 [Gräben können an bestehende Gräben anschließen](review-gebaeudevergleich.md#verbundene-nordgräben): Bereits ausgehobene Zellen werden in der Vorschau genannt und weder erneut bezahlt noch vertieft. Regel-, Worker- und gezielter Chromium-Test bestehen. Beide untersuchten Nordtrassen bleiben teilweise überlappend; ihr gemeinsamer Bau verbessert die getestete Runde nicht gegenüber dem diagonalen Graben allein.

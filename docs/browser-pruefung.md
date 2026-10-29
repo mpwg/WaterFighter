@@ -446,3 +446,7 @@ Ein Modelltest prüft Zellmittelpunkt, Oberflächenhöhe und Bewegungsgrenze auf
 Der Produktionsbuild von `64ba8bd` wurde zusätzlich aus einem separaten Git-Archiv erstellt; Build und alle 68 Vitest-Tests bestanden. Dies ergänzt die gezielten Browserprüfungen oben, ist aber kein vollständiger Browserlauf und keine Geräteabnahme.
 
 Auf dem isolierten Produktionsbuild `64ba8bd` bestanden am 29. Oktober 2026 zusätzlich alle 64 Playwright-Prüfungen in Headless-Chromium 156.0.8078.4 unter Linux mit Softwaregrafik (ein Worker, 8,0 Minuten). Ein separater Previewserver verwendete Port 4339 ohne Wiederverwendung; lokale Bibliotheken und Schriften waren über `LD_LIBRARY_PATH` und `FONTCONFIG_FILE` eingebunden. Der Lauf umfasst unter anderem die Pausenanimation, Bauauswahl mit Kartenverschiebung und den kombinierten Neustart. Er prüft diesen Commit, keine spätere Änderung oder echten Geräte.
+
+### Vorschauersatz und angeschlossene Gräben
+
+Auf Anwendungscode `bc6c8ed` bestanden am 29. Oktober 2026 `bun run test` mit 70 Modelltests sowie `bun --bun playwright test tests/browser/connected-trench.spec.ts tests/browser/preview-selection.spec.ts --workers=1` mit drei gezielten Fällen auf dem Vite-Entwicklungsserver. Playwright-Chromium 156 unter Linux verwendete Softwaregrafik und für einen Fall emulierten Touch. Die Fälle prüfen die Kosten einer überlappenden Grabenverlängerung und das Ersetzen einer unbestätigten Vorschau per Maus und Touch. Sie sind keine vollständige Browser-Suite, keine vollständige Spielrunde und keine Geräteabnahme.

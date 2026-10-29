@@ -1,5 +1,7 @@
 # Browser- und Stabilitätsprüfung
 
+**Versionsbezug:** Die folgenden historischen Dammrunden und Screenshots vor der direkten Dammführung verwendeten die frühere rechtwinklige Pfadregel. Sie belegen den jeweils genannten damaligen Build, nicht die neuen Referenzwerte; aktuelle Nachweise sind gesondert gekennzeichnet.
+
 ## Fehleranzeige bei ausgeblendetem Menü
 
 Ein kritischer Lade-, Worker- oder Grafikfehler öffnet das ausgeblendete Spielmenü, beendet den Worker und bietet dort eine Schaltfläche zum Neuladen. Eine Browserprüfung löst einen Grafikkontextverlust bei ausgeblendetem Menü aus, prüft die sichtbare Fehlermeldung und lädt über die Schaltfläche erfolgreich eine neue Vorbereitung. Die Prüfung simuliert das Ereignis und ersetzt keine Geräteprüfung eines tatsächlichen Grafikverlusts.

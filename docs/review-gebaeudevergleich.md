@@ -1,10 +1,10 @@
 # Gebäudevergleich der Referenzstrategien
 
-## Versuchsvergleich mit direkter Dammführung
+## Aktueller Vergleich mit direkter Dammführung
 
-**Stand dieses Versuchs:** Die direkte Dammführung und die erweiterten Referenzaktionen waren zum Zeitpunkt dieser Aufzeichnung noch nicht im veröffentlichten Anwendungscode enthalten. Die folgende Tabelle bezieht sich auf den parallelen lokalen Arbeitsstand; für den ausgelieferten Stand gelten bis zu dessen Übernahme die historischen Vergleiche weiter unten.
+**Stand:** Diese Vergleiche gelten für die direkte Dammführung und die erweiterten Referenzaktionen im aktuellen Anwendungscode.
 
-Im Versuchsstand folgt die Dammvorschau bei schrägen Endpunkten einer direkten, verbundenen Rasterlinie. Das Szenariopaket bleibt `1.4-draft`; die geänderte Pfadregel und die erweiterten Referenzaktionen gehören zum lokalen Versuchsstand. `bun tools/reference-strategies.ts baseline`, `shield`, `land-divert` und `divert` berechnen die folgenden 300-s-Runden mit demselben Paket; alle Maßnahmen erfolgen vor Flutbeginn.
+Die Dammvorschau folgt bei schrägen Endpunkten einer direkten, verbundenen Rasterlinie. Das Szenariopaket bleibt `1.4-draft`; die geänderte Pfadregel und die erweiterten Referenzaktionen gehören zum aktuellen Anwendungscode. `bun tools/reference-strategies.ts baseline`, `shield`, `land-divert` und `divert` berechnen die folgenden 300-s-Runden mit demselben Paket; alle Maßnahmen erfolgen vor Flutbeginn.
 
 | Variante | Flutschaden | Abrissverlust | Gesamtschaden | Budgetrest |
 | --- | ---: | ---: | ---: | ---: |

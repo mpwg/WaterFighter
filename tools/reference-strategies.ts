@@ -6,7 +6,7 @@ import {validateScenario} from '../src/scenario';
 const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
 const fixture=JSON.parse(readFileSync('tests/fixtures/review-strategies.json','utf8'));
 if(fixture.scenario!==scenario.version)throw Error('Szenarioversion stimmt nicht');
-const name=process.argv[2];const steps=fixture.strategies[name];if(!Array.isArray(steps))throw Error('Strategie: baseline | shield | divert');
+const name=process.argv[2];const steps=fixture.strategies[name];if(!Array.isArray(steps))throw Error('Strategie: baseline | shield | divert | land-divert');
 const game=new Game(scenario),s=game.solver,initial=s.volume(),results=[];
 for(const [i,step] of steps.entries()){
  let action:Action;

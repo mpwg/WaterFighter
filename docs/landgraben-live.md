@@ -1,5 +1,7 @@
 # Landgraben während einer laufenden Flut
 
+**Historischer Lauf:** Die hier verwendete Dammführung verlief rechtwinklig. Seit der direkten Dammführung sind die dammbasierten Schadens- und Strömungswerte nicht ohne Weiteres auf den aktuellen Stand übertragbar.
+
 Am 29. Oktober 2026 wurde `bun tools/observe-live-land-flow.mjs` mit Szenario `1.4-draft`, dem Vite-Entwicklungsserver und Chrome 156.0.8078.73 unter Linux mit Softwaregrafik ausgeführt. Der Test bestätigte vor Flutbeginn drei Dammabschnitte und den Graben von (0,4) bis (25,4) über die Spieloberfläche; der Budgetrest betrug 7.510. Die Klickpunkte wurden aus der Kamera und Szenengeometrie berechnet. Danach richtete der Test die Kamera programmatisch auf den Graben und blendete das Menü aus. Die Simulation und die Snapshots stammten während der gesamten Runde vom unveränderten Worker; es wurden keine gespeicherten Wasserzustände eingesetzt.
 
 Bei angezeigten 02:01 waren 13 Grabenzellen für Strömungsmarker abgetastet, davon keine mit einer Geschwindigkeit von mindestens 0,01 m/s. Bei 03:01 und 04:01 erfüllten jeweils alle 13 diese Schwelle; die größten abgetasteten Geschwindigkeiten betrugen 5,55 beziehungsweise 1,48 m/s. Die [Ansicht bei 03:01](landgraben-live-180.png) und die [Ansicht bei 04:01](landgraben-live-240.png) zeigen Strömungsstriche und den veränderten Überflutungszustand. Die Markergeschwindigkeit ist eine Anzeigegröße aus dem Spielmodell; sie ist kein realer Messwert.

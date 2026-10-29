@@ -2,6 +2,8 @@
 
 Stand: 29. Oktober 2026. Dieser Ausschnitt und das Prüfskript sind vorläufig; sie sind **kein fertiges Spielszenario**.
 
+**Hinweis zur Dammführung:** Die unten dokumentierten Vergleiche mit Referenzdämmen wurden mit der früheren rechtwinkligen Dammführung durchgeführt. Für die aktuelle direkte Dammführung gelten die neuen Werte im [Gebäudevergleich](review-gebaeudevergleich.md#aktueller-vergleich-mit-direkter-dammführung); Geodaten und Untersuchungen ohne Dämme sind davon nicht verändert.
+
 Als Kandidat dient ein 800 × 800 m großes Gebiet in der Brigittenau an der Donau: EPSG:31256, West/Süd/Ost/Nord 3900/344150/4700/344950 m. Die räumliche Übereinstimmung wurde anhand eines unabhängigen Orthofotos visuell geprüft; die Eignung für mindestens zwei spielbare Wasserwege ist hydraulisch noch zu belegen. Die OSM-Abfrage umfasst einen etwas größeren Bereich, damit Gebäude am Rand erfasst werden.
 
 ## Bezogene Rohdaten

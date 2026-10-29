@@ -110,6 +110,24 @@ for (const device of [
   await context.close();
 });
 
+test('Moduswechsel während einer Kartenberührung setzt keinen Baupunkt',async({browser})=>{
+  const context=await browser.newContext({viewport:{width:1200,height:800},hasTouch:true});
+  const page=await context.newPage();await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  const cdp=await context.newCDPSession(page),first={x:800,y:360,id:1};
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[first]});
+  await page.locator('[data-mode="dam"]').click();
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  await expect(page.locator('#message')).toHaveText('Start und Ende auf der Karte antippen.');
+  await expect(page.locator('#preview')).toBeHidden();
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[first]});
+  await page.locator('[data-mode="camera"]').click();await page.locator('[data-mode="dam"]').click();
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  await expect(page.locator('#message')).toHaveText('Start und Ende auf der Karte antippen.');
+  await page.touchscreen.tap(800,360);await expect(page.locator('#message')).toHaveText('Endpunkt auf der Karte antippen.');
+  await page.touchscreen.tap(850,385);await expect(page.locator('#confirm')).toBeEnabled();
+  await context.close();
+});
+
 test('Zweiter Finger übernimmt keine laufende Werkzeugberührung',async({browser})=>{
   const context=await browser.newContext({viewport:{width:1200,height:800},hasTouch:true});
   const page=await context.newPage();await page.goto('/');await expect(page.locator('#run')).toBeEnabled();

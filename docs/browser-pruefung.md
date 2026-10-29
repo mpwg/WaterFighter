@@ -159,3 +159,7 @@ Am 29. Oktober 2026 wurde die Pointer-Zuordnung korrigiert: Ein weiterer Kontakt
 ## Maßnahmendetails in der Vorschau
 
 Die Vorschau zeigt zusätzlich zu Kosten und verbleibendem Budget die Dammhöhe über der höheren benachbarten Sohle beziehungsweise die Geländeabsenkung des Grabens. Bei einem Gebäudeabriss nennt sie den vollständigen Gebäudeverlust; dieser ersetzt bereits verbuchten Flutschaden des Gebäudes und wird nicht zu ihm addiert. Die Werte stammen aus dem geladenen Szenario. Die Browserprüfungen kontrollieren alle drei Angaben sowie Vorschau und Bestätigung; die bestehenden Touch-Abläufe im simulierten Hoch- und Querformat bestehen auch mit dem längeren Text. Am 29. Oktober 2026 bestanden Build, 37 Vitest-Tests, 22 Chrome-156-Browserprüfungen und der statische Unterpfadtest unter Bun 1.4.4. Echte Geräte und Safari bleiben ungeprüft.
+
+## Moduswechsel während einer Berührung
+
+Ein bereits begonnener Kartenkontakt wird nach jedem Wechsel des Bedienmodus verworfen, selbst wenn anschließend zum ursprünglichen Modus zurückgewechselt wird. So kann das Loslassen einer Kameraberührung keinen Baupunkt setzen. Eine Chrome-Prüfung sendet dafür einen echten automatisierten Touchkontakt, wechselt währenddessen die Werkzeugtasten und prüft anschließend eine reguläre Dammvorschau. Am 29. Oktober 2026 bestanden Build, 37 Vitest-Tests und 23 Chrome-156-Browserprüfungen unter Bun 1.4.4. Dies ist keine Prüfung auf einem echten Mobilgerät.

@@ -23,12 +23,12 @@ const timeLabel=app.querySelector<HTMLElement>('#time')!, stateLabel=app.querySe
 type Mode='camera'|'dam'|'trench'|'demolish';
 let world:World|undefined, scenario:Scenario|undefined, round=0, running=false, finished=false, fatalError=false, speed:1|2=1;
 const pendingPresentation=new Map<string,{round:number;confirmedAt:number;confirmedRunning:boolean;confirmedSpeed:1|2;confirmedVisible:boolean;revision?:number;scheduled?:boolean}>();
-let mode:Mode='camera', first:{x:number;y:number}|undefined, draft:Action|undefined, previewId='', serial=0, awaiting=false;
+let mode:Mode='camera', modeRevision=0, first:{x:number;y:number}|undefined, draft:Action|undefined, previewId='', serial=0, awaiting=false;
 const resultPanel=app.querySelector<HTMLElement>('#result')!, resultTitle=app.querySelector<HTMLElement>('#result-title')!, resultDetails=app.querySelector<HTMLElement>('#result-details')!;
 app.querySelector<HTMLButtonElement>('#again')!.onclick=()=>{if(round)worker?.postMessage({type:'reset',round});};
 const preview=app.querySelector<HTMLDivElement>('#preview')!,previewText=app.querySelector<HTMLElement>('#preview-text')!,confirm=app.querySelector<HTMLButtonElement>('#confirm')!,budgetLabel=app.querySelector<HTMLElement>('#budget')!;
 function clearDraft() {first=undefined;draft=undefined;previewId='';awaiting=false;preview.hidden=true;confirm.disabled=true;world?.showPreview();}
-function chooseMode(next:Mode) { mode=next;clearDraft(); for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.setAttribute('aria-pressed',String(b.dataset.mode===mode)); message.textContent=mode==='camera'?'Karte verschieben und zoomen.':mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.'; }
+function chooseMode(next:Mode) { mode=next;modeRevision++;clearDraft(); for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.setAttribute('aria-pressed',String(b.dataset.mode===mode)); message.textContent=mode==='camera'?'Karte verschieben und zoomen.':mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.'; }
 for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.onclick=()=>chooseMode(b.dataset.mode as Mode);
 app.querySelector<HTMLButtonElement>('#cancel')!.onclick=clearDraft;
 confirm.onclick=()=>{if(!draft||!round||awaiting)return;awaiting=true;confirm.disabled=true;pendingPresentation.set(previewId,{round,confirmedAt:performance.now(),confirmedRunning:running,confirmedSpeed:speed,confirmedVisible:document.visibilityState==='visible'});worker?.postMessage({type:'action',round,id:previewId,action:draft});};
@@ -112,10 +112,10 @@ reset.onclick=()=>{ if(round) worker?.postMessage({type:'reset',round}); };
 speedButton.onclick=()=>{ if(!round)return; speed=speed===1?2:1; speedButton.textContent=`${speed}×`; worker?.postMessage({type:'speed',round,speed}); };
 app.querySelector<HTMLButtonElement>('#zoom-in')!.onclick=()=>world?.setZoom(0.8);
 app.querySelector<HTMLButtonElement>('#zoom-out')!.onclick=()=>world?.setZoom(1.25);
-let pointer: {id:number;x:number;y:number;startX:number;startY:number}|undefined;
-canvas.addEventListener('pointerdown',e=>{if(pointer)return;pointer={id:e.pointerId,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY};canvas.setPointerCapture(e.pointerId);});
-canvas.addEventListener('pointermove',e=>{if(pointer?.id===e.pointerId && mode==='camera'){world?.pan(e.clientX-pointer.x,e.clientY-pointer.y);pointer.x=e.clientX;pointer.y=e.clientY;}});
-canvas.addEventListener('pointerup',e=>{if(pointer?.id!==e.pointerId)return; if(mode!=='camera') selectAt(e.clientX,e.clientY); else if(Math.hypot(e.clientX-pointer.startX,e.clientY-pointer.startY)<5) message.textContent=world?.inspect(e.clientX,e.clientY)??'Karte ist noch nicht bereit.';pointer=undefined;});
+let pointer: {id:number;modeRevision:number;x:number;y:number;startX:number;startY:number}|undefined;
+canvas.addEventListener('pointerdown',e=>{if(pointer)return;pointer={id:e.pointerId,modeRevision,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY};canvas.setPointerCapture(e.pointerId);});
+canvas.addEventListener('pointermove',e=>{if(pointer?.id===e.pointerId && pointer.modeRevision===modeRevision && mode==='camera'){world?.pan(e.clientX-pointer.x,e.clientY-pointer.y);pointer.x=e.clientX;pointer.y=e.clientY;}});
+canvas.addEventListener('pointerup',e=>{if(pointer?.id!==e.pointerId)return; if(pointer.modeRevision!==modeRevision){pointer=undefined;return;} if(mode!=='camera') selectAt(e.clientX,e.clientY); else if(Math.hypot(e.clientX-pointer.startX,e.clientY-pointer.startY)<5) message.textContent=world?.inspect(e.clientX,e.clientY)??'Karte ist noch nicht bereit.';pointer=undefined;});
 for(const event of ['pointercancel','lostpointercapture'] as const) canvas.addEventListener(event,e=>{if(pointer?.id===e.pointerId)pointer=undefined;});
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();if(round)worker?.postMessage({type:'pause',round});fail('Grafikkontext verloren. Bitte Seite neu laden.');});
 fetch(`${import.meta.env.BASE_URL}scenarios/brigittenau-v1.json`).then(async response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return validateScenario(await response.json());}).then(loaded=>{

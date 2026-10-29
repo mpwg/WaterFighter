@@ -5,7 +5,7 @@
     "": {
       "name": "waterfighter",
       "dependencies": {
-        "@babylonjs/core": "9.33.0",
+        "@babylonjs/core": "9.33.1",
         "earcut": "^3.2.4",
       },
       "devDependencies": {
@@ -18,7 +18,7 @@
     },
   },
   "packages": {
-    "@babylonjs/core": ["@babylonjs/core@9.33.0", "", {}, "sha512-JMbMUoPy1AUQsqTKSjFOJV+gtshgfZdHDn3ZIFzOWwxQpKrHUQCgFDYKXRU4CwD/tAfT9zubiRJtUKCh5wpo7Q=="],
+    "@babylonjs/core": ["@babylonjs/core@9.33.1", "", {}, "sha512-NoIfREw4QeoXzRPpXnbUpmxxPIjuRi9iS4xFDbPgXHiLwCeHSI13DJHF8YB2gKHp6rA6T5R7BAevPvWHklvXWQ=="],
 
     "@jridgewell/resolve-uri": ["@jridgewell/resolve-uri@3.1.2", "", {}, "sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw=="],
 

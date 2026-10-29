@@ -14,6 +14,11 @@ test('Status und Quellen sind auf 320 × 480 lesbar und getrennt erreichbar', as
     const panel = (await page.locator('#game-panel').boundingBox())!;
     const footer = (await page.locator('footer').boundingBox())!;
     expect(panel.y + panel.height).toBeLessThanOrEqual(footer.y);
+    for (const button of await page.locator('.tools button').all()) {
+      const size=await button.evaluate(e=>({scroll:e.scrollWidth,client:e.clientWidth,width:e.getBoundingClientRect().width,height:e.getBoundingClientRect().height}));
+      expect(size.scroll).toBeLessThanOrEqual(size.client + 1);
+      expect(size.width).toBeGreaterThanOrEqual(44); expect(size.height).toBeGreaterThanOrEqual(44);
+    }
     for (const selector of ['#run', '#reset', '#speed']) {
       const button=page.locator(selector); await button.scrollIntoViewIfNeeded();
       const box=(await button.boundingBox())!;

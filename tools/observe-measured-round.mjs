@@ -17,7 +17,7 @@ try {
  await page.waitForFunction(()=>!document.querySelector('#result').hidden,null,{timeout:420000});
  const measurement=await page.evaluate(()=>window.waterfighterMeasurement.stop());
  const report={browser:browser.version(),wallSeconds:(Date.now()-start)/1000,result:await page.locator('#result-details').textContent(),measurement,errors};
- writeFileSync('/tmp/waterfighter-measured-round.json',JSON.stringify(report,null,2));
+ writeFileSync(process.env.WATERFIGHTER_MEASUREMENT_OUTPUT??'/tmp/waterfighter-measured-round.json',JSON.stringify(report,null,2));
  if(errors.length||!measurement.frameCount||!measurement.observedWallMs||!measurement.actions.length)throw Error('Messung unvollständig');
  console.log(JSON.stringify({browser:report.browser,wallSeconds:report.wallSeconds,result:report.result,frameCount:measurement.frameCount,frameP95:measurement.frameTimeP95Ms,simRate:measurement.simSecondsPerWallSecond,actionLatencies:measurement.actions.map(a=>a.latencyMs),errors},null,2));
 } finally {await browser.close();}

@@ -1,0 +1,16 @@
+{
+  "scenario": "1.4-draft",
+  "strategies": {
+    "baseline": [],
+    "shield": [
+      {"kind": "dam", "start": [26, 0], "end": [26, 10]},
+      {"kind": "dam", "start": [26, 10], "end": [36, 20]}
+    ],
+    "divert": [
+      {"kind": "dam", "start": [26, 0], "end": [26, 10]},
+      {"kind": "dam", "start": [26, 10], "end": [36, 20]},
+      {"kind": "demolish", "buildingId": "w33581744-0"},
+      {"kind": "trench", "start": [0, 10], "end": [23, 10]}
+    ]
+  }
+}

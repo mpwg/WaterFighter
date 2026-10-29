@@ -1,6 +1,9 @@
 {
-  "version": "1.3-draft",
+  "version": "1.4-draft",
   "inflowMaxColumnExclusive": 150,
   "inflowCurve": [[0, 0], [60, 3375], [140, 11250], [210, 7875], [300, 0]],
-  "inflowNote": "Der künstliche Zufluss wird auf 90 Gewässerzellen am oberen Rand verteilt; seine Kurve entspricht 75 % des Szenarioentwurfs 1.2. Dies sind Spielwerte und keine gemessene Hochwasserwelle."
+  "inflowNote": "Der künstliche Zufluss wird auf 90 Gewässerzellen am oberen Rand verteilt; seine Kurve entspricht 75 % des Szenarioentwurfs 1.2. Dies sind Spielwerte und keine gemessene Hochwasserwelle.",
+  "trenchDepth": 3,
+  "outflowEdges": ["bottom", "right", "left"],
+  "diversionNote": "Die Grabentiefe von 3 m und der zusätzlich offene westliche Modellrand sind Spielannahmen. Wasser, das den Rand verlässt, wird außerhalb des Ausschnitts nicht weiter simuliert; dies ist keine Aussage über eine sichere reale Ableitung."
 }

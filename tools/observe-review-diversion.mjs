@@ -1,17 +1,14 @@
 /** Test-only coordinate projection; every intervention still uses the normal UI. */
-import {gzipSync} from 'node:zlib';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {chromium} from '@playwright/test';
 const scenario=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
-if(scenario.version!=='1.3-draft')throw Error('Szenarioversion stimmt nicht');
-scenario.parameters.outflowEdges.push('left');scenario.parameters.trenchDepth=3;
+if(scenario.version!=='1.4-draft')throw Error('Szenarioversion stimmt nicht');
 const segments=JSON.parse(readFileSync('tests/fixtures/strategy.json','utf8')).segments.slice(0,2);
 const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined});
 const page=await browser.newPage({viewport:{width:1600,height:1000}}),errors=[];
 page.on('pageerror',e=>errors.push(e.message));page.on('crash',()=>errors.push('Seite abgestürzt'));
 try {
  await page.route('**/src/main.ts*',async route=>{const response=await route.fetch();const body=await response.text();await route.fulfill({response,body:body+'\nexport { world };\n'});});
- await page.route('**/scenarios/brigittenau-v1.json.bin',route=>route.fulfill({status:200,contentType:'application/octet-stream',body:gzipSync(Buffer.from(JSON.stringify(scenario)))}));
  await page.goto(process.env.WATERFIGHTER_URL??'http://127.0.0.1:5173/');await page.waitForFunction(()=>!document.querySelector('#run').disabled);
  async function landPoint(x,y,cell=false){return page.evaluate(async ({x,y,cell})=>{
   const {world}=await import(document.querySelector('script[src*="/src/main.ts"]').src),{Vector3,Matrix}=await import('/node_modules/@babylonjs/core/Maths/math.vector.js');
@@ -46,7 +43,7 @@ try {
  await page.locator('#speed').click();const start=Date.now();await page.locator('#run').click();
  for(const t of [60,120,180,240]){await page.waitForFunction(t=>{const [m,s]=document.querySelector('#time').textContent.split(':').map(Number);return m*60+s>=t;},t,{timeout:240000});await page.screenshot({path:`/tmp/waterfighter-review-${t}.png`});}
  await page.waitForFunction(()=>!document.querySelector('#result').hidden,null,{timeout:240000});
- const report={browser:browser.version(),scenario:scenario.version,experimental:{leftOpen:true,trenchDepth:3},budget:await page.locator('#budget').textContent(),title:await page.locator('#result-title').textContent(),details:await page.locator('#result-details').textContent(),wallSeconds:(Date.now()-start)/1000,errors};
+ const report={browser:browser.version(),scenario:scenario.version,budget:await page.locator('#budget').textContent(),title:await page.locator('#result-title').textContent(),details:await page.locator('#result-details').textContent(),wallSeconds:(Date.now()-start)/1000,errors};
  await page.screenshot({path:'/tmp/waterfighter-review-result.png'});writeFileSync('/tmp/waterfighter-review-browser.json',JSON.stringify(report,null,2));
  if(report.title!=='Schadensziel erreicht'||errors.length)throw Error(`Runde fehlgeschlagen: ${JSON.stringify(report)}`);console.log(JSON.stringify(report,null,2));
  }

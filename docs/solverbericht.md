@@ -214,3 +214,15 @@ Die geordnete Auswertung teilt die Markierung in fünf Fortschrittsstufen: Sie s
 Im Grabenversuch wurden an den vier Querschnitten 257,47, 175,15, 134,22 und 103,89 m³ markierter westwärtiger Fluss integriert. Diese separaten Flusssummen können wiederholt bewegte Anteile enthalten und sind nicht mit dem geordneten Randabfluss gleichzusetzen. Der Bilanzrest der geordneten Markierung liegt in beiden Läufen unter 1,1 × 10⁻¹² m³; die größte lokale Abweichung zwischen Summe der Stufen und einfacher Markierung unter 9 × 10⁻¹⁵ m³. Die globalen relativen Wasserbilanzfehler liegen unter 2,3 × 10⁻¹⁴. Ein zusätzlicher `dam2`-Lauf ohne Abriss und Graben ergab bei dieser Markierung dieselben Werte wie der Kontrolllauf mit Abriss ohne Graben.
 
 Das ist ein nachverfolgter, geordneter **numerischer Modellanteil** und ein stärkerer Hinweis auf den vorgesehenen Ableitungsweg als einzelne Kantenflüsse. Rusanov-Diffusion und Zellmischung verhindern die Interpretation als reale Wasserteilchen. Der offene Rand entfernt Wasser aus dem Ausschnitt, sagt nichts über die Folgen außerhalb aus und ist weiterhin keine geprüfte reale Ableitung. Der Versuch beweist nicht, dass der gesamte schadensmindernde Effekt durch diesen markierten Anteil verursacht wird; ein Browserlauf und eine menschliche Spielprüfung der Kandidaten fehlen.
+
+## Referenzstrategien auf dem ausgelieferten Entwurf 1.4
+
+Die zuvor verglichenen Spielannahmen sind in `1.4-draft` übernommen. `tests/fixtures/review-strategies.json` enthält die Aktionsfolgen; `bun tools/reference-strategies.ts baseline`, `shield` und `divert` berechnen jeweils 300 s direkt mit dem ausgelieferten Paket, ohne es im Speicher zu verändern. Alle Aktionen erfolgen in der Vorbereitung.
+
+| Strategie | Flutschaden | Abrissverlust | Gesamtschaden | Budgetrest |
+| --- | ---: | ---: | ---: | ---: |
+| Ohne Eingriff | 138.852,13 | 0 | 138.852,13 | 10.000 |
+| Zwei Dammabschnitte | 34.768,16 | 0 | 34.768,16 | 8.800 |
+| Zwei Dämme, Gebäudeabriss und Graben | 17.629,93 | 16.017 | 33.646,93 | 6.598 |
+
+Die relativen Wasserbilanzfehler der drei Läufe liegen unter 8,4 × 10⁻¹⁴. Beide Strategien erreichen das unveränderte Ziel 50.000. Der Graben und der Modellrand sind Spielannahmen; der Randabfluss wird außerhalb des Ausschnitts nicht weiter berechnet. Die obigen Kontrollversuche, Markierungen und Zeitpunktvergleiche stammen aus dem numerisch gleich parametrierten Kandidaten auf Basis `1.3-draft`; sie sind keine neue Geräte- oder Humanprüfung.

@@ -32,6 +32,8 @@ Zwei weitere Landkorridore vom südlichen Eintritt zum Südrand wurden über 300
 
 Ein [Tiefenvergleich am südlichen Landkorridor](geodaten-voruntersuchung.md#wiederholung-der-südlichen-gräben-mit-version-14) prüfte 3 m sowie hypothetisch 5 m und 8 m Grabentiefe. Auch die tieferen Varianten zeigen für die markierte Eintrittskante keinen nennenswerten direkten Randaustritt vor der Rückkehr ins Gewässer. Die Szenarioparameter bleiben unverändert; andere Wege und Eintritte sind weiterhin offen.
 
+Eine [Trassenprüfung des südlichen Landkorridors](geodaten-voruntersuchung.md#fluss-entlang-des-südlichen-landkorridors) zeigt mit Graben eine durchgehend nasse Folge und vorwärts gerichteten integrierten Fluss an jeder Kante, aber keinen Nachweis einer durchgehend markierten Wassermenge oder wirtschaftlichen Schutzwirkung. Die 55 Aktionen sind nicht menschlich getestet.
+
 Ein zusätzlicher Regeltest auf dem ausgelieferten Szenario 1.4 prüft den kurzen Graben durch die zuvor untersuchten Kanten `x:7072` und `x:7073`: Die Vorschau meldet zwei Kanten ohne Zustandsänderung; die bestätigte Aktion senkt beide tatsächlich um die konfigurierte Grabentiefe. Die 13 Tests der Spielregeln bestanden. Das belegt die konkrete Zuordnung im Spielmodell, keine reale Schutzfunktion der Kanten.
 
 Nach einer Bestätigung zeigt die Vorschau „Maßnahme wird ausgeführt“; Verwerfen und Werkzeugwechsel bleiben bis zur Workerantwort gesperrt. Ein Chromium-Test verzögert die Übermittlung künstlich und prüft die Sperre, das unveränderte Budget während des Wartens und die anschließende Ausführung. Produktionsbuild, 54 Vitest-Tests und zwei gezielte Chromium-Prüfungen bestanden; die Verzögerung ist ein Testaufbau und keine gemessene Geräte-Latenz.

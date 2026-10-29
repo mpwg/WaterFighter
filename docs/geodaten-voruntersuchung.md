@@ -251,6 +251,22 @@ Als Sensitivitätsversuch verändert die neue Option `--depth=5` beziehungsweise
 
 Der 5-m-Lauf hatte einen relativen Wasserbilanzfehler von 1,10 × 10⁻¹⁴ und einen Markierungsbilanzrest von −7,88 × 10⁻¹⁰ m³; beim 8-m-Lauf waren es 5,73 × 10⁻¹⁴ und −1,29 × 10⁻⁹ m³. Größere Tiefe erhöht den markierten Eintritt und das aufgestaute Landvolumen, liefert für diese markierte Eintrittskante und diesen Verlauf aber keinen nennenswerten direkten Randaustritt und nur geringe Schadensänderung. Die Markierung endet bei der ersten Rückkehr ins Gewässer und verfolgt keine realen Wasserteilchen. Sie schließt andere Eintrittsstellen, spätere Fließwege oder andere Trassen nicht aus; eine solche Vertiefung wurde weder ins Spiel übernommen noch fachlich als reales Bauwerk bewertet. Wiederholung nach `bun tools/find-southern-trench.ts 7 > /tmp/wf-southern-route-7.json` mit `bun tools/trace-land-retention.ts baseline --gates=y:10867,y:24918 --route-file=/tmp/wf-southern-route-7.json --depth=5` beziehungsweise `--depth=8`.
 
+### Fluss entlang des südlichen Landkorridors
+
+Am 29. Oktober 2026 prüfte `bun tools/inspect-southern-progress.ts baseline /tmp/wf-southern-route-7.json` und `trench` denselben 130-Zellen-Weg auf `1.4-draft` mit Bun 1.4.4; die Datei entsteht mit `bun tools/find-southern-trench.ts 7 > /tmp/wf-southern-route-7.json`. Der Graben setzt vor dem Start alle 55 einzeln gültigen Teilaktionen mit der ausgelieferten Tiefe von 3 m. Die Vergleichsrunde bleibt unbehandelt. Für die Stichproben endet jeweils ein Simulationsschritt genau bei 60, 120, 180, 240 und 300 s, wodurch geringe Abweichungen zu den früheren Läufen entstehen. Als nass gilt eine Zelle bei mehr als 0,02 m Tiefe.
+
+| Zeitpunkt | Nass: Kontrolle / Graben | Ab dem Eintritt zusammenhängend nass: Kontrolle / Graben |
+| --- | ---: | ---: |
+| 60 s | 0 / 1 | 0 / 0 Zellen |
+| 120 s | 0 / 31 | 0 / 16 Zellen |
+| 180 s | 32 / 130 | 2 / 130 Zellen |
+| 240 s | 48 / 130 | 2 / 130 Zellen |
+| 300 s | 0 / 130 | 0 / 130 Zellen |
+
+Über die Runde rekonstruierte das Programm den Rusanov-Massenfluss jeder benachbarten Trassenkante vor jedem Zeitschritt. In der Kontrolle hatten mehrere Kanten keinen Vorwärtsfluss und die Randzelle `(172,199)` keinen Austritt. Mit Graben betrug der kleinste über die Runde aufsummierte Vorwärtsfluss einer Trassenkante 1.788,50 m³; an dieser Kante `(171,196)` → `(172,196)` flossen in umgekehrter Richtung 0,02 m³. Über die Randzelle traten 1.766,95 m³ aus. Die relativen Wasserbilanzfehler der beiden Läufe betrugen höchstens 1,60 × 10⁻¹³; Gesamtschäden waren 138.852,08 ohne und 138.852,05 mit Graben, bei 10.000 beziehungsweise 6.750 Budgetrest.
+
+Die integrierten Kantenflüsse beziehen sich auf verschiedene Querschnitte und Zeitpunkte. Sie verfolgen keine bestimmte Wassermenge und beweisen keinen zeitlich geordneten Weg vom untersuchten Eintritt zum Rand; seitlicher Zu- und Abfluss ist möglich. Die frühere Markierungsrechnung für `y:24918` zeigte für diesen Eingang praktisch keinen direkten markierten Randaustritt vor Rückkehr ins Gewässer. Ein tatsächlich zusammenhängender Ableitungsweg und sein Schutzbeitrag sind daher weiterhin nicht belegt. Der lange Graben ist zudem nicht als menschlich bedienbare Maßnahme nachgewiesen.
+
 ## Übernahme der Spielparameter in Version 1.4
 
 Die zuvor nur experimentell untersuchten Parameter sind ab `1.4-draft` im gelieferten Szenario: 3 m Grabentiefe und ein zusätzlich offener westlicher Modellrand. Sie stehen mit ihrer Erläuterung in `tools/scenario-adjustments.json` und werden von `tools/build-scenario.py` in das Szenariopaket übernommen. Gelände, Gebäude, Rohdaten und das Schadensziel 50.000 bleiben unverändert. Der offene Rand entfernt Wasser aus dem berechneten Ausschnitt; das Gebiet dahinter wird nicht berechnet. Die Öffnung ist eine Spielvereinfachung, keine Aussage über reale Schadensvermeidung.

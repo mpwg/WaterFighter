@@ -474,3 +474,21 @@ Die Schadenswerte der jeweiligen offenen und geschlossenen Fälle stimmen auch v
 Mit demselben 20-m-Schutzdamm wurde der getrennte Graben vor Flutbeginn statt bei 180 s angelegt. `bun tools/compare-partial-diversion.ts 7 trench --guard-radius=2` ergibt 41.515,68 Schaden und 7.140 Budgetrest gegenüber 47.918,99 und 8.840 ohne Graben. Die Schadensminderung von 6.403,31 übersteigt die Grabenkosten von 1.700; beide Runden erreichen das Ziel. Mit experimentell geschlossenem Westrand (`--closed-west`) beträgt der Schaden mit Graben 41.516,30. Der vorab gebaute Graben führt bei offenem Rand über die 300-s-Runde insgesamt 8,07 m³ über den Westrand; ohne Graben ist der westliche Randabfluss null. Die Grabenaktion erhält das Wasservolumen, die relativen Wasserbilanzfehler liegen unter 1,10 × 10⁻¹³. Das Schließen des Randes verändert den Schaden in dieser Kombination um weniger als eine Einheit; der Randabfluss erklärt die gesamte Schadensminderung nicht.
 
 Die getrennte Markierungsrechnung `bun tools/trace-northern-route.ts trench --dams=2 --partial=7 --guard-radius=2 --route=0,46,47,26 --entry=30,47 --stay-on-route` markiert seitliche Eintritte im östlichen Trassenabschnitt und verfolgt sie ausschließlich innerhalb der Trassenzellen. Nach den westwärts geordneten Querungen bei x = 30, 20, 10 und 5 treten 4,22 m³ in der Randzeile 46 aus; die Kontrolle mit `control` statt `trench` ergibt null. Markiert wurden 17.312,14 m³ beziehungsweise 13.195,31 m³; die absoluten Markierungsbilanzreste liegen unter 1,30 × 10⁻¹⁰ m³. Das ist ein innerhalb der Modelltrasse verfolgter Anteil ab dem untersuchten Eintrittsbereich, kein durchgehend verfolgter Fluss vom Zufluss und keine Aussage über reale Wasserteilchen oder Folgen jenseits der Karte. Wiederholte Eintritte können erneut gezählt werden. Menschliche Platzierung und echte Geräte bleiben offen.
+
+### Eingriffszeiten mit 20-m-Schutzdamm und markierter Wasserpassage
+
+Die Kombination mit verkürztem zweitem Damm und 20-m-Schutzdamm wurde mit weiteren Eingriffszeiten wiederholt. Die Kontrolle ohne Graben endet bei 47.918,99 Schaden und 8.840 Budgetrest. `bun tools/compare-partial-diversion.ts 7 trench --guard-radius=2 --at=ZEIT` ergibt:
+
+| Grabenbau | Schaden | Budgetrest | Westlicher Modellabfluss |
+| ---: | ---: | ---: | ---: |
+| 150 s | 41.089,47 | 7.140 | 5,99 m³ |
+| 170 s | 37.380,49 | 7.140 | 0 m³ |
+| 180 s | 36.235,49 | 7.140 | 0 m³ |
+| 190 s | 36.346,38 | 7.140 | 0 m³ |
+| 200 s | 39.213,74 | 7.140 | 0 m³ |
+
+Alle Varianten erreichen das Schadensziel und vermindern den Schaden gegenüber der Kontrolle um mehr als die Grabenkosten von 1.700. Die Maßnahme erfolgt jeweils idealisiert zum angegebenen Zeitpunkt und erhält vorhandenes Wasser; die relativen Wasserbilanzfehler liegen unter 2,23 × 10⁻¹³. Die Werte belegen keine kontinuierliche Zeitgrenze zwischen den Stichproben.
+
+Die Markierungsrechnung `bun tools/trace-northern-route.ts trench --dams=2 --partial=7 --guard-radius=2 --route=0,46,47,26 --entry=30,47 --at=150 --stay-on-route --seed-at` markiert bei 150 s bereits vorhandenes Wasser im östlichen Trassenabschnitt sowie spätere seitliche Eintritte. Von insgesamt 12.600,88 m³ markiertem Eintritt, einschließlich 248,65 m³ anfänglich vorhandenen Wassers, passieren 3,19 m³ die Trassenkanten bei x = 30, 20, 10 und 5 westwärts und erreichen innerhalb der Trasse den Westrand in Zeile 46. Der passende Kontrolllauf mit `control` statt `trench` ergibt keinen solchen Austritt. Die absoluten Markierungsbilanzreste liegen unter 5,28 × 10⁻¹¹ m³ und die relativen Wasserbilanzfehler unter 1,34 × 10⁻¹³. Unterschiedliche Zeitschrittgrenzen führen zu einer geringfügigen Abweichung des Kontrollschadens gegenüber der ersten Tabelle.
+
+Dies belegt für den gewählten Eintrittsbereich eine geordnete Passage im Spielmodell nach Flutbeginn. Wiederholte Eintritte können erneut gezählt werden; die Rechnung verfolgt keine realen Wasserteilchen, beweist nicht die alleinige Ursache der Schadensminderung und berechnet keine Folgen jenseits des Modellrands. Die Ergebnisse zu anderen Zeitpunkten und die menschliche Platzierung bleiben getrennt zu beurteilen.

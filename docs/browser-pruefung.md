@@ -352,3 +352,9 @@ Build und 55 Vitest-Tests bestanden. Fünf gezielte Chromium-Prüfungen bestäti
 ### Höhenbezug beim Szenariostart
 
 Ein gezielter Playwright-Chromium-Test am 29. Oktober 2026 lieferte dem Entwicklungsserver ein ansonsten unverändertes `1.4-draft`-Szenario mit Höhenbezug „Adria“. Der Lader meldete „Ungültiger Höhenbezug; Wiener Null erforderlich“, der Zustand zeigte „Fehler“ und der Startknopf blieb deaktiviert. Die Szenario- und Controller-Tests prüfen zusätzlich den unveränderten Datensatz sowie fehlenden und falschen Höhenbezug; Typprüfung bestand. Der Test prüft die Datenkennzeichnung und Fehlerbehandlung, nicht die fachliche Richtigkeit jeder Höhenordinate.
+
+### Produktionsbuild mit Höhenbezugsprüfung
+
+Am 29. Oktober 2026 wurde Commit `e5e0276` per `git archive` in ein separates Verzeichnis exportiert und mit den vorhandenen gesperrten Abhängigkeiten gebaut. `bun run test` bestand mit 56 Vitest-Tests; `bun run build` bestand einschließlich Typprüfung. Auf diesem isolierten Produktionsbuild bestanden alle 57 Playwright-Tests in Headless-Chromium 156.0.8078.4 unter Linux mit Softwaregrafik (ein Worker, 6,6 Minuten). Eine separate Playwright-Konfiguration nutzte Port 4279 ohne Server-Wiederverwendung; Bibliotheken und Schriften wurden über die in dieser Umgebung eingerichteten `LD_LIBRARY_PATH` und `FONTCONFIG_FILE` eingebunden.
+
+Der Lauf umfasst unter anderem den fehlerhaften Höhenbezug, Maus- und emulierte Touchbedienung, laufende und pausierte Eingriffe, die verkürzte Runde und Neustart nach allen Werkzeugen. Er belegt weder eine vollständige menschliche Runde noch tatsächliches Safari oder echte Smartphones. Nach `e5e0276` hinzugekommene Änderungen sind nicht Teil dieses Laufs.

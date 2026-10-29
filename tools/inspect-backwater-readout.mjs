@@ -15,6 +15,7 @@ try {
   await new Promise(r=>world.scene.onAfterRenderObservable.addOnce(r));
  },state);
  await page.locator('#panel-toggle').click();
+ if(process.argv.includes('--close'))for(let i=0;i<12;i++)await page.locator('#zoom-in').click();
  const width=await page.evaluate(async()=>{const {world}=await import(document.querySelector('script[src*="/src/main.ts"]').src);return world.scenario.grid.width;});
  const results=[];
  for(const [x,y] of [[25,2],[26,2]]){
@@ -33,5 +34,7 @@ try {
   if(!found)throw Error(`Kartenabfrage für ${x},${y} nicht getroffen; erwartet ${expected}`);
   results.push(found);
  }
- console.log(JSON.stringify({scenario,browser:browser.version(),time:state.time,results},null,2));
+ const separation=Math.hypot(results[0].screen[0]-results[1].screen[0],results[0].screen[1]-results[1].screen[1]);
+ if(process.argv.includes('--close')&&separation<20)throw Error(`Dammseiten trotz Vergrößerung nur ${separation.toFixed(2)} CSS-Pixel auseinander`);
+ console.log(JSON.stringify({scenario,browser:browser.version(),time:state.time,close:process.argv.includes('--close'),separation,results},null,2));
 } finally {await browser.close();}

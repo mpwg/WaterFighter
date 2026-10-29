@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Der [Spieltestablauf](spieltest.md#produktionsbuild-für-ein-gerät-im-selben-netzwerk) enthält nun konkrete Schritte für eine Produktionsvorschau auf einer privaten Netzwerkadresse. Ein lokaler Abruf von HTML und Szenario sowie der Chromium-Start mit Worker über die eigene Adresse gelangen; Zugriff von einem zweiten Gerät und die menschliche Prüfung wurden nicht durchgeführt.
+
 Die neue Werkzeugverschiebung wurde zusätzlich in [Firefox 159](browser-pruefung.md#werkzeugverschiebung-in-firefox) mit Maus und emuliertem Touch geprüft; dabei blieb der erste Grabenpunkt erhalten. Der Lauf verwendete einen virtuellen Linux-Desktop und ersetzt keine Geräteabnahme.
 
 Ein [gezielter Produktionsbrowsertest](browser-pruefung.md#referenzgraben-nach-verschieben-und-vergrößern) setzt den Referenzgraben nach Verschieben und Vergrößern exakt über die 26 vorgesehenen Rasterzellen. Der Test verwendet projizierte Koordinaten; menschliche Platzierung und echte Geräte bleiben offen.

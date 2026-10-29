@@ -6,6 +6,18 @@ Dieser Ablauf bereitet die noch offene menschliche Spielprüfung vor. Er ist kei
 
 Im Repository `bun install --frozen-lockfile` und `bun run dev` ausführen und die vom Server ausgegebene lokale Adresse im Browser öffnen. Auf einem anderen Gerät ist eine erreichbare lokale Bereitstellung erforderlich; der Entwicklungsserver bindet standardmäßig nur an `127.0.0.1`. Die spielende Person soll mit der regulären Oberfläche und der eingebauten Hilfe beginnen. Gerät, Betriebssystem, Browser, Eingabemethode, Ausrichtung, Szenarioversion und Commit notieren. Keine Entwicklerwerkzeuge, Testprojektionen oder vorbereiteten Klickpunkte verwenden.
 
+### Produktionsbuild für ein Gerät im selben Netzwerk
+
+Auf dem Rechner mit dem Repository zuerst `bun install --frozen-lockfile` und `bun run build` ausführen. Die private IPv4-Adresse der Netzwerkschnittstelle ermitteln, die das Testgerät erreicht, und sie im folgenden Beispiel anstelle von `192.168.1.20` einsetzen:
+
+```sh
+bun --bun vite preview --host 192.168.1.20 --port 4173 --strictPort
+```
+
+Die vom Server ausgegebene `http://…:4173/`-Adresse auf dem Testgerät öffnen. Beide Geräte müssen sich erreichen können; Gastnetz-Isolation oder eine lokale Firewall können die Verbindung verhindern. Den Server nach dem Test mit Strg+C beenden. Die Bindung an die ausgewählte private Adresse ist eine lokale Testbereitstellung, keine öffentliche Veröffentlichung. Im Beobachtungsbogen den tatsächlich getesteten Build, das Gerät und den Browser festhalten; das bloße Starten des Servers ist kein Geräte- oder Spieltest.
+
+Auf dem hier verwendeten Linux-Rechner wurde ein isolierter Produktionsbuild kurz an dessen private Adresse gebunden. HTML und das komprimierte Szenario ließen sich über diese Adresse **vom selben Rechner** mit HTTP 200 abrufen; Chromium lud das Szenario und meldete den Worker als bereit. Ein Zugriff von einem zweiten Gerät wurde dabei nicht geprüft.
+
 ## Zwei Versuche
 
 1. Die Person spielt eine vollständige erste Runde selbstständig. Die beobachtende Person greift nur bei technischen Problemen ein und notiert gegebenenfalls die Hilfe; sie gibt keine Platzierungstipps.

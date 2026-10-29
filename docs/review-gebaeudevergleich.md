@@ -205,3 +205,22 @@ Die ergänzte Option `--dams=3` von `tools/trace-land-retention.ts` erlaubt dies
 | Drei Dämme und Graben | 27.651,49 m³ | 27.578,04 m³ | 73,45 m³ | 0 m³ | 808,69 |
 
 Die Markierungsbilanzreste liegen betragsmäßig unter 4,43 × 10⁻⁹ m³, die relativen Wasserbilanzfehler unter 1,52 × 10⁻¹³. In beiden Fällen enthält die erste erreichte Querschnittsstufe am Rundenende weniger als 0,27 m³; in späteren Stufen ist kein Anteil verblieben. Nach Rückkehr ins Gewässer kann Wasser erneut eintreten und erneut markiert werden; die markierten Eintritte sind deshalb keine Menge eindeutig unterscheidbarer Wasserteilchen. Der Versuch zeigt für diese Eintrittsregion und diese vier Trassenkanten keinen geordneten Modellanteil bis zum Rand. Andere Eintrittsregionen oder Wege sind damit nicht ausgeschlossen; die Modellrechnung erklärt die deutliche Schutzwirkung des Grabens weiterhin nicht vollständig und ist keine reale Flussprognose.
+
+### Gebäudewirkung und gespeicherte Wassermenge
+
+`bun tools/compare-northern-exposure.ts control` und `trench` vergleichen den Graben `(0,3) → (38,11)` nach denselben drei vorbereiteten direkten Dämmen. Beide Läufe verwenden `1.4-draft`, vollständige 300 s und die reguläre Gebäude- und Aktionslogik. Für die Stichproben werden Schritte bei den angegebenen Zeitpunkten begrenzt; dadurch entstehen geringe Rundungs- und Zeitschrittunterschiede zu anderen Läufen. Das Grabenvolumen ist die zum jeweiligen Zeitpunkt in allen 47 Zellen der Trasse enthaltene Wassermenge, keine zu- oder abgeflossene Gesamtmenge.
+
+| Simulationszeit | Gesamtschaden ohne / mit Graben | Wasser in den Trassenzellen ohne / mit Graben |
+| --- | ---: | ---: |
+| 120 s | 0 / 0 | 326,00 / 821,29 m³ |
+| 150 s | 35,00 / 29,87 | 696,82 / 1.420,30 m³ |
+| 180 s | 1.610,09 / 415,58 | 644,51 / 1.594,28 m³ |
+| 210 s | 7.388,56 / 666,76 | 501,64 / 1.596,63 m³ |
+| 240 s | 13.414,32 / 750,52 | 259,03 / 1.190,00 m³ |
+| 300 s | 23.574,17 / 808,69 | 77,67 / 474,35 m³ |
+
+Für `w316294474-0` beträgt die modellierte maximale Randtiefe bei 180, 210 und 240 s ohne Graben 0,98, 1,20 und 0,99 m, mit Graben in allen drei Stichproben 0 m. Bei `w219815193-0` sind es 0,19, 1,20 und 0,95 m ohne sowie jeweils 0 m mit Graben. Am Rundenende beträgt der Flutschaden dieser Gebäude ohne Graben 11.056 beziehungsweise 9.171,46, mit Graben jeweils 0. Die relativen Wasserbilanzfehler beider Läufe liegen unter 7,06 × 10⁻¹⁴.
+
+Die [Kontrollansicht](nordgraben-kontrolle-210.png) und die [Ansicht mit Graben](nordgraben-mit-210.png) zeigen dieselben berechneten Zustände bei 210 s mit drei Dämmen. Sie wurden aus gespeicherten Solverzuständen mit dem tatsächlichen Renderer von `cddc66f` in Headless-Chromium 156.0.8078.4 unter Linux erzeugt; Menü und Quellen sind für diesen Bildvergleich ausgeblendet und die Kamera testseitig auf den nördlichen Bereich gerichtet. Im Kontrollbild sind Gebäude mit Schaden farblich hervorgehoben; im Grabenbild bleiben dieselben Gebäude unbeschädigt. Die Bilder sind keine vollständige Browserrunde oder menschliche Bedienprüfung. Wiederholung: je Fall `bun tools/compare-northern-exposure.ts FALL --snapshot=/tmp/wf-north-210-FALL.json`, danach `node tools/render-northern-exposure.mjs` gegen einen Vite-Entwicklungsserver des genannten Rendererstands auf Port 5198.
+
+Der erhöhte Wasserinhalt im Graben ist mit einer Speicherwirkung vereinbar, beweist aber nicht, dass diese allein die Schadensminderung verursacht. Die Stichproben zeigen keine lückenlose Zeitreihe und die Bilder keine geordnete Durchleitung zum offenen Modellrand. Die Modellannahme berechnet keine Folgen jenseits des Ausschnitts und ist keine reale Gefahrenbewertung.

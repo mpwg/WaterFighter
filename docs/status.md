@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Ein [Gebäudevergleich mit Sichtbildern](review-gebaeudevergleich.md#gebäudewirkung-und-gespeicherte-wassermenge) zeigt beim nördlichen Graben niedrigere Randtiefen an zwei besonders betroffenen Gebäuden und mehr Wasser in den Grabenzellen. Eine alleinige Ursache oder geordnete Durchleitung ist daraus nicht bewiesen.
+
 Eine [Markierung seitlicher Eintritte](review-gebaeudevergleich.md#seitlicher-eintritt-und-geordnete-querungen) im östlichen Bereich des wirksamen Nordgrabens ergab keinen Anteil, der vier ausgewählte Trassenkanten in Reihenfolge passierte und vor Rückkehr ins Gewässer den Westrand erreichte. Andere Eintrittsstellen und Wege bleiben offen.
 
 Schräg gesetzte Dämme folgen nun wie Gräben einer direkten, verbundenen Rasterlinie. Das Szenario bleibt `1.4-draft`, aber dammbasierte Ergebnisse vor dieser Änderung sind historisch und mit der neuen Pfadregel nicht unverändert reproduzierbar. Die aktuellen numerischen Referenzen ergeben 138.852,13 Schaden ohne Maßnahmen, 25.821,81 mit zwei Dämmen und 863,20 mit drei Dämmen und Landgraben; die Restbudgets betragen 10.000, 8.800 und 7.510. Der [aktuelle Vergleich](review-gebaeudevergleich.md#aktueller-vergleich-mit-direkter-dammführung) enthält Kontrollfälle und Grenzen. Browser- und menschliche Prüfung der neuen Strategie sind noch offen.

@@ -127,7 +127,8 @@ export class World {
   }
   pick(clientX:number,clientY:number,buildingOnly=false):{x:number;y:number;buildingId?:string}|undefined {
     const rect=this.canvas.getBoundingClientRect();
-    const hit=this.scene.pick((clientX-rect.left)*this.engine.getRenderWidth()/rect.width,(clientY-rect.top)*this.engine.getRenderHeight()/rect.height,m=>buildingOnly?!!m.metadata?.buildingId:m===this.land);
+    // Babylon applies the engine hardware scaling itself when constructing the picking ray.
+    const hit=this.scene.pick(clientX-rect.left,clientY-rect.top,m=>buildingOnly?!!m.metadata?.buildingId:m===this.land);
     if(!hit?.hit||!hit.pickedPoint) return undefined;
     return {x:hit.pickedPoint.x+this.width*this.cell/2,y:hit.pickedPoint.z+this.height*this.cell/2,buildingId:hit.pickedMesh?.metadata?.buildingId};
   }

@@ -20,6 +20,7 @@ import { groundRoads, terrainHeight } from './roads';
 import { buildingCondition } from './building-status';
 import { boundaryArrowLines, boundaryArrows } from './boundary-arrows';
 import { MAX_TRENCH_FLOW_SAMPLES, trenchFlowCells } from './trench-flow';
+import { FlowClock } from './flow-clock';
 import type { Scenario } from '../scenario';
 import type { Action, BuildingStatus, Face } from '../simulation/game';
 
@@ -32,6 +33,7 @@ export class World {
   readonly camera: ArcRotateCamera;
   private readonly water: Mesh;
   private readonly flowLines: LinesMesh;
+  private readonly flowClock = new FlowClock();
   private readonly flowPositions: Float32Array;
   private readonly flowSamples: { x:number; y:number; height:number; vx:number; vy:number }[] = [];
   private flowTrenchCells:number[] = [];
@@ -127,7 +129,7 @@ export class World {
     }
     this.resize(); this.updateWater(new Float32Array(scenario.initialDepth));
     window.addEventListener('resize',this.resize);
-    this.engine.runRenderLoop(()=>{this.animateFlow(performance.now()/1000);this.scene.render();});
+    this.engine.runRenderLoop(()=>{this.animateFlow(this.flowClock.tick(performance.now()/1000));this.scene.render();});
   }
   private gridData(values:number[], colored:boolean): VertexData {
     const positions:number[]=[], indices:number[]=[], colors:number[]=[];
@@ -310,7 +312,8 @@ export class World {
     this.water.updateVerticesData(VertexBuffer.PositionKind,this.waterPositions,true);
     this.water.updateVerticesData(VertexBuffer.ColorKind,this.waterColors);
   }
-  resetView():void { this.zoom=560; this.camera.setTarget(Vector3.Zero()); this.camera.alpha=INITIAL_ALPHA; this.camera.beta=INITIAL_BETA; this.camera.radius=INITIAL_RADIUS; this.resize(); }
+  setFlowRunning(running:boolean,speed:1|2):void {this.flowClock.setRate(running?speed:0,performance.now()/1000);}
+  resetView():void { this.flowClock.reset(performance.now()/1000);this.zoom=560; this.camera.setTarget(Vector3.Zero()); this.camera.alpha=INITIAL_ALPHA; this.camera.beta=INITIAL_BETA; this.camera.radius=INITIAL_RADIUS; this.resize(); }
   setZoom(factor:number): void { this.zoom=Math.max(180,Math.min(950,this.zoom*factor)); this.resize(); }
   pan(dx:number,dy:number): void {
     const camera=this.camera; const scale=this.zoom/Math.max(1,this.canvas.clientHeight);

@@ -71,7 +71,7 @@ function selectAt(x:number,y:number) {
   const action=pathAction(first,hit);first=undefined;if(action)showDraft(action);else {world.showPreview();message.textContent='Bitte einen längeren Verlauf wählen.';}
 }
 let worker:Worker|undefined;
-function fail(text:string) { inspection.hidden=true;inspection.textContent='';pendingPresentation.clear(); fatalError=true; running=false; worker?.terminate(); run.disabled=true; reset.disabled=true; speedButton.disabled=true; for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=true; clearDraft(); resultPanel.hidden=true; gamePanel.hidden=false; gamePanel.scrollTop=0; panelToggle.setAttribute('aria-expanded','true'); panelToggle.textContent='Menü ausblenden'; message.textContent=text; stateLabel.textContent='Fehler'; reloadButton.hidden=false; }
+function fail(text:string) { inspection.hidden=true;inspection.textContent='';pendingPresentation.clear(); fatalError=true; running=false; world?.setFlowRunning(false,speed);worker?.terminate(); run.disabled=true; reset.disabled=true; speedButton.disabled=true; for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=true; clearDraft(); resultPanel.hidden=true; gamePanel.hidden=false; gamePanel.scrollTop=0; panelToggle.setAttribute('aria-expanded','true'); panelToggle.textContent='Menü ausblenden'; message.textContent=text; stateLabel.textContent='Fehler'; reloadButton.hidden=false; }
 try {worker=new Worker(new URL('./worker.ts',import.meta.url),{type:'module'});}
 catch {fail('Der Worker konnte nicht gestartet werden. Bitte die Seite neu laden.');}
 if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
@@ -89,7 +89,7 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
   } else if(data.type==='snapshot') {
     if(data.round===round && world && !fatalError) {
       const n=data.buffer.byteLength/16;
-      world.updateState(new Float32Array(data.buffer,n*12,n),data.buildings,data.dams,data.revision,data.trenches); world.updateWater(new Float32Array(data.buffer,0,n),new Float32Array(data.buffer,n*4,n),new Float32Array(data.buffer,n*8,n)); budgetLabel.textContent=Math.round(data.budget).toLocaleString('de-AT'); running=data.running;
+      world.setFlowRunning(data.running && !finished,data.speed);world.updateState(new Float32Array(data.buffer,n*12,n),data.buildings,data.dams,data.revision,data.trenches); world.updateWater(new Float32Array(data.buffer,0,n),new Float32Array(data.buffer,n*4,n),new Float32Array(data.buffer,n*8,n)); budgetLabel.textContent=Math.round(data.budget).toLocaleString('de-AT'); running=data.running;
       const display=(n:number)=>Math.round(n).toLocaleString('de-AT');damageTotal.textContent=`Schaden ${display(data.totalDamage)} / ${display(scenario!.parameters.damageTarget)}`;damageBreakdown.textContent=`Flut ${display(data.floodDamage)} · Abriss ${display(data.demolitionLoss)}`;
       const seconds=Math.floor(data.time); timeLabel.textContent=`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;
       stateLabel.textContent=finished?'Beendet':running?'Läuft':data.time===0?'Vorbereitung':'Pausiert'; run.textContent=running?'Pause':data.time===0?'Simulation starten':'Fortsetzen';
@@ -112,7 +112,7 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
     if(data.preview) {confirm.disabled=!data.result.ok;previewText.textContent=data.result.ok?`${draft?describeDraft(draft)+' · ':''}Kosten: ${data.result.cost} · Budget danach: ${data.result.budget}${data.result.loweredCrests?` · Senkt ${data.result.loweredCrests} modellierte ${data.result.loweredCrests===1?'Geländekante':'Geländekanten'}; der Wasserverlauf kann sich ändern.`:''}${data.result.buildingBlockedFaces?` · ${data.result.buildingBlockedFaces} ${data.result.buildingBlockedFaces===1?'Dammkante ist':'Dammkanten sind'} durch Gebäude bereits gesperrt.`:''}`:data.result.reason;}
     else {setAwaiting(false);if(data.result.ok){message.textContent=`Maßnahme bestätigt. Kosten: ${data.result.cost}.`;clearDraft();}else{previewText.textContent=data.result.reason;confirm.disabled=true;}}
   }
-  else if(data.type==='result' && data.round===round && !fatalError) { running=false; finished=true; inspection.hidden=true;inspection.textContent='';clearDraft();run.disabled=true; stateLabel.textContent='Beendet'; message.textContent='Die Runde ist beendet.';
+  else if(data.type==='result' && data.round===round && !fatalError) { running=false; finished=true; world?.setFlowRunning(false,speed);inspection.hidden=true;inspection.textContent='';clearDraft();run.disabled=true; stateLabel.textContent='Beendet'; message.textContent='Die Runde ist beendet.';
     const number=(n:number)=>Math.round(n).toLocaleString('de-AT');
     resultTitle.textContent=data.achieved?'Schadensziel erreicht':'Schadensziel verfehlt';
     resultDetails.textContent=`Flutschäden: ${number(data.floodDamage)} · Abrissverluste: ${number(data.demolitionLoss)} · Gesamtschaden: ${number(data.totalDamage)} · Ziel: höchstens ${number(data.target)} · Budgetrest: ${number(data.budget)}.`;

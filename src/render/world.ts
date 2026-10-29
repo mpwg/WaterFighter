@@ -16,6 +16,7 @@ import { VertexBuffer } from '@babylonjs/core/Buffers/buffer';
 import earcut from 'earcut';
 import { visibleWaterIndices } from './water-indices';
 import { damCrest } from '../simulation/dam-height';
+import { groundRoads, terrainHeight } from './roads';
 import type { Scenario } from '../scenario';
 import type { Action, BuildingStatus, Face } from '../simulation/game';
 
@@ -30,6 +31,8 @@ export class World {
   private readonly flowSamples: { x:number; y:number; height:number; vx:number; vy:number }[] = [];
   private readonly currentDepth: Float32Array;
   private currentBuildings = new Map<string,BuildingStatus>();
+  private readonly roads?: LinesMesh;
+  private readonly roadPositions?: Float32Array;
   private readonly land: Mesh;
   private readonly landPositions: Float32Array;
   private previewMesh?: LinesMesh;
@@ -66,6 +69,13 @@ export class World {
     this.waterIndexBuffer=this.wetVertices.length<=65536?new Uint16Array(this.width*this.height*6):new Uint32Array(this.width*this.height*6);
     const waterMat=new StandardMaterial('water-material',this.scene); waterMat.diffuseColor=new Color3(0.21,0.58,0.72); waterMat.specularColor=new Color3(0.1,0.15,0.16); waterMat.backFaceCulling=false; waterMat.emissiveColor=new Color3(0.10,0.29,0.38); waterMat.useAlphaFromDiffuseTexture=false;
     this.water.material=waterMat;
+    // OSM road paths follow the rendered terrain; elevated crossings are omitted.
+    const roadLines=groundRoads(scenario).map(points=>points.map(([x,y])=>new Vector3(x-this.width*this.cell/2,terrainHeight(x,y,this.width,this.height,this.cell,this.bed)+0.05,y-this.height*this.cell/2)));
+    if(roadLines.length){
+      this.roads=CreateLineSystem('roads',{lines:roadLines,updatable:true},this.scene);
+      this.roads.color=new Color3(0.46,0.43,0.34);this.roads.isPickable=false;
+      this.roadPositions=new Float32Array(roadLines.flatMap(line=>line.flatMap(p=>[p.x,p.y,p.z])));
+    }
     // The survey-derived face elevations affect flow, so show them on the map as well.
     this.updateSurveyRidges();
     // A fixed, bounded set of visual stream markers is updated from worker momentum.
@@ -118,6 +128,13 @@ export class World {
       this.landPositions[v*3+1]=this.bed[i];
     }
     this.land.updateVerticesData(VertexBuffer.PositionKind,this.landPositions);
+    if(this.roads && this.roadPositions){
+      for(let i=0;i<this.roadPositions.length;i+=3) {
+        const x=this.roadPositions[i]+this.width*this.cell/2,y=this.roadPositions[i+2]+this.height*this.cell/2;
+        this.roadPositions[i+1]=terrainHeight(x,y,this.width,this.height,this.cell,this.bed)+0.05;
+      }
+      this.roads.updateVerticesData(VertexBuffer.PositionKind,this.roadPositions);
+    }
     this.updateSurveyRidges();
     for(const b of buildings) {const mesh=this.scene.getMeshByName(`building-${b.id}`); if(mesh) mesh.setEnabled(!b.demolished);}
     const signature=JSON.stringify(dams);

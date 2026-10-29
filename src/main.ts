@@ -55,7 +55,7 @@ function fail(text:string) { pendingPresentation.clear(); fatalError=true; runni
 worker.onmessage=(event:MessageEvent<Response>)=>{
   const data=event.data;
   if(isReady(data) && !fatalError) {
-    round=data.round; pendingPresentation.clear(); running=false; finished=false; speed=1; clearDraft(); resultPanel.hidden=true; run.textContent='Simulation starten'; speedButton.textContent='1×';
+    round=data.round; pendingPresentation.clear(); running=false; finished=false; speed=1; chooseMode('camera'); world?.resetView(); resultPanel.hidden=true; run.textContent='Simulation starten'; speedButton.textContent='1×';
     run.disabled=false; reset.disabled=false; speedButton.disabled=false;
     message.textContent='Wiener Szenario geladen. Die Wasserberechnung ist bereit.'; stateLabel.textContent='Vorbereitung'; timeLabel.textContent='00:00';
   } else if(data.type==='snapshot') {

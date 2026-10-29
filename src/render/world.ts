@@ -183,6 +183,7 @@ export class World {
     this.water.updateVerticesData(VertexBuffer.PositionKind,this.waterPositions);
     this.water.updateVerticesData(VertexBuffer.ColorKind,this.waterColors);
   }
+  resetView():void { this.zoom=560; this.camera.setTarget(Vector3.Zero()); this.resize(); }
   setZoom(factor:number): void { this.zoom=Math.max(180,Math.min(950,this.zoom*factor)); this.resize(); }
   pan(dx:number,dy:number): void {
     const camera=this.camera; const scale=this.zoom/Math.max(1,this.canvas.clientHeight);

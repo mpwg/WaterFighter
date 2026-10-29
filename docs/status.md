@@ -45,7 +45,7 @@ Die Projektgrundlage ist geprüft. Ein vorläufiges Wiener Szenariopaket wird au
 | Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | Chrome 156: elf Headless-Abläufe; Firefox 159: virtuelle Desktop-Abläufe und vollständige 2×-Runde; Safari und manuelle Abnahme offen |
 | Echte iPhone-/Android-Abnahme | nicht prüfbar | Lokal kein Smartphone sichtbar und `adb`/`idevice_id` fehlen; Zugang zu echten Geräten bereitstellen |
 | Mobile Framezeiten, Simulationsrate und Aktionslatenz | nicht prüfbar | Messskript und [Verfahren](mobil-messung.md) vorhanden; keine echten Smartphones lokal erreichbar |
-| Drei stabile aufeinanderfolgende Runden | offen | Drei 2×-Runden im vorigen Build bestanden; JS-Heap ohne fortlaufenden Anstieg, Prozessspeicher und endgültiger Build offen: [Browserprüfung](browser-pruefung.md) |
+| Drei stabile aufeinanderfolgende Runden | offen | Drei 2×-Runden im vorigen Build bestanden; JS-Heap und Prozessbaum-RSS stichprobenartig erfasst, endgültiger Build offen: [Browserprüfung](browser-pruefung.md) |
 | Statischer Produktionsbuild und vollständige Quellenhinweise | offen | Build vorhanden; vollständige Quellen- und Lizenzprüfung fehlt |
 
 „Offen“ bedeutet hier, dass die Arbeit noch auszuführen ist. „Nicht prüfbar“ darf erst eingetragen werden, wenn ein konkretes Hindernis ermittelt und beschrieben wurde. Untersuchte, aber nicht erreichbare reale Geräte wären ein solcher Fall; ihr Fehlen wird aktuell nicht behauptet.

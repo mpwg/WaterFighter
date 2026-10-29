@@ -47,6 +47,7 @@ test('Graben und Damm vorschauen, bestätigen und neu starten', async ({page})=>
     await expect(page.locator('#budget')).not.toHaveText('10 000');
     await page.locator('#reset').click();
     await expect(page.locator('#budget')).toHaveText('10 000');
+    await expect(page.locator('[data-mode="camera"]')).toHaveAttribute('aria-pressed','true');
   }
 });
 
@@ -139,4 +140,13 @@ test('Messskript erfasst 1×-Frames, Workerzeit und bestätigte Aktionen',async(
   const report=await page.evaluate(()=>(window as any).waterfighterMeasurement.stop());
   expect(report.frameCount).toBeGreaterThan(0);expect(report.observedWallMs).toBeGreaterThan(0);expect(report.observedSimSeconds).toBeGreaterThan(0);
   expect(report.actions).toHaveLength(1);expect(report.actions[0].latencyMs).toBeGreaterThanOrEqual(0);
+});
+
+test('Neustart stellt Kartenmodus, Kameraziel und Zoom wieder her',async({page})=>{
+  await page.setViewportSize({width:1200,height:800});await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  const preview=async()=>{await page.locator('[data-mode="dam"]').click();await page.mouse.click(800,360);await page.mouse.click(850,385);await expect(page.locator('#confirm')).toBeEnabled();return await page.locator('#preview-text').textContent();};
+  const initial=await preview();await page.locator('#cancel').click();await page.locator('[data-mode="camera"]').click();
+  await page.mouse.move(700,420);await page.mouse.down();await page.mouse.move(760,460,{steps:4});await page.mouse.up();await page.locator('#zoom-in').click();
+  await page.locator('#reset').click();await expect(page.locator('[data-mode="camera"]')).toHaveAttribute('aria-pressed','true');
+  expect(await preview()).toBe(initial);
 });

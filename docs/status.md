@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026.
 
 ## Aktueller Stand
 
+Auf dem isolierten Produktionsbuild `d38c0ca` mit schematischer Grabenlinie bestanden [alle 85 Chromium-Fälle](browser-pruefung.md#gesamtsuite-mit-schematischer-grabenlinie). Menschliche Bedienung, tatsächliches Safari und echte Geräte bleiben offen.
+
 Ein [einzelner Abriss in einer erfolgreichen Dammstrategie](review-gebaeudevergleich.md#einzelabriss-in-einer-erfolgreichen-strategie) senkt den Gesamtschaden auch bei den geprüften Eingriffszeiten 120, 150 und 180 s stärker als seine Kosten; ein bereits beschädigtes Gebäude wird dabei nicht doppelt gewertet. Die Kombination mit dem späteren Westgraben ist für diesen Abriss dagegen ungünstig. Menschliche Bedienung und Geräteabnahme bleiben offen.
 
 Auch bei vier geprüften Einzelendpunkt-Abweichungen des 20-m-Schutzdamms erreicht der spätere getrennte Graben numerisch das Ziel und spart mehr Schaden als seine Kosten: [Vergleich](geodaten-voruntersuchung.md#einzelne-endpunktabweichungen-des-schutzdamms). Menschliche Platzierung und echte Geräte bleiben offen.

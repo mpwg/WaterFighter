@@ -10,6 +10,10 @@ Das Testzeitlimit für `small-readouts.spec.ts` wurde anschließend von 30 auf 6
 
 Auf dem isolierten Produktionsbuild `cdf3873` bestanden anschließend alle 84 Chromium-Fälle mit einem Worker in 13,8 Minuten. Der zuvor zeitüberschrittene Fall zur kleinen Statusansicht bestand im Gesamtlauf in 13,8 Sekunden. Es liefen zeitweise weitere Untersuchungen parallel; die Laufzeit ist keine Leistungsmessung. Später veränderte Darstellung und echte Geräte sind damit nicht geprüft.
 
+## Gesamtsuite mit schematischer Grabenlinie
+
+Auf dem isolierten Produktionsbuild `d38c0ca` bestanden am 29. Oktober 2026 alle 85 Playwright-Chromium-Fälle unter Linux mit Softwaregrafik und einem Worker in 14,3 Minuten. Dazu gehört der Bildvergleich der bestätigten Grabenlinie bei künstlich erhöhtem Wasser. Zeitweise liefen andere Untersuchungen parallel; die Dauer ist keine Leistungsmessung. Der Test belegt weder menschliche Verständlichkeit noch tatsächliches Safari oder echte Mobilgeräte.
+
 ## Karte im Werkzeugmodus verschieben
 
 Nach der Verbesserung der Platzierung lässt sich die Karte in allen Werkzeugmodi ziehen. Bei Damm und Graben bleibt ein bereits gewählter Startpunkt erhalten; gezogene Kontakte setzen keinen weiteren Punkt. Ein Produktionsbuild und 67 Modelltests bestanden. In Chromium mit Softwaregrafik bestanden gezielte Mausprüfungen in Hoch- und Querformat sowie Touch- und Mausprüfungen, die eine sichtbare Kartenverschiebung und die anschließende Endpunktauswahl prüfen. Ein erster erweiterter Touchlauf überschritt das bisherige 30-s-Testlimit; mit 90 s erlaubter Testdauer bestanden beide Verschiebungsfälle. Anschließend bestanden alle 64 Playwright-Chromium-Prüfungen auf dem Produktionsbuild des Anwendungscodes `4a54de4` unter Linux mit Softwaregrafik und einem Worker in 8,1 Minuten. Ein paralleler Langzeitlauf belastete den Rechner; die Zeit ist keine Leistungsmessung. Spätere Renderänderungen, unabhängige Spielpersonen und echte Geräte bleiben separat zu prüfen.

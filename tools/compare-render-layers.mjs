@@ -25,5 +25,5 @@ try {
   await page.close();
  }
  const report={browser:browser.version(),durationSeconds:15,results};
- writeFileSync('/tmp/waterfighter-render-layers.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+ writeFileSync(process.env.WATERFIGHTER_LAYER_OUTPUT??'/tmp/waterfighter-render-layers.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 } finally {await browser.close();}

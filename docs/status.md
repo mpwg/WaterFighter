@@ -22,6 +22,8 @@ Ein späterer isolierter Gesamtlauf zeigte einen Touchfehler im Querformat: Nach
 
 Die vollständige Chromium-Suite wurde anschließend auf einem isolierten Archiv von Anwendungscode `14fa5ff` wiederholt: Produktionsbuild, 55 Vitest-Tests und alle 56 Browserfälle bestanden, einschließlich des zuvor fehlerhaften Touchfalls und der Startmarkierung. Chrome 156 unter Linux verwendete Softwaregrafik und emulierten Touch. Die echten Geräte und eine menschliche Abnahme bleiben offen.
 
+Zwei zusätzliche südliche Grabenstrecken bis zu offenen Modellrändern wurden numerisch geprüft. Beide laufen überwiegend oder teilweise durch die Gewässermaske, vermindern den Schaden um weniger als ihre Kosten und belegen keinen durchgehenden Landweg; die Markierung endet bei der ersten Rückkehr ins Gewässer: [Einordnung](geodaten-voruntersuchung.md#wiederholung-der-südlichen-gräben-mit-version-14).
+
 Ein zusätzlicher Regeltest auf dem ausgelieferten Szenario 1.4 prüft den kurzen Graben durch die zuvor untersuchten Kanten `x:7072` und `x:7073`: Die Vorschau meldet zwei Kanten ohne Zustandsänderung; die bestätigte Aktion senkt beide tatsächlich um die konfigurierte Grabentiefe. Die 13 Tests der Spielregeln bestanden. Das belegt die konkrete Zuordnung im Spielmodell, keine reale Schutzfunktion der Kanten.
 
 Nach einer Bestätigung zeigt die Vorschau „Maßnahme wird ausgeführt“; Verwerfen und Werkzeugwechsel bleiben bis zur Workerantwort gesperrt. Ein Chromium-Test verzögert die Übermittlung künstlich und prüft die Sperre, das unveränderte Budget während des Wartens und die anschließende Ausführung. Produktionsbuild, 54 Vitest-Tests und zwei gezielte Chromium-Prüfungen bestanden; die Verzögerung ist ein Testaufbau und keine gemessene Geräte-Latenz.

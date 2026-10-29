@@ -237,6 +237,16 @@ Das Grabenende des untersuchten Beispiels liegt etwa bei 16,38467° Ost, 48,2425
 
 Die relativen Wasserbilanzfehler lagen unter 2,64 × 10⁻¹³. Der nördliche Graben senkt den Schaden um 21.140,46 bei 1.525 Kosten; der südliche verändert ihn um weniger als 0,01. Beide bleiben über dem Schadensziel von 50.000. Die getrennt berechneten Abschnitte sind durch die Spielregeln zulässig, ihre tatsächliche Bedienbarkeit wurde nicht geprüft; insbesondere erscheinen 46 Einzelaktionen aufwendig. Der integrierte Randabfluss verfolgt keine zusammenhängende Wassermenge und belegt keinen vollständigen Fließweg. Andere Grabenführungen und Kombinationen bleiben möglich. Diese Ergebnisse belegen weiterhin keine zwei sinnvoll nutzbaren Ableitungswege und keine Folgen außerhalb der Karte.
 
+Mit der zusätzlichen Option `--dams` setzt dasselbe Programm vor dem Graben die ersten beiden Referenzdämme. Auch in diesen drei 300-s-Läufen waren alle Aktionen zulässig und die relativen Bilanzfehler kleiner als 1,33 × 10⁻¹³:
+
+| Variante | Budgetrest | Gesamtschaden | Westlicher Modellabfluss |
+| --- | ---: | ---: | ---: |
+| Zwei Dämme ohne Graben | 8.800 | 34.768,16 | 0,01 m³ |
+| Zwei Dämme und nördlicher Korridor | 7.275 | 83.135,86 | 42,10 m³ |
+| Zwei Dämme und südlicher Korridor | 3.625 | 34.768,16 | 0,01 m³ |
+
+Der nördliche Graben verschlechtert damit diese konkrete Dammstrategie um 48.367,70 Schaden und verfehlt das Ziel, obwohl er in der unbehandelten Vergleichsrunde den Schaden senkt. Der südliche Korridor verändert auch hier das Ergebnis um weniger als 0,01. Die Ursache der Wechselwirkung wurde nicht räumlich isoliert; aus dem Randabfluss allein lässt sie sich nicht erklären. Die Berechnung ersetzt keine menschliche Platzierung und ist keine Aussage über andere Damm- oder Grabenverläufe.
+
 Zwei Pipeline-Läufe mit den dokumentierten Rohdaten erzeugten dieselbe Szenariodatei mit SHA-256 `bf7f274f8899ac3fa0332e2df2936423d06795a0bb193d4e7328aa0925512470`. Das lokale Rohdatenarchiv `raw-data/waterfighter-source-1.4-draft.tar.gz` enthält die elf prüfsummengeprüften Quelldateien und das Versionsmanifest; SHA-256 `89072e858e53cf3f77062a2117d18607235b2346b2b123af07e4bd882f56a77f`. Es liegt außerhalb von Git. Fachliche Prüfung der Bruchkanten und Durchlässe sowie die Lizenz- und Geräteabnahme bleiben offen.
 
 Ein weiterer unabhängiger Wiederaufbau am 29. Oktober 2026 entpackte dieses Archiv mit Pythons `tarfile`-Filter `data` nach `/tmp/wf-archive-audit`, kopierte `build-scenario.py`, `breakline_faces.py` und `scenario-adjustments.json` dorthin und führte die Pipeline mit den lokal installierten Versionen aus `tools/requirements-geo.txt` aus. Die erzeugte Datei enthielt 104 Gebäude, 422 Straßenabschnitte und 15.612 Wasserzellen; ihre SHA-256 war erneut `bf7f274f8899ac3fa0332e2df2936423d06795a0bb193d4e7328aa0925512470`, bytegleich mit dem ausgelieferten Paket. Der Lauf belegt die Wiederherstellung aus diesem lokalen Archiv, keine dauerhafte externe Bereitstellung oder vollständige Lizenz- und Fachdatenprüfung.

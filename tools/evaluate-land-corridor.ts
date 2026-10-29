@@ -2,12 +2,22 @@
 import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { Game } from '../src/simulation/game';
+import { damPath } from '../src/simulation/path';
 import { validateScenario } from '../src/scenario';
 
 const mode=process.argv[2];
 if(!['baseline','0','1'].includes(mode)) throw Error('Aufruf: bun tools/evaluate-land-corridor.ts baseline|0|1');
 const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
 const game=new Game(scenario),solver=game.solver,w=solver.width,initial=solver.volume();
+const dams=process.argv.includes('--dams')?2:0;
+if(dams) {
+  const fixture=JSON.parse(readFileSync('tests/fixtures/strategy.json','utf8')) as {scenario:string;segments:[[number,number],[number,number]][]};
+  if(fixture.scenario!==scenario.version) throw Error('Referenzstrategie passt nicht zur Szenarioversion');
+  for(const [i,[start,end]] of fixture.segments.slice(0,dams).entries()) {
+    const result=game.apply(`dam-${i}`,{kind:'dam',faces:damPath(start,end,w)});
+    if(!result.ok) throw Error(`Damm ${i}: ${result.reason}`);
+  }
+}
 let cells=0,segments=0;
 if(mode!=='baseline') {
   const search=spawnSync(process.execPath,['tools/find-land-routes.ts'],{encoding:'utf8'});
@@ -36,4 +46,4 @@ while(solver.time<scenario.parameters.duration-1e-9) {
   if(solver.step(maxDt)!==dt) throw Error('Zeitschritt stimmt nicht');
   game.addInflow(t,dt);game.updateDamage(dt);
 }
-console.log(JSON.stringify({scenario:scenario.version,mode,cells,segments,budget:game.budget,...game.totals(),westOutflow,relativeBalance:Math.abs(solver.volume()-initial-solver.inflow+solver.outflow-solver.roundoffVolume)/(initial+solver.inflow)},null,2));
+console.log(JSON.stringify({scenario:scenario.version,mode,dams,cells,segments,budget:game.budget,...game.totals(),westOutflow,relativeBalance:Math.abs(solver.volume()-initial-solver.inflow+solver.outflow-solver.roundoffVolume)/(initial+solver.inflow)},null,2));

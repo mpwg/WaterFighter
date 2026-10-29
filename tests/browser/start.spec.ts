@@ -266,3 +266,23 @@ test('Eine unlesbare Worker-Nachricht stoppt die Berechnung sichtbar',async({pag
   await expect(page.locator('#run')).toBeDisabled();
   expect(await page.evaluate(()=>(window as any).workerTerminated)).toBe(true);
 });
+
+for(const bad of [
+  {name:'leerer Inhalt',data:null},
+  {name:'falsche Protokollversion',data:{type:'ready',version:2,scenarioId:'brigittenau',round:1}},
+  {name:'beschädigter Snapshot',data:{type:'snapshot',round:1,buffer:null}},
+]) test(`Ungültige Worker-Nachricht meldet einen Fehler: ${bad.name}`,async({page})=>{
+  await page.addInitScript(()=>{
+    const OriginalWorker=window.Worker;
+    window.Worker=class extends OriginalWorker {
+      constructor(url:string|URL,options?:WorkerOptions){super(url,options);(window as any).testWorker=this;}
+      override terminate(){(window as any).workerTerminated=true;super.terminate();}
+    };
+  });
+  await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.evaluate(data=>(window as any).testWorker.dispatchEvent(new MessageEvent('message',{data})),bad.data);
+  await expect(page.locator('#state')).toHaveText('Fehler');
+  await expect(page.locator('#message')).toContainText('Seite neu laden');
+  await expect(page.locator('#run')).toBeDisabled();
+  expect(await page.evaluate(()=>(window as any).workerTerminated)).toBe(true);
+});

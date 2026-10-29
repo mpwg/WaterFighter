@@ -65,7 +65,10 @@ function fail(text:string) { pendingPresentation.clear(); fatalError=true; runni
 try {worker=new Worker(new URL('./worker.ts',import.meta.url),{type:'module'});}
 catch {fail('Der Worker konnte nicht gestartet werden. Bitte die Seite neu laden.');}
 if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
+  if(fatalError)return;
+  try {
   const data=event.data;
+  if(!data || typeof data!=='object' || !['ready','snapshot','action-result','result','error'].includes(data.type) || (data.type==='ready' && !isReady(data))) throw new Error('Ungültiges Worker-Protokoll');
   if(isReady(data) && !fatalError) {
     round=data.round; pendingPresentation.clear(); running=false; finished=false; speed=1; chooseMode('camera'); world?.resetView(); resultPanel.hidden=true; run.textContent='Simulation starten'; speedButton.textContent='1×';
     run.disabled=false; reset.disabled=false; speedButton.disabled=false;
@@ -102,6 +105,9 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
     resultPanel.hidden=false;
   }
   else if(data.type==='error' && (data.round===round || (round===0 && data.round===1))) fail(`Simulation angehalten: ${data.message}. Bitte die Seite neu laden.`);
+  } catch {
+    fail('Die Worker-Nachricht konnte nicht verarbeitet werden. Bitte die Seite neu laden.');
+  }
 };
 if(worker) {
   worker.onerror=()=>fail('Der Worker ist ausgefallen. Bitte die Seite neu laden.');

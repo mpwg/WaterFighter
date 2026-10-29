@@ -131,3 +131,9 @@ Nach Ergänzung der Worker-Start- und Nachrichtenfehlerbehandlung bestanden Prod
 Auf Produktionsbuild `ec8e054`, Szenario `1.3-draft`, liefen am 29. Oktober 2026 drei ungeschützte 2×-Runden mit `tools/observe-three-rounds.mjs` in Chrome 156.0.8078.73 unter Linux/Playwright mit Softwaregrafik. Pause, Zoom, Fortsetzen und Neustarts funktionierten; Seitenfehler wurden nicht protokolliert. Die Runden dauerten 153,211 / 152,997 / 152,981 s und endeten jeweils mit 140.415 Schaden und 10.000 Budgetrest.
 
 Der Seiten-Heap nach den Runden betrug 47.292.510 / 60.261.730 / 47.630.514 Bytes, die RSS-Summe im Prozessbaum 1.434.931.200 / 1.460.142.080 / 1.456.439.296 Bytes bei je zehn Prozessen. Beide Werte schwanken ohne durchgehenden Anstieg, schließen aber langsame Speicherprobleme nicht aus. Die automatisierte Desktopprüfung ersetzt keine echte Geräteabnahme und prüft nicht jede Bedienung über die gesamte Flutphase.
+
+## Drei Runden mit wiederverwendetem Wasser-Indexpuffer
+
+Auf Produktionsbuild `599463a`, Szenario `1.3-draft`, liefen am 29. Oktober 2026 drei ungeschützte 2×-Runden mit `tools/observe-three-rounds.mjs` in Chrome 156.0.8078.73 unter Linux/Playwright mit Softwaregrafik. Pause, Zoom, Fortsetzen und Neustarts funktionierten; Seitenfehler wurden nicht protokolliert. Die Runden dauerten 153,136 / 153,054 / 152,987 s und endeten jeweils mit 140.415 Schaden und 10.000 Budgetrest.
+
+Der Seiten-Heap nach den Runden betrug 33.964.452 / 30.247.072 / 31.684.488 Bytes, die RSS-Summe im Prozessbaum 1.394.540.544 / 1.414.283.264 / 1.427.746.816 Bytes bei je zehn Prozessen. Der Heap schwankt, die RSS-Summe steigt; drei Stichproben können langsame Speicherprobleme nicht ausschließen. Die automatisierte Desktopprüfung ersetzt keine echte Geräteabnahme.

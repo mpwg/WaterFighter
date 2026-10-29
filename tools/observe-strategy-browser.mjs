@@ -16,14 +16,14 @@ if(candidate){
   scenario.parameters.inflowCells=Array.from({length:scenario.grid.width},(_,x)=>x).filter(x=>x<150&&scenario.waterMask[x]===1);
   await page.route('**/scenarios/brigittenau-v1.json',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(scenario)}));
 }
-await page.goto('http://127.0.0.1:5173/');await page.waitForFunction(()=>!document.querySelector('#run').disabled);
+await page.goto(process.env.WATERFIGHTER_URL??'http://127.0.0.1:5173/');await page.waitForFunction(()=>!document.querySelector('#run').disabled);
 await page.locator('[data-mode=dam]').click();
 for(const [number,[start,end]] of segments.entries()) {
   for(const vertex of [start,end]) {
     const screen=await page.evaluate(async ([x,y])=>{
       const mainUrl=document.querySelector('script[src*="/src/main.ts"]').src;
       const {world}=await import(mainUrl);
-      const {Vector3,Matrix}=await import('/node_modules/.vite/deps/@babylonjs_core.js');
+      const {Vector3,Matrix}=await import('/node_modules/@babylonjs/core/Maths/math.vector.js');
       const g=world.scenario.grid, xx=Math.min(g.width-1,x), yy=Math.min(g.height-1,y);
       const z=world.scenario.bed[yy*g.width+xx];
       // Keep the first vertex just inside the raster so the pick hits a triangle.

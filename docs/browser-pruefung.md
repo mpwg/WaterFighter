@@ -41,3 +41,9 @@ Am 29. Oktober 2026 wurde der Produktionsbuild des Anwendungscodes `82562b8` mit
 ## Workerfehler
 
 Nach der Ergänzung der Fehlerbehandlung bestanden Build, 30 Vitest-Tests, zwei Python-Tests und 16 Chrome-156-Browserprüfungen. Zwei neue Browserprüfungen injizieren Worker-Fehlermeldungen bei der Initialisierung beziehungsweise beim Start der Simulation: Die Oberfläche zeigt den Fehler und den Hinweis zum Neuladen; die Simulation bleibt deaktiviert. Die Tests simulieren diese Fehlermeldungen und beweisen nicht jeden möglichen Worker-Ausfall. Der oben dokumentierte Drei-Runden-Lauf erfolgte vor dieser Änderung und muss für die vollständige Endabnahme auf dem endgültigen Anwendungscode wiederholt werden.
+
+## Wiederholung nach Workerfehlerkorrektur
+
+Der Produktionsbuild von Anwendungscode `48d5e8d`, Szenario `1.2-draft`, wurde am 29. Oktober 2026 erneut in Chrome 156.0.8078.73 unter Linux mit Softwaregrafik über `tools/observe-three-rounds.mjs` geprüft. Drei ungeschützte 2×-Runden dauerten 150,939 / 150,958 / 150,900 s; sie meldeten jeweils 322.752 Schaden und 10.000 Budgetrest. Das Protokoll enthält keine Seitenfehler. Weitere Browser- oder Simulationsprüfungen wurden währenddessen nicht gestartet.
+
+Der JavaScript-Heap nach den drei Runden betrug 32.175.461 / 33.140.033 / 53.416.153 Bytes, die Prozessbaum-RSS-Summe 1.395.912.704 / 1.405.493.248 / 1.432.903.680 Bytes bei jeweils zehn Prozessen. Beide Größen stiegen in diesen drei Endstichproben; daraus lässt sich weder ein Leck nachweisen noch ausschließen. Gemeinsame Speicherseiten können mehrfach gezählt werden, GPU-Speicher fehlt möglicherweise, und Garbage Collection beeinflusst den Heap. Der Lauf prüft Start, Ergebnis und Neustart, aber keine vollständige Bedienung während aller drei Flutphasen. Echte Geräte und eine längere Speicheruntersuchung bleiben offen.

@@ -1,6 +1,20 @@
 import {expect,it,vi} from 'vitest';
 import {World} from '../src/render/world';
 
+it('markiert ein kleines Abrissziel und entfernt die Markierung beim Verwerfen',async()=>{
+  const {NullEngine}=await import('@babylonjs/core/Engines/nullEngine');
+  const {Scene}=await import('@babylonjs/core/scene');
+  const {CreateBox}=await import('@babylonjs/core/Meshes/Builders/boxBuilder');
+  const engine=new NullEngine(),scene=new Scene(engine),mesh=CreateBox('small',{size:2},scene);
+  mesh.metadata={buildingId:'small'};mesh.computeWorldMatrix(true);
+  const world={scene,cell:4,scenario:{buildings:[{id:'small',area:4}]},buildingMeshes:new Map([['small',mesh]])} as any;
+  try {
+    World.prototype.showPreview.call(world,{kind:'demolish',buildingId:'small'});
+    const marker=world.previewMesh;expect(marker.name).toBe('preview-building-marker');expect(marker.isPickable).toBe(false);expect(mesh.renderOverlay).toBe(true);
+    World.prototype.showPreview.call(world);expect(marker.isDisposed()).toBe(true);expect(mesh.renderOverlay).toBe(false);
+  } finally {scene.dispose();engine.dispose();}
+});
+
 it('bewahrt die Wasserabfrage beim Wiederverwenden des Snapshot-Puffers und aktualisiert Strömung',()=>{
   const world={width:2,height:2,cell:4,bed:[0,0,0,0],currentDepth:new Float32Array(4),flowSamples:[],flowTrenchCells:[],
     wetVertices:new Uint8Array(9),waterIndexBuffer:new Uint16Array(24),wetTopologyReady:false,waterPositions:new Float32Array(27),waterColors:new Float32Array(36),

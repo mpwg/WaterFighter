@@ -4,7 +4,7 @@ import '@babylonjs/core/Rendering/outlineRenderer';
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { Scene } from '@babylonjs/core/scene';
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
-import { Vector3 } from '@babylonjs/core/Maths/math.vector';
+import { Matrix, Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
 import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
@@ -23,6 +23,7 @@ import { MAX_TRENCH_FLOW_SAMPLES, trenchFlowCells } from './trench-flow';
 import { flowArrowLength, writeFlowArrow } from './flow-arrow';
 import { trenchRouteSegments } from './trench-route';
 import { FlowClock } from './flow-clock';
+import { uniqueSmallBuilding, type SmallBuildingBox } from './small-building-hit';
 import type { Scenario } from '../scenario';
 import type { Action, BuildingStatus, Face } from '../simulation/game';
 
@@ -237,6 +238,23 @@ export class World {
     if(!hit?.hit||!hit.pickedPoint) return undefined;
     return {x:hit.pickedPoint.x+this.width*this.cell/2,y:hit.pickedPoint.z+this.height*this.cell/2,buildingId:hit.pickedMesh?.metadata?.buildingId};
   }
+  /** Preserve exact hits; only offer a fallback when one small building is unambiguous. */
+  pickDemolition(clientX:number,clientY:number):{buildingId:string}|undefined {
+    const exact=this.pick(clientX,clientY,true);
+    if(exact?.buildingId)return {buildingId:exact.buildingId};
+    const rect=this.canvas.getBoundingClientRect(),rw=this.engine.getRenderWidth(),rh=this.engine.getRenderHeight();
+    if(!rect.width || !rect.height || !rw || !rh)return undefined;
+    const viewport=this.camera.viewport.toGlobal(rw,rh),transform=this.scene.getTransformMatrix(),boxes:SmallBuildingBox[]=[];
+    for(const [id,mesh] of this.buildingMeshes) {
+      if(!mesh.isEnabled() || !mesh.isVisible || !mesh.isPickable)continue;
+      const points=mesh.getBoundingInfo().boundingBox.vectorsWorld.map(v=>Vector3.Project(v,Matrix.Identity(),transform,viewport));
+      if(points.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)||!Number.isFinite(p.z)||p.z<0||p.z>1))continue;
+      const xs=points.map(p=>rect.left+p.x*rect.width/rw),ys=points.map(p=>rect.top+p.y*rect.height/rh);
+      boxes.push({id,left:Math.min(...xs),right:Math.max(...xs),top:Math.min(...ys),bottom:Math.max(...ys)});
+    }
+    const id=uniqueSmallBuilding(boxes,clientX,clientY);
+    return id?{buildingId:id}:undefined;
+  }
   showStart(point:{x:number;y:number}):void {
     this.showPreview();
     this.previewStart=point;
@@ -262,7 +280,24 @@ export class World {
     this.previewMesh?.dispose(); this.previewMesh=undefined;this.previewStart=undefined;
     for(const m of this.scene.meshes) if(m.metadata?.buildingId) m.renderOverlay=false;
     if(!action)return;
-    if(action.kind==='demolish') {const m=this.buildingMeshes.get(action.buildingId); if(m){m.renderOverlay=true;m.overlayColor=new Color3(1,0.3,0.1);m.overlayAlpha=0.55;}return;}
+    if(action.kind==='demolish') {
+      const m=this.buildingMeshes.get(action.buildingId);
+      if(m){
+        m.renderOverlay=true;m.overlayColor=new Color3(1,0.3,0.1);m.overlayAlpha=0.55;
+        // Small footprints can be hard to see in the overview: a non-pickable
+        // cross identifies the selected object without changing its geometry.
+        if((this.scenario.buildings.find(b=>b.id===action.buildingId)?.area??Infinity)<=64){
+          const bounds=m.getBoundingInfo().boundingBox,c=bounds.centerWorld.clone(),r=this.cell*2;
+          c.y=bounds.maximumWorld.y+2;
+          this.previewMesh=CreateLineSystem('preview-building-marker',{lines:[
+            [new Vector3(c.x-r,c.y,c.z),new Vector3(c.x+r,c.y,c.z)],
+            [new Vector3(c.x,c.y,c.z-r),new Vector3(c.x,c.y,c.z+r)],
+          ]},this.scene);
+          this.previewMesh.color=new Color3(1,0.3,0.1);this.previewMesh.isPickable=false;this.previewMesh.renderingGroupId=1;
+        }
+      }
+      return;
+    }
     let lines:Vector3[][]=[];
     if(action.kind==='dam') lines=action.faces.map(face=>this.facePoints(face,damCrest(face,this.width,this.height,this.bed,this.scenario.parameters.damHeight)+0.5));
     else lines=action.cells.map(i=>{const x=i%this.width,y=Math.floor(i/this.width),h=this.bed[i]+1;return [new Vector3((x+.2)*this.cell-this.width*this.cell/2,h,(y+.5)*this.cell-this.height*this.cell/2),new Vector3((x+.8)*this.cell-this.width*this.cell/2,h,(y+.5)*this.cell-this.height*this.cell/2)];});

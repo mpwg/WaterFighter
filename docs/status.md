@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Eine [Auswahlhilfe für kleine Abrissziele](browser-pruefung.md#auswahlhilfe-für-kleine-abrissziele) erlaubt eindeutige Beinahetreffer und markiert das gewählte kleine Gebäude in der Vorschau. Produktionsbuild, 76 Vitest-Tests und gezielte Chromium-Desktopprüfungen bestanden; eine vollständige Runde mit spätem Graben erreichte das Ziel und der kurze Safari-Werkzeuglauf bestand. Die menschliche Auffindbarkeit bleibt offen; mobile Tests sind ausgesetzt.
+
 Auf `1.5-draft` bestanden [vollständige automatisierte Desktoprunden in Google Chrome 156 und Firefox 159](browser-pruefung.md#google-chrome-und-firefox-auf-szenario-15) einschließlich Ergebnisneustart; Chrome erreichte mit spätem Graben das Ziel. 38 ausgewählte Chromium-Desktopfälle bestanden ebenfalls. Firefox meldete auf dem schreibgeschützten Testimage Sandbox- und Crashreporter-Zugriffsfehler, die während des erfolgreichen Ablaufs nicht ausgeräumt wurden. Eine menschliche Abnahme fehlt; mobile Tests sind ausgesetzt.
 
 Auf `1.5-draft` bestanden eine [vollständige Safari-27.2-Runde mit Ergebnisneustart](browser-pruefung.md#safari-272-auf-dem-korrigierten-szenario-15) und [drei Chromium-Runden mit allen Werkzeugen und zwei Neustarts](browser-pruefung.md#drei-chromium-runden-auf-15). Beide Prüfungen nutzten feste Testkoordinaten; die Speicherstichproben und die parallele Browserausführung erlauben keine abschließende Speicher- oder Leistungsabnahme. Build und alle 73 Vitest-Tests bestanden.

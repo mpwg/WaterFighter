@@ -6,6 +6,10 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Auf dem Mac wurde am 30. Oktober 2026 der Stand `7f86698` mit Bun 1.4.4 nach `bun install --frozen-lockfile` gebaut; `bun run build` und alle 72 Vitest-Tests bestanden. Ein gezielter Chromium-Lauf bestand sieben Fälle für schräge Dämme und Gräben sowie Grabenverlängerungen bei laufender und pausierter Flut; zwei davon nutzten emulierten Touch. Der zuvor gestartete Gesamtlauf wurde nach der Nutzerentscheidung, mobile Tests auszulassen, abgebrochen: elf Fälle bestanden, sieben waren beim Abbruch unterbrochen und 86 liefen nicht. Dies ist kein Gesamtsuite-Nachweis. Weitere mobile Prüfungen werden vorläufig ausgelassen.
+
+Safari 27.2 ist auf diesem Mac vorhanden. Ein WebDriver-Sitzungsversuch scheiterte, weil „Fernsteuerung erlauben“ in Safari nicht aktiviert ist; eine Safari-Spielprüfung fand nicht statt. Xcode meldete ein iPhone 15 Pro Max als offline. Die frühere Linux-Gerätebestandsaufnahme unten beschreibt nicht diesen Mac. Menschlicher Spieltest, Safari-Abnahme und die übrigen fachlichen und lizenzrechtlichen Lücken bleiben offen.
+
 Auf Ansichten bis 600 × 500 CSS-Pixel öffnet ein direkter Hilfeknopf die vorhandene Spielanleitung. Im schmalen Querformat wird die geöffnete Anleitung zum Lesen verbreitert; die Maßnahmenvorschau bleibt darüber bedienbar. Produktionsbuild und [alle 104 Chromium-Fälle](browser-pruefung.md#direkter-hilfezugang-auf-sehr-kleinen-ansichten) auf Anwendungscode `ff7e58c` bestanden. Auf dem vorherigen Anwendungscode `64f1f17` bestanden 72 Vitest-Tests und zwei Python-Tests. Menschliche Verständlichkeit und echte Geräte bleiben gesondert zu prüfen.
 
 Die [kompakte Spielhilfe](browser-pruefung.md#firefox-prüfung-der-kompakten-spielhilfe) ließ sich auf demselben Anwendungscode auch in Firefox 159 bei 500 × 320 CSS-Pixeln mit emuliertem Touch öffnen und schließen. Echte Geräte und die menschliche Verständlichkeit bleiben offen.

@@ -33,6 +33,14 @@ try {
   let found;
   for(const [sx,sy] of candidates){if(mobile)await page.touchscreen.tap(sx,sy);else await page.mouse.click(sx,sy);const text=await page.locator('#inspection').textContent();if(text?.includes(expected)){found={cell:[x,y],screen:[sx,sy],depth:state.depth[i],level,text};break;}}
   if(!found)throw Error(`Kartenabfrage für ${x},${y} nicht getroffen; erwartet ${expected}`);
+  if(process.argv.includes('--offsets')){
+   found.offsets=[];
+   for(const [dx,dy] of [[-3,0],[3,0],[0,-3],[0,3],[-5,0],[5,0],[0,-5],[0,5]]){
+    const sx=found.screen[0]+dx,sy=found.screen[1]+dy;
+    if(mobile)await page.touchscreen.tap(sx,sy);else await page.mouse.click(sx,sy);
+    const text=await page.locator('#inspection').textContent();found.offsets.push({offset:[dx,dy],same:!!text?.includes(expected),text});
+   }
+  }
   results.push(found);
  }
  if(process.env.WATERFIGHTER_SCREENSHOT)await page.screenshot({path:process.env.WATERFIGHTER_SCREENSHOT});

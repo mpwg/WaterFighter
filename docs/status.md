@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Ein [Live-Browsertest](browser-pruefung.md#laufender-gebäudeschaden-ohne-baumaßnahme) beobachtete auf `1.5-draft` den Wechsel eines Gebäudes auf das Schadensmaterial bei unveränderter Aktionsrevision. Die menschliche Erkennbarkeit bleibt offen.
+
 Die [Firefox-Wiederholung mit temporär kopierter App](browser-pruefung.md#firefox-wiederholung-mit-kopierter-app) bestand Werkzeuge, vollständige Runde und Neustart auf `1.5-draft`. Sandbox- und Crashreporter-Zugriffsfehler traten weiterhin auf; das zuvor schreibgeschützte Image erklärt sie nicht allein.
 
 Eine [gezielte Desktop-Werkzeugprüfung](browser-pruefung.md#desktop-werkzeugprüfung-auf-szenario-15) bestand 19 Chromium-Fälle auf dem aktuellen Produktionsbuild. Zwei vorherige Auswahlversuche wurden abgebrochen; dabei liefen versehentlich zwei kleine emulierte Ansichten. Echte Mobilgeräte wurden nicht geprüft und mobile Prüfungen bleiben ausgesetzt.

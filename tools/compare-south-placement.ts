@@ -25,7 +25,19 @@ changed[0]+=dx;changed[1]+=dy;
 if([start,end].some(([x,y])=>x<0||y<0||x>=solver.width||y>=solver.height)){
   console.log(JSON.stringify({scenario:scenario.version,strategy:north?'north':'south',endpoint,dx,dy,start,end,accepted:false,reason:'Endpunkt außerhalb der Karte.'}));process.exit(0);
 }
-const cells=trenchPath(start,end,solver.width),preview=game.preview({kind:'trench',cells});
+let cells=trenchPath(start,end,solver.width);
+const hybrid=process.argv.find(arg=>arg.startsWith('--hybrid='))?.slice(9);
+if(hybrid){
+  if(north||!['reference-tail','variant-tail'].includes(hybrid))throw Error('Hybrid muss reference-tail oder variant-tail für den südlichen Graben sein');
+  const reference=trenchPath(step.start,step.end,solver.width);
+  const cutX=Number(process.argv.find(arg=>arg.startsWith('--cut-x='))?.slice(8)??35);
+  if(!Number.isInteger(cutX)||cutX<0||cutX>=solver.width)throw Error('Ungültige Schnittposition');
+  const cut=cells.findIndex(i=>i%solver.width>=cutX&&reference.includes(i));
+  if(cut<0)throw Error('Kein gemeinsamer Knoten ab dieser Schnittposition');
+  const refCut=reference.indexOf(cells[cut]);
+  cells=hybrid==='reference-tail'?[...cells.slice(0,cut),...reference.slice(refCut)]:[...reference.slice(0,refCut),...cells.slice(cut)];
+}
+const preview=game.preview({kind:'trench',cells});
 if(!preview.ok){console.log(JSON.stringify({scenario:scenario.version,strategy:north?'north':'south',endpoint,dx,dy,start,end,accepted:false,reason:preview.reason,budget:game.budget}));process.exit(0);}
 const retainedKey=process.argv.find(arg=>arg.startsWith('--retain='))?.slice(9);
 const retained=retainedKey?scenario.surveyCrests.find(face=>`${face.axis}:${face.index}`===retainedKey):undefined;
@@ -45,5 +57,5 @@ while(solver.time<scenario.parameters.duration-1e-9){
   const t=solver.time,dt=solver.step(Math.min(1,scenario.parameters.duration-t,applied?Infinity:at-t));
   game.addInflow(t,dt);game.updateDamage(dt);
 }
-console.log(JSON.stringify({scenario:scenario.version,strategy:north?'north':'south',endpoint,dx,dy,start,end,accepted:true,at,cells:cells.length,cost,volumeChange,retained:retainedKey??null,budget:game.budget,
+console.log(JSON.stringify({scenario:scenario.version,strategy:north?'north':'south',endpoint,dx,dy,start,end,accepted:true,at,cells:cells.length,cost,volumeChange,retained:retainedKey??null,hybrid:hybrid??null,budget:game.budget,
   ...game.totals(),relativeBalance:Math.abs(solver.volume()-initial-solver.inflow+solver.outflow-solver.roundoffVolume)/(initial+solver.inflow)}));

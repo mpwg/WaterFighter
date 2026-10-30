@@ -80,7 +80,13 @@ export class Game {
     }
     for(const [k,crest] of this.damFaces) {const [axis,raw]=k.split(':'),i=Number(raw),field=axis==='x'?s.crestX:s.crestY; field[i]=Math.max(field[i],crest);}
   }
-  status():BuildingStatus[] { return this.buildings.map(({id,value,damage,demolished,neighbours})=>({id,value,damage,demolished,exposure:demolished?0:neighbours.reduce((depth,i)=>Math.max(depth,this.solver.h[i]),0)})); }
+  /** Measure water above the original surface, not the depth below it in a trench. */
+  private exposure(b:BuildingState):number {
+    let depth=0;
+    for(const i of b.neighbours) depth=Math.max(depth,this.solver.h[i]+this.solver.bed[i]-this.scenario.bed[i]);
+    return depth;
+  }
+  status():BuildingStatus[] { return this.buildings.map(b=>({id:b.id,value:b.value,damage:b.damage,demolished:b.demolished,exposure:b.demolished?0:this.exposure(b)})); }
   totals():{floodDamage:number;demolitionLoss:number;totalDamage:number} {
     let floodDamage=0,demolitionLoss=0;
     for(const b of this.buildings) if(b.demolished) demolitionLoss+=b.value; else floodDamage+=b.damage;
@@ -105,7 +111,7 @@ export class Game {
     if(!Number.isFinite(dt)||dt<0) throw new Error('Ungültige Schadenszeit');
     for(const b of this.buildings) {
       if(b.demolished) continue;
-      let depth=0; for(const i of b.neighbours) depth=Math.max(depth,this.solver.h[i]);
+      const depth=this.exposure(b);
       b.damage=Math.min(b.value,b.damage+b.value*Math.min(1,depth/this.scenario.parameters.damageDepth)*dt/this.scenario.parameters.damageDuration);
     }
   }

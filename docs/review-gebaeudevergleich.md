@@ -1,6 +1,16 @@
 # Gebäudevergleich der Referenzstrategien
 
-## Platzierung und Sichtbarkeit auf 1.6
+## Korrektur der Gebäudeschäden neben Gräben
+
+Am 30. Oktober 2026 zeigte ein Hybridvergleich für die Verschiebung des südlichen Endpunkts `(47,26)` → `(48,26)` den entscheidenden Unterschied: Die Referenz führt durch Zelle `(22,36)`, die Variante stattdessen durch `(23,37)` direkt neben einem Gebäude. Bei ansonsten gleichem Referenzverlauf sprang der Schaden von 5.339,96 auf 194.042,37. Die Schadensermittlung verwendete bislang die gesamte Wassertiefe der Nachbarzelle, einschließlich des unter das ursprüngliche Gelände ausgehobenen Teils. Das konnte ein Gebäude durch Wasser im tieferen Graben fälschlich als überflutet bewerten.
+
+Die Schadensermittlung und die angezeigte Exposition verwenden jetzt die Wasseroberfläche über der ursprünglichen Oberfläche der jeweiligen Nachbarzelle; negative Werte werden auf null begrenzt. Das ist weiterhin ein vereinfachtes Spielmodell und berücksichtigt keine spezifischen Gebäude-Eingangshöhen. Wasserstand, Strömung und Wasserbilanz selbst werden durch diese Änderung nicht verändert. Ein gezielter Regeltest prüft Wasser unter und über der ursprünglichen Oberfläche.
+
+Mit `bun tools/compare-south-placement.ts end 1 0 --hybrid=reference-tail --cut-x=22` und `--cut-x=24` sind die alten Hybridläufe reproduzierbar, wenn man den früheren Code auscheckt; die Endpunkte im Bericht bezeichnen die Ausgangsvariante, der resultierende Hybrid folgt ab dem ersten gemeinsamen Knoten der Referenz. Alle folgenden älteren Schadenszahlen und Wirtschaftlichkeitsvergleiche mit Gräben stammen aus der vorherigen Schadensberechnung und sind historisch, auch wenn die Szenarioversion gleich ist.
+
+Nach der Korrektur ergeben die Referenz und die drei zuvor besonders auffälligen zulässigen Einzelverschiebungen bei Eingriff nach 150 s 2.626,32 beziehungsweise 2.635,68, 2.647,33 und 2.654,84 Schaden. Die Budgets sind 6.540 beziehungsweise 6.565, 6.515 und 6.565; die Bilanzfehler liegen unter 0,1 %. Das erklärt den zuvor beobachteten extremen Ausschlag in diesen Fällen, beweist aber keine allgemeine Platzierungsrobustheit oder menschliche Verständlichkeit.
+
+## Platzierung und Sichtbarkeit auf 1.6 (historische Schadensberechnung)
 
 Die drei in 1.5 besonders nachteiligen Einzelverschiebungen des südlichen Grabens wurden auf `1.6-draft` mit `bun tools/compare-south-placement.ts start 1 0`, `end 1 0` und `end 0 1` bei 150 s wiederholt. Die unverschobene Referenz ergibt 6.341,85 Schaden; die drei zulässigen Varianten ergeben 192.702,70, 191.226,99 und 190.037,30. Das erste Grabenende liegt dabei eine Zelle vor dem offenen westlichen Modellrand; die übrigen Varianten erreichen den Rand, ändern aber den Verlauf am anderen Ende. Alle Bilanzfehler liegen unter 0,1 %.
 

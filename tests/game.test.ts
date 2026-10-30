@@ -73,6 +73,16 @@ describe('Bauaktionen und Schäden',()=>{
     expect(g.apply('d',{kind:'demolish',buildingId:'house'}).ok).toBe(true);
     expect(g.solver.crestX[face]).toBe(-Infinity);expect(g.solver.volume()).toBe(v);
   });
+  it('zählt Wasser unter der ursprünglichen Oberfläche eines Grabens nicht als Gebäudeflut',()=>{
+    const g=new Game(scenario),neighbour=11;
+    expect(g.apply('ditch',{kind:'trench',cells:[neighbour]}).ok).toBe(true);
+    g.solver.h[neighbour]=scenario.parameters.trenchDepth-0.5;
+    g.updateDamage(60);
+    expect(g.status()[0].exposure).toBe(0);expect(g.totals().floodDamage).toBe(0);
+    g.solver.h[neighbour]=scenario.parameters.trenchDepth+0.5;
+    g.updateDamage(1);
+    expect(g.status()[0].exposure).toBeCloseTo(0.5);expect(g.totals().floodDamage).toBeGreaterThan(0);
+  });
   it('bewertet Wasser an Gebäudegrenzen und zählt Abriss nicht zusätzlich zum Flutschaden',()=>{
     const g=new Game(scenario);g.solver.h[11]=1;g.updateDamage(30);
     const before=g.totals();expect(before.floodDamage).toBeGreaterThan(0);expect(before.demolitionLoss).toBe(0);

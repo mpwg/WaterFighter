@@ -6,11 +6,13 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Die Schadensermittlung für Gebäude neben ausgehobenen Gräben wurde korrigiert: Wasser unter der ursprünglichen Oberfläche der benachbarten Zelle zählt nicht mehr als Gebäudeexposition. Die zuvor auf `1.6-draft` beobachteten extremen Schäden bei drei Grabenverschiebungen verschwinden in den aktuellen numerischen Vergleichen. Die [Untersuchung](review-gebaeudevergleich.md#korrektur-der-gebäudeschäden-neben-gräben) beschreibt Ursache, Modellgrenze und Gegenversuche. Build und 84 Tests bestanden. Frühere Schadenszahlen mit Gräben in den nachfolgenden historischen Einträgen und deren verlinkten Berichten verwenden die alte Schadensermittlung; sie sind keine aktuellen Referenzwerte. Die aktualisierte Übersicht enthält die neu berechneten Referenzen.
+
 Die kompakte [Übersicht des spielbaren Prototyps](prototyp-status.md) bündelt Startanleitung, aktuelle Vergleichsrunden und offene Abnahmen; die nachfolgenden Einträge erhalten die ausführliche Chronologie.
 
-Ein [Safari-Kurztest nach der Darstellungsänderung](browser-pruefung.md#safari-kurzprüfung-nach-der-grabendarstellung) bestand für Start, Pause, Neustart und alle drei Werkzeuge; eine vollständige Safari-Runde auf dieser Darstellung wurde nicht wiederholt.
+Ein [Safari-Kurztest vor der jüngsten Schadenskorrektur und nach der Darstellungsänderung](browser-pruefung.md#safari-kurzprüfung-nach-der-grabendarstellung) bestand für Start, Pause, Neustart und alle drei Werkzeuge; eine vollständige Safari-Runde auf dieser Darstellung wurde nicht wiederholt.
 
-Die aktuelle Darstellung zeigt den Graben als goldgelbes Band mit violetter Markierung am offenen Modellrand und lokalen Richtungspfeilen. Eine vollständige Chromium-Produktionsrunde mit spätem Graben erreichte 6.330 Schaden und 6.540 Restbudget; Neustart und Unterpfadprüfung bestanden. Build und 83 Vitest-Tests bestanden. Drei untersuchte Verschiebungen des südlichen Grabens verursachen weiterhin jeweils über 190.000 Schaden; die Ursache ist nicht abschließend geklärt. Siehe [Vergleich und Aufnahmen](review-gebaeudevergleich.md#platzierung-und-sichtbarkeit-auf-16).
+Vor der Korrektur der Schadensermittlung zeigte die Darstellung den Graben als goldgelbes Band mit violetter Markierung am offenen Modellrand und lokalen Richtungspfeilen. Eine vollständige Chromium-Produktionsrunde mit spätem Graben erreichte 6.330 Schaden und 6.540 Restbudget; Neustart und Unterpfadprüfung bestanden. Build und 83 Vitest-Tests bestanden. Drei untersuchte Verschiebungen des südlichen Grabens verursachten damals jeweils über 190.000 Schaden; die Ursache und der aktuelle Gegenvergleich stehen oben. Siehe [Vergleich und Aufnahmen](review-gebaeudevergleich.md#platzierung-und-sichtbarkeit-auf-16).
 
 [Drei aufeinanderfolgende Produktionsrunden auf 1.6](browser-pruefung.md#drei-produktionsrunden-auf-16) bestanden in Chromium mit allen Werkzeugen und zwei Ergebnisneustarts. Die Testmaßnahmen verfehlten das Ziel; Speicherstichproben erlauben keine abschließende Aussage über langfristige Stabilität.
 

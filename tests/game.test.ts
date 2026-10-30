@@ -1,10 +1,21 @@
 import { describe,expect,it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { Game } from '../src/simulation/game';
+import { damPath } from '../src/simulation/path';
 const base=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
 const scenario={...base,grid:{...base.grid,width:5,height:5,cellSize:4},terrain:Array(25).fill(0),bed:Array(25).fill(0),initialDepth:Array(25).fill(0),waterMask:Array(25).fill(0),surveyCrests:[],parameters:{...base.parameters,inflowCells:[0],inflowCurve:[[0,0],[300,0]],outflowEdges:[]},buildings:[{id:'house',area:16,height:8,heightEstimated:true,polygon:{outer:[[8,8],[12,8],[12,12],[8,12],[8,8]],holes:[]}}]};
 
 describe('Bauaktionen und Schäden',()=>{
+  it('weist auf ein freies Dammende eine Rasterkante vor dem Rand hin',()=>{
+    const g=new Game(scenario), near={kind:'dam' as const,faces:damPath([2,1],[2,3],5)};
+    const before=g.budget,volume=g.solver.volume();
+    expect(g.preview(near)).toMatchObject({ok:true,nearBoundaryGap:true});
+    expect(g.budget).toBe(before);expect(g.solver.volume()).toBe(volume);
+    const reachesEdge={kind:'dam' as const,faces:damPath([2,0],[2,3],5)};
+    expect(g.preview(reachesEdge)).not.toHaveProperty('nearBoundaryGap');
+    expect(g.apply('extension',{kind:'dam',faces:damPath([2,0],[2,1],5)}).ok).toBe(true);
+    expect(g.preview(near)).not.toHaveProperty('nearBoundaryGap');
+  });
   it('berechnet Vorschau ohne Zustandsänderung, rechnet Bestätigung genau einmal ab',()=>{
     const g=new Game(scenario), a={kind:'dam' as const,faces:[{axis:'x' as const,index:2*6+2},{axis:'x' as const,index:3*6+2}]};
     const before=g.budget,volume=g.solver.volume(); const preview=g.preview(a);

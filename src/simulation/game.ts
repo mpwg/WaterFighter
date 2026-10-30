@@ -4,7 +4,7 @@ import { damCrest } from './dam-height';
 
 export type Face = { axis: 'x' | 'y'; index: number };
 export type Action = { kind: 'dam'; faces: Face[] } | { kind: 'trench'; cells: number[] } | { kind: 'demolish'; buildingId: string };
-export type ActionResult = { ok: true; cost: number; budget: number; loweredCrests?: number; buildingBlockedFaces?: number; reusedCells?: number } | { ok: false; reason: string; budget: number };
+export type ActionResult = { ok: true; cost: number; budget: number; loweredCrests?: number; buildingBlockedFaces?: number; reusedCells?: number; nearBoundaryGap?: boolean } | { ok: false; reason: string; budget: number };
 export interface BuildingStatus { id: string; value: number; damage: number; demolished: boolean; exposure: number }
 interface BuildingState extends Omit<BuildingStatus,'exposure'> { cells: number[]; neighbours: number[] }
 const key = (face: Face) => `${face.axis}:${face.index}`;
@@ -111,7 +111,7 @@ export class Game {
   }
   preview(action:Action):ActionResult {
     const p=this.scenario.parameters,s=this.solver;
-    let cost=0,loweredCrests=0,buildingBlockedFaces=0,reusedCells=0;
+    let cost=0,loweredCrests=0,buildingBlockedFaces=0,reusedCells=0,nearBoundaryGap=false;
     if(!action || typeof action!=='object') return {ok:false,reason:'Ungültige Aktion.',budget:this.budget};
     if(action.kind==='dam') {
       if(!Array.isArray(action.faces)||!action.faces.length||action.faces.length>500) return {ok:false,reason:'Ungültiger Dammverlauf.',budget:this.budget};
@@ -130,6 +130,23 @@ export class Game {
         if(previous && !ends.some(a=>previous!.some(b=>a[0]===b[0]&&a[1]===b[1]))) return {ok:false,reason:'Dammverlauf ist nicht zusammenhängend.',budget:this.budget};
         previous=ends; seen.add(key(face));
       }
+      const vertices=new Map<string,number>();
+      for(const face of action.faces){
+        const x=face.axis==='x'?face.index%(s.width+1):face.index%s.width;
+        const y=face.axis==='x'?Math.floor(face.index/(s.width+1)):Math.floor(face.index/s.width);
+        for(const [vx,vy] of face.axis==='x'?[[x,y],[x,y+1]]:[[x,y],[x+1,y]]){
+          const vertex=`${vx},${vy}`;vertices.set(vertex,(vertices.get(vertex)??0)+1);
+        }
+      }
+      const existingVertices=new Set<string>();
+      for(const key of this.damFaces.keys()){
+        const [axis,raw]=key.split(':'),index=Number(raw),x=axis==='x'?index%(s.width+1):index%s.width,y=axis==='x'?Math.floor(index/(s.width+1)):Math.floor(index/s.width);
+        for(const [vx,vy] of axis==='x'?[[x,y],[x,y+1]]:[[x,y],[x+1,y]])existingVertices.add(`${vx},${vy}`);
+      }
+      nearBoundaryGap=[...vertices].some(([vertex,count])=>{
+        const [x,y]=vertex.split(',').map(Number);
+        return count===1&&!existingVertices.has(vertex)&&((x===1||x===s.width-1)&&y>0&&y<s.height||(y===1||y===s.height-1)&&x>0&&x<s.width);
+      });
       cost=action.faces.length*p.damCostPerCell;
     } else if(action.kind==='trench') {
       if(!Array.isArray(action.cells)||!action.cells.length||action.cells.length>500) return {ok:false,reason:'Ungültiger Grabenverlauf.',budget:this.budget};
@@ -156,7 +173,7 @@ export class Game {
       cost=Math.ceil(b.value*p.demolitionCostFraction);
     } else return {ok:false,reason:'Unbekanntes Werkzeug.',budget:this.budget};
     if(cost>this.budget) return {ok:false,reason:'Budget reicht nicht aus.',budget:this.budget};
-    return {ok:true,cost,budget:this.budget-cost,...(loweredCrests?{loweredCrests}:{}),...(buildingBlockedFaces?{buildingBlockedFaces}:{}),...(reusedCells?{reusedCells}:{})};
+    return {ok:true,cost,budget:this.budget-cost,...(loweredCrests?{loweredCrests}:{}),...(buildingBlockedFaces?{buildingBlockedFaces}:{}),...(reusedCells?{reusedCells}:{}),...(nearBoundaryGap?{nearBoundaryGap:true}:{})};
   }
   hasProcessedAction(id:string):boolean { return this.actionResults.has(id); }
   apply(id:string,action:Action):ActionResult {

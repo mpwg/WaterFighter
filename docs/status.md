@@ -6,7 +6,7 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
-Ein [Vergleich aller 24 einzelnen Endpunktverschiebungen der südlichen Dämme](review-gebaeudevergleich.md#einzelne-endpunktverschiebungen-der-südlichen-dämme) auf `1.5-draft` ergab 20 zulässige zielerreichende, eine zulässige zielverfehlende und drei abgelehnte Varianten. Die mögliche Lücke wird durch die Berechnung nicht automatisch für Menschen verständlich; menschliche Bedienung bleibt offen.
+Ein [Vergleich aller 24 einzelnen Endpunktverschiebungen der südlichen Dämme](review-gebaeudevergleich.md#einzelne-endpunktverschiebungen-der-südlichen-dämme) auf `1.5-draft` ergab 20 zulässige zielerreichende, eine zulässige zielverfehlende und drei abgelehnte Varianten. Die Vorschau warnt nun bei einem freien Dammende eine Rasterkante vor dem Kartenrand vor einer möglichen Öffnung; die konkrete zielverfehlende Verschiebung wurde im Desktopbrowser geprüft. Der Hinweis erkennt nicht jede mögliche Lücke und prognostiziert keine Schadenswirkung; menschliche Verständlichkeit bleibt offen. Build, 80 Vitest-Tests und zwei gezielte Desktopbrowserfälle bestanden. Vollständige Browserrunden nach der Änderung stehen noch aus.
 
 Die [erneut bezogenen Quellen](geodaten-voruntersuchung.md#unabhängiger-neuaufbau-mit-erneut-bezogenen-quellen) sind zusätzlich als prüfsummengesichertes lokales Archiv unter `raw-data/` gesichert. Ein Neuaufbau aus dem entpackten Archiv reproduziert das Szenario nach der dokumentierten OSM-Hash-Normalisierung. Historische OSM-Bytes und eine unabhängige dauerhafte Sicherung fehlen weiterhin.
 

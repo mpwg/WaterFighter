@@ -6,7 +6,7 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
-Ein [Gegenversuch zu den fünf vom südlichen Graben gesenkten DGM-Kanten](review-gebaeudevergleich.md#einfluss-der-geländekanten-am-südlichen-graben) erhält diese modellierten Kronen im Speicher: Der Graben bleibt gegenüber der Dammkontrolle wirtschaftlich wirksam und ergibt geringeren Schaden als die reguläre Absenkung. Die reale Funktion der Kanten und eine fachliche Freigabe sind damit nicht geklärt.
+Ein [Gegenversuch zu den fünf vom südlichen Graben gesenkten DGM-Kanten](review-gebaeudevergleich.md#einfluss-der-geländekanten-am-südlichen-graben) erhält diese modellierten Kronen im Speicher: Der Graben bleibt gegenüber der Dammkontrolle wirtschaftlich wirksam und ergibt geringeren Schaden als die reguläre Absenkung. Alle fünf Kanten lassen sich auf Typ-1-Bruchlinien im Szenario zurückführen; ihre reale Funktion und eine fachliche Freigabe sind damit nicht geklärt.
 
 Drei [aufeinanderfolgende Desktop-Produktionsrunden nach dem Dammhinweis](browser-pruefung.md#drei-produktionsrunden-nach-dem-dammhinweis) bestanden mit allen drei Werkzeugen und zwei Ergebnisneustarts. Die gewählten Testmaßnahmen verfehlten das Schadensziel; Heap- und RSS-Endstichproben stiegen und erlauben keine abschließende Aussage über langfristige Speicherstabilität.
 

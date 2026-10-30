@@ -26,7 +26,7 @@ it('passt Straßendarstellung bei verändertem Gelände an',()=>{
 it('überträgt unverändertes Gelände bei anderen Aktionen nicht erneut und aktualisiert Gebäude',()=>{
  const landUpdate=vi.fn(),roadUpdate=vi.fn(),surveyUpdate=vi.fn(),setEnabled=vi.fn();
  const world={width:2,height:2,cell:4,bed:[0,0,0,0],terrainRevision:0,landPositions:new Float32Array(27),land:{updateVerticesData:landUpdate},roads:{updateVerticesData:roadUpdate},roadPositions:new Float32Array([-4,0,-4]),
-  scenario:{surveyCrests:[]},buildingMaterials:{verloren:{}},scene:{getMeshByName:()=>({setEnabled})},updateSurveyRidges:surveyUpdate,updateTrenches:vi.fn(),damSignature:'[]'} as any;
+  scenario:{surveyCrests:[]},buildingMaterials:{verloren:{}},buildingMeshes:new Map([['house',{setEnabled}]]),updateSurveyRidges:surveyUpdate,updateTrenches:vi.fn(),damSignature:'[]'} as any;
  World.prototype.updateState.call(world,new Float32Array([0,0,0,0]),[{id:'house',value:1,damage:0,demolished:true,exposure:0}],[],1,[]);
  expect(landUpdate).not.toHaveBeenCalled();expect(roadUpdate).not.toHaveBeenCalled();expect(surveyUpdate).not.toHaveBeenCalled();
  expect(setEnabled).toHaveBeenCalledWith(false);expect(world.currentBuildings.get('house').demolished).toBe(true);
@@ -37,7 +37,7 @@ it('überträgt unverändertes Gelände bei anderen Aktionen nicht erneut und ak
 
 it('aktualisiert den Gebäudezustand auch ohne neue Aktionsrevision',()=>{
  const mesh={material:null},materials={unbeschädigt:{},gefährdet:{},beschädigt:{},verloren:{}};
- const world={terrainRevision:3,buildingMaterials:materials,scene:{getMeshByName:()=>mesh}} as any;
+ const world={terrainRevision:3,buildingMaterials:materials,buildingMeshes:new Map([['house',mesh]])} as any;
  const b={id:'house',value:100,damage:0,demolished:false,exposure:0};
  World.prototype.updateState.call(world,new Float32Array(),[b],[],3,[]);expect(mesh.material).toBe(materials.unbeschädigt);
  World.prototype.updateState.call(world,new Float32Array(),[{...b,exposure:0.1,damage:1}],[],3,[]);expect(mesh.material).toBe(materials.gefährdet);

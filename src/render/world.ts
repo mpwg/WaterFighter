@@ -41,6 +41,7 @@ export class World {
   private flowTrenchCells:number[] = [];
   private readonly currentDepth: Float32Array;
   private currentBuildings = new Map<string,BuildingStatus>();
+  private readonly buildingMeshes = new Map<string,Mesh>();
   private readonly buildingMaterials: Record<ReturnType<typeof buildingCondition>,StandardMaterial>;
   private readonly roads?: LinesMesh;
   private readonly roadPositions?: Float32Array;
@@ -130,7 +131,7 @@ export class World {
           indices.push(v,v+2,v+1,v+1,v+2,v+3);
         }
       }
-      const mesh=new Mesh(`building-${building.id}`,this.scene); const data=new VertexData(); data.positions=verts; data.indices=indices; const normals:number[]=[]; VertexData.ComputeNormals(verts,indices,normals); data.normals=normals; data.applyToMesh(mesh); mesh.material=this.buildingMaterials.unbeschädigt; mesh.metadata={buildingId:building.id};
+      const mesh=new Mesh(`building-${building.id}`,this.scene); const data=new VertexData(); data.positions=verts; data.indices=indices; const normals:number[]=[]; VertexData.ComputeNormals(verts,indices,normals); data.normals=normals; data.applyToMesh(mesh); mesh.material=this.buildingMaterials.unbeschädigt; mesh.metadata={buildingId:building.id};this.buildingMeshes.set(building.id,mesh);
     }
     this.resize(); this.updateWater(new Float32Array(scenario.initialDepth));
     window.addEventListener('resize',this.resize);
@@ -150,7 +151,7 @@ export class World {
   }
   updateState(bed:Float32Array, buildings:BuildingStatus[], dams:[string,number][], revision:number, trenches:number[]):void {
     this.currentBuildings=new Map(buildings.map(b=>[b.id,b]));
-    for(const b of buildings) {const mesh=this.scene.getMeshByName(`building-${b.id}`);if(mesh)mesh.material=this.buildingMaterials[buildingCondition(b)];}
+    for(const b of buildings) {const mesh=this.buildingMeshes.get(b.id);if(mesh)mesh.material=this.buildingMaterials[buildingCondition(b)];}
     if(revision===this.terrainRevision) return;
     this.terrainRevision=revision;
     const bedChanged=this.bed.length!==bed.length || bed.some((value,i)=>value!==this.bed[i]);
@@ -171,7 +172,7 @@ export class World {
       this.updateSurveyRidges();
     }
     this.updateTrenches(trenches);
-    for(const b of buildings) {const mesh=this.scene.getMeshByName(`building-${b.id}`); if(mesh) mesh.setEnabled(!b.demolished);}
+    for(const b of buildings) {const mesh=this.buildingMeshes.get(b.id); if(mesh) mesh.setEnabled(!b.demolished);}
     const signature=JSON.stringify(dams);
     if(signature!==this.damSignature) {
       this.damSignature=signature; this.damMesh?.dispose();
@@ -261,7 +262,7 @@ export class World {
     this.previewMesh?.dispose(); this.previewMesh=undefined;this.previewStart=undefined;
     for(const m of this.scene.meshes) if(m.metadata?.buildingId) m.renderOverlay=false;
     if(!action)return;
-    if(action.kind==='demolish') {const m=this.scene.getMeshByName(`building-${action.buildingId}`); if(m){m.renderOverlay=true;m.overlayColor=new Color3(1,0.3,0.1);m.overlayAlpha=0.55;}return;}
+    if(action.kind==='demolish') {const m=this.buildingMeshes.get(action.buildingId); if(m){m.renderOverlay=true;m.overlayColor=new Color3(1,0.3,0.1);m.overlayAlpha=0.55;}return;}
     let lines:Vector3[][]=[];
     if(action.kind==='dam') lines=action.faces.map(face=>this.facePoints(face,damCrest(face,this.width,this.height,this.bed,this.scenario.parameters.damHeight)+0.5));
     else lines=action.cells.map(i=>{const x=i%this.width,y=Math.floor(i/this.width),h=this.bed[i]+1;return [new Vector3((x+.2)*this.cell-this.width*this.cell/2,h,(y+.5)*this.cell-this.height*this.cell/2),new Vector3((x+.8)*this.cell-this.width*this.cell/2,h,(y+.5)*this.cell-this.height*this.cell/2)];});

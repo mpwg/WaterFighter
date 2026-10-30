@@ -1,11 +1,11 @@
 /// <reference lib="webworker" />
-import { Session } from "./session";
+import { Session, SessionClock } from "./session";
 import type { Request, Response } from "./protocol";
 const scope = self as unknown as DedicatedWorkerGlobalScope;
+let clock: SessionClock;
 let session: Session | undefined,
   test = false,
-  last = performance.now(),
-  lastSnapshot = last,
+  lastSnapshot = performance.now(),
   inFlight = false;
 function send(message: Response) {
   scope.postMessage(
@@ -21,8 +21,9 @@ scope.onmessage = ({ data: r }: { data: Request }) => {
     }
     if (r.type === "init") {
       session = new Session();
+      clock = new SessionClock((seconds) => session!.tick(seconds));
       test = r.test;
-      last = performance.now();
+      lastSnapshot = performance.now();
       send({
         id: r.id,
         type: "ready",
@@ -32,6 +33,11 @@ scope.onmessage = ({ data: r }: { data: Request }) => {
       return;
     }
     if (!session) throw new Error("Session not initialized");
+    if (r.type === "startclock") {
+      clock.start(performance.now());
+      send({ id: r.id, type: "result" });
+      return;
+    }
     if (r.type === "benchmark") {
       if (!test) throw new Error("Benchmark requires frozen test mode");
       send({ id: r.id, type: "result", diagnostics: session.benchmark() });
@@ -44,7 +50,7 @@ scope.onmessage = ({ data: r }: { data: Request }) => {
     if (r.type === "command") {
       const result = session.command(r.id, r.command);
       if (["reset", "pause", "resume"].includes(r.command.type))
-        last = performance.now();
+        clock.rebase(performance.now());
       send({ id: r.id, type: "result", result, snapshot: session.snapshot() });
       return;
     }
@@ -67,8 +73,7 @@ scope.onmessage = ({ data: r }: { data: Request }) => {
 setInterval(() => {
   if (!session || test) return;
   const now = performance.now();
-  session.tick((now - last) / 1000);
-  last = now;
+  clock.tick(now);
   if (now - lastSnapshot >= 100 && !inFlight) {
     lastSnapshot = now;
     inFlight = true;

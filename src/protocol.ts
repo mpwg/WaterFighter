@@ -6,6 +6,7 @@ export type Request = { id: number } & (
   | { type: "advance"; seconds: number }
   | { type: "diagnostics" }
   | { type: "ack" }
+  | { type: "startclock" }
   | { type: "benchmark" }
 );
 export interface Response {

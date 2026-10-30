@@ -75,3 +75,23 @@ export class Session {
     };
   }
 }
+
+/** Realtime starts only when the initial landscape is ready. Later readiness is idempotent. */
+export class SessionClock {
+  private started = false;
+  private last = 0;
+  constructor(private advance: (seconds: number) => void) {}
+  start(now: number) {
+    if (this.started) return;
+    this.started = true;
+    this.last = now;
+  }
+  rebase(now: number) {
+    this.last = now;
+  }
+  tick(now: number) {
+    if (!this.started) return;
+    this.advance(Math.max(0, now - this.last) / 1000);
+    this.last = now;
+  }
+}

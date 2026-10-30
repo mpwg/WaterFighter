@@ -1,3 +1,4 @@
+import { LatestThrottle } from "./input";
 import { createLandscape } from "./scene";
 import type { Quality, ScenePick } from "./scene";
 import type { Command, Point, Snapshot, Terrain } from "./flood/types";
@@ -26,10 +27,13 @@ let view: ReturnType<typeof createLandscape>,
   snapshot: Snapshot,
   tool: Tool = "barrier",
   points: Point[] | undefined;
+const previewThrottle = new LatestThrottle<{ path: Point[]; revision: number }>(
+  65,
+  ({ path, revision }) => preview(path, revision),
+);
 let sequence = 0,
   previewRevision = 0,
   feedbackTimer: number,
-  previewTimer: number,
   failed = false;
 const pending = new Map<
   number,
@@ -45,7 +49,7 @@ const worker = new Worker(new URL("./worker.ts", import.meta.url), {
 function failure(message: string) {
   if (failed) return;
   failed = true;
-  clearTimeout(previewTimer);
+  previewThrottle.cancel();
   points = undefined;
   $("loading").hidden = true;
   $("failure").hidden = false;
@@ -135,7 +139,7 @@ function feedback(message: string) {
 function cancel() {
   points = undefined;
   previewRevision++;
-  clearTimeout(previewTimer);
+  previewThrottle.cancel();
   view?.setPreview(undefined);
 }
 async function command(c: Command) {
@@ -261,8 +265,14 @@ function pointer(phase: "down" | "move" | "up" | "cancel", pick: ScenePick) {
   if (phase === "move") {
     const revision = ++previewRevision,
       path = [...points];
-    clearTimeout(previewTimer);
-    previewTimer = window.setTimeout(() => void preview(path, revision), 65);
+    view.setPreview({
+      points: path,
+      valid: false,
+      cost: 0,
+      reason: "Prüfung läuft…",
+    });
+    $("feedback").textContent = "Linie wird geprüft…";
+    previewThrottle.push({ path, revision });
   } else if (phase === "up") {
     const path = [...points],
       action = tool === "remove" ? "remove" : "barrier";
@@ -397,6 +407,8 @@ void (async () => {
     });
     terrain = r.terrain!;
     await rebuild();
+    await request({ type: "startclock" });
+    if (document.hidden) await command({ type: "pause" });
     select("barrier");
     if (testing) $("intro").hidden = true;
     resolveReady();

@@ -12,6 +12,14 @@ Die anschließende Suche mit `bun tools/evaluate-demolition.ts south-control GEB
 
 Eine vollständige Produktionsrunde mit `bun tools/observe-south-production.mjs --after-flood` in Chromium 156.0.8078.4 bestätigte auf `1.6-draft` drei Dämme vor Beginn und den südlichen Graben in Pause bei 02:31. Das Ergebnis erreichte das Ziel mit 6.329 Schaden und 6.540 Budgetrest; der Ergebnisneustart setzte Zeit, Budget und Schaden zurück. Es wurden keine Seitenfehler protokolliert. Die Auswahl verwendete feste Testkoordinaten und eine instrumentierte Endpunktsuche; die Laufzeit von 165,436 s einschließlich Pause bei parallelen numerischen Berechnungen ist keine Leistungsmessung und belegt keine menschliche Auffindbarkeit.
 
+### Größerer Abriss ohne vorbereitete Dämme
+
+Eine weitere vollständige Suche mit `bun tools/evaluate-demolition.ts baseline GEBÄUDE-ID 0` verglich alle 91 zu Beginn bezahlbaren Einzelabrisse mit der unbehandelten Kontrolle auf `1.6-draft`. Die [Einzelwerte](demolition-baseline-1.6.json) enthalten Kosten und Bilanzen. Zwei Kandidaten waren nach Kosten wirtschaftlich: das bereits bekannte kleine Gebäude `w1207502028-0` und das größere Bürogebäude `w33581744-0` mit 1.601,7 m². Dessen Abriss kostet 1.602 und ergibt 149.441,54 Gesamtschaden gegenüber 164.817,51 ohne Maßnahmen; nach Kosten bleibt ein Vorteil von 13.773,98. Die Runde verfehlt trotzdem das Ziel von 50.000.
+
+Zeitlich angeglichene Kontrollen zeigen für denselben Einzelabriss bei 60, 120 und 180 s einen Vorteil nach Kosten von 13.773,97, 13.773,98 und 9.486,03; bei 240 s ist er um 531,68 nachteilig. Die vier diskreten Zeitpunkte beweisen keine stetige Grenzzeit. Bei 180 s betrug der zuvor verbuchte Gebäudeschaden rund 3.997,66; die Abrisswertung ersetzt diesen Anteil durch den vollen Gebäudewert. In Gegenversuchen nach dem ersten Referenzdamm oder nach beiden `shield`-Dämmen ist der Abriss bei 0 und 180 s jeweils um 17.619 nachteilig; dort ändert sich der übrige Flutschaden nicht. Alle geprüften Aktionsvolumenänderungen waren null und die relativen Bilanzfehler unter 0,1 %.
+
+Der Desktop-Produktionsbrowsertest `tests/browser/partial-demolition-selection.spec.ts` wählte `w33581744-0` auf `1.6-draft` über projizierte Mauskoordinaten und prüfte die Vorschau mit 16.017 Gebäudeverlust und 1.602 Kosten. Eine vollständige Browserrunde mit diesem Einzelabriss und unabhängiges menschliches Auffinden sind noch nicht belegt. Der Modellnutzen hängt hier stark von der Dammführung ab und ist keine reale Schutzempfehlung.
+
 ## Aktueller Vergleich mit direkter Dammführung
 
 **Stand:** Diese Vergleiche gelten für die direkte Dammführung und die erweiterten Referenzaktionen im aktuellen Anwendungscode.

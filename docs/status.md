@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Die Rückstandsmeldung ist nun auch im Kartenmodus bei ausgeblendetem Menü sichtbar; eine Kartenabfrage erscheint nach dem Aufholen wieder oder kann die Meldung durch eine neue Abfrage ersetzen. Produktionsbuild, 72 Vitest-Tests und [gezielte Chromium-Prüfungen](browser-pruefung.md#rückstandsmeldung-bei-ausgeblendetem-kartenmenü) einschließlich kleiner emulierter Ansichten bestanden. Eine vollständige Suite für diese Änderung sowie echte Geräte und menschliche Bedienung bleiben offen.
+
 Die Rückstandsmeldung verschwindet nach dem Aufholen oder Pausieren und überschreibt während anhaltenden Rückstands keine neue Bedienrückmeldung. Auf Anwendungscode `80cc37a` bestanden Produktionsbuild, 72 Vitest-Tests, zwei Python-Tests und [alle 95 Chromium-Fälle](browser-pruefung.md#rückstandsmeldung-und-vollständige-chromium-suite). Die Rückstandsprüfung nutzt künstlich veränderte Snapshot-Werte; Geräte- und menschliche Abnahme bleiben offen.
 
 Eine [vollständige Produktionsrunde mit spätem Grabeneingriff](browser-pruefung.md#produktionsrunde-nach-der-rückstandsmeldung) auf demselben Anwendungscode erreichte das Ziel und setzte beim Neustart Zeit, Budget und Schaden zurück. Sie verwendete automatisierte Testkoordinaten; unabhängige menschliche und echte Geräteprüfungen bleiben offen.

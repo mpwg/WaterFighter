@@ -39,10 +39,13 @@ const resultPanel=app.querySelector<HTMLElement>('#result')!, resultTitle=app.qu
 app.querySelector<HTMLButtonElement>('#again')!.onclick=()=>{if(round)worker?.postMessage({type:'reset',round});};
 const preview=app.querySelector<HTMLDivElement>('#preview')!,previewText=app.querySelector<HTMLElement>('#preview-text')!,confirm=app.querySelector<HTMLButtonElement>('#confirm')!,cancel=app.querySelector<HTMLButtonElement>('#cancel')!,budgetLabel=app.querySelector<HTMLElement>('#budget')!;
 function syncToolHint(){
+  const cameraBacklog=mode==='camera'&&backlogMessageVisible&&gamePanel.hidden&&!finished&&!fatalError;
+  if(cameraBacklog)inspection.hidden=true;
+  else if(mode==='camera'&&gamePanel.hidden&&inspection.textContent&&!finished&&!fatalError)inspection.hidden=false;
   toolHint.textContent=message.textContent;
-  toolHint.hidden=!gamePanel.hidden||mode==='camera'||!preview.hidden||finished||fatalError||!toolHint.textContent;
+  toolHint.hidden=!gamePanel.hidden||(mode==='camera'&&!cameraBacklog)||!preview.hidden||finished||fatalError||!toolHint.textContent;
 }
-function setMessage(text:string){if(confirmationTimer!==undefined){clearTimeout(confirmationTimer);confirmationTimer=undefined;}backlogMessageVisible=false;message.textContent=text;syncToolHint();}
+function setMessage(text:string,backlog=false){if(confirmationTimer!==undefined){clearTimeout(confirmationTimer);confirmationTimer=undefined;}backlogMessageVisible=backlog;message.textContent=text;syncToolHint();}
 function setAwaiting(value:boolean) {awaiting=value;cancel.disabled=value;for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=value||fatalError;}
 function clearDraft() {first=undefined;draft=undefined;previewId='';setAwaiting(false);preview.hidden=true;confirm.disabled=true;world?.showPreview();syncToolHint();}
 function chooseMode(next:Mode) { mode=next;modeRevision++;inspection.hidden=true;inspection.textContent='';clearDraft(); for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.setAttribute('aria-pressed',String(b.dataset.mode===mode)); setMessage(mode==='camera'?'Karte verschieben und zoomen.':mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.'); }
@@ -114,8 +117,7 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
       const catchingUp=data.running && !finished && data.backlog>2;
       if(catchingUp && (!backlogActive || backlogMessageVisible)) {
         const text=`Simulation holt ${data.backlog.toFixed(1)} s Rückstand auf.`;
-        if(message.textContent!==text)setMessage(text);
-        backlogMessageVisible=true;
+        if(message.textContent!==text||!backlogMessageVisible)setMessage(text,true);
       } else if(!catchingUp && backlogMessageVisible) {
         setMessage(mode==='camera'?'Karte verschieben und zoomen.':mode==='demolish'?'Gebäude auf der Karte antippen.':first?'Endpunkt auf der Karte antippen.':'Start und Ende auf der Karte antippen.');
       }

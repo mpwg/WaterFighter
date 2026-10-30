@@ -30,7 +30,7 @@ Die Typprüfung verwendet ES2025-Bibliothekstypen und prüft auch die TypeScript
 
 Bei einem nicht behebbaren Grafik-, Lade- oder Workerfehler wird das Menü geöffnet und bietet einen Knopf zum Neuladen der Seite; dabei beginnt eine neue Runde.
 
-Wenn die laufende Berechnung mehr als zwei Sekunden Rückstand hat, erscheint ein Hinweis. Nach dem Aufholen oder Pausieren verschwindet er; neuere Bedienhinweise bleiben erhalten. Die [Prüfbelege](docs/browser-pruefung.md#rückstandsmeldung-und-vollständige-chromium-suite) unterscheiden automatisierte Tests von der noch offenen Geräte- und Spielabnahme.
+Wenn die laufende Berechnung mehr als zwei Sekunden Rückstand hat, erscheint ein Hinweis, auch im Kartenmodus bei ausgeblendetem Menü. Nach dem Aufholen oder Pausieren verschwindet er; neuere Bedienhinweise bleiben erhalten. Eine vorübergehend verdeckte Kartenabfrage erscheint danach wieder. Die [Prüfbelege](docs/browser-pruefung.md#rückstandsmeldung-bei-ausgeblendetem-kartenmenü) unterscheiden automatisierte Tests von der noch offenen Geräte- und Spielabnahme.
 
 Die Kopfzeile zeigt laufend Gesamtschaden, Ziel sowie Flut- und Abrissverluste, auch bei ausgeblendetem Menü. Gebäude werden nach Zustand eingefärbt; im Kartenmodus zeigt Antippen zusätzlich Zustand, Schaden und Wassertiefe am Gebäuderand als Text. Bei Wasser nennt die Kartenabfrage Tiefe und Wasserspiegel über Wiener Null; bei ausgeblendetem Menü erscheint sie mit dem Zeitpunkt der Abfrage. So lassen sich Wasserstände auf beiden Seiten eines Damms vergleichen.
 

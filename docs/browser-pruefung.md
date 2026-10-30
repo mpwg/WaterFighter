@@ -689,3 +689,9 @@ Am 30. Oktober 2026 wurde `tools/observe-land-production.mjs` um eine Prüfung e
 Bei 02:32 zeigte eine gemeinsame Browserabfrage während laufender Simulation „Schaden 60 / 50.000“ und „Flut 60 · Abriss 0“. Die Runde erreichte nach 156,173 s einschließlich Bedienung das Ziel mit 1.346 Flutschaden und 7.510 Budgetrest; Seitenfehler wurden nicht protokolliert. Der Neustart stellte Zeit, Budget und Schaden zurück. In einem vorherigen Versuch hatte das Skript Gesamtschaden und Aufschlüsselung getrennt abgefragt, während die Simulation weiterlief; diese Werte stammten daher möglicherweise aus unterschiedlichen Snapshots und eignen sich nicht zum Vergleich. Die Wiederholung liest beide Angaben synchron.
 
 Dies ist eine automatisierte Stichprobe mit festen Testkoordinaten auf Linux und Softwaregrafik; sie belegt weder menschliche Verständlichkeit noch eine Geräte- oder Leistungsabnahme.
+
+### Rückstandsmeldung bei ausgeblendetem Kartenmenü
+
+Am 30. Oktober 2026 wurde korrigiert, dass die Rückstandsmeldung im Kartenmodus bei ausgeblendetem Menü unsichtbar war. Eine vorhandene Kartenabfrage ist während der Meldung vorübergehend verdeckt und erscheint nach dem Aufholen mit ihrem ursprünglichen Zeitstempel wieder. Eine neue Kartenabfrage ersetzt die Meldung und bleibt sichtbar.
+
+Produktionsbuild und 72 Vitest-Tests bestanden. Zehn gezielte Playwright-Chromium-Fälle zu Rückstand, Kartenabfrage und Werkzeughinweisen bestanden; anschließend bestanden alle fünf Rückstandsfälle einschließlich der ergänzten Größen 320 × 480 und 480 × 320 CSS-Pixel. In diesen beiden Ansichten überlappt die Meldung weder Kopfzeile noch Zoom. Der Rückstand wurde testseitig in Worker-Snapshots gesetzt; die Ansichten sind emuliert. Menschliche Verständlichkeit und echte Geräte bleiben offen.

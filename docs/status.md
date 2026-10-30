@@ -12,6 +12,8 @@ Die [kompakte Spielhilfe](browser-pruefung.md#firefox-prüfung-der-kompakten-spi
 
 Der [aktuelle Produktionsbuild unter einem Unterpfad](browser-pruefung.md#aktueller-build-unter-unterpfad-nach-der-hilfeänderung) lud Worker, Szenario und Quellen; Dammaktion, Start, Pause und Neustart funktionierten. Eine dauerhafte Bereitstellung und die Lizenzabnahme bleiben offen.
 
+Die [Datenlizenz-Prüfung](datenlizenz-pruefung.md#konkrete-verknüpfung-der-quellen) benennt nun die Kombination von Wiener Höhen und OSM-Gewässermaske im Simulationsbett und die daraus folgenden konkreten Prüfungsfragen. Eine anwendbare Sondererlaubnis oder abschließende Rechtsfreigabe ist dadurch nicht nachgewiesen.
+
 Eine [aktuelle vollständige Produktionsrunde](browser-pruefung.md#produktionsrunde-nach-der-kompakten-spielhilfe) mit spätem Grabeneingriff erreichte das Ziel, zeigte laufende Schäden und setzte beim Neustart Zeit, Budget und Schaden zurück. Der Test nutzte feste Koordinaten; menschliche Bedienung und Geräteabnahme bleiben offen.
 
 Die Rückstandsmeldung ist nun auch im Kartenmodus bei ausgeblendetem Menü sichtbar; eine Kartenabfrage erscheint nach dem Aufholen wieder oder kann die Meldung durch eine neue Abfrage ersetzen. Produktionsbuild, 72 Vitest-Tests und [alle 98 Chromium-Fälle](browser-pruefung.md#rückstandsmeldung-bei-ausgeblendetem-kartenmenü) auf Anwendungscode `853cc90` bestanden. Echte Geräte und menschliche Bedienung bleiben offen.

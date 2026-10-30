@@ -1,5 +1,6 @@
 import { SCENARIO } from '../core/arena';
 import type { GameState, LinkSpec, Point, Selection, WaterNode, WaterNodeSpec } from '../core/types';
+import { getPreview } from './preview';
 
 const W = 1000, H = 680;
 const C = { land: '#eee9d8', ink: '#183c40', muted: '#73877b', contour: '#d9ddc6', river: '#215f72', water: '#55b6c6', foam: '#d9f4e9', basin: '#d3ddbc', town: '#cf8061', danger: '#d96741', amber: '#edb84c', cream: '#fffaf0', teal: '#277e73' };
@@ -20,10 +21,17 @@ export class ArenaView {
   private hovered: Selection = null;
   private readonly onClick = (event: MouseEvent) => this.select(this.hit(this.point(event)));
   private readonly onMove = (event: MouseEvent) => {
-    this.hovered = this.hit(this.point(event));
+    const next = this.hit(this.point(event));
+    if (next?.kind !== this.hovered?.kind || next?.id !== this.hovered?.id) {
+      this.hovered = next;
+      this.render();
+    }
     this.canvas.style.cursor = this.hovered ? 'pointer' : 'default';
   };
-  private readonly onLeave = () => { this.hovered = null; this.canvas.style.cursor = 'default'; };
+  private readonly onLeave = () => {
+    if (this.hovered) { this.hovered = null; this.render(); }
+    this.canvas.style.cursor = 'default';
+  };
 
   constructor(private canvas: HTMLCanvasElement, private select: (selection: Selection) => void) {
     const context = canvas.getContext('2d');
@@ -263,16 +271,34 @@ export class ArenaView {
 
   private preview(): void {
     const sel = this.selection ?? this.hovered;
-    if (!sel || sel.kind === 'node') return;
-    const site = sel.kind === 'site' ? SCENARIO.sites.find(v => v.id === sel.id) : null;
-    const link = SCENARIO.links.find(v => v.id === (site?.linkId ?? sel.id));
-    if (!link) return;
-    const c = this.ctx, receiver = nodeSpec(site?.receiverId ?? link.to);
+    const preview = getPreview(this.state!, sel);
+    if (!preview) return;
+    const { link, receiverId } = preview;
+    const c = this.ctx;
     c.save();
     c.strokeStyle = C.amber; c.lineWidth = 4;
     c.setLineDash([8, 5]); this.line(this.waterPath(link)); c.stroke();
     c.setLineDash([]);
-    this.polygon(receiver.polygon); c.fillStyle = '#edb84c'; c.globalAlpha = .18; c.fill(); c.globalAlpha = 1; c.lineWidth = 2.5; c.stroke();
+    let label = 'Kein Gefälle · derzeit kein Fluss';
+    if (receiverId) {
+      const receiver = nodeSpec(receiverId);
+      const points = this.waterPath(link);
+      const middle = points[1];
+      const destination = points[receiverId === link.to ? 2 : 0];
+      const angle = Math.atan2(destination.y - middle.y, destination.x - middle.x);
+      c.save(); c.translate(middle.x, middle.y); c.rotate(angle);
+      c.strokeStyle = C.ink; c.lineWidth = 3; c.lineCap = 'round';
+      this.line([{ x: -15, y: 0 }, { x: 12, y: 0 }, { x: 5, y: -6 }, { x: 12, y: 0 }, { x: 5, y: 6 }]); c.stroke();
+      c.restore();
+      this.polygon(receiver.polygon); c.fillStyle = '#edb84c'; c.globalAlpha = .18; c.fill(); c.globalAlpha = 1; c.lineWidth = 2.5; c.stroke();
+      label = `Möglicher Flutraum · ${receiver.name}`;
+    }
+    c.font = '600 11px "Avenir Next", "Segoe UI", sans-serif';
+    const labelWidth = c.measureText(label).width + 14;
+    const labelX = clamp(link.position.x, labelWidth / 2 + 8, W - labelWidth / 2 - 8);
+    const labelY = clamp(link.position.y - 26, 13, H - 13);
+    c.fillStyle = '#fffaf0e8'; c.beginPath(); c.roundRect(labelX - labelWidth / 2, labelY - 10, labelWidth, 20, 5); c.fill();
+    this.text(label, labelX, labelY, 11, C.ink, 600, 'center');
     c.restore();
   }
 

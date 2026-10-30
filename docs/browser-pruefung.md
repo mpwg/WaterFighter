@@ -649,3 +649,9 @@ Nach jedem der zwölf Neustarts meldeten die schwachen Referenzen keine noch err
 ### Bestätigung und anschließender Bedienhinweis
 
 Am 30. Oktober 2026 wurde die Rückmeldung nach einer bestätigten Maßnahme so angepasst, dass sie nach vier Sekunden wieder zum passenden Werkzeughinweis wechselt. Eine neue Auswahl, ein Moduswechsel oder ein anderer Hinweis beendet den Timer, damit eine neuere Rückmeldung nicht überschrieben wird. Produktionsbuild, 72 Vitest-Tests und zwei Python-Tests bestanden. In Chrome 156.0.8078.73 unter Linux mit Softwaregrafik bestanden elf gezielte Browserfälle für Werkzeughinweise, Vorschauwechsel und ausstehende Aktionen. Nach Ergänzung eines separaten Falls für eine unmittelbar begonnene neue Auswahl bestanden die fünf Hinweisfälle erneut. Die kleinformatigen Touchfälle sind emuliert; eine vollständige Suite und echte Geräte bleiben gesondert zu prüfen.
+
+### Gesamtsuite nach der Bestätigungsrückmeldung
+
+Am 30. Oktober 2026 bestanden auf einem isolierten Git-Archiv von `2c5506c` der Produktionsbuild mit Typprüfung und alle 93 Playwright-Chromium-Fälle. Die Suite lief mit einem Worker und `--timeout=90000` in 7,2 Minuten auf Google Chrome 156.0.8078.73 unter Linux mit Softwaregrafik. Der isolierte Testserver verwendete Port 4396; die verwendete separate Abhängigkeitsinstallation entsprach der Lockdatei. Der Build meldete die bestehende Größenwarnung für einen JavaScript-Chunk.
+
+Der Durchgang umfasst die beiden neuen Rückmeldungsfälle, Werkzeugaktionen, Kartenbedienung, emulierten Touch und Neustarts. Echte Geräte, tatsächliches Safari und menschliche Bedienung sind damit nicht abgenommen; die Laufzeit ist keine Geräteleistungsmessung.

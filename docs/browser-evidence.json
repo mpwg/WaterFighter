@@ -1,22 +1,253 @@
 {
-  "date": "2026-10-30T19:06:11.951Z",
+  "date": "2026-10-30T20:44:10.692Z",
   "browser": "156.0.8078.4",
-  "platform": "darwin 27.2.0 arm64",
-  "viewportStart": "1280x800",
-  "viewportFlood": "1440x960",
-  "rafWallSeconds": 15.001,
-  "rafSimSeconds": 14.966666666666667,
-  "naturalTabSwitch": {
-    "hidden": false,
-    "phase": "running"
+  "platform": "linux",
+  "viewport": "1440x960",
+  "quality": "low",
+  "wallSeconds": 365.958,
+  "simulationSeconds": 360,
+  "diagnostics": {
+    "scene": {
+      "backend": "WebGPU",
+      "quality": "low",
+      "adapter": {
+        "vendor": "google",
+        "renderer": "swiftshader",
+        "version": "unknown version"
+      },
+      "limits": {
+        "maxTextureDimension2D": 8192,
+        "maxBufferSize": 268435456
+      },
+      "renderWidth": 822,
+      "renderHeight": 548,
+      "preview": null
+    },
+    "worker": {
+      "fixedStep": 0.03333333333333333,
+      "snapshotHz": 10,
+      "samples": 1000,
+      "coreP95Ms": 2.4000000059604645
+    }
   },
-  "screenshots": [
-    "docs/v3-start.png",
-    "docs/v3-echtzeit.png",
-    "docs/v3-flut.png",
-    "docs/v3-ergebnis.png"
+  "samples": [
+    {
+      "wallSeconds": 11.216,
+      "time": 11.466666666666637,
+      "wetCells": 8353,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 21.269,
+      "time": 21.500000000000227,
+      "wetCells": 8353,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 31.312,
+      "time": 31.60000000000073,
+      "wetCells": 8353,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 41.361,
+      "time": 41.56666666666687,
+      "wetCells": 8353,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 51.425,
+      "time": 51.63333333333296,
+      "wetCells": 8353,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 61.468,
+      "time": 61.73333333333239,
+      "wetCells": 8941,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 71.518,
+      "time": 71.79999999999849,
+      "wetCells": 11722,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 81.574,
+      "time": 81.86666666666459,
+      "wetCells": 13447,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 91.623,
+      "time": 91.83333333333069,
+      "wetCells": 14563,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 101.672,
+      "time": 101.89999999999678,
+      "wetCells": 15418,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 111.731,
+      "time": 111.9999999999962,
+      "wetCells": 16247,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 121.792,
+      "time": 122.0666666666623,
+      "wetCells": 16691,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 131.861,
+      "time": 132.03333333332841,
+      "wetCells": 16933,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 141.906,
+      "time": 142.13333333332784,
+      "wetCells": 17115,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 151.964,
+      "time": 152.19999999999393,
+      "wetCells": 17625,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 161.999,
+      "time": 162.26666666666003,
+      "wetCells": 18402,
+      "damage": 0
+    },
+    {
+      "wallSeconds": 172.033,
+      "time": 172.26666666665946,
+      "wetCells": 19159,
+      "damage": 0.00003180830131076495
+    },
+    {
+      "wallSeconds": 182.099,
+      "time": 182.33333333332556,
+      "wetCells": 19824,
+      "damage": 0.00036672027574522945,
+      "crest": true
+    },
+    {
+      "wallSeconds": 193.232,
+      "time": 193.43333333332492,
+      "wetCells": 20514,
+      "damage": 0.0017314325527435608
+    },
+    {
+      "wallSeconds": 203.313,
+      "time": 203.49999999999102,
+      "wetCells": 21154,
+      "damage": 0.004395826680485001
+    },
+    {
+      "wallSeconds": 213.372,
+      "time": 213.63333333332378,
+      "wetCells": 21733,
+      "damage": 0.008467172095564916
+    },
+    {
+      "wallSeconds": 223.441,
+      "time": 223.69999999998987,
+      "wetCells": 22116,
+      "damage": 0.013598945145827037
+    },
+    {
+      "wallSeconds": 233.506,
+      "time": 233.76666666665596,
+      "wetCells": 22271,
+      "damage": 0.019459891763366995
+    },
+    {
+      "wallSeconds": 243.536,
+      "time": 243.7666666666554,
+      "wetCells": 22608,
+      "damage": 0.02565104378299084
+    },
+    {
+      "wallSeconds": 253.704,
+      "time": 253.93333333332149,
+      "wetCells": 22946,
+      "damage": 0.03201748596910149
+    },
+    {
+      "wallSeconds": 263.751,
+      "time": 264.03333333332773,
+      "wetCells": 23224,
+      "damage": 0.03831108792037833
+    },
+    {
+      "wallSeconds": 273.877,
+      "time": 274.00000000000233,
+      "wetCells": 23444,
+      "damage": 0.04449543997733635
+    },
+    {
+      "wallSeconds": 283.913,
+      "time": 284.20000000001045,
+      "wetCells": 23630,
+      "damage": 0.0507696493934307
+    },
+    {
+      "wallSeconds": 294.025,
+      "time": 294.2666666666851,
+      "wetCells": 23796,
+      "damage": 0.05692690687015072
+    },
+    {
+      "wallSeconds": 304.073,
+      "time": 304.3333333333598,
+      "wetCells": 23955,
+      "damage": 0.0630957333371615
+    },
+    {
+      "wallSeconds": 314.112,
+      "time": 314.33333333336776,
+      "wetCells": 24062,
+      "damage": 0.06925454020088685
+    },
+    {
+      "wallSeconds": 324.178,
+      "time": 324.40000000004244,
+      "wetCells": 24179,
+      "damage": 0.07547602585378314
+    },
+    {
+      "wallSeconds": 334.306,
+      "time": 334.5666666667172,
+      "wetCells": 24280,
+      "damage": 0.08177174317234501
+    },
+    {
+      "wallSeconds": 344.563,
+      "time": 344.7000000000586,
+      "wetCells": 24339,
+      "damage": 0.08804923079503366
+    },
+    {
+      "wallSeconds": 354.804,
+      "time": 355.0000000000668,
+      "wetCells": 24210,
+      "damage": 0.09442480208615331
+    },
+    {
+      "wallSeconds": 364.859,
+      "time": 360,
+      "wetCells": 24198,
+      "damage": 0.09751621886313244
+    }
   ],
-  "floodScreenshotAdditionalAdvanceSeconds": 90,
-  "pageErrors": [],
-  "externalRequests": []
+  "pageErrors": []
 }

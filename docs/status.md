@@ -1,36 +1,16 @@
-# Die Donau kommt – Stand und Abnahme
+# Tullner Donauauen · Stand und Abnahme
 
-Stand: 30. Oktober 2026. HQ100 ist implementiert und automatisiert in Desktop-Chromium geprüft. Die menschliche Spielabnahme steht aus. Der frühere V2-Stand bleibt unter `prototype/v2-preserved-2026-10-30` erhalten.
+Stand: 30. Oktober 2026. Aktueller Zweig `codex/tulln-3d-flood`. Das sechsminütige Spiel ersetzt den früheren V3-Prototyp.
 
-## Kriterienmatrix
+| Kriterium | Nachweis und Grenze |
+| --- | --- |
+| Wasser und Ressourcen | Deterministischer 256×192-Kern mit 1/30-Sekunden-Schritten, Wasserbilanz und trockenen Zellen; 31 automatisierte Kern-, Szenen-, Session- und Eingabetests bestanden. |
+| Produktionsbuild | TypeScript und Vite bestanden; Hauptbundle ca. 6.3 MB minifiziert / 1.39 MB gzip. Compiler und Schrift lokal, keine CDN-Abhängigkeit. |
+| Freie Linien und Rettung | Worker prüft jede Linie exakt, reserviert Material auch bei Pause, entfernt mit Rückerstattung; parallele sechssekündige Hausrettungen. Browserprüfungen unter `tests/browser/flood.spec.ts`. |
+| Browser | Ausschließlich Headless Chrome unter Ubuntu; WebGPU-Adapter Google SwiftShader ist Software. Keine Hardware-GPU-Abnahme, keine Aussage über flüssige reale Geräte. |
+| Zeit und Screenshots | [Browsermessdaten](browser-evidence.json): vollständige echte Runde mit exakt360s Simulationszeit in365.958s erfasster Wandzeit, Chrome156.0.8078.4, keine Seitenfehler. Start, Flut und Ergebnis werden in 1440×960 erfasst. |
+| Strategien | [Reproduzierbare Messdaten](strategy-evidence.json), erzeugt durch `bun tools/compare-strategies.ts`: gleiche Karte, gleicher Zufluss, keine Rettungen, nur Bau/Schütz variieren. Auswirkungen gelten ausschließlich innerhalb dieses Modells. |
+| Landschaft | Sichtbare 3D-Flusslandschaft mit geneigten Dächern; regelmäßiges Hausraster und vereinfachte Straßen/Vegetation. Stilisiertes Tullner Motiv, keine vermessene Topographie und keine amtliche Gefahrenkarte. |
+| Offene Abnahme | Safari ungetestet; physische GPUs, reale Telefone/Touch, natürlicher Tabwechsel sowie menschliche Verständlichkeit und Spielspaß offen. Kein Ersatz durch Browseremulation. |
 
-| Kriterium | Status | Beleg und Grenze |
-| --- | --- | --- |
-| Dreiminütiges HQ100, feste Karte und deterministischer Wasserkern | erfüllt | `src/core/`, `src/render/`; Core-Tests und beschleunigte vollständige HQ100-Browserrunde. Die Karte zeigt reale Ortsnamen auf erfundener Topologie. |
-| Drei frei kombinierbare und abwählbare Vorbereitungen | erfüllt | Browserprüfung: Abwahl, Kategorien, genau drei Wahlen, Startschranke. |
-| Wasserbilanz, begrenzte Becken, Überläufe und Rückstau | erfüllt | Core-Tests und Vergleichsläufe; Bilanzfehler in allen dokumentierten Runden unter 2e-11. Keine Aussage zur realen Hochwasserprognose. |
-| Vier Wehre, Stellzeit, zwei Notdämme und irreversible Dammöffnung | erfüllt | Core-Tests; Browser: Canvas-Mauswahl, Wehrwechsel, Bau und 0,9-s-Hold einschließlich Abbrüchen. |
-| Dammwarnung und Meldungsprotokoll | erfüllt | Panel erklärt dauerhaften Schutzverlust und beidseitig möglichen Wasserfluss; die Kartenvorschau zeigt die aktuelle mögliche Empfangsseite. Der Kern prüft D1 ohne Gefälle, mit Vorwärtsfluss und mit Rückfluss; Browser prüft den realen Rückfluss nach 170 s sowie Rettungs- und Bauabschluss im Protokoll. Der feste Warnstreifen bleibt auf Warn-, Flut-, Damm- und Abschlussmeldungen begrenzt. |
-| Zwei Rettungsteams, Umverteilung, Schäden und Ergebnis Menschen vor Sachwerten | erfüllt | Core-Tests; Browser: Zuweisung/Umverteilung und vollständiges Ergebnis mit sicheren, geretteten, noch in Not befindlichen Menschen und Sachschäden. |
-| Pause sperrt Eingriffe und Auswahl, Neustart setzt zurück | erfüllt | Browserprüfung für Canvas, Direktwahl, Test-API-Auswahl und Command-Sperre; eingefrorene Simulationszeit sowie Reset geprüft. |
-| Warnung bei 70 s trotz ungültigem Befehl; Fehlermeldung läuft ab | erfüllt | Browser-Regression mit ungültigem Wehrbefehl vor 70 s und erneutem Fehler ohne Folgeereignis. |
-| Produktionsbuild und Desktop-Chrome-Browserpfad | erfüllt | `bun run test:browser`: Typecheck, Vite-Build und acht Playwright-Tests auf exklusivem Port 4187. Keine UI-JavaScriptfehler oder externen Laufzeitanfragen in diesen Pfaden. |
-| Kurzer Echtzeitlauf mit RAF | erfüllt | 15,001 s Wandzeit und 14,967 s Simulationszeit, Karte mit sichtbarem Wasserfluss; [Messdaten](browser-evidence.json). Kein Nachweis einer vollständigen Echtzeit-Dreiminutenrunde oder exakter Bildrate. |
-| Ganze Karte und feste Bedienung bei 1280×800 und 1440×960 | erfüllt | Browser-Viewport-Assertions mit `ratio: 1` für die ganze Karte und visuell geprüfte Screenshots. Seitenleiste ist bei Bedarf scrollbar. |
-| Natürlicher Tabwechsel pausiert automatisch | offen | Ein zweiter Browser-Tab wurde aktiviert; in dieser Headless-Umgebung blieb `document.hidden=false` und die Runde lief weiter. Handler vorhanden, aber natürliche Hintergrundpause nicht nachgewiesen. Im sichtbaren Desktopbrowser prüfen. |
-| Drei menschliche HQ100-Spielrunden, Verständlichkeit und Spielspaß | offen | [Spieltest-Leitfaden](spieltest.md); noch keine menschliche Runde. |
-| HQ10, HQ50, HQ500 und HQ1000 | offen | Bis nach drei menschlichen HQ100-Runden und Entscheidung über Verständlichkeit und Spielspaß zurückgestellt. |
-| Safari, Touch und mobile Geräte | nicht prüfbar | Nicht Teil der ausgeführten Desktop-Chromium-Abnahme; keine Plattformfreigabe. |
-| Schmale Viewports unter 1280 px | außerhalb | Der feste Warnstreifen ist dort nicht abgenommen; keine Layoutänderung in dieser Fixrunde. |
-
-## Ausgeführte Belege
-
-- `bun run test`: 25 Kernprüfungen bestanden. `bun run test:browser`: acht Browserprüfungen bestanden. Ein 15-Sekunden-Lauf nutzte echte RAF-Zeit; die vollständige Runde verwendete die nur mit `?test=1` erreichbare Beschleunigung.
-- `bun --bun tools/compare-rounds.ts`: acht deterministische HQ100-Strategien mit identischen drei Speicher-Vorbereitungen; [Werte und Grenzen](vergleichsrunden.md).
-- Browser: Chromium 156.0.8078.4, macOS/Darwin 27.2.0 arm64, Viewports 1280×800 und 1440×960. [Start](v3-start.png), [Echtzeit nach 15 s](v3-echtzeit.png), [Flut nach weiteren 90 beschleunigten Simulationssekunden](v3-flut.png), [Ergebnis](v3-ergebnis.png). Diese Screenshots sind Desktop-Chrome-Belege, keine Geräte- oder menschliche Abnahme.
-
-## Abschlussreview
-
-Der Gesamtvergleich von V2 (`106c26a`) bis V3 und das abgegrenzte Nachreview des letzten Fixes (`25907f2..ea064b3`) sind abgeschlossen. Keine offenen wichtigen Codebefunde. Korrigiert wurden insbesondere eine falsche Flutbehauptung bei Rückfluss durch einen geöffneten Damm und die Anzeige von Rettungs-/Bauabschlüssen. Der letzte geprüfte Implementierungsstand bestand 25 Kern- und 8 Browserprüfungen einschließlich Produktionsbuild. Damit ist HQ100 technisch bereit für die menschliche Abnahme, aber noch nicht vollständig abgenommen; die oben genannten offenen Kriterien bleiben bestehen.
-
-Die Umsetzung bleibt lokal committet auf `codex/donau-v3` im vorhandenen Checkout, ohne zusätzlichen Worktree. Es gab keinen Push, Merge oder Release. Die vier weiteren Hochwasserklassen bleiben gemäß Meilensteinentscheidung bis zum menschlichen Spieltest zurückgestellt.
+Die alten V3-Screenshots und HQ100-Vergleichsannahmen dokumentieren einen früheren Prototyp und gelten nicht als Abnahme dieses Zweigs. Es gibt keine fachliche oder rechtliche Freigabe für Hochwasserschutzentscheidungen.

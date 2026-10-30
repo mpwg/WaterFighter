@@ -1,38 +1,24 @@
-# WaterFighter: Die Donau kommt
+# WaterFighter · Tullner Donauauen
 
-Ein dreiminütiges Desktop-Browserspiel über Hochwasser an der Donau zwischen Tulln und Wien. Lenke Wasser in Rückhalteräume, schütze Dämme und evakuiere gefährdete Gemeinden. Die Ortsnamen sind real; Flussgeometrie und Hochwasserwirkung sind ein vereinfachtes Spielszenario.
+Ein sechsminütiges Desktop-Hochwasserspiel mit einer WebGPU-Landschaft und einem deterministischen Wasserkern. Ziehe freie Sandsacklinien, rette Menschen durch Hausklicks und bediene den Flussschütz. Die Landschaft ist eine stilisierte Annäherung mit regelmäßig angeordneten Häusern, keine vermessene Darstellung von Tulln und keine Hochwasserprognose.
 
-## Starten und prüfen
-
-Voraussetzung: Bun 1.4.4. Die Abhängigkeiten stehen in `bun.lock`.
+Voraussetzung: Bun 1.4.4 und ein Browser mit WebGPU.
 
 ```sh
 bun install --frozen-lockfile
 bun run dev
-bun run build
 bun run test
+bun run build
 bun run test:browser
-bun --bun tools/compare-rounds.ts
+bun tools/compare-strategies.ts
 ```
 
-`bun run dev` zeigt die lokale Adresse an. `bun run preview` öffnet den Produktionsbuild. Die Browserprüfung baut neu und startet Vite Preview exklusiv auf Port 4187. Sie benötigt Playwright Chromium; bei Bedarf `bunx playwright install chromium`. `WATERFIGHTER_CHROME` kann auf eine kompatible lokale Chromium-Datei zeigen.
+Die Browserprüfung startet den Produktionsbuild exklusiv auf Port 4187. `WATERFIGHTER_CHROME` wählt eine vorhandene Chrome-Datei. `WATERFIGHTER_SOFTWARE_GPU=1` aktiviert die dokumentierten SwiftShader/Vulkan-Flags für funktionale Headless-Tests. Software-Rendering belegt keine Hardware-GPU-Leistung. Der Browserlauf enthält eine vollständige echte 360-Sekunden-Runde und dauert entsprechend länger.
 
-## Spielen
+Die Runde startet nach dem Laden. Die ersten 45 Sekunden bleiben ruhig. Werkzeug **Sandsäcke** (1) zeichnet per linker Maustaste freie Linien auf trockenem Boden; Materialkosten werden am Cursor geprüft. **Entfernen** (2) entfernt Linien und erstattet unbegonnenes Material vollständig, begonnenes teilweise. **Retten** (3) startet durch Hausklick eine sechssekündige Rettung; mehrere Häuser sind gleichzeitig möglich. **Schütz** (4) schaltet den Durchlass. Rechts ziehen verschiebt die Kamera, das Mausrad zoomt, **Übersicht** setzt die Kamera zurück. Escape bricht eine Linie ab.
 
-1. Wähle vor dem Einsatz genau drei Maßnahmen. Unter **Dämme**, **Rückhalt** und **Rettung** kannst du Ziele frei kombinieren und eine Wahl per erneutem Klick zurücknehmen.
-2. Starte die HQ100-Flut. Die ganze Karte bleibt sichtbar. Wähle Ziele auf der Karte oder über die Listen rechts. Wehre haben die Stellungen zu, halb und offen; ihre Umstellung dauert 1,2 Sekunden.
-3. Zwei Notdämme können gebaut werden, solange der Pegel es zulässt. Der Bau dauert drei Sekunden. Eine Dammöffnung gibt den Schutz der benannten Gemeinde dauerhaft auf und wird erst nach 0,9 Sekunden Gedrückthalten ausgelöst. Wasser kann je nach Pegel in beide Richtungen fließen; die Kartenvorschau zeigt die aktuell mögliche Empfangsseite.
-4. Weise bis zu zwei Rettungsteams Gemeinden zu, verteile sie um oder ziehe sie per erneutem Klick ab. Beobachte Pegel, Zulaufprognose, Meldungen, sichere Menschen und Sachschäden.
-5. **Pause** friert die Simulation ein und sperrt Eingriffe. **Weiter** setzt sie fort. **Neustart** beginnt dieselbe Flut erneut. Am Ende zeigt die Bilanz sichere, gerettete und noch in Not befindliche Menschen sowie Sachschäden getrennt.
+**Pause** hält Wasser und Rettungen an; neue Sandsäcke werden mit reservierten Kosten geplant und nach Weiter gebaut. **Neustart** setzt Zeit und Material zurück. Qualität Hoch/Niedrig kann während der Runde gewechselt werden. Nach sechs Minuten erscheint die Bilanz.
 
-Die Steuerung ist für Desktop und Maus ausgelegt. Dammöffnungen funktionieren auch mit Leertaste oder Eingabetaste auf dem fokussierten Button.
+`src/flood/` enthält den 256×192-Wasserkern mit festen 1/30-Sekunden-Schritten, `src/worker.ts` besitzt die laufende Simulation, `src/scene/` rendert Babylon.js WebGPU. `?test=1` stellt eine eingefrorene Test-API bereit; `?test=1&realtime=1` beobachtet echte Zeit. Normale URLs besitzen diese API nicht. Compiler und Schriftdateien werden lokal gebündelt.
 
-## Aufbau und Abnahme
-
-`src/core/` enthält den deterministischen Wasserkern mit festen 1/30-Sekunden-Schritten. `src/render/` zeichnet die Canvas-Karte. `src/main.ts` verbindet Eingabe, Status, Karte und Spielschleife. `?test=1` aktiviert nur für lokale Browserprüfungen die Test-API `window.__waterfighter`; ohne Query ist sie nicht vorhanden.
-
-[Vergleichsrunden](docs/vergleichsrunden.md) messen reproduzierbare HQ100-Strategien unter gleichen Vorbereitungen. [Status und Kriterienmatrix](docs/status.md) führen tatsächliche Nachweise und offene Punkte. [Spieltest-Leitfaden](docs/spieltest.md) beschreibt die ausstehende menschliche Abnahme.
-
-Der frühere V2-Stand liegt als Git-Referenz `prototype/v2-preserved-2026-10-30` (`106c26a28f869b1a84330bdd0e24ed3625eabe09`). Die aktuelle Entwicklung liegt auf `codex/donau-v3`.
-
-Automatisiert geprüft wurden der Kern und Desktop-Chromium. Der 15-Sekunden-RAF-Lauf belegt einen kurzen Echtzeitausschnitt; die vollständige Browserrunde nutzt Zeitbeschleunigung. Ein zweiter Browser-Tab wurde aktiviert; Headless-Chromium meldete den Spieltab dabei nicht als verborgen. Die natürliche Hintergrundpause bleibt offen. Menschliche Verständlichkeit und Spielspaß, Safari, Touch und mobile Geräte sind nicht abgenommen. Schmale Viewports unter 1280 px bleiben außerhalb dieser Abnahme. HQ10, HQ50, HQ500 und HQ1000 sind bis nach drei menschlichen HQ100-Runden zurückgestellt. Kein Release oder Push ist Teil dieser Arbeit.
+[Abnahme und Grenzen](docs/status.md), [Strategiedaten](docs/strategy-evidence.json) und [Browsermessdaten](docs/browser-evidence.json) dokumentieren den aktuellen Stand. Safari, physische GPUs, reale Mobilgeräte und menschlicher Spielspaß wurden nicht abgenommen.

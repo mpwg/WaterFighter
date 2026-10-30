@@ -1,0 +1,80 @@
+{
+  "scenario": "stylized deterministic 256x192; identical initial state and forcing; no rescues",
+  "rows": [
+    {
+      "strategy": "no-action",
+      "resources": 900,
+      "barriers": 0,
+      "checkpoints": [
+        {
+          "time": 179.99999999999235,
+          "wetCells": 19695,
+          "waterVolume": 132399.16117830755,
+          "meanDamage": 0.00023713858469771184,
+          "damagedBuildings": 0,
+          "peakHouseDepth": 0.1905696396739299,
+          "balanceError": 1.2738746590912342e-7
+        },
+        {
+          "time": 360,
+          "wetCells": 24198,
+          "waterVolume": 54406.24428739056,
+          "meanDamage": 0.09751621886313244,
+          "damagedBuildings": 7,
+          "peakHouseDepth": 0.6688886289734406,
+          "balanceError": 1.1910742614418268e-7
+        }
+      ]
+    },
+    {
+      "strategy": "barrier",
+      "resources": 864,
+      "barriers": 18,
+      "checkpoints": [
+        {
+          "time": 179.99999999999235,
+          "wetCells": 19539,
+          "waterVolume": 132391.99370146624,
+          "meanDamage": 0.0001568873493460212,
+          "damagedBuildings": 0,
+          "peakHouseDepth": 0.1905696396739299,
+          "balanceError": 1.23007339425385e-7
+        },
+        {
+          "time": 360,
+          "wetCells": 23999,
+          "waterVolume": 54233.96110738771,
+          "meanDamage": 0.09144439052127885,
+          "damagedBuildings": 7,
+          "peakHouseDepth": 0.6688886289777217,
+          "balanceError": 1.0494841262698174e-7
+        }
+      ]
+    },
+    {
+      "strategy": "gate",
+      "resources": 900,
+      "barriers": 0,
+      "checkpoints": [
+        {
+          "time": 179.99999999999235,
+          "wetCells": 19118,
+          "waterVolume": 132331.24952023546,
+          "meanDamage": 0.00015688734953485872,
+          "damagedBuildings": 0,
+          "peakHouseDepth": 0.19056963967393292,
+          "balanceError": 1.1599331628531218e-7
+        },
+        {
+          "time": 360,
+          "wetCells": 23586,
+          "waterVolume": 53754.81213769847,
+          "meanDamage": 0.08625234393685369,
+          "damagedBuildings": 7,
+          "peakHouseDepth": 0.6688886291238465,
+          "balanceError": 1.0734947863966227e-7
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "diagnostics": {
+    "scene": {
+      "backend": "WebGPU",
+      "quality": "high",
+      "adapter": {
+        "vendor": "google",
+        "renderer": "swiftshader",
+        "version": "unknown version"
+      },
+      "limits": {
+        "maxTextureDimension2D": 8192,
+        "maxBufferSize": 268435456
+      },
+      "renderWidth": 1440,
+      "renderHeight": 960,
+      "preview": null
+    },
+    "worker": {
+      "fixedStep": 0.03333333333333333,
+      "snapshotHz": 10,
+      "samples": 1000,
+      "coreP95Ms": 1.7000000178813934
+    }
+  },
+  "state": {
+    "time": 360,
+    "results": {
+      "rescued": 0,
+      "totalPeople": 140,
+      "safePeople": 98,
+      "threatenedPeople": 42,
+      "damagedBuildings": 7,
+      "meanDamage": 0.09751621886313244
+    },
+    "accounting": {
+      "initial": 29515.459299323342,
+      "inflow": 108764.02964120753,
+      "outflow": 83873.24465325942,
+      "volume": 54406.24428739056,
+      "error": 1.1910742614418268e-7
+    }
+  },
+  "pageErrors": [],
+  "externalRequests": []
+}

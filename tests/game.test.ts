@@ -140,6 +140,14 @@ describe('Hydraulische Wirkung der Werkzeuge',()=>{
     expect(downstream(closed)).toBeLessThan(1e-8);expect(downstream(gap)).toBeGreaterThan(0.1);
     expect(Math.abs(closed.solver.volume()-initial)/initial).toBeLessThan(0.001);
   });
+  it('lässt durch eine tatsächlich breitere Grabenfläche mehr Wasser abfließen',()=>{
+    const w=12,h=5,bed=Array(w*h).fill(1),cfg={...scenario,grid:{...scenario.grid,width:w,height:h},bed,terrain:bed,initialDepth:Array.from({length:w*h},(_,i)=>i%w>=5?0.5:0),waterMask:Array(w*h).fill(0),buildings:[],parameters:{...scenario.parameters,outflowEdges:['left' as const],trenchDepth:0.8}};
+    const narrow=new Game(cfg),wide=new Game(cfg),cells=trenchPath([0,2],[6,2],w),initial=wide.solver.volume();
+    expect(narrow.apply('n',{kind:'trench',cells}).ok).toBe(true);expect(wide.apply('w',{kind:'trench',cells,wide:true}).ok).toBe(true);
+    expect(wide.trenchCells.size).toBeGreaterThan(narrow.trenchCells.size);expect(wide.solver.volume()).toBe(initial);
+    narrow.solver.advance(15);wide.solver.advance(15);
+    expect(wide.solver.outflow).toBeGreaterThan(narrow.solver.outflow);expect(Math.abs(wide.solver.volume()+wide.solver.outflow-initial)/initial).toBeLessThan(0.001);
+  });
   it('erhöht den Abfluss durch einen automatisch verbundenen Grabenrand',()=>{
     const w=12,h=5,bed=Array(w*h).fill(1);
     const cfg={...scenario,grid:{...scenario.grid,width:w,height:h},bed,terrain:bed,initialDepth:Array.from({length:w*h},(_,i)=>i%w>=5?0.5:0),waterMask:Array(w*h).fill(0),buildings:[],parameters:{...scenario.parameters,outflowEdges:['left' as const],trenchDepth:0.8}};

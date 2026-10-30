@@ -47,11 +47,11 @@ Die anfängliche Rundendauer, Flutkurve, Werkzeugkosten und das Schadensziel wer
 
 ### Damm
 
-Ein gezeichneter Verlauf erhöht Barrieren zwischen Simulationszellen. Wasser staut sich und kann bei ausreichendem Pegel überströmen. Automatischer Bruch und Erosion sind nicht Bestandteil des Prototyps.
+Ein gezeichneter Verlauf erhöht Barrieren zwischen Simulationszellen. Im Arcade-Werkzeug werden entlang der Mittellinie bis zu drei benachbarte Sperrkanten gesetzt; am Modellrand wird die Breite begrenzt. Wasser staut sich und kann bei ausreichendem Pegel überströmen. Automatischer Bruch und Erosion sind nicht Bestandteil des Prototyps.
 
 ### Graben
 
-Ein gezeichneter Verlauf senkt das Gelände und schafft einen neuen Wasserweg oder Speicherraum. Vorhandenes Wasser bleibt beim Ausheben erhalten.
+Ein gezeichneter Verlauf senkt das Gelände und schafft einen neuen Wasserweg oder Speicherraum. Das Arcade-Werkzeug senkt die Zellen der Mittellinie und ihre orthogonalen Nachbarn. Gebäudeflächen am Rand werden ausgespart und angezeigt; ein Gebäude auf der Mittellinie blockiert. Vorhandenes Wasser bleibt beim Ausheben erhalten.
 
 ### Abriss
 
@@ -61,6 +61,7 @@ Ein Gebäude wird gezielt ausgewählt und nach Vorschau abgerissen. Seine Ström
 
 - Nahe Endpunkte und sinnvolle Anschlüsse sollen tolerant verbunden werden, damit kleine Zeichenabweichungen keine unbeabsichtigten winzigen Lecks oder fehlenden Abflussanschlüsse erzeugen. Die tatsächlich angewandte Geometrie und ihre spürbare Breite müssen in der Vorschau sichtbar sein; Kosten entsprechen der bestätigten Maßnahme. Keine automatische optimale Strategie und keine stillen großen Umwege. Das interne Simulationsraster darf fein bleiben.
 - Vorschau zeigt Geometrie, Kosten und verbleibendes Budget, ohne den Spielzustand zu ändern.
+- Breite Dämme und Gräben kosten pro neu betroffener Rasterkante beziehungsweise Zelle ein Drittel des jeweiligen Grundpreises, je Aktion aufgerundet. Bestehende Teile werden nicht erneut bezahlt.
 - Erst die ausdrückliche Bestätigung löst eine Aktion aus.
 - Maßnahmen erfolgen sofort am nächsten Simulationsschritt; während einer Pause werden sie ebenfalls verarbeitet, ohne die Simulationszeit fortzuschreiben.
 - Unbezahlbare und ungültige Aktionen werden ohne Teiländerungen abgelehnt.

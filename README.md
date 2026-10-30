@@ -2,7 +2,7 @@
 
 WaterFighter ist ein browserbasierter Prototyp eines Hochwasserschutzspiels in einem realen Wiener Donauviertel. Er umfasst das Szenario, drei Bauwerkzeuge, eine Flutrunde und die Ergebnisanzeige. Die Szenario- und Geräteabnahme ist noch unvollständig. Die Gebäudeschadensberechnung neben Gräben wurde korrigiert; ältere dokumentierte Graben-Schadenswerte sind historisch. Die Anwendung ist keine Hochwasserprognose.
 
-Die laufende Übergabeversion kann vom jüngeren Quellstand abweichen; der Quellstand enthält erste tolerante Anschlüsse für Damm- und Grabenenden sowie schematisch breitere Dammbänder. Die Arcade-Platzierung ist noch nicht vollständig abgenommen.
+Der aktuelle Quellstand enthält breite, hydraulisch wirksame Dämme und Gräben sowie tolerante Anschlüsse. Die menschliche Spielabnahme ist noch offen.
 
 Der [aktuelle Prototyp-Zwischenstand](docs/prototyp-status.md) enthält Startanleitung, vergleichbare Referenzrunden, eine kurze Kriterienmatrix und das zurückgestellte Feintuning.
 
@@ -48,7 +48,7 @@ Für eine beobachtete Runde beschreibt [Spieltest ohne Testkoordinaten](docs/spi
 
 Das Spiel setzt aktuelle stabile Versionen von Safari, Chrome oder Firefox mit WebGL2 voraus. Ältere Browser werden nicht gesondert unterstützt; Safari und echte Mobilgeräte sind noch nicht abgenommen.
 
-Auf dem aktuellen Mac bestanden isolierter Build und 92 automatisierte Tests sowie gezielte Chromium-Desktopfälle für `1.6-draft`. [Vollständige automatisierte Desktoprunden vor der jüngsten Schadenskorrektur](docs/browser-pruefung.md#desktopbrowser-auf-szenario-16) bestanden in Safari, Google Chrome und Firefox; Firefox protokollierte Zugriffsfehler. Mobile Tests werden auf Nutzerwunsch vorläufig ausgelassen. Einzelheiten und offene Kriterien stehen in [status.md](docs/status.md).
+Auf dem aktuellen Mac bestanden isolierter Build und 96 automatisierte Tests sowie gezielte Chromium-Desktopfälle für `1.6-draft`. [Vollständige automatisierte Desktoprunden vor der jüngsten Schadenskorrektur](docs/browser-pruefung.md#desktopbrowser-auf-szenario-16) bestanden in Safari, Google Chrome und Firefox; Firefox protokollierte Zugriffsfehler. Mobile Tests werden auf Nutzerwunsch vorläufig ausgelassen. Einzelheiten und offene Kriterien stehen in [status.md](docs/status.md).
 
 Die Typprüfung verwendet ES2025-Bibliothekstypen und prüft auch die TypeScript-Diagnoseprogramme und Konfigurationsdateien. Vite erzeugt den Produktionsbuild mit `esnext` für aktuelle Browser. Das TypeScript-Ziel allein legt das Vite-Ausgabeziel nicht fest; Bibliothekstypen ersetzen keine Prüfung der tatsächlich verfügbaren Browser-APIs.
 
@@ -60,13 +60,13 @@ Wenn die laufende Berechnung mehr als zwei Sekunden Rückstand hat, erscheint ei
 
 Die Kopfzeile zeigt laufend Gesamtschaden, Ziel sowie Flut- und Abrissverluste, auch bei ausgeblendetem Menü. Gebäude werden nach Zustand eingefärbt; im Kartenmodus zeigt Antippen zusätzlich Zustand, Schaden und Wassertiefe am Gebäuderand als Text. Bei Wasser nennt die Kartenabfrage Tiefe und Wasserspiegel über Wiener Null; bei ausgeblendetem Menü erscheint sie mit dem Zeitpunkt der Abfrage. So lassen sich Wasserstände auf beiden Seiten eines Damms vergleichen.
 
-Bestätigte Dämme erscheinen als schematische orange Bänder und bestätigte Gräben als braune Geländeflächen. Ein schematisches goldgelbes Band zeigt den Grabenverlauf auch über Wasser und Gebäuden; sie ist eine Kartenüberlagerung. Schräge Gräben folgen rasterverbunden der Verbindung zwischen den beiden gewählten Punkten; die Vorschau zeigt den tatsächlichen Verlauf.
+Bestätigte breite Dämme erscheinen als orange Bänder und bestätigte Gräben als braune Geländeflächen. Ein schematisches goldgelbes Band zeigt den Grabenverlauf auch über Wasser und Gebäuden; es ist eine Kartenüberlagerung. Schräge Gräben folgen rasterverbunden der Verbindung zwischen den beiden gewählten Punkten; die Vorschau zeigt den tatsächlichen Verlauf.
 
 Helle Strömungspfeile zeigen die berechnete Richtung nahe der jeweils abgetasteten Wasserzelle. Entlang bestätigter Gräben sind die Pfeile dunkelblau, wenn dort genügend Wasser und Strömung vorhanden sind. Die Größe der regulären Pfeile passt sich begrenzt dem Zoom an; schmale Grabenmarker können trotz der Farbe in der Übersicht schwer erkennbar sein. Eine [Safari-Sichtprobe](docs/browser-pruefung.md#dunkle-grabenpfeile-in-safari) dokumentiert die Darstellung und ihre Grenzen.
 
 Blaue Pfeile kennzeichnen die Zuflussbereiche; violette Pfeile markieren offene Modellränder, über die Wasser den Ausschnitt verlassen kann. Die Pfeile sind schematisch und keine Aussage über eine sichere reale Ableitung.
 
-Der Szenarioentwurf `1.5-draft` verwendet weiterhin einen offenen westlichen Modellrand und 3 m Grabentiefe als Spielannahmen. Wasser außerhalb des Ausschnitts wird nicht weiter simuliert. Die numerischen Referenzstrategien stehen in `tests/fixtures/review-strategies.json` und lassen sich mit `bun tools/reference-strategies.ts baseline`, `shield`, `land-divert`, `south-control` oder `south-divert` nachvollziehen. [Zeitvergleich](docs/review-gebaeudevergleich.md#südlicher-graben-eingriffszeit-auf-15), [Wegdiagnose](docs/review-gebaeudevergleich.md#modellierter-wasserweg-nach-spätem-südlichem-grabeneingriff-auf-15) und [Platzierungsabweichungen](docs/review-gebaeudevergleich.md#platzierungsabweichungen-der-beiden-gräben-auf-15) zeigen Nutzen und Empfindlichkeit; frühere Gebäudevergleiche beziehen sich auf `1.4-draft`. Schräge Damm- und Grabenverläufe folgen einer verbundenen Rasterlinie; menschliche Platzierung bleibt offen.
+Der Szenarioentwurf `1.6-draft` verwendet einen offenen westlichen Modellrand und 3 m Grabentiefe als Spielannahmen. Wasser außerhalb des Ausschnitts wird nicht weiter simuliert. Die numerischen Referenzstrategien stehen in `tests/fixtures/review-strategies.json` und lassen sich mit `bun tools/reference-strategies.ts baseline --wide` und entsprechend `shield`, `land-divert`, `south-control` oder `south-divert` mit `--wide` nachvollziehen. [Zeitvergleich](docs/review-gebaeudevergleich.md#südlicher-graben-eingriffszeit-auf-15), [Wegdiagnose](docs/review-gebaeudevergleich.md#modellierter-wasserweg-nach-spätem-südlichem-grabeneingriff-auf-15) und [Platzierungsabweichungen](docs/review-gebaeudevergleich.md#platzierungsabweichungen-der-beiden-gräben-auf-15) zeigen Nutzen und Empfindlichkeit; frühere Gebäudevergleiche beziehen sich auf `1.4-draft`. Schräge Damm- und Grabenverläufe folgen einer verbundenen Rasterlinie; menschliche Platzierung bleibt offen.
 
 Gräben dürfen an bereits ausgehobene Zellen anschließen. Die Vorschau nennt die wiederverwendeten Zellen; Kosten und Vertiefung betreffen nur neue Zellen. Eine vollständig vorhandene Strecke wird abgelehnt.
 

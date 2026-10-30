@@ -2,7 +2,7 @@
 
 WaterFighter ist ein browserbasierter Prototyp eines Hochwasserschutzspiels in einem realen Wiener Donauviertel. Er umfasst das Szenario, drei Bauwerkzeuge, eine Flutrunde und die Ergebnisanzeige. Die Szenario- und Geräteabnahme ist noch unvollständig. Die Anwendung ist keine Hochwasserprognose.
 
-Der Szenarioentwurf `1.5-draft` entfernt zehn identifizierte OSM-Dächer aus der Gebäude- und Sperrenmodellierung. Die [Analyse und Grenzen](docs/solverbericht.md#überlagerte-gebäude-und-als-gebäude-erfasste-dächer) sind dokumentiert. Ein neuer wirtschaftlich sinnvoller Einzelabriss ist noch nicht nachgewiesen; die bisherigen Nachweise für `1.4-draft` sind historisch.
+Der Szenarioentwurf `1.5-draft` entfernt zehn identifizierte OSM-Dächer aus der Gebäude- und Sperrenmodellierung. Ein [neuer numerisch wirtschaftlicher Einzelabriss](docs/review-gebaeudevergleich.md#dach-korrigiertes-szenario-15-abrisssuche-und-laufender-eingriff) ist sehr klein und seine menschliche Auffindbarkeit noch ungeprüft. Die bisherigen Nachweise für `1.4-draft` sind historisch.
 
 ## Einrichtung und Prüfung
 

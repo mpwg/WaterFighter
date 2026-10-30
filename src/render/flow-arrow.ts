@@ -1,6 +1,6 @@
 /** Keep arrows legible in overview without enlarging them indefinitely. */
 export function flowArrowLength(zoom:number,viewportHeight:number):number {
-  return Math.max(6,Math.min(24,16*zoom/Math.max(1,viewportHeight)));
+  return Math.max(Math.min(6,Math.max(1,zoom*0.15)),Math.min(24,16*zoom/Math.max(1,viewportHeight)));
 }
 
 /** Write one horizontal arrow as three line segments into a reusable vertex buffer. */

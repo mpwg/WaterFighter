@@ -343,7 +343,7 @@ export class World {
   }
   setFlowRunning(running:boolean,speed:1|2):void {this.flowClock.setRate(running?speed:0,performance.now()/1000);}
   resetView():void { this.flowClock.reset(performance.now()/1000);this.zoom=560; this.camera.setTarget(Vector3.Zero()); this.camera.alpha=INITIAL_ALPHA; this.camera.beta=INITIAL_BETA; this.camera.radius=INITIAL_RADIUS; this.resize(); }
-  setZoom(factor:number): void { this.zoom=Math.max(40,Math.min(950,this.zoom*factor)); this.resize(); }
+  setZoom(factor:number): void { this.zoom=Math.max(25,Math.min(950,this.zoom*factor)); this.resize(); }
   pan(dx:number,dy:number): void {
     const camera=this.camera; const scale=this.zoom/Math.max(1,this.canvas.clientHeight);
     const right=new Vector3(Math.cos(camera.alpha+Math.PI/2),0,Math.sin(camera.alpha+Math.PI/2));

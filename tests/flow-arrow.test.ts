@@ -10,6 +10,7 @@ it('points the shaft and both arrowhead segments in the flow direction',()=>{
 });
 
  it('increases overview arrows with camera scale while bounding their length',()=>{
+  expect(flowArrowLength(25,480)).toBeCloseTo(3.75);
   expect(flowArrowLength(180,844)).toBe(6);
   expect(flowArrowLength(560,844)).toBeCloseTo(10.616,2);
   expect(flowArrowLength(950,320)).toBe(24);

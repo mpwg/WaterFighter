@@ -16,7 +16,7 @@ try {
   await new Promise(r=>world.scene.onAfterRenderObservable.addOnce(r));
  },state);
  if(mobile)await page.locator('#panel-toggle').tap();else await page.locator('#panel-toggle').click();
- if(process.argv.includes('--close'))for(let i=0;i<12;i++){if(mobile)await page.locator('#zoom-in').tap();else await page.locator('#zoom-in').click();}
+ if(process.argv.includes('--close'))for(let i=0;i<24;i++){if(mobile)await page.locator('#zoom-in').tap();else await page.locator('#zoom-in').click();}
  const width=await page.evaluate(async()=>{const {world}=await import(document.querySelector('script[src*="/src/main.ts"]').src);return world.scenario.grid.width;});
  const results=[];
  for(const [x,y] of [[25,2],[26,2]]){

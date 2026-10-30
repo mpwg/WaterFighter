@@ -4,6 +4,7 @@ const base='http://127.0.0.1:4444';
 async function command(path,body,method='POST') {const r=await fetch(base+path,{method,headers:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(JSON.stringify(d));return d.value;}
 const session=await command('/session',{capabilities:{alwaysMatch:{browserName:'firefox','moz:firefoxOptions':{binary:process.env.WATERFIGHTER_FIREFOX,args:process.env.WATERFIGHTER_FIREFOX_HEADLESS==='0'?[]:['-headless'],prefs:{'webgl.force-enabled':true,'webgl.disabled':false,'gfx.webrender.software':true}}}}});
 const sid=session.sessionId,prefix=`/session/${sid}`;
+let failed=false;
 try {
   await command(prefix+'/url',{url:process.env.WATERFIGHTER_URL??'http://127.0.0.1:4173/'});
   const script=async code=>command(prefix+'/execute/sync',{script:code,args:[]});
@@ -21,6 +22,7 @@ try {
   const pointer=async (x,y)=>command(prefix+'/actions',{actions:[{type:'pointer',id:'mouse',parameters:{pointerType:'mouse'},actions:[{type:'pointerMove',duration:0,x,y,origin:'viewport'},{type:'pointerDown',button:0},{type:'pointerUp',button:0}]}]});
   const toolResults=[];
   for(const mode of ['trench','dam','demolish']) {
+    phase=`Werkzeug ${mode}`;
     await click(`[data-mode="${mode}"]`);
     if(mode==='demolish') {
       for(const [x,y] of [[560,245],[410,225],[450,230],[600,210],[515,220],[675,225]]) {
@@ -40,6 +42,7 @@ try {
   }
   let fullRound=null;
   if(process.env.WATERFIGHTER_FIREFOX_FULL==='1') {
+    phase='Vollständige Runde';
     await click('#speed');const started=Date.now();await click('#run');
     for(let i=0;i<240;i++) {if(await script('return !document.querySelector("#result").hidden'))break;await new Promise(r=>setTimeout(r,1000));}
     fullRound=await script('return {visible:!document.querySelector("#result").hidden,title:document.querySelector("#result-title").textContent,details:document.querySelector("#result-details").textContent,time:document.querySelector("#time").textContent};');
@@ -49,4 +52,10 @@ try {
   const screenshot=await command(prefix+'/screenshot',undefined,'GET');writeFileSync('/tmp/waterfighter-firefox.png',Buffer.from(screenshot,'base64'));
   const report={version:session.capabilities.browserVersion,initial:state,running,paused,reset,toolResults,fullRound};writeFileSync('/tmp/waterfighter-firefox.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
   if(running.state!=='Läuft'||paused.state!=='Pausiert'||reset.state!=='Vorbereitung'||reset.time!=='00:00')throw new Error('Firefox-Ablauf fehlgeschlagen');
-} finally {await command(prefix,undefined,'DELETE');}
+} catch (error) {
+  failed=true;
+  throw error;
+} finally {
+  try {await command(prefix,undefined,'DELETE');}
+  catch (error) {if(!failed)throw error; console.error('Firefox-Sitzung konnte nach dem ursprünglichen Fehler nicht beendet werden:',error);}
+}

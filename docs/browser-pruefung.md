@@ -897,3 +897,8 @@ Zusätzlich vor `</head>` der kopierten `index.html` den folgenden Worker-Hook e
 ```
 
 Vite in der Kopie auf Port 5174 und `safaridriver -p 4445` starten; anschließend `bun tools/verify-safari-south-flow.mjs` im ursprünglichen Repository ausführen. Der Ablauf setzt eine Inhaltsfläche von 1600 × 1000 CSS-Pixeln voraus, prüft die Szenariodatei und schreibt die Sichtproben nach `/tmp`. Der Worker-Hook liest Vorschauen mit, ohne Nachrichten oder Simulationswerte zu ändern; die Aufnahmen und Aktionen sind instrumentierte Tests.
+
+
+## Safari-Kurzprüfung nach der Grabendarstellung
+
+Am 30. Oktober 2026 wurde der lokale Produktionsbuild mit `bun tools/observe-safari.mjs` über tatsächliches Safari 27.2 und Safari WebDriver auf macOS geprüft. Das ausgelieferte Szenario `1.6-draft` entsprach dem lokalen Szenario-Hash `dc43e606bf9ff4e06507714a3be27aaab27c6a0ac0eeeaaca308810089896b80`. Laden, Start, Pause und Rücksetzen auf 00:00 sowie Auswahl, bestätigbare Vorschau, Bestätigung und Budgetübernahme für Graben, Damm und Abriss bestanden. Die Auswahl erfolgte automatisiert mit festen Bildschirmkoordinaten. Dies war ein Desktop-Kurztest, keine vollständige Runde und keine menschliche Bewertung der Sichtbarkeit.

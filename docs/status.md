@@ -6,7 +6,7 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
-Eine [Abrisssuche ohne vorbereitete Dämme](review-gebaeudevergleich.md#größerer-abriss-ohne-vorbereitete-dämme) auf 1.6 fand neben dem kleinen Kandidaten ein größeres Bürogebäude: Sein Abriss ist numerisch vor Beginn sowie bei 60, 120 und 180 s wirtschaftlich, verfehlt allein jedoch das Schadensziel. Bei 240 s und mit den getesteten Dammführungen ist er nachteilig. Die Desktopvorschau wurde mit Testkoordinaten geprüft; ein menschlicher Spieltest fehlt.
+Eine [Abrisssuche ohne vorbereitete Dämme](review-gebaeudevergleich.md#größerer-abriss-ohne-vorbereitete-dämme) auf 1.6 fand neben dem kleinen Kandidaten ein größeres Bürogebäude: Sein Abriss ist numerisch vor Beginn sowie bei 60, 120 und 180 s wirtschaftlich, verfehlt allein jedoch das Schadensziel. Bei 240 s und mit den getesteten Dammführungen ist er nachteilig. Eine vollständige Chromium-Runde mit spätem Abriss und Neustart bestand mit Testkoordinaten; ein menschlicher Spieltest fehlt.
 
 Das überlappende [Brückengebäudeteil](geodaten-voruntersuchung.md#überlappendes-brückengebäudeteil) belegt auf dem 4-m-Raster fünf vollständig vom größeren Gebäude überdeckte Zellen. Fünf Referenzpaare auf 1.6 ergaben mit und ohne Teil identische Schäden und Budgets. Seine reale und hydraulische Einordnung bleibt offen; das Objekt wurde nicht entfernt.
 

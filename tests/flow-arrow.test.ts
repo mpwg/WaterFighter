@@ -1,5 +1,28 @@
 import { expect, it } from 'vitest';
-import { flowArrowLength, writeFlowArrow } from '../src/render/flow-arrow';
+import { flowArrowLength, flowLineColors, writeFlowArrow } from '../src/render/flow-arrow';
+
+it('colors all segments of trench samples differently from regular water samples',()=>{
+  const colors=flowLineColors(2,1);
+  expect(colors).toHaveLength(9);
+  for(const line of colors.slice(0,6))expect(line.map(c=>c.asArray())).toEqual([[0.8,0.96,0.99,1],[0.8,0.96,0.99,1]]);
+  for(const line of colors.slice(6))expect(line.map(c=>c.asArray())).toEqual([[0.04,0.20,0.32,1],[0.04,0.20,0.32,1]]);
+});
+
+it('passes the two marker colors into a Babylon line-system vertex buffer',async()=>{
+  const {NullEngine}=await import('@babylonjs/core/Engines/nullEngine');
+  const {Scene}=await import('@babylonjs/core/scene');
+  const {Vector3}=await import('@babylonjs/core/Maths/math.vector');
+  const {VertexBuffer}=await import('@babylonjs/core/Buffers/buffer');
+  const {CreateLineSystem}=await import('@babylonjs/core/Meshes/Builders/linesBuilder');
+  const engine=new NullEngine(),scene=new Scene(engine);
+  try {
+    const mesh=CreateLineSystem('flow-colors',{lines:Array.from({length:6},()=>[Vector3.Zero(),Vector3.Zero()]),colors:flowLineColors(1,1),useVertexAlpha:false},scene);
+    expect(mesh.useVertexColor).toBe(true);
+    const colors=mesh.getVerticesData(VertexBuffer.ColorKind)!;
+    expect(colors[0]).toBeCloseTo(0.8);expect(colors[1]).toBeCloseTo(0.96);
+    expect(colors[24]).toBeCloseTo(0.04);expect(colors[25]).toBeCloseTo(0.20);
+  } finally {scene.dispose();engine.dispose();}
+});
 
 it('points the shaft and both arrowhead segments in the flow direction',()=>{
   const buffer=new Float32Array(18);

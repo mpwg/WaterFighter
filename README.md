@@ -28,7 +28,7 @@ Für eine beobachtete Runde beschreibt [Spieltest ohne Testkoordinaten](docs/spi
 
 Das Spiel setzt aktuelle stabile Versionen von Safari, Chrome oder Firefox mit WebGL2 voraus. Ältere Browser werden nicht gesondert unterstützt; Safari und echte Mobilgeräte sind noch nicht abgenommen.
 
-Auf dem aktuellen Mac bestanden Build und 76 Modelltests. Vollständige automatisierte Runden in [Safari](docs/browser-pruefung.md#safari-272-auf-dem-korrigierten-szenario-15), [Google Chrome und Firefox](docs/browser-pruefung.md#google-chrome-und-firefox-auf-szenario-15) auf `1.5-draft` stammen vom Stand vor der Auswahlhilfe; Firefox protokollierte dabei Zugriffsfehler. Die Modelltests umfassen eine [Konvergenzprüfung gegen eine analytische Dammbruchwelle](docs/solverbericht.md#räumliche-verfeinerung-einer-analytischen-dammbruchwelle). Mobile Tests werden auf Nutzerwunsch vorläufig ausgelassen. Einzelheiten und offene Kriterien stehen in [status.md](docs/status.md).
+Auf dem aktuellen Mac bestanden Build und 78 Modelltests. Vollständige automatisierte Runden in [Safari](docs/browser-pruefung.md#safari-272-auf-dem-korrigierten-szenario-15), [Google Chrome und Firefox](docs/browser-pruefung.md#google-chrome-und-firefox-auf-szenario-15) auf `1.5-draft` stammen vom Stand vor den letzten Darstellungsänderungen; Firefox protokollierte dabei Zugriffsfehler. Die Modelltests umfassen eine [Konvergenzprüfung gegen eine analytische Dammbruchwelle](docs/solverbericht.md#räumliche-verfeinerung-einer-analytischen-dammbruchwelle). Mobile Tests werden auf Nutzerwunsch vorläufig ausgelassen. Einzelheiten und offene Kriterien stehen in [status.md](docs/status.md).
 
 Die Typprüfung verwendet ES2025-Bibliothekstypen und prüft auch die TypeScript-Diagnoseprogramme und Konfigurationsdateien. Vite erzeugt den Produktionsbuild mit `esnext` für aktuelle Browser. Das TypeScript-Ziel allein legt das Vite-Ausgabeziel nicht fest; Bibliothekstypen ersetzen keine Prüfung der tatsächlich verfügbaren Browser-APIs.
 
@@ -42,7 +42,7 @@ Die Kopfzeile zeigt laufend Gesamtschaden, Ziel sowie Flut- und Abrissverluste, 
 
 Bestätigte Dämme erscheinen als orange Linien und bestätigte Gräben als braune Geländeflächen. Eine schematische dunkelbraune Linie zeigt den Grabenverlauf auch über Wasser und Gebäuden; sie ist eine Kartenüberlagerung. Schräge Gräben folgen rasterverbunden der Verbindung zwischen den beiden gewählten Punkten; die Vorschau zeigt den tatsächlichen Verlauf.
 
-Weiße Strömungspfeile zeigen die berechnete Richtung nahe der jeweils abgetasteten Zelle und erscheinen auch entlang bestätigter Gräben, wenn dort genügend Wasser und Strömung vorhanden sind. Die Größe der regulären Pfeile passt sich begrenzt dem Zoom an; schmale Grabenmarker können in der Übersicht schwer erkennbar sein.
+Helle Strömungspfeile zeigen die berechnete Richtung nahe der jeweils abgetasteten Wasserzelle. Entlang bestätigter Gräben sind die Pfeile dunkelblau, wenn dort genügend Wasser und Strömung vorhanden sind. Die Größe der regulären Pfeile passt sich begrenzt dem Zoom an; schmale Grabenmarker können trotz der Farbe in der Übersicht schwer erkennbar sein.
 
 Blaue Pfeile kennzeichnen die Zuflussbereiche; violette Pfeile markieren offene Modellränder, über die Wasser den Ausschnitt verlassen kann. Die Pfeile sind schematisch und keine Aussage über eine sichere reale Ableitung.
 

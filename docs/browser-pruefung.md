@@ -818,3 +818,9 @@ Object.defineProperty(window,'__wfPickTest',{get:()=>({world,Vector3:TestVector3
 ```
 
 Bei laufendem `safaridriver -p 4445` führt `bun tools/verify-safari-small-building.mjs` im ursprünglichen Repository die Prüfung aus. Der Skriptaufruf kontrolliert das Szenariopaket gegen die lokale Datei. Der Hook existiert nur in der isolierten Kopie, nicht im Produkt; Safari-Fernsteuerung muss aktiviert und Safari gegebenenfalls zunächst beendet sein.
+
+## Dunkle Strömungspfeile entlang von Gräben
+
+Graben-Strömungspfeile sind nun dunkelblau; die übrigen Wasserpfeile bleiben hell. Die Farben werden pro Liniensegment in den Babylon-Vertexpuffer geschrieben. Position, Richtung, Länge, Geschwindigkeitsschwelle und Worker-Simulation wurden nicht geändert. Die Spielhilfe erklärt die Farben. Produktionsbuild und 78 Vitest-Tests bestanden; darunter prüfen Tests Farbzuordnung und Babylon-Vertexpuffer. Vier gezielte Chromium-Desktopfälle zu Pause, Grabentrasse und Neustart bestanden.
+
+Eine erneute instrumentierte Live-Runde auf `1.5-draft` mit Grabenbau bei 02:30 und testseitig fokussierter Kamera zeigte bei [03:00](suedgraben-1.5-dunkel-180.png) 17 und bei [04:00](suedgraben-1.5-dunkel-240.png) 27 bewegte von 34 abgetasteten Grabenstellen. Die dunkelblauen Pfeile unterscheiden sich auf Wasser besser von den hellen regulären Pfeilen; sie bleiben schmal und werden teilweise durch Geometrie und Perspektive verdeckt. Die Runde erreichte 13.446 Schaden und 6.540 Budgetrest. Die Sichtprobe nutzt Testkoordinaten und ist keine menschliche Verständlichkeits- oder Geräteabnahme; mobile Tests sind ausgesetzt.

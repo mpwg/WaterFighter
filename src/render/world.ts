@@ -20,7 +20,7 @@ import { groundRoads, terrainHeight } from './roads';
 import { buildingCondition } from './building-status';
 import { boundaryArrowLines, boundaryArrows } from './boundary-arrows';
 import { MAX_TRENCH_FLOW_SAMPLES, trenchFlowCells } from './trench-flow';
-import { flowArrowLength, writeFlowArrow } from './flow-arrow';
+import { flowArrowLength, flowLineColors, writeFlowArrow } from './flow-arrow';
 import { trenchRouteSegments } from './trench-route';
 import { FlowClock } from './flow-clock';
 import { uniqueSmallBuilding, type SmallBuildingBox } from './small-building-hit';
@@ -108,9 +108,9 @@ export class World {
     // The survey-derived face elevations affect flow, so show them on the map as well.
     this.updateSurveyRidges();
     // A fixed, bounded set of visual stream markers is updated from worker momentum.
-    const count=Math.ceil(this.width/12)*Math.ceil(this.height/12)+MAX_TRENCH_FLOW_SAMPLES;
-    this.flowLines=CreateLineSystem('flow',{lines:Array.from({length:count*3},()=>[Vector3.Zero(),Vector3.Zero()]),updatable:true},this.scene);
-    this.flowLines.color=new Color3(0.8,0.96,0.99);this.flowLines.isPickable=false;
+    const regularCount=Math.ceil(this.width/12)*Math.ceil(this.height/12),count=regularCount+MAX_TRENCH_FLOW_SAMPLES;
+    this.flowLines=CreateLineSystem('flow',{lines:Array.from({length:count*3},()=>[Vector3.Zero(),Vector3.Zero()]),colors:flowLineColors(regularCount,MAX_TRENCH_FLOW_SAMPLES),useVertexAlpha:false,updatable:true},this.scene);
+    this.flowLines.isPickable=false;
     // Dynamic markers start at the origin; their initial bounds do not follow updates.
     this.flowLines.alwaysSelectAsActiveMesh=true;
     this.flowPositions=new Float32Array(count*18);

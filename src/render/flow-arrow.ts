@@ -1,3 +1,14 @@
+import { Color4 } from '@babylonjs/core/Maths/math.color';
+
+/** Fixed colours per segment: water-wide samples stay light, trench samples are dark. */
+export function flowLineColors(regularCount:number,trenchCount:number):Color4[][] {
+  const water=new Color4(0.8,0.96,0.99,1),trench=new Color4(0.04,0.20,0.32,1);
+  return Array.from({length:(regularCount+trenchCount)*3},(_,i)=>{
+    const color=i<regularCount*3?water:trench;
+    return [color,color];
+  });
+}
+
 /** Keep arrows legible in overview without enlarging them indefinitely. */
 export function flowArrowLength(zoom:number,viewportHeight:number):number {
   return Math.max(Math.min(6,Math.max(1,zoom*0.15)),Math.min(24,16*zoom/Math.max(1,viewportHeight)));

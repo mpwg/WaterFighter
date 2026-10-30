@@ -1,5 +1,11 @@
 # Browser- und Stabilitätsprüfung
 
+## Desktop-Werkzeugprüfung auf Szenario 1.5
+
+Am 30. Oktober 2026 bestanden auf dem lokalen Produktionsbuild mit Chromium 156.0.8078.4 19 ausgewählte Playwright-Prüfungen bei Desktopansichten. Sie umfassen Damm- und Grabenverläufe, die Auswahl kleiner Gebäude, Hindernismeldungen, Aktionen bei laufender und pausierter Flut, verzögerte Workerantworten, alte Rundennachrichten und eine bei erhöhtem Wasser sichtbare Grabentrasse. Die konkrete Auswahl wird durch `bun --bun playwright test` mit den Dateien `connected-trench-live`, `connected-trench`, `diagonal-dam`, `partial-demolition-selection`, `partial-diversion-placement`, `paused-actions`, `paused-flow`, `pending-action`, `shifted-reference`, `small-building-selection`, `south-trench-blocked`, `stale-ready` und `trench-route-overlay` unter `tests/browser/` reproduziert. Der Testlauf nutzte zwei Worker und dauerte 53,4 s; dies ist keine Leistungsabnahme.
+
+Zwei vorausgehende Auswahlversuche wurden abgebrochen, weil ihre Dateien auch nicht gewünschte kleine Ansichten oder Touchfälle enthielten. Beim zweiten Versuch liefen vor dem Abbruch versehentlich zwei kleine Ansichten bei 320 × 480 und 480 × 320 CSS-Pixeln; beide bestanden, sind aber keine Tests auf Mobilgeräten. Die abgebrochenen Tests zählen nicht als bestandene Suite. Tatsächliche mobile Geräteprüfungen bleiben auf Nutzerwunsch ausgesetzt.
+
 **Versionsbezug:** Die folgenden historischen Dammrunden und Screenshots vor der direkten Dammführung verwendeten die frühere rechtwinklige Pfadregel. Sie belegen den jeweils genannten damaligen Build, nicht die neuen Referenzwerte; aktuelle Nachweise sind gesondert gekennzeichnet.
 
 ## Gesamtsuite nach kompaktem Status

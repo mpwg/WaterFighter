@@ -661,3 +661,11 @@ Der Durchgang umfasst die beiden neuen Rückmeldungsfälle, Werkzeugaktionen, Ka
 Am 30. Oktober 2026 spielte `bun tools/observe-land-production.mjs --after-flood` auf dem isolierten Produktionsbuild `2c5506c` mit Szenario `1.4-draft` in Chrome 156.0.8078.73 unter Linux und Softwaregrafik. Drei Dämme wurden in der Vorbereitung bestätigt; bei 02:31 wurde pausiert und der nördliche Landgraben bestätigt. Die Worker-Vorschau wurde testseitig mitgelesen; die Auswahl nutzte feste Bildschirmkoordinaten und eine kleine Endpunktkorrektur. Die Uhr blieb während der Pause stehen.
 
 Nach 156,682 s einschließlich Bedienung erreichte die 2×-Runde mit 1.405 Flutschaden, keinem Abrissverlust und 7.510 Budgetrest das Ziel. Seitenfehler wurden nicht protokolliert; der Neustart setzte Zeit, Budget und Schaden zurück. Der automatisierte Lauf belegt keine menschliche Platzierung oder echte Geräteabnahme.
+
+### Firefox-Prüfung der Bestätigungsrückmeldung
+
+Am 30. Oktober 2026 prüfte `WATERFIGHTER_FIREFOX_FULL=1 WATERFIGHTER_FIREFOX_HINT=1 bun tools/observe-firefox.mjs` den isolierten Produktionsbuild `2c5506c` in Firefox 159.0 über geckodriver 0.37.1 auf einem virtuellen Linux-X-Desktop mit Mesa-Softwaregrafik. Die Content-Sandbox war für lokale Testschriften deaktiviert. Das ergänzte Testskript wurde in das isolierte Archiv kopiert; es verwendete feste Mauskoordinaten.
+
+Bei verborgenem Menü zeigte der erste bestätigte Graben zunächst die Kosten und nach 4,5 s wieder den Hinweis zur Start- und Endpunktwahl. Nach einer weiteren Bestätigung wurde unmittelbar ein neuer Startpunkt gewählt; auch nach 4,5 s blieb der Hinweis zur Endpunktwahl erhalten. Dazwischen setzte der Test die Runde zurück. Zusätzlich funktionierten Start, Pause, Neustart sowie Vorschau und Bestätigung aller drei Werkzeuge. Die anschließende unbehandelte 2×-Runde endete nach 150,977 s bei 05:00 mit sichtbarem Ergebnis, 138.836 Flutschaden und 10.000 Budgetrest; das Ziel wurde verfehlt.
+
+Die Prüfung ist automatisiert und ersetzt weder menschliche Bedienung noch echte Geräte oder tatsächliches Safari. Der frühere [WebDriver-Abbruch](#firefox-wiederholung-nach-zoomänderung-abgebrochen) bleibt ungeklärt.

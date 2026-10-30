@@ -40,6 +40,31 @@ try {
     toolResults.push({mode,preview:preview.text,budget:await script('return document.querySelector("#budget").textContent')});
     await click('#reset');await new Promise(r=>setTimeout(r,300));
   }
+  let hintChecks=null;
+  if(process.env.WATERFIGHTER_FIREFOX_HINT==='1') {
+    phase='Bestätigungshinweis';hintChecks=[];
+    for(const chooseAgain of [false,true]) {
+      await click('[data-mode="trench"]');await click('#panel-toggle');
+      await pointer(650,450);await pointer(700,450);
+      let ready=false;
+      for(let i=0;i<100;i++){ready=await script('return !document.querySelector("#confirm").disabled && !document.querySelector("#preview").hidden');if(ready)break;await new Promise(r=>setTimeout(r,100));}
+      if(!ready)throw Error('Graben für Hinweisprüfung nicht bestätigbar');
+      await click('#confirm');
+      let confirmation='';
+      for(let i=0;i<100;i++){confirmation=await script('return document.querySelector("#tool-hint").textContent');if(confirmation.startsWith('Maßnahme bestätigt.'))break;await new Promise(r=>setTimeout(r,100));}
+      if(!confirmation.startsWith('Maßnahme bestätigt.'))throw Error(`Bestätigung fehlt: ${confirmation}`);
+      if(chooseAgain)await pointer(650,450);
+      await new Promise(r=>setTimeout(r,4500));
+      const hint=await script('return {text:document.querySelector("#tool-hint").textContent,visible:!document.querySelector("#tool-hint").hidden}');
+      const expected=chooseAgain?'Endpunkt auf der Karte antippen.':'Start und Ende auf der Karte antippen.';
+      if(!hint.visible||hint.text!==expected)throw Error(`Unerwarteter Werkzeughinweis: ${JSON.stringify(hint)}`);
+      hintChecks.push({chooseAgain,confirmation,hint:hint.text});
+      await click('#panel-toggle');await click('#reset');
+      let resetReady=false;
+      for(let i=0;i<100;i++){resetReady=await script('return document.querySelector("#state").textContent==="Vorbereitung" && document.querySelector("#budget").textContent.replace(/\\s/g,"")==="10000"');if(resetReady)break;await new Promise(r=>setTimeout(r,100));}
+      if(!resetReady)throw Error("Neustart nach Hinweisprüfung nicht abgeschlossen");
+    }
+  }
   let fullRound=null;
   if(process.env.WATERFIGHTER_FIREFOX_FULL==='1') {
     phase='Vollständige Runde';
@@ -50,7 +75,7 @@ try {
     if(!fullRound.visible)throw new Error(`Vollständige Runde nicht beendet: ${JSON.stringify(fullRound)}`);
   }
   const screenshot=await command(prefix+'/screenshot',undefined,'GET');writeFileSync('/tmp/waterfighter-firefox.png',Buffer.from(screenshot,'base64'));
-  const report={version:session.capabilities.browserVersion,initial:state,running,paused,reset,toolResults,fullRound};writeFileSync('/tmp/waterfighter-firefox.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+  const report={version:session.capabilities.browserVersion,initial:state,running,paused,reset,toolResults,hintChecks,fullRound};writeFileSync('/tmp/waterfighter-firefox.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
   if(running.state!=='Läuft'||paused.state!=='Pausiert'||reset.state!=='Vorbereitung'||reset.time!=='00:00')throw new Error('Firefox-Ablauf fehlgeschlagen');
 } catch (error) {
   failed=true;

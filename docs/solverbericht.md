@@ -384,6 +384,22 @@ Eine API-Abfrage der im Szenario enthaltenen OSM-Wege am 30. Oktober 2026 identi
 
 ## Erste Prüfungen des Dach-korrigierten Szenarios 1.5
 
+### Rastervergleich auf dem korrigierten Szenario
+
+Am 30. Oktober 2026 wurde der oben beschriebene stückweise konstante Rastervergleich mit `WATERFIGHTER_GRID_OUTPUT=/tmp/wf-grid-1.5-4.json bun tools/compare-grid-refinement.ts 1` und entsprechend Faktor 2 auf `1.5-draft` wiederholt. Die 2-m-Zellen verwenden weiterhin keine neu aufgelösten Rohdaten; die Gebäude werden auf jedem Raster erneut belegt. Beide unbehandelten Runden laufen 300 s mit gleicher Zuflusskurve.
+
+| Größe | 4 m | 2 m |
+| --- | ---: | ---: |
+| Anfangsvolumen | 499.584 m³ | 499.584 m³ |
+| Zufluss | 1.710.000 m³ | 1.710.000 m³ |
+| Endvolumen | 1.084.321,31 m³ | 1.099.313,51 m³ |
+| Abfluss | 1.125.262,69 m³ | 1.110.270,49 m³ |
+| Flutschaden | 94.376,50 | 92.934,48 |
+| CFL-Schritte | 3.572 | 7.247 |
+| Relativer Bilanzfehler | 3,23 × 10⁻¹⁴ | 3,90 × 10⁻¹³ |
+
+Der Gesamtschaden sinkt um 1.442,01 beziehungsweise rund 1,53 %. `bun tools/compare-grid-results.ts /tmp/wf-grid-1.5-4.json /tmp/wf-grid-1.5-2.json` zeigt jedoch eine Summe absoluter Gebäudeschadensunterschiede von 1.830,39: `r9350494-0` sinkt von 11.392,97 auf 9.756,76, während `w316294475-0` von 1.031,77 auf 1.222,61 steigt. Nach Mittelung der vier feinen Zellen auf jede grobe Zelle beträgt die integrierte absolute Differenz der Endtiefen 37.561,47 m³; in 784 von 40.000 groben Zellen überschreitet sie 0,5 m, maximal 2,47 m. Die Werte betreffen nur den Endzustand und schließen Gebäudezellen ein. Die relativ ähnlichen globalen Größen belegen weder lokale Konvergenz noch eine reale Kalibrierung; Maßnahmen, ein drittes Raster und neu aufbereitete feinere Rohdaten bleiben ungeprüft.
+
 Der aus dem prüfsummengeprüften Vorgänger abgeleitete Entwurf `1.5-draft` wurde auf macOS 27.2 mit Bun 1.4.4 berechnet. Ohne Maßnahmen ergibt sich 94.376,50 Schaden. Die zwei Referenzdämme erreichen 7.274,23 bei 8.800 Budgetrest; drei Dämme und der nördliche Graben ergeben 0 bei 7.510 Rest. Die südliche Dammkontrolle erzielt 19.287,45 bei 8.240 Rest; mit südlichem Graben sind es 13.716,19 bei 6.540 Rest. Die relative Wasserbilanz liegt in diesen Läufen unter 0,1 %. Die Differenz von 5.571,26 übersteigt die zusätzlichen Grabenkosten von 1.700; das belegt diesen Modellvergleich, nicht die menschliche Platzierbarkeit oder reale Ableitung.
 
 Die Kombination `divert` mit Abriss des OSM-Bürogebäudes `w33581744-0` erreicht 18.610,68 einschließlich 16.017 Abrissverlust bei 6.598 Budgetrest. Ein Gegenversuch mit zwei Dämmen und ausschließlich diesem Abriss ergibt 23.291,23 statt 7.274,23 ohne Abriss: Die Flutschäden bleiben in diesem Fall unverändert. Der vorläufige Vergleich von sieben Einzelabrissen ohne Dämme lieferte keinen Nutzen oberhalb seiner Kosten; der Abriss des großen Gebäudes `r9350494-0` war nicht bezahlbar. Ein wirtschaftlich sinnvoller Gebäudeabriss ist daher für 1.5 noch nicht belegt. Die bisherigen Abrissbelege für 1.4 einschließlich des entfernten Daches sind historisch und nicht auf 1.5 übertragbar.

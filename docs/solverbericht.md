@@ -265,6 +265,16 @@ Die Maxima der beiden Flächenspalten werden unabhängig bestimmt und müssen ni
 
 Die Ergebnisse zeigen, dass Tiefen ab zwei Metern im Modell nicht ausschließlich auf die Zuflusszelle oder einen einzelnen Moment beschränkt sind. Sie belegen weder die räumliche Konvergenz noch reale Wasserstände, da Zufluss, Gewässersohle und Rand modelliert sind. Eine fachliche Kalibrierung und die Einordnung der betroffenen Flächen bleiben offen.
 
+Am 30. Oktober 2026 ergänzte `bun tools/summarize-depth-footprint.ts 0.05` diesen unbehandelten Fall um eine maximale Schrittweite von 0,05 s statt 1 s; die CFL-Grenze gilt weiterhin zusätzlich. Der Vergleich verwendet dasselbe Raster und dieselben Szenarioparameter:
+
+| Tiefenschwelle | Größte Landfläche bei max. 1 s | Größte Landfläche bei max. 0,05 s | Landzellen ≥ 60 s: 1 s / 0,05 s |
+| --- | ---: | ---: | ---: |
+| 0,5 m | 18.816 m² | 18.816 m² | 1.058 / 1.056 |
+| 1 m | 8.048 m² | 8.048 m² | 429 / 428 |
+| 2 m | 2.464 m² | 2.448 m² | 103 / 103 |
+
+Ab Zeile 5 betragen die jeweiligen Flächenmaxima 16.848 / 16.848 m², 6.784 / 6.768 m² und 1.920 / 1.904 m². Der feinere Lauf ergibt 138.813,12 Gesamtschaden und `8,96 × 10⁻¹⁵` relativen Bilanzfehler; die Typprüfung bestand. Der Vergleich begrenzt die beobachtete zeitliche Schrittweitenempfindlichkeit dieser Schwellenwerte, ist aber weder ein allgemeiner Konvergenzbeweis noch eine räumliche oder reale Validierung. Insbesondere entscheiden Schwellenwerte an einzelnen Zellen über die ausgewiesenen Flächen.
+
 ### Schrittweitenvergleich auf Version 1.4
 
 Am 29. Oktober 2026 wurden `bun tools/compare-timesteps.ts SCHRITT baseline` und `bun tools/compare-timesteps.ts SCHRITT bank` mit den maximalen Schrittweiten 1 und 0,05 s auf dem ausgelieferten `1.4-draft` über jeweils 300 simulierte Sekunden ausgeführt. Der Solver begrenzt beide Vorgaben zusätzlich durch CFL. `bank` setzt die elf Dammabschnitte aus `tests/fixtures/strategy.json` vor Beginn; dies ist die ältere, längere Dammstrategie, nicht die kürzere Reviewreferenz.

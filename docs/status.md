@@ -18,7 +18,7 @@ Der bei OpenStreetMap verlinkte Wiener [Bescheid zur Sondererlaubnis](datenlizen
 
 Eine [aktuelle vollständige Produktionsrunde](browser-pruefung.md#produktionsrunde-nach-der-kompakten-spielhilfe) mit spätem Grabeneingriff erreichte das Ziel, zeigte laufende Schäden und setzte beim Neustart Zeit, Budget und Schaden zurück. Der Test nutzte feste Koordinaten; menschliche Bedienung und Geräteabnahme bleiben offen.
 
-Eine [Flächen- und Dauerauswertung der Landtiefen](solverbericht.md#fläche-und-dauer-hoher-modellierter-landtiefen) zeigt, dass hohe modellierte Tiefen nicht auf eine einzelne Zuflusszelle beschränkt sind. Reale Plausibilität und Kalibrierung bleiben offen.
+Eine [Flächen- und Dauerauswertung der Landtiefen](solverbericht.md#fläche-und-dauer-hoher-modellierter-landtiefen) zeigt, dass hohe modellierte Tiefen nicht auf eine einzelne Zuflusszelle beschränkt sind; ein Vergleich zweier zeitlicher Schrittgrenzen ergibt ähnliche Schwellenflächen. Reale Plausibilität, räumliche Konvergenz und Kalibrierung bleiben offen.
 
 Auf demselben Anwendungscode bestanden [drei aufeinanderfolgende Produktionsrunden mit allen Werkzeugen](browser-pruefung.md#drei-produktionsrunden-nach-der-kompakten-spielhilfe) und Neustarts. Die für den Stabilitätstest gewählten Maßnahmen verfehlten das Ziel; echte Geräte und menschliche Bedienung bleiben offen.
 

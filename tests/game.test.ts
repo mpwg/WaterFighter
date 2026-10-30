@@ -1,7 +1,7 @@
 import { describe,expect,it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { Game } from '../src/simulation/game';
-import { damPath, trenchPath } from '../src/simulation/path';
+import { arcadeDamPath, damPath, trenchPath } from '../src/simulation/path';
 const base=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
 const scenario={...base,grid:{...base.grid,width:5,height:5,cellSize:4},terrain:Array(25).fill(0),bed:Array(25).fill(0),initialDepth:Array(25).fill(0),waterMask:Array(25).fill(0),surveyCrests:[],parameters:{...base.parameters,inflowCells:[0],inflowCurve:[[0,0],[300,0]],outflowEdges:[]},buildings:[{id:'house',area:16,height:8,heightEstimated:true,polygon:{outer:[[8,8],[12,8],[12,12],[8,12],[8,8]],holes:[]}}]};
 
@@ -92,6 +92,22 @@ describe('Bauaktionen und Schäden',()=>{
 });
 
 describe('Hydraulische Wirkung der Werkzeuge',()=>{
+  it('schließt eine kleine Dammlücke durch den automatischen Anschluss auch hydraulisch',()=>{
+    const w=12,h=6,bed=Array(w*h).fill(0);
+    const cfg={...scenario,grid:{...scenario.grid,width:w,height:h},bed,terrain:bed,initialDepth:Array.from({length:w*h},(_,i)=>i%w<5?1:0),waterMask:Array(w*h).fill(0),buildings:[]};
+    const closed=new Game(cfg),gap=new Game(cfg),initial=closed.solver.volume();
+    for(const g of [closed,gap])expect(g.apply('first',{kind:'dam',faces:damPath([5,0],[5,3],w)}).ok).toBe(true);
+    const connected=arcadeDamPath([5,4],[5,6],w,h,closed.damFaces.keys());
+    expect(connected).toEqual(damPath([5,3],[5,6],w));
+    const before=closed.solver.volume(),cost=closed.preview({kind:'dam',faces:connected});
+    expect(cost.ok).toBe(true);expect(closed.apply('second',{kind:'dam',faces:connected})).toEqual(cost);
+    expect(closed.solver.volume()).toBe(before);
+    expect(gap.apply('second',{kind:'dam',faces:damPath([5,4],[5,6],w)}).ok).toBe(true);
+    closed.solver.advance(15);gap.solver.advance(15);
+    const downstream=(g:Game)=>g.solver.h.reduce((sum,v,i)=>sum+(i%w>=5?v:0),0);
+    expect(downstream(closed)).toBeLessThan(1e-8);expect(downstream(gap)).toBeGreaterThan(0.1);
+    expect(Math.abs(closed.solver.volume()-initial)/initial).toBeLessThan(0.001);
+  });
   it('leitet durch einen Graben Wasser über eine künstliche Bodenschwelle',()=>{
     const w=12,h=5,bed=Array.from({length:w*h},(_,i)=>i%w>=5&&i%w<=6?0.65:0);
     const cfg={...scenario,grid:{...scenario.grid,width:w,height:h},bed,terrain:bed,initialDepth:Array.from({length:w*h},(_,i)=>i%w<5?0.5:0),waterMask:Array(w*h).fill(0),buildings:[],parameters:{...scenario.parameters,trenchDepth:0.8}};

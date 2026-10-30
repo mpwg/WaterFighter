@@ -1,5 +1,11 @@
 # Browser- und Stabilitätsprüfung
 
+## Drei Produktionsrunden auf 1.6
+
+Am 30. Oktober 2026 führte `bun tools/observe-three-rounds.mjs --actions` drei aufeinanderfolgende Produktionsrunden auf `1.6-draft` in Chromium 156.0.8078.4 unter macOS aus. In jeder Runde wurden nach Flutbeginn in Pause Graben, Damm und Abriss mit festen Mauskoordinaten bestätigt; Zoom und Fortsetzen wurden geprüft. Alle drei Runden zeigten 243.028 Gesamtschaden und 526 Budgetrest und verfehlten das Ziel. Zwischen den Runden stellte der Ergebnisneustart Zeit, Budget und Schaden zurück. Seitenfehler oder Abstürze wurden nicht protokolliert; die Rundendauern betrugen 156,992, 157,027 und 157,073 s einschließlich Pause.
+
+Der Seiten-Heap am jeweiligen Rundenende betrug 52.485.746, 32.741.499 und 27.535.265 Bytes; die Prozessbaum-RSS-Summe einschließlich Testprozess 846.528.512, 860.241.920 und 872.251.392 Bytes bei jeweils sechs Prozessen. Die Heapstichproben sanken, die RSS-Summen stiegen. Ohne erzwungene Sammlung und längere Beobachtung beweist das weder ein Leck noch langfristige Stabilität; RSS kann gemeinsame Seiten mehrfach zählen und GPU-Speicher auslassen. Der automatisierte Test ersetzt keine menschliche Bedien- oder mobile Geräteabnahme.
+
 ## Desktopbrowser auf Szenario 1.6
 
 Am 30. Oktober 2026 prüften Safari 27.2, Google Chrome 156.0.8078.80 und Firefox 159.0 den lokalen Produktionsbuild mit Szenario `1.6-draft` auf macOS 27.2. Safari und Firefox liefen über ihre WebDriver, verwendeten feste Mauskoordinaten und prüften Start, Pause, die drei Werkzeuge sowie je eine vollständige unbehandelte 2×-Runde. Das entpackte Szenario stimmte mit SHA-256 `dc43e606bf9ff4e06507714a3be27aaab27c6a0ac0eeeaaca308810089896b80` der Quelldatei überein. Die Runden endeten bei 05:00 mit 164.795 beziehungsweise 164.797 Schaden und verfehlten das Ziel; der Ergebnisneustart setzte Zeit, Budget und Schaden zurück. Firefox protokollierte erneut die zuvor beschriebenen Sandbox- und Crashreporter-Zugriffsfehler; sie bleiben ungeklärt.

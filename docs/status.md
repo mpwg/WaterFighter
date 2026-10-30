@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+[Drei aufeinanderfolgende Produktionsrunden auf 1.6](browser-pruefung.md#drei-produktionsrunden-auf-16) bestanden in Chromium mit allen Werkzeugen und zwei Ergebnisneustarts. Die Testmaßnahmen verfehlten das Ziel; Speicherstichproben erlauben keine abschließende Aussage über langfristige Stabilität.
+
 Eine [Abrisssuche ohne vorbereitete Dämme](review-gebaeudevergleich.md#größerer-abriss-ohne-vorbereitete-dämme) auf 1.6 fand neben dem kleinen Kandidaten ein größeres Bürogebäude: Sein Abriss ist numerisch vor Beginn sowie bei 60, 120 und 180 s wirtschaftlich, verfehlt allein jedoch das Schadensziel. Bei 240 s und mit den getesteten Dammführungen ist er nachteilig. Eine vollständige Chromium-Runde mit spätem Abriss und Neustart bestand mit Testkoordinaten; ein menschlicher Spieltest fehlt.
 
 Das überlappende [Brückengebäudeteil](geodaten-voruntersuchung.md#überlappendes-brückengebäudeteil) belegt auf dem 4-m-Raster fünf vollständig vom größeren Gebäude überdeckte Zellen. Fünf Referenzpaare auf 1.6 ergaben mit und ohne Teil identische Schäden und Budgets. Seine reale und hydraulische Einordnung bleibt offen; das Objekt wurde nicht entfernt.
@@ -378,7 +380,7 @@ Die Dammvorschau weist auf Kanten hin, die durch ein Gebäude bereits gesperrt s
 | Tatsächliche Desktop-Abnahme Safari/Chrome/Firefox | offen | [Automatisierte Desktoprunden auf 1.6](browser-pruefung.md#desktopbrowser-auf-szenario-16) bestanden in Safari, Chrome und Firefox; Firefox protokollierte erneut Sandbox- und Crashreporter-Zugriffsfehler. Menschliche Abnahme und Einordnung der Fehler bleiben offen. |
 | Echte iPhone-/Android-Abnahme | offen | Auf Nutzerwunsch vorläufig ausgesetzt. Auf dem aktuellen Mac meldete Xcode ein iPhone als offline; Android wurde nicht geprüft. |
 | Mobile Framezeiten, Simulationsrate und Aktionslatenz | offen | Auf Nutzerwunsch vorläufig ausgesetzt. Frühere [Desktop-Verfahrensproben und emulierte Touchrunden](mobil-messung.md) ersetzen keine Messungen auf echten Geräten. |
-| Drei stabile aufeinanderfolgende Runden | offen | Drei Produktionsrunden auf 1.5 sind historisch; 1.6 muss erneut geprüft werden. Die Speicherentwicklung und mobile Tests bleiben offen. |
+| Drei stabile aufeinanderfolgende Runden | offen | [Drei Chromium-Produktionsrunden auf 1.6](browser-pruefung.md#drei-produktionsrunden-auf-16) bestanden mit allen Werkzeugen und zwei Neustarts. Die Speicherentwicklung und mobile Tests bleiben offen. |
 | Statischer Produktionsbuild und vollständige Quellenhinweise | offen | [Produktionsbuild `ff7e58c` unter Unterpfad](browser-pruefung.md#aktueller-build-unter-unterpfad-nach-der-hilfeänderung) einschließlich Worker, Szenario und Quellen geprüft; Entwicklungscache bei Dateiersatz geprüft; direkte Links zu Aufbereitung und Quellen ergänzt, vollständige Lizenzprüfung fehlt |
 
 „Offen“ bedeutet hier, dass die Arbeit noch auszuführen ist. „Nicht prüfbar“ darf erst eingetragen werden, wenn ein konkretes Hindernis ermittelt und beschrieben wurde. Die lokale Gerätesuche ist unten dokumentiert; ein entfernter Gerätezugang wurde nicht ausgeschlossen.

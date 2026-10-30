@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Die Gebäudeabfrage und die laufende Schadensanzeige stellen positive Werte unter 0,5 als „< 1“ statt als null dar. Ein Unit-Test und ein Desktop-Produktionsbrowsertest mit gezielt eingespeistem Snapshot prüfen die Anzeige; Build und 79 Vitest-Tests bestanden. Die vorhandenen vollständigen Browserrunden stammen von vor dieser Darstellungsänderung.
+
 Ein [Live-Browsertest](browser-pruefung.md#laufender-gebäudeschaden-ohne-baumaßnahme) beobachtete auf `1.5-draft` den Wechsel eines Gebäudes auf das Schadensmaterial bei unveränderter Aktionsrevision. Die menschliche Erkennbarkeit bleibt offen.
 
 Die [Firefox-Wiederholung mit temporär kopierter App](browser-pruefung.md#firefox-wiederholung-mit-kopierter-app) bestand Werkzeuge, vollständige Runde und Neustart auf `1.5-draft`. Sandbox- und Crashreporter-Zugriffsfehler traten weiterhin auf; das zuvor schreibgeschützte Image erklärt sie nicht allein.

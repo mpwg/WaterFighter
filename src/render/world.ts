@@ -17,7 +17,7 @@ import { roofIndices } from './roof';
 import { visibleWaterIndices } from './water-indices';
 import { damCrest } from '../simulation/dam-height';
 import { groundRoads, terrainHeight } from './roads';
-import { buildingCondition } from './building-status';
+import { buildingCondition, displayDamage } from './building-status';
 import { boundaryArrowLines, boundaryArrows } from './boundary-arrows';
 import { MAX_TRENCH_FLOW_SAMPLES, trenchFlowCells } from './trench-flow';
 import { flowArrowLength, flowLineColors, writeFlowArrow } from './flow-arrow';
@@ -307,7 +307,7 @@ export class World {
     const building=this.pick(clientX,clientY,true);
     if(building?.buildingId) {
       const b=this.currentBuildings.get(building.buildingId);
-      if(b) return `Gebäude ${buildingCondition(b)}: Flutschaden ${Math.round(b.damage).toLocaleString('de-AT')} von ${Math.round(b.value).toLocaleString('de-AT')}; Wassertiefe am Rand ${b.exposure.toFixed(2)} m.`;
+      if(b) return `Gebäude ${buildingCondition(b)}: Flutschaden ${displayDamage(b.damage)} von ${Math.round(b.value).toLocaleString('de-AT')}; Wassertiefe am Rand ${b.exposure.toFixed(2)} m.`;
     }
     const point=this.pick(clientX,clientY);
     if(!point) return 'Keine Stelle auf der Karte ausgewählt.';

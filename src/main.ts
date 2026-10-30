@@ -1,6 +1,7 @@
 import { isReady, type Response } from './protocol';
 import { validateScenario } from './scenario';
 import { World } from './render/world';
+import { displayDamage } from './render/building-status';
 import type { Scenario } from './scenario';
 import type { Action } from './simulation/game';
 import { damPath, trenchPath } from './simulation/path';
@@ -106,7 +107,7 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
     if(data.round===round && world && !fatalError) {
       const n=data.buffer.byteLength/16;
       world.setFlowRunning(data.running && !finished,data.speed);world.updateState(new Float32Array(data.buffer,n*12,n),data.buildings,data.dams,data.revision,data.trenches); world.updateWater(new Float32Array(data.buffer,0,n),new Float32Array(data.buffer,n*4,n),new Float32Array(data.buffer,n*8,n)); budgetLabel.textContent=Math.round(data.budget).toLocaleString('de-AT'); running=data.running;
-      const display=(n:number)=>Math.round(n).toLocaleString('de-AT');damageTotal.textContent=`Schaden ${display(data.totalDamage)} / ${display(scenario!.parameters.damageTarget)}`;damageBreakdown.textContent=`Flut ${display(data.floodDamage)} · Abriss ${display(data.demolitionLoss)}`;
+      damageTotal.textContent=`Schaden ${displayDamage(data.totalDamage)} / ${displayDamage(scenario!.parameters.damageTarget)}`;damageBreakdown.textContent=`Flut ${displayDamage(data.floodDamage)} · Abriss ${displayDamage(data.demolitionLoss)}`;
       const seconds=Math.floor(data.time); timeLabel.textContent=`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;
       stateLabel.textContent=finished?'Beendet':running?'Läuft':data.time===0?'Vorbereitung':'Pausiert';compactStatus.textContent=`${timeLabel.textContent} · Budget ${budgetLabel.textContent} · ${stateLabel.textContent}`; run.textContent=running?'Pause':data.time===0?'Simulation starten':'Fortsetzen';
       window.dispatchEvent(new CustomEvent('waterfighter:diagnostics',{detail:{round:data.round,time:data.time,backlog:data.backlog,running:data.running,speed:data.speed}}));

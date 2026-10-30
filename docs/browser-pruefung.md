@@ -806,6 +806,12 @@ Die Prozessbaum-RSS-Summen vor/nach den Runden betrugen 692,4/759,6, 766,5/780,3
 
 ## Google Chrome und Firefox auf Szenario 1.5
 
+### Wiederholung nach Änderung der Schadensanzeige
+
+Am 30. Oktober 2026 wurden die vollständigen Desktopläufe auf Anwendungscode `d05c395` wiederholt. Google Chrome 156.0.8078.80 stammte aus dem unten genannten offiziellen DMG mit identischem SHA-256; `codesign --verify --deep` bestand. `WATERFIGHTER_CHROME=<Chrome-Binary> bun tools/observe-south-production.mjs --after-flood` setzte drei Dämme vor Beginn und bestätigte den südlichen Graben in Pause bei 02:30. Das Ergebnis lautete 13.455 Schaden bei 6.540 Budgetrest; das Ziel wurde erreicht, der Ergebnisneustart setzte Zeit, Budget und Schaden zurück. Die Auswahl nutzte feste Testkoordinaten und eine instrumentierte Endpunktsuche; Seitenfehler wurden nicht protokolliert.
+
+Firefox 159.0 verwendete die unten beschriebene temporär kopierte, signaturgeprüfte App und `WATERFIGHTER_FIREFOX_FULL=1 bun tools/observe-firefox.mjs` über geckodriver. Start, Pause und die drei Werkzeuge wurden geprüft; die anschließende unbehandelte 2×-Runde endete mit 94.369 Schaden und 10.000 Budgetrest und verfehlte das Ziel. Der Ergebnisneustart setzte die Anzeigen zurück. Der Szenariohash stimmte mit der Quelldatei überein. Im Protokoll traten erneut Sandbox- und Crashreporter-Zugriffsfehler auf; ihre Ursache bleibt ungeklärt. Beide Prüfungen liefen teilweise parallel, sind keine Leistungs- oder menschliche Abnahme und nutzten keine Mobilgeräte.
+
 ### Firefox-Wiederholung mit kopierter App
 
 Am 30. Oktober 2026 wurde Firefox 159.0 aus demselben offiziellen DMG (SHA-256 `22eb58c1009a7d40ac28a5594c960339235b31c8ed73015c3a761d17057043f5`) mit `ditto` in ein temporäres beschreibbares Verzeichnis kopiert und mit `codesign --verify --deep --strict` geprüft. `WATERFIGHTER_FIREFOX_FULL=1 bun tools/observe-firefox.mjs` verwendete diese Kopie mit geckodriver 0.37.1, temporärem Profil und Headless-Softwaredarstellung auf macOS 27.2. Der Produktionsbuild lieferte das erwartete `1.5-draft` mit SHA-256 `f27c6082e7dee7444d20439bd94f14203abe04de412dde2ebedb9cfde7cebdd0`. Start, Pause, Neustart und die drei Werkzeuge wurden automatisiert mit festen Koordinaten geprüft. Die anschließende unbehandelte 2×-Runde erreichte nach 150,688 s das Ergebnis mit 94.369 Schaden und 10.000 Budgetrest; der Ergebnisneustart setzte Zeit, Budget und Schaden zurück.

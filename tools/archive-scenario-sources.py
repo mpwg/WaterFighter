@@ -11,11 +11,22 @@ root = Path(__file__).resolve().parent.parent
 scenario = json.loads((root / 'public/scenarios/brigittenau-v1.json').read_text())
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('output', type=Path, help='New .tar.gz file outside the repository')
+parser.add_argument('--refreshed-manifest', type=Path, help='Manifest of independently fetched sources; does not replace historical provenance')
 args = parser.parse_args()
 output = args.output.resolve()
 if output.is_relative_to(root) and not output.is_relative_to(root / 'raw-data'):
     parser.error('Ausgabe muss außerhalb des Repositories oder unter raw-data/ liegen')
-sources = scenario['sources']['sha256']
+historical = scenario['sources']['sha256']
+sources = historical
+provenance = 'historical'
+if args.refreshed_manifest:
+    refreshed = json.loads(args.refreshed_manifest.read_text())
+    sources = refreshed['files']
+    if not isinstance(sources, dict) or set(sources) != set(historical):
+        raise ValueError('Erneutes Quellenmanifest hat eine andere Dateiliste')
+    if any(sources[name] != historical[name] for name in sources if name.endswith('.zip')):
+        raise ValueError('Wiener Rohdaten weichen von den historischen Hashes ab')
+    provenance = 'refreshed'
 files = []
 for name, expected in sorted(sources.items()):
     path = (root / 'raw-data' / name).resolve()
@@ -25,7 +36,7 @@ for name, expected in sorted(sources.items()):
     if hashlib.sha256(data).hexdigest() != expected:
         raise ValueError(f'Prüfsumme stimmt nicht: {name}')
     files.append((name, data))
-manifest = json.dumps({'scenario': scenario['version'], 'sha256': sources}, sort_keys=True, indent=2).encode() + b'\n'
+manifest = json.dumps({'scenario': scenario['version'], 'provenance': provenance, 'sha256': sources}, sort_keys=True, indent=2).encode() + b'\n'
 with output.open('xb') as raw, gzip.GzipFile(fileobj=raw, mode='wb', filename='', mtime=0) as compressed:
     with tarfile.open(fileobj=compressed, mode='w') as tar:
         for name, data in [('MANIFEST.json', manifest), *[(f'raw-data/{n}', d) for n, d in files]]:

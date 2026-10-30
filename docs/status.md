@@ -40,8 +40,8 @@ Der Kern tickt unabhängig vom Renderer mit 30 festen Schritten pro Sekunde. Zwe
 - `bun run test`: 25 Tests aus zwei Dateien bestanden.
 - `bun run test:browser`: Build inklusive Typecheck und sechs Playwright-Chromium-Prüfungen bestanden. Der Test startet den aktuellen Produktionsbuild exklusiv auf Port 4187, ohne fremden Server wiederzuverwenden.
 - `bun tools/compare-rounds.ts`: sieben reproduzierbare Strategien, dokumentiert in `vergleichsrunden.md`.
-- Kurzer Echtzeitlauf ohne Test-Zeitsprung: erste Hausbedrohung bei 14 simulierten Sekunden nach etwa 14,1 realen Sekunden. Messwerte und genaue Browser-/Systemversion in [browser-evidence.json](browser-evidence.json). Der längere Browser-Sieg ist beschleunigt.
-- Keine Browser-JavaScriptfehler in den geprüften Bau-/Rundenpfaden, keine externen Ressourcenabrufe im Starttest. Babylon-Hauptbundle rund 1,02 MB, komprimiert rund 245 KB; Vite weist weiterhin auf einen Chunk größer 500 KB hin.
+- Kurzer Echtzeitlauf ohne Test-Zeitsprung: erste Hausbedrohung bei 14 simulierten Sekunden nach etwa 14,2 realen Sekunden. Messwerte und genaue Browser-/Systemversion in [browser-evidence.json](browser-evidence.json). Der längere Browser-Sieg ist beschleunigt.
+- Keine Browser-JavaScriptfehler in den geprüften Bau-/Rundenpfaden, keine externen Ressourcenabrufe im Starttest. Babylon-Hauptbundle rund 1,05 MB, komprimiert rund 254 KB; Vite weist weiterhin auf einen Chunk größer 500 KB hin.
 
 Die Umgebung war Playwright Chromium 156 auf macOS/Darwin 27.2, arm64, mit WebGL im Headlessbetrieb. Screenshots belegen diese Umgebung, keine Safari-, reale Touch-, Geräte- oder menschliche Abnahme.
 

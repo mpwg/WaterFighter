@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Ein [Zwölf-Runden-Kurztest mit Worker- und Seiten-Garbage-Collection](browser-pruefung.md#kurze-neustartrunden-mit-garbage-collection) wurde auf `1.5-draft` unter macOS wiederholt. Er verlief ohne protokollierte Seitenfehler; die Speicherstichproben belegen keine langfristige Stabilität und ersetzen keine vollen Runden.
+
 Die [Datenlizenz-Bestandsaufnahme](datenlizenz-pruefung.md) bezieht sich nun auf `1.5-draft`. Der lokale Produktionsbuild von `b41de50` wurde erneut unter einem Unterpfad mit Chromium geprüft; das heruntergeladene Szenariopaket stimmt entpackt mit der Quelldatei überein. Die rechtliche Einordnung der kombinierten Daten und die dauerhafte Bereitstellung bleiben offen.
 
 Die [Einzelpunkt-Abweichungen auf 1.5](review-gebaeudevergleich.md#platzierungsabweichungen-der-beiden-gräben-auf-15) zeigen eine starke Empfindlichkeit des südlichen Grabens: Drei gültige Varianten führen zu erheblich höherem Schaden. Der nördliche Referenzgraben bleibt bei sechs von sieben gültigen Einzelabweichungen nach Kosten wirtschaftlich; die siebente bleibt unter dem Schadensziel, ist aber nicht wirtschaftlich. Eine verschobene südliche Trasse mit Gebäudehindernis wurde im Desktopbrowser verständlich und ohne Kosten abgelehnt. Menschliche Platzierung bleibt offen.

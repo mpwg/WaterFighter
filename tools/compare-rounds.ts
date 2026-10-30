@@ -14,6 +14,8 @@ const strategies: Strategy[] = [
   { name: 'Ohne Eingriff', interventions: () => [] },
   { name: 'Alle Wehre offen', interventions: s => at(0, s, s.gates.map(g => ({ type: 'gate', id: g.id, opening: 1 } as const))) },
   { name: 'Alle Wehre geschlossen', interventions: s => at(0, s, s.gates.map(g => ({ type: 'gate', id: g.id, opening: 0 } as const))) },
+  { name: 'Alle Wehre erst bei 90 s offen', interventions: s => at(90, s, s.gates.map(g => ({ type: 'gate', id: g.id, opening: 1 } as const))) },
+  { name: 'Notdamm d3 bei 0 s', interventions: s => at(0, s, [{ type: 'build', id: 'd3' }]) },
   {
     name: 'Rettung Tulln + Korneuburg',
     interventions: s => at(0, s, [

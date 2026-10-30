@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Ein [Gegenversuch zu den fünf vom südlichen Graben gesenkten DGM-Kanten](review-gebaeudevergleich.md#einfluss-der-geländekanten-am-südlichen-graben) erhält diese modellierten Kronen im Speicher: Der Graben bleibt gegenüber der Dammkontrolle wirtschaftlich wirksam und ergibt geringeren Schaden als die reguläre Absenkung. Die reale Funktion der Kanten und eine fachliche Freigabe sind damit nicht geklärt.
+
 Drei [aufeinanderfolgende Desktop-Produktionsrunden nach dem Dammhinweis](browser-pruefung.md#drei-produktionsrunden-nach-dem-dammhinweis) bestanden mit allen drei Werkzeugen und zwei Ergebnisneustarts. Die gewählten Testmaßnahmen verfehlten das Schadensziel; Heap- und RSS-Endstichproben stiegen und erlauben keine abschließende Aussage über langfristige Speicherstabilität.
 
 Ein [Vergleich aller 24 einzelnen Endpunktverschiebungen der südlichen Dämme](review-gebaeudevergleich.md#einzelne-endpunktverschiebungen-der-südlichen-dämme) auf `1.5-draft` ergab 20 zulässige zielerreichende, eine zulässige zielverfehlende und drei abgelehnte Varianten. Die Vorschau warnt nun bei einem freien Dammende eine Rasterkante vor dem Kartenrand vor einer möglichen Öffnung; die konkrete zielverfehlende Verschiebung wurde im Desktopbrowser geprüft. Der Hinweis erkennt nicht jede mögliche Lücke und prognostiziert keine Schadenswirkung; menschliche Verständlichkeit bleibt offen. Build, 80 Vitest-Tests, zwei gezielte Desktopbrowserfälle und eine vollständige Chromium-Runde mit späterem Abriss bestanden. Die vollständigen Safari-, Chrome- und Firefox-Runden stammen von vor dem Dammhinweis.

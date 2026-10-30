@@ -479,6 +479,18 @@ Anschließend prüfte `bun tools/observe-south-demolition.mjs` eine vollständig
 
 Nach der Änderung der Anzeige kleiner positiver Schäden wurde diese vollständige Produktionsrunde auf Anwendungscode `d05c395` mit demselben Befehl und Browser wiederholt. Der Abriss erfolgte erneut pausiert bei 03:00; Ergebnis und Budget waren gerundet identisch, der Neustart setzte Zeit, Budget und Schaden zurück. Der Lauf dauerte 154,096 s einschließlich Pause und protokollierte keine Seitenfehler oder Abstürze. Die Auswahl erfolgte weiterhin mit Testkoordinaten.
 
+### Einfluss der Geländekanten am südlichen Graben
+
+`bun tools/compare-south-crests.ts control|trench|retain` vergleicht auf dem unveränderten Szenario `1.5-draft` drei vorbereitete südliche Dämme und einen Eingriff bei 150 s. Die Kontrolle erhält dieselbe zeitliche Schrittgrenze. Der Referenzgraben überquert fünf modellierte DGM-Kanten: `x:6266` (7,966 m), `x:6664` (6,380 m), `x:8054` (7,243 m), `y:5643` (8,660 m) und `y:6434` (6,388 m), jeweils bezogen auf Wiener Null. Die reguläre Grabenaktion senkt diese Kanten um 3 m; ihre Vorschau nennt fünf betroffene Kanten. Der Gegenversuch `retain` stellt unmittelbar nach der Aktion die ursprünglichen modellierten Kronen wieder her, belässt Grabenbett und Kosten aber unverändert. Diese Variante wird ausschließlich im Speicher gerechnet und ist keine im Spiel auswählbare Maßnahme.
+
+| Variante | Gesamtschaden | Budgetrest |
+| --- | ---: | ---: |
+| Dämme ohne Graben | 19.287,45 | 8.240 |
+| Dämme und regulärer Graben | 13.460,45 | 6.540 |
+| Dämme und Graben mit erhaltenen Kanten | 10.561,41 | 6.540 |
+
+Alle drei relativen Bilanzfehler lagen unter 0,1 %. Der Gegenversuch verbessert den Schaden gegenüber dem regulären Graben um 2.899,04; ein Vorteil des Grabens bleibt gegenüber der Dammkontrolle in beiden Varianten nach 1.700 Kosten bestehen. Die Rechnung identifiziert weder eine einzelne entscheidende Kante noch den Wasserweg und belegt nicht, welche reale Funktion die DGM-Kanten haben oder ob eine Absenkung dort fachlich zulässig wäre. Die Modellvariante zeigt lediglich, dass das vollständige Absenken aller fünf Kanten für den beobachteten numerischen Nutzen nicht erforderlich ist.
+
 ### Einzelne Endpunktverschiebungen der südlichen Dämme
 
 `bun tools/compare-south-dam-placement.ts DAMM start|end DX DY` verschiebt auf `1.5-draft` einen von sechs Endpunkten der drei vorbereiteten Dämme der `south-control`-Referenz um genau eine 4-m-Rasterzelle. Es wurden alle vier Richtungen je Endpunkt geprüft; die übrigen Endpunkte blieben unverändert und kein Graben oder Abriss wurde gesetzt. Der [vollständige Vergleich](south-dam-offsets-1.5.json) enthält alle 24 Läufe, Vorschauergebnisse, Kosten und Bilanzen. Die unverschobene Kontrolle ergibt 19.287,45 Schaden und 8.240 Budgetrest.

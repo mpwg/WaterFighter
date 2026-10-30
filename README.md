@@ -42,7 +42,7 @@ Die Kopfzeile zeigt laufend Gesamtschaden, Ziel sowie Flut- und Abrissverluste, 
 
 Bestätigte Dämme erscheinen als orange Linien und bestätigte Gräben als braune Geländeflächen. Eine schematische dunkelbraune Linie zeigt den Grabenverlauf auch über Wasser und Gebäuden; sie ist eine Kartenüberlagerung. Schräge Gräben folgen rasterverbunden der Verbindung zwischen den beiden gewählten Punkten; die Vorschau zeigt den tatsächlichen Verlauf.
 
-Helle Strömungspfeile zeigen die berechnete Richtung nahe der jeweils abgetasteten Wasserzelle. Entlang bestätigter Gräben sind die Pfeile dunkelblau, wenn dort genügend Wasser und Strömung vorhanden sind. Die Größe der regulären Pfeile passt sich begrenzt dem Zoom an; schmale Grabenmarker können trotz der Farbe in der Übersicht schwer erkennbar sein.
+Helle Strömungspfeile zeigen die berechnete Richtung nahe der jeweils abgetasteten Wasserzelle. Entlang bestätigter Gräben sind die Pfeile dunkelblau, wenn dort genügend Wasser und Strömung vorhanden sind. Die Größe der regulären Pfeile passt sich begrenzt dem Zoom an; schmale Grabenmarker können trotz der Farbe in der Übersicht schwer erkennbar sein. Eine [Safari-Sichtprobe](docs/browser-pruefung.md#dunkle-grabenpfeile-in-safari) dokumentiert die Darstellung und ihre Grenzen.
 
 Blaue Pfeile kennzeichnen die Zuflussbereiche; violette Pfeile markieren offene Modellränder, über die Wasser den Ausschnitt verlassen kann. Die Pfeile sind schematisch und keine Aussage über eine sichere reale Ableitung.
 

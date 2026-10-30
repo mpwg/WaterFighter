@@ -824,3 +824,24 @@ Bei laufendem `safaridriver -p 4445` führt `bun tools/verify-safari-small-build
 Graben-Strömungspfeile sind nun dunkelblau; die übrigen Wasserpfeile bleiben hell. Die Farben werden pro Liniensegment in den Babylon-Vertexpuffer geschrieben. Position, Richtung, Länge, Geschwindigkeitsschwelle und Worker-Simulation wurden nicht geändert. Die Spielhilfe erklärt die Farben. Produktionsbuild und 78 Vitest-Tests bestanden; darunter prüfen Tests Farbzuordnung und Babylon-Vertexpuffer. Vier gezielte Chromium-Desktopfälle zu Pause, Grabentrasse und Neustart bestanden.
 
 Eine erneute instrumentierte Live-Runde auf `1.5-draft` mit Grabenbau bei 02:30 und testseitig fokussierter Kamera zeigte bei [03:00](suedgraben-1.5-dunkel-180.png) 17 und bei [04:00](suedgraben-1.5-dunkel-240.png) 27 bewegte von 34 abgetasteten Grabenstellen. Die dunkelblauen Pfeile unterscheiden sich auf Wasser besser von den hellen regulären Pfeilen; sie bleiben schmal und werden teilweise durch Geometrie und Perspektive verdeckt. Die Runde erreichte 13.446 Schaden und 6.540 Budgetrest. Die Sichtprobe nutzt Testkoordinaten und ist keine menschliche Verständlichkeits- oder Geräteabnahme; mobile Tests sind ausgesetzt.
+
+### Dunkle Grabenpfeile in Safari
+
+Am 30. Oktober 2026 wurde Anwendungscode `cbee4d4` mit Safari 27.2 auf macOS 27.2 in einer isolierten Vite-Kopie geprüft. Der Szenariodownload stimmte bytegleich mit `1.5-draft` im Repository überein. Ein Testhook protokollierte die Worker-Vorschauen und erlaubte eine testseitige Kamerafokussierung; er ist kein Teil der Anwendung. Bei 1600 × 1000 CSS-Pixeln wurden drei Dämme vor Flutbeginn und der südliche Graben in Pause bei 02:30 gesetzt; die exakten Worker-Aktionen und Kosten wurden geprüft. Die Auswahl verwendete feste Koordinaten und eine instrumentierte Suche nach dem Endpunkt.
+
+Bei [03:00](suedgraben-safari-1.5-180.png) waren 17 von 34 abgetasteten Grabenstellen in Bewegung, bei [04:01](suedgraben-safari-1.5-240.png) 27 von 34. Der Babylon-Farbpuffer enthielt für die Grabenpfeile jeweils den erwarteten dunkelblauen Wert. Die Bilder zeigen die dunklen Pfeile neben hellen Wasserpfeilen; der Verlauf bleibt teilweise durch Gebäude, Überlagerungen und Perspektive schwer zu verfolgen. Die Runde erreichte 13.445 Schaden und 6.540 Budgetrest; „Neue Runde“ setzte Zeit und Budget zurück. Die Stichproben belegen keine durchgehende menschliche Verständlichkeit oder reale Ableitung. Mobile Tests sind auf Nutzerwunsch ausgesetzt.
+
+Zum Wiederholen eine isolierte Vite-Kopie wie in [Safari-Beinahetreffer](#safari-beinahetreffer-auf-15) einrichten. Statt des dortigen Szene-Hooks diese Testzeilen an `src/main.ts` anhängen:
+
+```ts
+import { Vector3 as TestVector3, Matrix as TestMatrix } from '@babylonjs/core/Maths/math.vector';
+Object.defineProperty(window,'__wfTest',{get:()=>({world,Vector3:TestVector3,Matrix:TestMatrix})});
+```
+
+Zusätzlich vor `</head>` der kopierten `index.html` den folgenden Worker-Hook einsetzen:
+
+```html
+<script>const OriginalWorker=window.Worker;window.Worker=class extends OriginalWorker{postMessage(m,o){if(m?.type==="preview")window.__wfAction=m.action;return super.postMessage(m,o)}};</script>
+```
+
+Vite in der Kopie auf Port 5174 und `safaridriver -p 4445` starten; anschließend `bun tools/verify-safari-south-flow.mjs` im ursprünglichen Repository ausführen. Der Ablauf setzt eine Inhaltsfläche von 1600 × 1000 CSS-Pixeln voraus, prüft die Szenariodatei und schreibt die Sichtproben nach `/tmp`. Der Worker-Hook liest Vorschauen mit, ohne Nachrichten oder Simulationswerte zu ändern; die Aufnahmen und Aktionen sind instrumentierte Tests.

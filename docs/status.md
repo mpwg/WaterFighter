@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Die [Einzelpunkt-Abweichungen auf 1.5](review-gebaeudevergleich.md#platzierungsabweichungen-der-beiden-gräben-auf-15) zeigen eine starke Empfindlichkeit des südlichen Grabens: Drei gültige Varianten führen zu erheblich höherem Schaden. Der nördliche Referenzgraben bleibt bei sechs von sieben gültigen Einzelabweichungen nach Kosten wirtschaftlich; die siebente bleibt unter dem Schadensziel, ist aber nicht wirtschaftlich. Eine verschobene südliche Trasse mit Gebäudehindernis wurde im Desktopbrowser verständlich und ohne Kosten abgelehnt. Menschliche Platzierung bleibt offen.
+
 Die [Safari-Liveprüfung der dunklen Grabenpfeile](browser-pruefung.md#dunkle-grabenpfeile-in-safari) erreichte mit spätem Eingriff das Ziel; zu zwei Zeitpunkten waren bewegte Strömungsstellen und der erwartete Farbpuffer nachweisbar. Die Kamera und Auswahl wurden testseitig gesteuert. Der Verlauf bleibt teilweise verdeckt; menschliche Verständlichkeit und mobile Prüfungen sind offen.
 
 Die [Strömungspfeile an bestätigten Gräben](browser-pruefung.md#dunkle-strömungspfeile-entlang-von-gräben) sind jetzt dunkelblau und von den hellen Wasserpfeilen unterscheidbar. Build, 78 Vitest-Tests und gezielte Desktopprüfungen bestanden; eine instrumentierte Live-Runde mit spätem Graben erreichte das Ziel. Die Pfeile bleiben teilweise verdeckt und schmal; menschliche Verständlichkeit und mobile Geräte sind nicht geprüft.

@@ -1,0 +1,381 @@
+{
+  "scenario": "1.5-draft",
+  "scenarioSha256": "f27c6082e7dee7444d20439bd94f14203abe04de412dde2ebedb9cfde7cebdd0",
+  "at": 150,
+  "control": {
+    "north": 6645.267587573782,
+    "south": 19287.445474341745
+  },
+  "results": [
+    {
+      "scenario": "1.5-draft",
+      "strategy": "north",
+      "endpoint": "end",
+      "dx": -1,
+      "dy": 0,
+      "start": [
+        0,
+        4
+      ],
+      "end": [
+        24,
+        4
+      ],
+      "accepted": true,
+      "at": 150,
+      "cells": 25,
+      "cost": 625,
+      "volumeChange": 0,
+      "budget": 7535,
+      "floodDamage": 125.3865628199213,
+      "demolitionLoss": 0,
+      "totalDamage": 125.3865628199213,
+      "relativeBalance": 2.9746816913729773e-13
+    },
+    {
+      "scenario": "1.5-draft",
+      "strategy": "north",
+      "endpoint": "end",
+      "dx": 0,
+      "dy": -1,
+      "start": [
+        0,
+        4
+      ],
+      "end": [
+        25,
+        3
+      ],
+      "accepted": true,
+      "at": 150,
+      "cells": 27,
+      "cost": 675,
+      "volumeChange": 0,
+      "budget": 7485,
+      "floodDamage": 30.303597397086044,
+      "demolitionLoss": 0,
+      "totalDamage": 30.303597397086044,
+      "relativeBalance": 2.97152049935239e-13
+    },
+    {
+      "scenario": "1.5-draft",
+      "strategy": "north",
+      "endpoint": "end",
+      "dx": 0,
+      "dy": 1,
+      "start": [
+        0,
+        4
+      ],
+      "end": [
+        25,
+        5
+      ],
+      "accepted": true,
+      "at": 150,
+      "cells": 27,
+      "cost": 675,
+      "volumeChange": 0,
+      "budget": 7485,
+      "floodDamage": 0.3374603754633601,
+      "demolitionLoss": 0,
+      "totalDamage": 0.3374603754633601,
+      "relativeBalance": 2.966251845984744e-13
+    },
+    {
+      "scenario": "1.5-draft",
+      "strategy": "north",
+      "endpoint": "end",
+      "dx": 1,
+      "dy": 0,
+      "start": [
+        0,
+        4
+      ],
+      "end": [
+        26,
+        4
+      ],
+      "accepted": true,
+      "at": 150,
+      "cells": 27,
+      "cost": 675,
+      "volumeChange": 0,
+      "budget": 7485,
+      "floodDamage": 5.849418744055285,
+      "demolitionLoss": 0,
+      "totalDamage": 5.849418744055285,
+      "relativeBalance": 1.0463545588140939e-13
+    },
+    {
+      "scenario": "1.5-draft",
+      "strategy": "north",
+      "endpoint": "start",
+      "dx": -1,
+      "dy": 0,
+      "start": [
+        -1,
+        4
+      ],
+      "end": [
+        25,
+        4
+      ],
+      "accepted": false,
+      "reason": "Endpunkt außerhalb der Karte."
+    },
+    {
+      "scenario": "1.5-draft",
+      "strategy": "north",
+      "endpoint": "start",
+      "dx": 0,
+      "dy": -1,
+      "start": [
+        0,
+        3
+      ],
+      "end": [
+        25,
+        4
+      ],
+      "accepted": true,
+      "at": 150,
+      "cells": 27,
+      "cost": 675,
+      "volumeChange": 0,
+      "budget": 7485,
+      "floodDamage": 5.849418937234698,
+      "demolitionLoss": 0,
+      "totalDamage": 5.849418937234698,
+      "relativeBalance": 2.958875731270039e-13
+    },
+    {
+      "scenario": "1.5-draft",
+      "strategy": "north",
+      "endpoint": "start",
+      "dx": 0,
+      "dy": 1,
+      "start": [
+        0,
+        5
+      ],
+      "end": [
+        25,
+        4
+      ],
+      "accepted": true,
+      "at": 150,
+      "cells": 27,
+      "cost": 675,
+      "volumeChange": 0,
+      "budget": 7485,
+      "floodDamage": 11636.834399129739,
+      "demolitionLoss": 0,
+      "totalDamage": 11636.834399129739,
+      "relativeBalance": 2.9683593073318024e-13
+    },
+    {
+      "scenario": "1.5-draft",
+      "strategy": "north",
+      "endpoint": "start",
+      "dx": 1,
+      "dy": 0,
+      "start": [
+        1,
+        4
+      ],
+      "end": [
+        25,
+        4
+      ],
+      "accepted": true,
+      "at": 150,
+      "cells": 25,
+      "cost": 625,
+      "volumeChange": 0,
+      "budget": 7535,
+      "floodDamage": 5.849418937234698,
+      "demolitionLoss": 0,
+      "totalDamage": 5.849418937234698,
+      "relativeBalance": 2.973627960699448e-13
+    },
+    {
+      "scenario": "1.5-draft",
+      "endpoint": "end",
+      "dx": -1,
+      "dy": 0,
+      "start": [
+        0,
+        46
+      ],
+      "end": [
+        46,
+        26
+      ],
+      "accepted": true,
+      "at": 150,
+      "cells": 67,
+      "cost": 1675,
+      "volumeChange": 0,
+      "budget": 6565,
+      "floodDamage": 18416.642878257328,
+      "demolitionLoss": 0,
+      "totalDamage": 18416.642878257328,
+      "relativeBalance": 2.687013217498646e-14,
+      "strategy": "south"
+    },
+    {
+      "scenario": "1.5-draft",
+      "endpoint": "end",
+      "dx": 0,
+      "dy": -1,
+      "start": [
+        0,
+        46
+      ],
+      "end": [
+        47,
+        25
+      ],
+      "accepted": true,
+      "at": 150,
+      "cells": 69,
+      "cost": 1725,
+      "volumeChange": 0,
+      "budget": 6515,
+      "floodDamage": 17570.218130246118,
+      "demolitionLoss": 0,
+      "totalDamage": 17570.218130246118,
+      "relativeBalance": 9.167456859700655e-14,
+      "strategy": "south"
+    },
+    {
+      "scenario": "1.5-draft",
+      "endpoint": "end",
+      "dx": 0,
+      "dy": 1,
+      "start": [
+        0,
+        46
+      ],
+      "end": [
+        47,
+        27
+      ],
+      "accepted": true,
+      "at": 150,
+      "cells": 67,
+      "cost": 1675,
+      "volumeChange": 0,
+      "budget": 6565,
+      "floodDamage": 197346.96076649288,
+      "demolitionLoss": 0,
+      "totalDamage": 197346.96076649288,
+      "relativeBalance": 1.4868139803495115e-13,
+      "strategy": "south"
+    },
+    {
+      "scenario": "1.5-draft",
+      "endpoint": "end",
+      "dx": 1,
+      "dy": 0,
+      "start": [
+        0,
+        46
+      ],
+      "end": [
+        48,
+        26
+      ],
+      "accepted": true,
+      "at": 150,
+      "cells": 69,
+      "cost": 1725,
+      "volumeChange": 0,
+      "budget": 6515,
+      "floodDamage": 198478.98911120053,
+      "demolitionLoss": 0,
+      "totalDamage": 198478.98911120053,
+      "relativeBalance": 1.464685636205161e-14,
+      "strategy": "south"
+    },
+    {
+      "scenario": "1.5-draft",
+      "endpoint": "start",
+      "dx": -1,
+      "dy": 0,
+      "start": [
+        -1,
+        46
+      ],
+      "end": [
+        47,
+        26
+      ],
+      "accepted": false,
+      "reason": "Endpunkt außerhalb der Karte.",
+      "strategy": "south"
+    },
+    {
+      "scenario": "1.5-draft",
+      "endpoint": "start",
+      "dx": 0,
+      "dy": -1,
+      "start": [
+        0,
+        45
+      ],
+      "end": [
+        47,
+        26
+      ],
+      "accepted": false,
+      "reason": "Ein Gebäude versperrt den Graben. Verlauf ändern oder Gebäude abreißen.",
+      "budget": 8240,
+      "strategy": "south"
+    },
+    {
+      "scenario": "1.5-draft",
+      "endpoint": "start",
+      "dx": 0,
+      "dy": 1,
+      "start": [
+        0,
+        47
+      ],
+      "end": [
+        47,
+        26
+      ],
+      "accepted": false,
+      "reason": "Ein Gebäude versperrt den Graben. Verlauf ändern oder Gebäude abreißen.",
+      "budget": 8240,
+      "strategy": "south"
+    },
+    {
+      "scenario": "1.5-draft",
+      "endpoint": "start",
+      "dx": 1,
+      "dy": 0,
+      "start": [
+        1,
+        46
+      ],
+      "end": [
+        47,
+        26
+      ],
+      "accepted": true,
+      "at": 150,
+      "cells": 67,
+      "cost": 1675,
+      "volumeChange": 0,
+      "budget": 6565,
+      "floodDamage": 199854.40029693596,
+      "demolitionLoss": 0,
+      "totalDamage": 199854.40029693596,
+      "relativeBalance": 8.956710724995785e-15,
+      "strategy": "south"
+    }
+  ]
+}

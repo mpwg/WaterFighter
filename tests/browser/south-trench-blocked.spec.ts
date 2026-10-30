@@ -25,5 +25,6 @@ test('Südgraben nahe dem offenen Rand schließt sichtbar und mit passenden Kost
   await expect(page.locator('#confirm')).toBeEnabled();
   expect(await page.evaluate(()=>(window as any).trenchCells)).toEqual(trenchPath([0,46],[47,26],200));
   await expect(page.locator('#preview-text')).toContainText('Kosten: 1700');
+  await expect(page.locator('#preview-text')).toContainText('Anschluss automatisch verbunden.');
   await expect(page.locator('#budget')).toHaveText('10 000');await page.locator('#confirm').click();await expect(page.locator('#budget')).toHaveText('8 300');
 });

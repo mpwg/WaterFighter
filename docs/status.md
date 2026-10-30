@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+**Anschlusshinweis im Quellstand:** Die Vorschau benennt eine automatische Verbindung und fordert zur Kontrolle des angezeigten Verlaufs auf. Ein unveränderter Verlauf erhält den Hinweis nicht. 89 Tests, Typprüfung und fünf gezielte Chromium-Desktopfälle im Entwicklungsserver bestanden. Beide laufenden Übergabebuilds bleiben unverändert; die neue Textänderung ist dort noch nicht enthalten.
+
 **Zusätzliche lokale Erprobung:** Der Quellstand `2bd20a0` wurde mit `bun run typecheck` und `bun x vite build --outDir /private/tmp/waterfighter-arcade-build --emptyOutDir` isoliert gebaut und mit `bun x vite preview --outDir /private/tmp/waterfighter-arcade-build --host 127.0.0.1 --port 4174 --strictPort` bereitgestellt. Ein gezielter Chromium-Desktoptest auf diesem Produktionsbuild bestätigte den nahen Randanschluss, die zehn angefragten Dammkanten, 400 Kosten und 9.600 Budgetrest. Die ältere Übergabeversion auf Port 4173 bleibt unberührt. Beide lokalen Prozesse sind temporär; dies ist keine vollständige menschliche Spielabnahme.
 
 **Anschluss-Grenzfälle:** Bei vertauschten Dammendpunkten bleibt der tatsächlich erzeugte Verlauf gleich; identische Punkte erzeugen keinen Damm. Ein kurzer Graben wird nicht auf eine einzelne Zelle verkürzt, wenn beide Enden auf denselben Anschluss einrasten würden. 89 Tests, Typprüfung und sechs gezielte Chromium-Desktopfälle im Entwicklungsserver bestanden. Der laufende Übergabebuild bleibt unverändert.

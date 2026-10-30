@@ -10,6 +10,7 @@ test('Verschobener Referenzdamm bleibt zulässig; ein Verlauf am Kartenrand wird
   await page.mouse.click(358.09,526.89);await page.mouse.click(385.84,513.48);
   await expect(page.locator('#confirm')).toBeEnabled();
   await expect(page.locator('#preview-text')).toContainText('Kosten: 440');
+  await expect(page.locator('#preview-text')).not.toContainText('Anschluss automatisch verbunden.');
   await expect(page.locator('#budget')).toHaveText('10 000');await page.locator('#cancel').click();
   // Both endpoints on the upper map edge produce a forbidden boundary face.
   await page.mouse.click(358.09,526.89);await page.mouse.click(383,541);
@@ -28,6 +29,7 @@ test('Vorschau verbindet ein nahes Dammende mit dem Rand',async({page})=>{
   await expect(page.locator('#confirm')).toBeEnabled();
   expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([26,0],[26,10],200));
   await expect(page.locator('#preview-text')).toContainText('Kosten: 400');
+  await expect(page.locator('#preview-text')).toContainText('Anschluss automatisch verbunden.');
   await expect(page.locator('#budget')).toHaveText('10 000');await page.locator('#cancel').click();
   await expect(page.locator('#budget')).toHaveText('10 000');
 });
@@ -44,6 +46,7 @@ test('Vorschau verbindet ein nahes Ende mit einem vorhandenen Damm',async({page}
   await expect(page.locator('#confirm')).toBeEnabled();
   expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([26,10],[34,20],200));
   await expect(page.locator('#preview-text')).toContainText('Kosten: 720');
+  await expect(page.locator('#preview-text')).toContainText('Anschluss automatisch verbunden.');
   await expect(page.locator('#budget')).toHaveText('9 600');await page.locator('#confirm').click();
   await expect(page.locator('#budget')).toHaveText('8 880');
 });

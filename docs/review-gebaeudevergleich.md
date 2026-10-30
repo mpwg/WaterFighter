@@ -320,6 +320,14 @@ Der Kontrollschaden ist in beiden Randvarianten auch vor Rundung identisch; beim
 
 In dieser vorbereiteten Kombination ist der modellierte Schadensnutzen somit nicht überwiegend durch das Öffnen des Westrands erklärt. Der Gegenversuch bestimmt nicht allein, ob Speicherung, Verlagerung, abgesenkte Kanten oder andere Effekte den Unterschied verursachen; er belegt auch keine reale Ableitung außerhalb der Karte und gilt nicht automatisch für spätere Eingriffszeitpunkte.
 
+#### Gegenversuch mit erhaltenen Geländekanten
+
+Am 30. Oktober 2026 wurde die vorbereitete südliche Referenzstrategie mit `bun tools/compare-review-strategies.ts dam3trench --tip=-2 --route=0,46,47,26` nachgerechnet. Die reguläre Grabenaktion senkt fünf aus Bruchlinien abgeleitete Modellkanten und ergibt 38.070,94 Gesamtschaden bei 6.540 Budgetrest. Im Gegenversuch stellt die zusätzliche Option `--retain-crests` unmittelbar nach der regulären Aktion die ursprünglichen Höhen dieser geschnittenen Kanten wieder her. Dies ist eine numerische Diagnose, keine im Spiel verfügbare Maßnahme; Kosten und Grabenbett bleiben unverändert.
+
+Mit erhaltenen Kanten beträgt der Schaden 32.571,27 bei demselben Budgetrest, also 5.499,67 weniger als mit regulär abgesenkten Kanten. Der modellierte Schaden von `w491428570-0` sinkt dabei von 5.531,00 auf 0 und jener von `w1184608697-0` von 857,29 auf 0; bei `w1343275154-0` steigt er zugleich von 3.584,97 auf 4.344,36. Der westliche Randabfluss beträgt 14,71 m³ beziehungsweise 0 m³. Die relativen Wasserbilanzfehler liegen unter `1,38 × 10⁻¹³`.
+
+Das gemeinsame Erhalten der fünf Kanten verändert die Verteilung und verbessert diese konkrete Grabenrunde gegenüber der regulären Aktion; die einzelnen Kanten werden dadurch nicht voneinander isoliert. Auch dieser Gegenversuch beweist weder die reale Funktion der aus DGM-Bruchlinien abgeleiteten Kanten noch die vollständige Ursache des Grabennutzens gegenüber der Dammkontrolle.
+
 Der Schaden verteilt sich im Modell um: `r9350494-0` sinkt von 17.088,41 auf 0, während `w491428570-0` von 0 auf 5.531,00 steigt. Die Differenz erklärt nicht allein die hydraulische Ursache und ist keine reale Gebäuderisikobewertung.
 
 Bei vorbereiteten Dämmen und einem idealisierten Grabeneingriff nach 120, 150 beziehungsweise 180 s enden die Runden mit 37.915,18, 37.797,06 beziehungsweise 32.659,38 Schaden und jeweils 6.540 Budgetrest. Die jeweils entstehende Schadensminderung gegenüber der unveränderten Dammkontrolle übersteigt die Grabenkosten. Beispiel: `bun tools/compare-staged-trench.ts 150 --tip=-2 --route=0,46,47,26`. Die Aktion erfolgt dabei exakt zum angegebenen Zeitpunkt; Auswahl und Bestätigung brauchen in einer menschlichen Runde zusätzliche Zeit.

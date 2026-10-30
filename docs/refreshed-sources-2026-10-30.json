@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-30",
+  "files": {
+    "35_2_dgm_bk.zip": "f5abb28d8a6d93ee99ae2f0934639ad5e5e1358b2985081aa3c9a9ca771aa7db",
+    "35_2_dgm_tif.zip": "e8808f973a48223240e2c8863223ee4e2e85b988426c44fadd5f0b0cb95aa638",
+    "brigittenau.osm": "54d913ff74395f81a3f631d933c1938d1eb53836f874d03d16ccf136edff8ba0",
+    "building-relations/105223.osm": "54933eb81cc0516b5efaa4ba74e748302842582e1894f768965e0926c2abfb89",
+    "building-relations/1527647.osm": "3daa02ff78e8de8449c7011e661790b564f18d50af444ca80c9da11e8f3d9fc5",
+    "building-relations/1527705.osm": "33b78a2a1cde40fba2e4e8d38f503c1c821e1bc9b473d50bc3ec4d55b7d3045e",
+    "building-relations/1536148.osm": "acb916a034f738906113ad4d605c5be596faae39b6bf92f3430a96ff835e1d13",
+    "building-relations/1536152.osm": "1541b7306a7222fb3e9f87336abd9a8927bba73b80c3a11812a673caadc580bd",
+    "building-relations/1577738.osm": "034f7fa10925c6ce9272e3cb7e871a70e1387115e478af93c116477698593121",
+    "donau-relation.osm": "a3dda046354ce6251c253cf437d159b3a38d32a8f99268c087cec428c8e340a0",
+    "neue-donau-relation.osm": "e847bc170fc191ddc7bbec1336e19a84266de9afcfedadc92d8db03b34c558d2"
+  }
+}

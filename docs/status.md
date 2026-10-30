@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+**Anschluss bei laufender und pausierter Flut:** Zwei gezielte Chromium-Desktopfälle im Entwicklungsserver bauten einen Damm vor der Flut und bestätigten anschließend einen automatisch seitlich angeschlossenen Damm bei laufender Uhr beziehungsweise in Pause. Vorschau, Hinweis, tatsächlicher Verlauf und Budget stimmten; in Pause blieb die Uhr stehen. Menschliche Bedienbarkeit bleibt offen.
+
 **Tatsächliche Grabenbreite noch offen:** Eine Untersuchung der südlichen Referenztrasse `(0,46)` → `(47,26)` auf dem aktuellen Szenario ergänzt jede der 68 Trassenzellen um ihre unmittelbaren orthogonalen Nachbarn. Daraus entstehen 165 unterschiedliche Zellen; drei liegen in Gebäudegrundrissen (`(5,45)`, `(4,46)`, `(9,41)`). Die geltende Validierung würde eine solche ungefilterte Maßnahme ablehnen und ihre Zellkosten wären anders. Eine breitere hydraulische Maßnahme muss daher ihre tatsächlich betroffenen Zellen, Hindernisse, Anschluss, Kosten und Vorschau zusammenhängend behandeln; die bestehenden Bänder sind schematisch. Die lokale Spielversion wurde nicht verändert.
 
 **Hydraulischer Grabenanschluss:** Ein synthetischer Vergleich führt einen Graben automatisch bis zum offenen Rand; nach 15 s fließen dort etwa 40,49 m³ ab gegenüber 11,10 m³ bei ansonsten gleichem Graben, der eine Zelle vor dem Rand endet. Der kurze Graben lässt bei diesem Wasserstand ebenfalls Abfluss über das Gelände zu; der Anschluss erhöht ihn im Test. Vorschau und Bestätigung stimmen überein, das Bauvolumen bleibt erhalten und die Bilanz liegt unter 0,1 %. 92 Tests und Typprüfung bestanden. Der Versuch belegt keine reale Ableitung oder allgemeine Wirkung jeder Trasse.

@@ -6,7 +6,7 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
-Der [Rastervergleich auf `1.5-draft`](solverbericht.md#rastervergleich-auf-dem-korrigierten-szenario) zeigt bei 2-m- gegenüber 4-m-Zellen rund 1,53 % weniger Gesamtschaden in der unbehandelten Runde, aber weiterhin größere lokale Unterschiede. Er belegt keine lokale Konvergenz oder reale Kalibrierung.
+Der [Rastervergleich auf `1.5-draft`](solverbericht.md#rastervergleich-auf-dem-korrigierten-szenario) zeigt bei 2-m- gegenüber 4-m-Zellen rund 1,53 % weniger Gesamtschaden in der unbehandelten Runde, aber weiterhin größere lokale Unterschiede. Die südliche Dammstrategie und der untersuchte Abriss bleiben auch im 2-m-Versuch erfolgreich und wirtschaftlich, bei deutlich anderen Schadenswerten und neu gerasterten Dammkanten. Das belegt keine lokale Konvergenz oder reale Kalibrierung.
 
 Auf `1.5-draft` bestanden [Zehn-Minuten-Bilanzläufe](solverbericht.md#zehn-minuten-mit-mehreren-eingriffen) ohne Maßnahmen und mit Dämmen, überlappenden Gräben und Abriss. Wassererhaltung, einmalige Aktionskosten und endliche, nichtnegative Tiefen wurden dabei geprüft; reale Plausibilität und Geräteabnahme bleiben offen.
 

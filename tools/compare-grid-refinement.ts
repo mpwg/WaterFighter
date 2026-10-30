@@ -1,11 +1,14 @@
-/** Compare the untreated scenario with a piecewise-constant 2× grid subdivision. */
+/** Compare the untreated scenario or southern dams with a piecewise-constant 2× subdivision. */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { Game } from '../src/simulation/game';
+import { damPath } from '../src/simulation/path';
 import { validateScenario, type Scenario } from '../src/scenario';
 
 const original=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
 const factor=Number(process.argv[2]??1);
 if(factor!==1 && factor!==2)throw Error('Argument: Verfeinerungsfaktor 1 oder 2');
+const mode=process.argv[3]??'baseline';
+if(!['baseline','south-control','south-demolition'].includes(mode))throw Error('Modus: baseline, south-control oder south-demolition');
 
 function refine(s:Scenario):Scenario {
   const {width:w,height:h,cellSize}=s.grid, n=w*2;
@@ -24,10 +27,20 @@ function refine(s:Scenario):Scenario {
   }
   return {...s,grid:{...s.grid,width:n,height:h*2,cellSize:cellSize/2},
     terrain:replicate(s.terrain),bed:replicate(s.bed),initialDepth:replicate(s.initialDepth),waterMask:replicate(s.waterMask),
-    surveyCrests:crests,parameters:{...s.parameters,inflowCells:s.parameters.inflowCells.flatMap(i=>[2*i,2*i+1])}};
+    surveyCrests:crests,parameters:{...s.parameters,damCostPerCell:s.parameters.damCostPerCell/2,inflowCells:s.parameters.inflowCells.flatMap(i=>[2*i,2*i+1])}};
 }
 const scenario=factor===1?original:refine(original);
 const game=new Game(scenario),solver=game.solver,initial=solver.volume(),started=performance.now();
+if(mode!=='baseline'){
+  const fixture=JSON.parse(readFileSync('tests/fixtures/review-strategies.json','utf8'));
+  if(fixture.scenario!==scenario.version)throw Error('Szenarioversion stimmt nicht');
+  for(const [i,step] of fixture.strategies['south-control'].entries()){
+    const start:[number,number]=[step.start[0]*factor,step.start[1]*factor],end:[number,number]=[step.end[0]*factor,step.end[1]*factor];
+    const result=game.apply(`dam-${i}`,{kind:'dam',faces:damPath(start,end,solver.width)});
+    if(!result.ok)throw Error(result.reason);
+  }
+}
+let actionApplied=mode==='baseline';
 const ids=['w316294475-0','w501079921-0','w1343275154-0'];
 const trace=process.env.WATERFIGHTER_GRID_DIAGNOSTICS?ids.map(id=>{
   const building=game.buildings.find(b=>b.id===id);
@@ -37,7 +50,14 @@ const trace=process.env.WATERFIGHTER_GRID_DIAGNOSTICS?ids.map(id=>{
   return {building,maxDepth:0,maxDepthTime:0,wetSeconds:0,blockedNeighbours:building.neighbours.filter(i=>others.has(i)).length,owners};
 }):[];
 while(solver.time<scenario.parameters.duration-1e-9) {
-  const time=solver.time,dt=solver.step(Math.min(1,scenario.parameters.duration-time));
+  if(!actionApplied&&solver.time>=180-1e-9){
+    if(mode==='south-demolition'){
+      const result=game.apply('demolition',{kind:'demolish',buildingId:'w316294475-0'});
+      if(!result.ok)throw Error(result.reason);
+    }
+    actionApplied=true;
+  }
+  const time=solver.time,dt=solver.step(Math.min(1,scenario.parameters.duration-time,actionApplied?Infinity:180-time));
   game.addInflow(time,dt);game.updateDamage(dt);
   for(const t of trace) {
     const depth=t.building.neighbours.reduce((max,i)=>Math.max(max,solver.h[i]),0);
@@ -49,6 +69,6 @@ if(process.env.WATERFIGHTER_GRID_OUTPUT)writeFileSync(process.env.WATERFIGHTER_G
 if(trace.length)writeFileSync(process.env.WATERFIGHTER_GRID_DIAGNOSTICS!,JSON.stringify(trace.map(t=>({id:t.building.id,
   cells:t.building.cells,neighbours:t.building.neighbours,blockedNeighbours:t.blockedNeighbours,owners:t.owners,
   damage:t.building.damage,maxDepth:t.maxDepth,maxDepthTime:t.maxDepthTime,wetSeconds:t.wetSeconds})),null,2));
-console.log(JSON.stringify({version:scenario.version,factor,cellSize:solver.cellSize,steps:solver.steps,
+console.log(JSON.stringify({version:scenario.version,mode,factor,cellSize:solver.cellSize,steps:solver.steps,budget:game.budget,
   wallSeconds:(performance.now()-started)/1000,initialVolume:initial,finalVolume:solver.volume(),
   inflow:solver.inflow,outflow:solver.outflow,relativeBalance:Math.abs(solver.volume()-initial-solver.inflow+solver.outflow-solver.roundoffVolume)/(initial+solver.inflow),...game.totals()}));

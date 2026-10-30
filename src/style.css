@@ -365,3 +365,26 @@ footer {
     font-size: 9px;
   }
 }
+
+.rescue-marker {
+  position: fixed;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+  z-index: 2;
+  padding: 3px 7px;
+  border: 1px solid #ffdc80;
+  border-radius: 5px;
+  color: #fff5d5;
+  background: #24382eef;
+  font-size: 11px;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px #0005;
+}
+.rescue-marker[data-state="active"]::after {
+  content: "";
+  display: block;
+  height: 2px;
+  width: var(--progress);
+  background: #ffdc80;
+}
+.rescue-marker[data-state="complete"] { border-color: #b8e5a0; color: #d1f5be; }

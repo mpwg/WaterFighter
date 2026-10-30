@@ -1,3 +1,4 @@
+import { rescueFeedback } from "./rescue-ui";
 import { LatestThrottle } from "./input";
 import { createLandscape } from "./scene";
 import type { Quality, ScenePick } from "./scene";
@@ -16,7 +17,7 @@ app.innerHTML = `<canvas id="landscape" aria-label="Hochwasserlandschaft. Mit de
 <footer><span>Rechts ziehen: Ansicht · Mausrad: Zoom · Esc: Abbrechen</span><span>Tulln als Vorbild · Modelllandschaft, keine Gefahrenprognose</span></footer>
 <div class="overlay" id="loading"><div class="dialog"><span class="eyebrow">DONAU / ÖSTERREICH</span><h2>Die Flusslandschaft entsteht…</h2><p>WebGPU und Hochwassersimulation werden gestartet.</p></div></div>
 <div class="overlay" id="failure" hidden><div class="dialog"><span class="eyebrow">LANDSCHAFT NICHT VERFÜGBAR</span><h2>Diese Runde konnte nicht starten.</h2><p id="failure-message"></p><button id="retry">Erneut versuchen</button></div></div>
-<div class="overlay" id="result" hidden><div class="dialog"><span class="eyebrow">DAS WASSER GEHT ZURÜCK</span><h2>Du hast ihnen Zeit verschafft.</h2><p id="result-text"></p><button id="again">Noch eine Runde ↗</button></div></div>`;
+<div class="overlay" id="result" hidden><div class="dialog"><span class="eyebrow">DAS WASSER GEHT ZURÜCK</span><h2>Die Hochwasserrunde ist beendet.</h2><p id="result-text"></p><button id="again">Noch eine Runde ↗</button></div></div>`;
 const $ = <T extends HTMLElement = HTMLElement>(id: string) =>
   document.getElementById(id) as T;
 const canvas = $<HTMLCanvasElement>("landscape");
@@ -115,6 +116,7 @@ function userReason(reason?: string) {
   return (
     (
       {
+        "Game is paused": "Pause · Rettungen können erst nach dem Fortsetzen starten.",
         "Flood has finished": "Die Hochwasserrunde ist beendet.",
         "Unknown gate": "Dieses Schütz ist nicht bekannt.",
         "Unknown building": "Dieses Haus ist nicht bekannt.",
@@ -179,7 +181,7 @@ function renderHUD() {
   );
   const active = snapshot.rescues.filter((r) => r.status === "active");
   const rescueStatus = active.length
-    ? ` · ${active.length} Rettung${active.length === 1 ? " läuft" : "en laufen"} (${Math.max(...active.map((r) => Math.ceil(6 - r.elapsed)))}s)`
+    ? ` · ${active.length} Rettung${active.length === 1 ? "" : "en"} ${snapshot.phase === "paused" ? "pausiert" : "aktiv"} (${Math.max(...active.map((r) => Math.ceil(6 - r.elapsed)))}s)`
     : "";
   const hints: Record<Tool, string> = {
     barrier: "Sandsacklinie ziehen · 2 Sandsäcke je Abschnitt",
@@ -197,7 +199,7 @@ function renderHUD() {
     rescueStatus;
   if (snapshot.phase === "finished") {
     $("result-text").textContent =
-      `${snapshot.results.rescued} Menschen gerettet, ${snapshot.results.safePeople} zu Hause sicher. ${snapshot.results.damagedBuildings} Häuser beschädigt. Dein Einsatz hat den Verlauf im Dorf verändert.`;
+      `${snapshot.results.rescued} Menschen gerettet, ${snapshot.results.safePeople} zu Hause sicher. ${snapshot.results.damagedBuildings} Häuser beschädigt.`;
     $("result").hidden = false;
   } else $("result").hidden = true;
 }
@@ -238,10 +240,14 @@ function pointer(phase: "down" | "move" | "up" | "cancel", pick: ScenePick) {
     canvas.focus();
     if (tool === "rescue") {
       if (pick.buildingId !== undefined) {
-        void command({ type: "rescue", buildingId: pick.buildingId }).catch(
-          (e) => failure(String(e)),
-        );
-        feedback("Rettung läuft · 6 Sekunden");
+        const buildingId = pick.buildingId;
+        if (snapshot.phase === "paused" || snapshot.phase === "finished") {
+          feedback(rescueFeedback(snapshot, buildingId));
+        } else {
+          void command({ type: "rescue", buildingId }).then((result) => {
+            if (result.ok) feedback(rescueFeedback(snapshot, buildingId));
+          }).catch((e) => failure(String(e)));
+        }
       } else feedback("Klicke ein Haus an, um seine Bewohner zu retten");
       return;
     }

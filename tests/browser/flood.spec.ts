@@ -176,6 +176,52 @@ test('actual house and gate clicks, parallel six-second idempotent rescue, full 
   await page.locator('#again').click();
   await expect.poll(async()=> (await state(page)).time).toBe(0);
 });
+test('house markers track actual clicks, progress, completion, repeat and pause',async({page})=> {
+  await ready(page);
+  const buildings=await page.evaluate(()=> (window as any).__waterfighter.buildings);
+  await page.locator('[data-tool="rescue"]').click();
+  const clickHouse=async(i:number)=> {
+    const b=buildings[i], q=await project(page,{x:b.x+b.width/2,y:b.y+b.height/2});
+    await page.mouse.click(q.x,q.y);
+  };
+  const marker=(i:number)=>page.locator(`.rescue-marker[data-building-id="${buildings[i].id}"]`);
+  await expect(marker(0)).toBeHidden();
+  await clickHouse(0);
+  await expect(marker(0)).toBeVisible();
+  await expect(marker(0)).toHaveAttribute('data-state','active');
+  await expect(page.locator('#feedback')).toHaveText('Rettung läuft · noch 6s');
+  await advance(page,3);
+  await expect(marker(0)).toHaveAttribute('data-progress',/0\.49|0\.50|0\.5/);
+  await expect(marker(0)).toHaveText(/3s|4s/);
+  await page.locator('#pause').click();
+  await expect.poll(async()=> (await state(page)).phase).toBe('paused');
+  const frozen=await state(page);
+  await clickHouse(0);
+  await expect(page.locator('#feedback')).toHaveText(/Rettung pausiert/);
+  await clickHouse(1);
+  await expect(page.locator('#feedback')).toHaveText('Pause · Rettung nach dem Fortsetzen starten.');
+  await advance(page,8);
+  expect((await state(page)).rescues).toEqual(frozen.rescues);
+  await expect(marker(1)).toBeHidden();
+  await page.locator('#pause').click();
+  await expect.poll(async()=> (await state(page)).phase).toBe('running');
+  await clickHouse(1);
+  await expect(marker(1)).toHaveAttribute('data-state','active');
+  await advance(page,6.1);
+  for(const i of [0,1]) {
+    await expect(marker(i)).toHaveAttribute('data-state','complete');
+    await expect(marker(i)).toHaveText('✓ Gerettet');
+  }
+  const rescued=(await state(page)).results.rescued;
+  await clickHouse(2);
+  await expect(marker(2)).toHaveAttribute('data-state','active');
+  await advance(page,2);
+  await clickHouse(0);
+  await expect(page.locator('#feedback')).toHaveText('Bewohner dieses Hauses sind bereits gerettet.');
+  expect((await state(page)).results.rescued).toBe(rescued);
+  expect((await state(page)).rescues).toHaveLength(3);
+  await page.screenshot({path:'docs/tulln-rescue-markers.png'});
+});
 test('complete 360-second wall-clock round with visible flood evidence',async( {
   page,browser
 })=> {
@@ -231,7 +277,11 @@ test('high-quality frozen-round visual evidence',async( {
   await page.screenshot( {
     path:'docs/tulln-high-end.png'
   });
-  writeFileSync('docs/high-quality-evidence.json',JSON.stringify( {
+  await expect(page.locator('#result h2')).toHaveText('Die Hochwasserrunde ist beendet.');
+  const final=await state(page);
+  expect(final.results.rescued).toBe(0);
+  await expect(page.locator('#result-text')).toHaveText(`${final.results.rescued} Menschen gerettet, ${final.results.safePeople} zu Hause sicher. ${final.results.damagedBuildings} Häuser beschädigt.`);
+  writeFileSync('docs/high-quality-evidence.json' ,JSON.stringify( {
     diagnostics:await page.evaluate(()=> (window as any).__waterfighter.diagnostics()),state:((s:Snapshot)=>( {
       time:s.time,results:s.results,accounting:s.accounting
     }))(await state(page)),pageErrors:errors,externalRequests:external

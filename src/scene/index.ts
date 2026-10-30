@@ -1,3 +1,4 @@
+import { rescueState } from "../rescue-ui";
 import glslangJs from "@babylonjs/core/assets/glslang/glslang.js?url";
 import glslangWasm from "@babylonjs/core/assets/glslang/glslang.wasm?url";
 import twgslJs from "@babylonjs/core/assets/twgsl/twgsl.js?url";
@@ -65,6 +66,7 @@ export function createLandscape(
     disposed = false,
     lastTime = -1,
     previewState: Preview | undefined;
+  const rescueMarkers = new Map<number, { element: HTMLDivElement; point: Vector3 }>();
   const houses = new Map<number, Mesh>(),
     gates = new Map<number, Mesh>(),
     barriers = new Map<string, Mesh>();
@@ -336,6 +338,12 @@ export function createLandscape(
       house.metadata = { buildingId: b.id };
       house.isPickable = true;
       houses.set(b.id, house);
+      const element = document.createElement("div");
+      element.className = "rescue-marker";
+      element.dataset.buildingId = String(b.id);
+      element.hidden = true;
+      canvas.parentElement!.append(element);
+      rescueMarkers.set(b.id, { element, point: new Vector3(x, base + h + 5, z) });
       shadow.addShadowCaster(house);
       const tile = material(
         "terracotta" + (b.id % 3),
@@ -592,6 +600,13 @@ export function createLandscape(
         ripples.uOffset = performance.now() * 0.000012;
         ripples.vOffset = Math.sin(performance.now() * 0.0001) * 0.018;
         scene.render();
+        for (const { element, point } of rescueMarkers.values()) {
+          if (element.hidden) continue;
+          const p = Vector3.Project(point, Matrix.Identity(), scene.getTransformMatrix(), camera.viewport.toGlobal(engine.getRenderWidth(), engine.getRenderHeight()));
+          const rect = engine.getRenderingCanvas()!.getBoundingClientRect();
+          element.style.left = `${rect.left + p.x / engine.getRenderWidth() * rect.width}px`;
+          element.style.top = `${rect.top + p.y / engine.getRenderHeight() * rect.height}px`;
+        }
       }
     };
     engine.runRenderLoop(renderFrame);
@@ -613,9 +628,14 @@ export function createLandscape(
       geometry(water, snapshot.depths);
       lastTime = snapshot.time;
     }
-    for (const state of snapshot.buildings) {
-      const house = houses.get(state.buildingId);
-      if (house) house.visibility = 1;
+    for (const [id, { element }] of rescueMarkers) {
+      const state = rescueState(snapshot, id);
+      element.hidden = state.status === "idle";
+      element.dataset.state = state.status;
+      element.dataset.progress = String(state.progress);
+      element.textContent = state.label;
+      element.setAttribute("aria-label", `Haus ${id}: ${state.status === "complete" ? "Bewohner gerettet" : snapshot.phase === "paused" ? "Rettung pausiert" : "Rettung läuft"} ${Math.round(state.progress * 100)}%`);
+      element.style.setProperty("--progress", `${state.progress * 100}%`);
     }
     for (const gate of snapshot.gates) {
       const m = gates.get(gate.id);
@@ -715,6 +735,8 @@ export function createLandscape(
     engine
       ?.getRenderingCanvas()
       ?.removeEventListener("contextmenu", preventContext);
+    for (const { element } of rescueMarkers.values()) element.remove();
+    rescueMarkers.clear();
     scene?.dispose();
     engine?.dispose();
   }

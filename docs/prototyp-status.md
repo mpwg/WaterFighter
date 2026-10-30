@@ -31,6 +31,12 @@ Die Werte wurden mit `bun tools/reference-strategies.ts` auf dem aktuellen Schad
 | Menschlicher Spieltest | Offen: Der Nutzer meldete, dass derzeit keine unabhängige Testperson verfügbar ist. |
 | Mobile Geräte | Vorläufig ausgesetzt. |
 
+## Nächste Produktarbeit: großzügige Arcade-Platzierung
+
+Der Prototyp ist für eine eigene Desktop-Erprobung bereit. Dämme und Gräben sollen künftig grob, gut sichtbar und großzügig platzierbar sein: Nahe sinnvolle Endpunkte und Anschlüsse werden tolerant verbunden, und Vorschau, tatsächlich angewandter Verlauf, Breite und Kosten müssen übereinstimmen. Kleine Zeichenabweichungen sollen keine unbeabsichtigten winzigen Lecks oder fehlenden Abflussanschlüsse erzeugen. Der aktuelle Stand hat einzelne Warnhinweise, erfüllt diese Anforderung aber noch nicht vollständig. Vor weiterer Balance- und Physikabstimmung hat diese Produktarbeit Vorrang; eine Rückmeldung aus eigenem Spielen ist jetzt besonders hilfreich.
+
+Bei der aktuellen Safari-Prüfung erschien das Ergebnis, der automatisierte Ergebnisneustart blieb aber aus. Die Ursache ist ungeklärt; für die Erprobung wird daher ein Desktopbrowser empfohlen, dessen aktueller Lauf samt Neustart bestanden hat. Firefox meldete zudem Sandbox-Zugriffsfehler.
+
 ## Späteres Feintuning und offene Abnahme
 
 - Schadens- und Kostenbalance, weitere robuste Trassen und die Wirkung unterschiedlicher Eingriffszeiten nach dem Prototyp-Meilenstein optimieren.

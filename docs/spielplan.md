@@ -6,6 +6,8 @@ Stand: 29. Oktober 2026. Dieses Dokument beschreibt das verbindliche Konzept; Im
 
 WaterFighter ist ein browserbasiertes Hochwasserschutzspiel. Spieler schützen ein reales Wiener Stadtviertel an der Donau durch Dämme, Gräben und gezielten Gebäudeabriss. Das Spiel kombiniert Planung mit Eingriffen während einer sichtbaren Flutwelle.
 
+Spielspaß und schnelle, verständliche Entscheidungen stehen im Vordergrund: WaterFighter soll sich eher wie ein Arcade-Spiel als wie ein präzises Simulationswerkzeug anfühlen. Dämme und Gräben sind grobe, gut sichtbare Strukturen; ihre Platzierung darf keine pixelgenaue Arbeit verlangen.
+
 Die Geografie ist real; Flutereignis, Baukosten und Schäden sind für das Spiel abgestimmt. Die Anwendung ist keine Hochwasserprognose und kein Werkzeug für reale Schutzentscheidungen.
 
 ## 2. Verbindlicher Prototypumfang
@@ -57,6 +59,7 @@ Ein Gebäude wird gezielt ausgewählt und nach Vorschau abgerissen. Seine Ström
 
 ### Gemeinsame Regeln
 
+- Nahe Endpunkte und sinnvolle Anschlüsse sollen tolerant verbunden werden, damit kleine Zeichenabweichungen keine unbeabsichtigten winzigen Lecks oder fehlenden Abflussanschlüsse erzeugen. Die tatsächlich angewandte Geometrie und ihre spürbare Breite müssen in der Vorschau sichtbar sein; Kosten entsprechen der bestätigten Maßnahme. Keine automatische optimale Strategie und keine stillen großen Umwege. Das interne Simulationsraster darf fein bleiben.
 - Vorschau zeigt Geometrie, Kosten und verbleibendes Budget, ohne den Spielzustand zu ändern.
 - Erst die ausdrückliche Bestätigung löst eine Aktion aus.
 - Maßnahmen erfolgen sofort am nächsten Simulationsschritt; während einer Pause werden sie ebenfalls verarbeitet, ohne die Simulationszeit fortzuschreiben.

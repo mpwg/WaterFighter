@@ -183,6 +183,8 @@ Bei unzureichender Leistung zunächst Profiling, Speicherzugriffe und Schrittber
 
 ### Umsetzung
 
+**Nächste Produktarbeit:** Nach der spielbaren Übergabe großzügige Arcade-Platzierung für Dämme und Gräben vor weiterem Balancing oder Physik-Feintuning umsetzen. Nahe Endpunkte und sinnvolle Anschlüsse tolerant verbinden; unbeabsichtigte kleine Lecks und fehlende Auslassanschlüsse vermeiden. Die Vorschau zeigt den tatsächlich angewandten Verlauf und seine spürbare Breite; Kosten entsprechen der bestätigten Maßnahme. Kein automatisches Ermitteln einer optimalen Strategie, keine stillen großen Umwege und kein Architekturwechsel. Warnhinweise allein erfüllen diese Anforderung nicht. Der aktuelle Stand setzt diese großzügige Platzierung noch nicht vollständig um.
+
 1. Gemeinsame Aktionsvalidierung für Geometrie, Kosten, Budget und aktuellen Rundenzustand implementieren.
 2. Dämme entlang Linien als Barrieren an Zellgrenzen abbilden. Überströmung konservativ zwischen benachbarten Zellen verrechnen.
 3. Gräben entlang Linien ausheben, ohne vorhandenes Wasservolumen zu verändern.
@@ -195,6 +197,7 @@ Bei unzureichender Leistung zunächst Profiling, Speicherzugriffe und Schrittber
 
 ### Abnahme
 
+- Grobe Damm- und Grabenplatzierung verbindet nahe sinnvolle Anschlüsse fehlertolerant; Vorschau, bestätigte Geometrie, Breite und Kosten stimmen überein. Kleine Zeichenabweichungen erzeugen keine unbeabsichtigten winzigen Lecks oder fehlenden Auslassanschlüsse.
 - Damm staut und kann überströmt werden; Graben leitet um; Abriss öffnet einen Weg.
 - Jede Aktion belastet das Budget genau einmal, auch nach doppelter Nachrichtenübermittlung.
 - Vorschau verändert weder Budget noch Simulation.

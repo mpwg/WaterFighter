@@ -731,3 +731,9 @@ Auf Anwendungscode `ff7e58c` bestanden anschließend alle 104 Playwright-Chromiu
 Am 30. Oktober 2026 prüfte `bun tools/verify-firefox-help.mjs` den Produktionsbuild mit Anwendungscode `ff7e58c` in Firefox 159.0 über geckodriver 0.37.1 auf einem virtuellen Linux-X-Desktop mit Mesa-Softwaregrafik. Für lokale Testschriften war die Firefox-Content-Sandbox deaktiviert. Eine zunächst angeforderte innere Fensterbreite von 480 Pixeln wurde von dieser Firefox-Umgebung auf 500 Pixel angehoben; der abgeschlossene Test verwendete daher 500 × 320 CSS-Pixel.
 
 Das Skript betätigte den 44 × 44 Pixel großen Hilfeknopf mit emulierten Touchereignissen. Die Anleitung öffnete sich mit sichtbarer Überschrift in einer 280 Pixel breiten Quellenleiste; erneutes Tippen schloss sie und setzte die Scrollposition zurück. Dies ist ein kurzer automatisierter Desktoptest ohne echte Touchhardware und ersetzt weder eine menschliche Spielprüfung noch die Abnahme auf Safari, iPhone oder Android.
+
+### Aktueller Build unter Unterpfad nach der Hilfeänderung
+
+Am 30. Oktober 2026 prüfte `bun tools/verify-static-subpath.mjs` den Produktionsbuild mit Anwendungscode `ff7e58c` unter dem lokalen statischen Pfad `/waterfighter/` in Playwright-Chromium 156.0.8078.4 auf Linux mit Softwaregrafik. Anwendung, Worker und Szenario luden; eine Dammvorschau wurde bestätigt, die Simulation lief bis 00:01, wurde pausiert und neu gestartet. Der Quellenhinweis und das komprimierte Szenariopaket waren erreichbar; der direkte Szenariolink und der Link im Quellenhinweis zeigten auf dasselbe Paket, dessen entpackte Bytes der Quelldatei entsprachen. Alle protokollierten Anfragen waren erfolgreich; Seitenfehler wurden nicht protokolliert.
+
+Dies prüft die lokale Bereitstellung unter einem Unterpfad, keine dauerhafte öffentliche Bereitstellung, vollständige Spielrunde oder Lizenzfreigabe.

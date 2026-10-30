@@ -55,17 +55,42 @@ app.innerHTML = /* HTML */ `<div class="page">
     </div>
   </header>
   <div class="statusbar">
-    <div>
+    <div class="stat">
       <span>VERBLEIBENDE ZEIT</span
       ><strong id="time-left" data-testid="time-left"></strong>
     </div>
-    <div>
+    <div class="stat">
       <span>MENSCHEN SICHER</span><strong id="safe" data-testid="safe"></strong>
     </div>
-    <div>
+    <div class="stat">
       <span>SACHSCHADEN</span><strong id="damage" data-testid="damage"></strong>
     </div>
-    <b id="phase" class="phase"></b>
+    <section class="forecast intel-forecast" aria-label="Zuflussprognose">
+      <div class="intel-title">ZULAUF <b id="inflow"></b></div>
+      <svg
+        viewBox="0 0 400 92"
+        role="img"
+        aria-label="Zuflussprognose mit Spitzen bei 0:52 und 1:52"
+      >
+        <path class="grid" d="M12 75H390M12 44H390M12 13H390" />
+        <path class="curve" d="${forecast}" />
+        <line
+          id="forecast-cursor"
+          class="cursor"
+          x1="12"
+          x2="12"
+          y1="4"
+          y2="79"
+        />
+      </svg>
+      <span class="peak-label">SCHEITEL 0:52 · 1:52</span>
+    </section>
+    <div class="latest-alert" role="status" aria-live="polite">
+      <b id="phase" class="phase"></b>
+      <span id="latest-warning" data-testid="latest-warning"
+        >Prognose beachten und drei Maßnahmen wählen.</span
+      >
+    </div>
   </div>
   <main class="workspace">
     <section class="map-column" aria-label="Einsatzkarte">
@@ -108,35 +133,6 @@ app.innerHTML = /* HTML */ `<div class="page">
         <h3>GEMEINDEN</h3>
         <div id="town-list" class="quick-list"></div>
       </section>
-      <section class="section forecast">
-        <div class="section-title">
-          <span>ZUFLUSSPROGNOSE</span><span>0–3 MIN.</span>
-        </div>
-        <svg
-          viewBox="0 0 400 92"
-          role="img"
-          aria-label="Zuflussprognose mit Spitzen bei 0:52 und 1:52"
-        >
-          <path class="grid" d="M12 75H390M12 44H390M12 13H390" />
-          <path class="curve" d="${forecast}" />
-          <line
-            id="forecast-cursor"
-            class="cursor"
-            x1="12"
-            x2="12"
-            y1="4"
-            y2="79"
-          />
-          <text x="99" y="17">1. SCHEITEL</text>
-          <text x="226" y="17">2. SCHEITEL</text>
-          <text x="12" y="90">0:00</text>
-          <text x="354" y="90">3:00</text>
-        </svg>
-        <div class="forecast-caption">
-          <span>AKTUELL <b id="inflow"></b></span
-          ><span>MAX. 45 Einheiten/s</span>
-        </div>
-      </section>
       <section class="section">
         <div class="section-title">MELDUNGEN</div>
         <div id="events" class="events" role="log" aria-live="polite"></div>
@@ -159,6 +155,7 @@ function cancelHold(): void {
   hold = null;
 }
 function select(next: Selection): void {
+  if (state.phase === "paused") return;
   cancelHold();
   selection = next;
   panelKey = "";
@@ -211,8 +208,8 @@ function preparationPanel(): string {
         })
         .join("")}
     </div>
-    <div class="tabs" role="tablist" aria-label="Maßnahmenkategorie">
-      ${(["reinforce", "capacity", "evacuation"] as const).map((k) => `<button role="tab" aria-selected="${category === k}" class="${category === k ? "active" : ""}" data-category="${k}">${labels[k]}</button>`).join("")}
+    <div class="tabs" role="group" aria-label="Maßnahmenkategorie">
+      ${(["reinforce", "capacity", "evacuation"] as const).map((k) => `<button aria-pressed="${category === k}" class="${category === k ? "active" : ""}" data-category="${k}">${labels[k]}</button>`).join("")}
     </div>
     <p class="panel-copy">${descriptions[category]}</p>
     <div class="targets">
@@ -488,6 +485,12 @@ function refresh(force = false): void {
     .reverse()
     .filter((e) => ["warning", "flood", "breach", "finish"].includes(e.type))
     .slice(0, 3);
+  const latestWarning =
+    state.lastError ??
+    messages[0]?.message ??
+    "Prognose beachten und drei Maßnahmen wählen.";
+  if ($("latest-warning").textContent !== latestWarning)
+    $("latest-warning").textContent = latestWarning;
   const eventKey = `${state.lastError ?? ""}:${messages.map((e) => e.id).join(",")}`;
   if (force || lastEvents !== eventKey) {
     lastEvents = eventKey;
@@ -504,14 +507,13 @@ function refresh(force = false): void {
             .join("")
         : '<p class="small">Noch keine Warnungen. Beobachte die Prognose.</p>');
   }
-  document
-    .querySelectorAll<HTMLButtonElement>("[data-select]")
-    .forEach((b) =>
-      b.classList.toggle(
-        "selected",
-        b.dataset.select === `${selection?.kind}:${selection?.id}`,
-      ),
+  document.querySelectorAll<HTMLButtonElement>("[data-select]").forEach((b) => {
+    b.disabled = state.phase === "paused";
+    b.classList.toggle(
+      "selected",
+      b.dataset.select === `${selection?.kind}:${selection?.id}`,
     );
+  });
   view.update(state, selection);
   view.render();
 }

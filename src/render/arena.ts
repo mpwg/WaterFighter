@@ -21,6 +21,7 @@ export class ArenaView {
   private hovered: Selection = null;
   private readonly onClick = (event: MouseEvent) => this.select(this.hit(this.point(event)));
   private readonly onMove = (event: MouseEvent) => {
+    if (this.state?.phase === 'paused') { this.hovered = null; this.canvas.style.cursor = 'default'; return; }
     const next = this.hit(this.point(event));
     if (next?.kind !== this.hovered?.kind || next?.id !== this.hovered?.id) {
       this.hovered = next;
@@ -46,7 +47,10 @@ export class ArenaView {
     this.resize();
   }
 
-  update(state: GameState, selection: Selection): void { this.state = state; this.selection = selection; }
+  update(state: GameState, selection: Selection): void {
+    this.state = state; this.selection = selection;
+    if (state.phase === 'paused') { this.hovered = null; this.canvas.style.cursor = 'default'; }
+  }
 
   private resize(): void {
     const rect = this.canvas.getBoundingClientRect();

@@ -125,21 +125,22 @@ h1 {
   background: #d8e5d9;
 }
 .statusbar {
-  min-height: 74px;
-  display: flex;
+  height: 86px;
+  display: grid;
+  grid-template-columns: 160px 170px 250px 260px minmax(0, 1fr);
   align-items: stretch;
   border-bottom: 1px solid var(--ink);
   background: #f4f0e5;
 }
-.statusbar > div {
+.statusbar > .stat {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-width: 175px;
-  padding: 9px 24px;
+  min-width: 0;
+  padding: 9px 15px;
   border-right: 1px solid var(--line);
 }
-.statusbar > div > span {
+.statusbar > .stat > span {
   font-size: 9px;
   color: var(--muted);
   margin-bottom: 5px;
@@ -152,14 +153,57 @@ h1 {
   letter-spacing: -0.045em;
 }
 .phase {
-  margin: auto 24px auto auto;
   color: var(--blue);
   white-space: nowrap;
+}
+.statusbar .intel-forecast {
+  min-width: 0;
+  border-right: 1px solid var(--line);
+  padding: 5px 10px 2px;
+  overflow: hidden;
+}
+.intel-title,
+.peak-label {
+  display: block;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+.intel-title b {
+  color: var(--blue);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0;
+}
+.statusbar .intel-forecast svg {
+  height: 42px;
+  width: 100%;
+  background: transparent;
+  border: 0;
+}
+.statusbar .latest-alert {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 16px;
+  background: #e9ede2;
+  border-left: 3px solid var(--orange);
+}
+.latest-alert #latest-warning {
+  font-size: 12px;
+  line-height: 1.25;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .workspace {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 350px;
-  height: calc(100dvh - 218px);
+  height: calc(100dvh - 230px);
   min-height: 520px;
   max-height: 1100px;
 }
@@ -341,7 +385,7 @@ h3 {
   border: 0;
   background: transparent;
   padding: 9px 2px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: bold;
 }
 .tabs button.active {
@@ -366,10 +410,10 @@ h3 {
   justify-content: space-between;
   gap: 8px;
   text-align: left;
-  font-size: 11px;
+  font-size: 12px;
 }
 .target b {
-  font-size: 8px;
+  font-size: 11px;
   white-space: nowrap;
   letter-spacing: 0.06em;
   color: var(--blue);
@@ -413,7 +457,7 @@ h3 {
   display: flex;
   justify-content: space-between;
   gap: 7px;
-  font-size: 11px;
+  font-size: 12px;
 }
 .quick-list button span {
   color: var(--blue);
@@ -430,13 +474,6 @@ h3 {
   background: #edf0e6;
   border: 1px solid #d6ded3;
 }
-.forecast svg text {
-  fill: #54716e;
-  font:
-    9px "Trebuchet MS",
-    sans-serif;
-  font-weight: bold;
-}
 .forecast .grid {
   stroke: #c6d2ca;
   stroke-width: 1;
@@ -452,15 +489,6 @@ h3 {
   stroke: var(--orange);
   stroke-width: 2;
   stroke-dasharray: 3 3;
-}
-.forecast-caption {
-  display: flex;
-  justify-content: space-between;
-  font:
-    10px ui-monospace,
-    SFMono-Regular,
-    monospace;
-  padding-top: 8px;
 }
 .events {
   display: grid;
@@ -528,12 +556,12 @@ h3 {
   flex-direction: column;
   gap: 4px;
   align-items: center;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: bold;
 }
 .position small {
   font:
-    10px ui-monospace,
+    12px ui-monospace,
     SFMono-Regular,
     monospace;
 }
@@ -575,7 +603,7 @@ h3 {
   border: 1px solid var(--orange);
   background: #fbf1e9;
   color: #963e25;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: bold;
   touch-action: none;
 }
@@ -611,11 +639,11 @@ h3 {
   display: block;
 }
 .team b {
-  font-size: 10px;
+  font-size: 12px;
   margin-bottom: 5px;
 }
 .team span {
-  font-size: 9px;
+  font-size: 12px;
   color: var(--muted);
 }
 .team.assigned {
@@ -671,9 +699,14 @@ footer {
   .workspace {
     grid-template-columns: minmax(0, 1fr) 305px;
   }
-  .statusbar > div {
-    min-width: 145px;
-    padding: 9px 15px;
+  .statusbar {
+    grid-template-columns: 130px 140px 220px 215px minmax(0, 1fr);
+  }
+  .statusbar > .stat {
+    padding: 9px;
+  }
+  .statusbar strong {
+    font-size: 20px;
   }
   .sidebar .section {
     padding: 15px;
@@ -705,24 +738,25 @@ footer {
     padding: 6px;
   }
   .statusbar {
-    min-height: 60px;
-    flex-wrap: wrap;
+    height: auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .statusbar > div {
+  .statusbar > .stat {
     min-width: 0;
-    flex: 1;
     padding: 8px;
   }
   .statusbar strong {
     font-size: 17px;
   }
-  .statusbar > div > span {
+  .statusbar > .stat > span {
     font-size: 7px;
   }
-  .phase {
-    width: 100%;
-    margin: 0;
-    padding: 4px 9px;
+  .statusbar .intel-forecast {
+    grid-column: span 1;
+    border-top: 1px solid var(--line);
+  }
+  .statusbar .latest-alert {
+    grid-column: span 2;
     border-top: 1px solid var(--line);
   }
   .workspace {

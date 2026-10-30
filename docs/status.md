@@ -20,6 +20,8 @@ Eine [aktuelle vollständige Produktionsrunde](browser-pruefung.md#produktionsru
 
 Eine [Flächen- und Dauerauswertung der Landtiefen](solverbericht.md#fläche-und-dauer-hoher-modellierter-landtiefen) zeigt, dass hohe modellierte Tiefen nicht auf eine einzelne Zuflusszelle beschränkt sind; ein Vergleich zweier zeitlicher Schrittgrenzen ergibt ähnliche Schwellenflächen. Reale Plausibilität, räumliche Konvergenz und Kalibrierung bleiben offen.
 
+Ein [Gegenversuch zur südlichen Strategie](review-gebaeudevergleich.md#gegenversuch-mit-geschlossenem-westrand) zeigt, dass ihr modellierter Schadensnutzen bei vorbereitetem Graben nahezu vollständig bestehen bleibt, wenn der westliche Modellrand geschlossen wird. Die genaue Ursache und reale Folgen außerhalb der Karte sind damit nicht geklärt.
+
 Auf demselben Anwendungscode bestanden [drei aufeinanderfolgende Produktionsrunden mit allen Werkzeugen](browser-pruefung.md#drei-produktionsrunden-nach-der-kompakten-spielhilfe) und Neustarts. Die für den Stabilitätstest gewählten Maßnahmen verfehlten das Ziel; echte Geräte und menschliche Bedienung bleiben offen.
 
 Die Rückstandsmeldung ist nun auch im Kartenmodus bei ausgeblendetem Menü sichtbar; eine Kartenabfrage erscheint nach dem Aufholen wieder oder kann die Meldung durch eine neue Abfrage ersetzen. Produktionsbuild, 72 Vitest-Tests und [alle 98 Chromium-Fälle](browser-pruefung.md#rückstandsmeldung-bei-ausgeblendetem-kartenmenü) auf Anwendungscode `853cc90` bestanden. Echte Geräte und menschliche Bedienung bleiben offen.

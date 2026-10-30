@@ -4,6 +4,8 @@ import {Game,type Action} from '../src/simulation/game';
 import {damPath,trenchPath} from '../src/simulation/path';
 import {validateScenario} from '../src/scenario';
 const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
+const westClosed=process.argv.includes('--closed-west');
+if(westClosed)scenario.parameters.outflowEdges=scenario.parameters.outflowEdges.filter(edge=>edge!=='left');
 const fixture=JSON.parse(readFileSync('tests/fixtures/review-strategies.json','utf8'));
 if(fixture.scenario!==scenario.version)throw Error('Szenarioversion stimmt nicht');
 const name=process.argv[2];const steps=fixture.strategies[name];if(!Array.isArray(steps))throw Error('Strategie: baseline | shield | divert | land-divert | south-control | south-divert');
@@ -17,4 +19,4 @@ for(const [i,step] of steps.entries()){
  const result=game.apply(`reference-${i}`,action);if(!result.ok)throw Error(result.reason);results.push(result);
 }
 while(s.time<scenario.parameters.duration-1e-9){const t=s.time,dt=s.step(Math.min(1,scenario.parameters.duration-t));game.addInflow(t,dt);game.updateDamage(dt);}
-console.log(JSON.stringify({scenario:scenario.version,strategy:name,time:s.time,results,budget:game.budget,...game.totals(),inflow:s.inflow,outflow:s.outflow,relativeBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow),buildings:game.status()},null,2));
+console.log(JSON.stringify({scenario:scenario.version,strategy:name,...(westClosed?{westClosed}:{}),time:s.time,results,budget:game.budget,...game.totals(),inflow:s.inflow,outflow:s.outflow,relativeBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow),buildings:game.status()},null,2));

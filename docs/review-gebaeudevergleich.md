@@ -307,6 +307,19 @@ Ein weiterer Kandidat verwendet auf `1.4-draft` drei Dammabschnitte `(26,0) → 
 
 Die Dämme kosten zusammen 1.760, der Graben zusätzlich 1.700. Gegenüber derselben Dammkontrolle senkt der Graben den Gesamtschaden um 11.901,91; nach Addition seiner Kosten beträgt der rechnerische Vorteil 10.201,91. Beide Kombinationen halten Budget und Schadensziel von 50.000 ein; die Kontrolle liegt nur 27,15 unter dem Ziel. Ohne Dämme senkt derselbe Graben den Schaden um 3.961,10, verfehlt aber allein das Ziel: [Vergleich](geodaten-voruntersuchung.md#südlicher-westgraben-ohne-und-mit-referenzdämmen). Nachrechnen: `bun tools/reference-strategies.ts south-control` und `south-divert`. Die relativen Wasserbilanzfehler der Kontroll- und Grabenrunde betragen 1,49 × 10⁻¹³ beziehungsweise 1,38 × 10⁻¹³.
 
+#### Gegenversuch mit geschlossenem Westrand
+
+Am 30. Oktober 2026 wurden `south-control` und `south-divert` auf demselben `1.4-draft` nochmals mit offenem sowie ausschließlich im Speicher geschlossenem westlichem Modellrand verglichen. `bun tools/reference-strategies.ts south-control --closed-west` beziehungsweise `south-divert --closed-west` entfernt die linke offene Randbedingung; die beiden Vergleichsläufe ohne diese Option verwenden das ausgelieferte Szenario. Die übrigen Randbedingungen und Maßnahmen bleiben gleich; alle Maßnahmen erfolgen vor Flutbeginn.
+
+| Modellrand | Kontrolle: Schaden / Budgetrest | Südlicher Graben: Schaden / Budgetrest |
+| --- | ---: | ---: |
+| West offen | 49.972,85 / 8.240 | 38.070,94 / 6.540 |
+| West geschlossen | 49.972,85 / 8.240 | 38.083,44 / 6.540 |
+
+Der Kontrollschaden ist in beiden Randvarianten auch vor Rundung identisch; beim Graben erhöht das Schließen des Randes ihn um 12,50. Die Schadensminderung des Grabens gegenüber denselben Dämmen beträgt bei geschlossenem Rand 11.889,41 und übersteigt weiterhin die Kosten von 1.700. Alle vier relativen Wasserbilanzfehler liegen unter `1,50 × 10⁻¹³`; die Typprüfung bestand. Die globalen Abflusswerte umfassen alle offenen Ränder und sind keine gesonderte Messung des Westrandflusses.
+
+In dieser vorbereiteten Kombination ist der modellierte Schadensnutzen somit nicht überwiegend durch das Öffnen des Westrands erklärt. Der Gegenversuch bestimmt nicht allein, ob Speicherung, Verlagerung, abgesenkte Kanten oder andere Effekte den Unterschied verursachen; er belegt auch keine reale Ableitung außerhalb der Karte und gilt nicht automatisch für spätere Eingriffszeitpunkte.
+
 Der Schaden verteilt sich im Modell um: `r9350494-0` sinkt von 17.088,41 auf 0, während `w491428570-0` von 0 auf 5.531,00 steigt. Die Differenz erklärt nicht allein die hydraulische Ursache und ist keine reale Gebäuderisikobewertung.
 
 Bei vorbereiteten Dämmen und einem idealisierten Grabeneingriff nach 120, 150 beziehungsweise 180 s enden die Runden mit 37.915,18, 37.797,06 beziehungsweise 32.659,38 Schaden und jeweils 6.540 Budgetrest. Die jeweils entstehende Schadensminderung gegenüber der unveränderten Dammkontrolle übersteigt die Grabenkosten. Beispiel: `bun tools/compare-staged-trench.ts 150 --tip=-2 --route=0,46,47,26`. Die Aktion erfolgt dabei exakt zum angegebenen Zeitpunkt; Auswahl und Bestätigung brauchen in einer menschlichen Runde zusätzliche Zeit.

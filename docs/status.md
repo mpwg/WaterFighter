@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Die [Safari-Desktopprüfung des kleinen Abrissziels](browser-pruefung.md#safari-beinahetreffer-auf-15) bestätigte einen eindeutigen Beinahetreffer, Markierung und Verwerfen ohne Budgetänderung. Die Position wurde testseitig projiziert; menschliche Auffindbarkeit und die auf Nutzerwunsch ausgesetzten mobilen Prüfungen bleiben offen.
+
 Eine [Auswahlhilfe für kleine Abrissziele](browser-pruefung.md#auswahlhilfe-für-kleine-abrissziele) erlaubt eindeutige Beinahetreffer und markiert das gewählte kleine Gebäude in der Vorschau. Produktionsbuild, 76 Vitest-Tests und gezielte Chromium-Desktopprüfungen bestanden; eine vollständige Runde mit spätem Graben erreichte das Ziel und der kurze Safari-Werkzeuglauf bestand. Die menschliche Auffindbarkeit bleibt offen; mobile Tests sind ausgesetzt.
 
 Auf `1.5-draft` bestanden [vollständige automatisierte Desktoprunden in Google Chrome 156 und Firefox 159](browser-pruefung.md#google-chrome-und-firefox-auf-szenario-15) einschließlich Ergebnisneustart; Chrome erreichte mit spätem Graben das Ziel. 38 ausgewählte Chromium-Desktopfälle bestanden ebenfalls. Firefox meldete auf dem schreibgeschützten Testimage Sandbox- und Crashreporter-Zugriffsfehler, die während des erfolgreichen Ablaufs nicht ausgeräumt wurden. Eine menschliche Abnahme fehlt; mobile Tests sind ausgesetzt.

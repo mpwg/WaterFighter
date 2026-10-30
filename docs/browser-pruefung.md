@@ -805,3 +805,16 @@ Kleine Gebäudeflächen erhalten im Abrissmodus bei einem direkten Fehltreffer e
 Der Produktionsbuild und alle 76 Vitest-Tests bestanden am 30. Oktober 2026 auf macOS 27.2. Ein Test prüft Einzel-, Mehrdeutigkeits- und Größenfälle; ein weiterer prüft Markierung und Verwerfen. Im Produktionsbrowser Chromium 156 wählte ein Desktoptest den 8 CSS-Pixel neben dem kleinen Kandidaten liegenden Punkt, bei dem die direkte Geometrieabfrage zuvor im instrumentierten Entwicklungsbrowser keinen Treffer ergab. Die Vorschau zeigte Kosten 7; vor Bestätigung und nach Verwerfen blieb das Budget 10.000. Ein direkter Auswahllauf des Bürogebäudes bestand ebenfalls. Neun gezielte Desktopfälle zu Auswahl, laufenden und pausierten Eingriffen, ausstehenden Antworten und Neustart bestanden vor dem letzten unverhaltensändernden Endlichkeitscheck; die beiden Auswahlfälle wurden danach erneut ausgeführt.
 
 Eine [Sichtprobe](abriss-kandidat-markiert.png) zeigt die kleine orange Markierung in der Gesamtansicht; die Position wurde testseitig projiziert. Safari 27.2 bestand den kurzen Werkzeug- und Budgetlauf. Eine vollständige Chromium-Produktionsrunde mit drei Dämmen und südlichem Graben in Pause bei 02:30 erreichte 13.445 Schaden und 6.540 Budgetrest; der Neustart funktionierte. Die Positionen waren automatisiert und die Safari-Prüfung traf nicht gezielt den Beinahetreffer. Menschliche Auffindbarkeit, Mehrdeutigkeit im praktischen Gebrauch und die auf Nutzerwunsch ausgesetzten mobilen Tests bleiben offen.
+
+### Safari-Beinahetreffer auf 1.5
+
+Am 30. Oktober 2026 wurde die Auswahlhilfe auf Anwendungscode `b07e842` mit tatsächlichem Safari 27.2 auf macOS 27.2 geprüft. In einer isolierten Vite-Kopie wurde ausschließlich ein Testzugang zur Szene ergänzt; der ausgelieferte Szenariodatensatz stimmte bytegleich mit dem Repository überein. Bei einer tatsächlichen Inhaltsfläche von 1600 × 925 CSS-Pixeln wählte das Skript einen Punkt 8 CSS-Pixel rechts vom projizierten Zentrum des Gebäudes `w1207502028-0`. Die direkte Babylon-Abfrage traf kein Gebäude, die eindeutige Auswahlhilfe traf den Kandidaten. Safari zeigte 66 Verlust und 7 Kosten bei unverändertem Budget 10.000; das orange Kreuz war sichtbar. Nach „Verwerfen“ verschwanden Vorschau und Markierung, das Budget blieb 10.000. Die [Sichtprobe](abriss-kandidat-safari.png) zeigt die Auswahl. Das Skript verwendet projizierte Testkoordinaten und ersetzt keinen menschlichen Spieltest.
+
+Zur Wiederholung aus einem sauberen Repository ein isoliertes Verzeichnis anlegen, den aktuellen Commit dorthin exportieren und dessen `node_modules` auf die lokale Installation verlinken. In der Kopie folgende Testzeilen an `src/main.ts` anhängen und Vite dort auf Port 5174 starten:
+
+```ts
+import { Vector3 as TestVector3, Matrix as TestMatrix } from '@babylonjs/core/Maths/math.vector';
+Object.defineProperty(window,'__wfPickTest',{get:()=>({world,Vector3:TestVector3,Matrix:TestMatrix})});
+```
+
+Bei laufendem `safaridriver -p 4445` führt `bun tools/verify-safari-small-building.mjs` im ursprünglichen Repository die Prüfung aus. Der Skriptaufruf kontrolliert das Szenariopaket gegen die lokale Datei. Der Hook existiert nur in der isolierten Kopie, nicht im Produkt; Safari-Fernsteuerung muss aktiviert und Safari gegebenenfalls zunächst beendet sein.

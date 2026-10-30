@@ -6,6 +6,9 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+**Arcade-Werkzeuge in Arbeit:** Der Entwicklungsstand verwendet feste breite Dämme und Gräben. Der Worker berechnet für breite Dämme drei benachbarte Sperrkanten und für Gräben die Trassenzellen sowie deren orthogonale Nachbarn; an Gebäuden werden Randzellen ausgespart und in der Vorschau benannt, Gebäude auf der Mittellinie blockieren. Die Vorschau erhält die vom Worker bestimmte Fläche; bereits vorhandene Teile werden nicht erneut bezahlt. Für breite Werkzeuge kostet eine neue Rasterkante beziehungsweise Zelle ein Drittel des bisherigen Satzes, gerundet pro Aktion. Regeltests, Typprüfung und gezielte Desktopbedienung einschließlich Überlappung sowie laufender und pausierter Flut bestanden. Eine vollständige aktuelle Produktionsrunde und die abschließende Übergabe sind noch in Arbeit; frühere Referenzwerte für schmale Werkzeuge sind historisch.
+
+
 **Übergabe zur eigenen Erprobung:** Der aktuelle Repository-Quellstand ist maßgeblich; die [VS-Code-Startanleitung](../README.md#in-vs-code-selbst-starten) verwendet `bun install --frozen-lockfile` und `bun run dev`. Am 30. Oktober 2026 wurden Installation und ein unabhängig gestarteter Entwicklungsserver geprüft: Chromium lud die aktuelle Anwendung und das mitgelieferte Szenario `1.6-draft`, dessen entpackter Hash der Quelldatei entsprach; keine Seitenfehler wurden protokolliert. Der Nutzer möchte zunächst selbst spielen und danach Feedback geben. Weitere Umsetzung und Feintuning warten darauf; die Arcade-Platzierung, tatsächliche Werkzeugbreite und menschliche Verständlichkeit sind nicht vollständig abgenommen. Mobile Tests bleiben auf Nutzerwunsch ausgesetzt. Der zuletzt beobachtete automatisierte Safari-Ergebnisneustart schlug fehl; Ursache offen.
 
 

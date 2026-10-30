@@ -45,7 +45,7 @@ it('zeigt die Dammvorschau auf der später bestätigten Krone bei unebenem Gelä
     World.prototype.showPreview.call(world,{kind:'dam',faces});
     const positions=world.previewDamMesh.getVerticesData(VertexBuffer.PositionKind);
     expect(world.previewDamMesh.isPickable).toBe(false);expect(world.previewDamMesh.renderingGroupId).toBe(2);
-    expect(Math.abs(positions[0]-positions[3])+Math.abs(positions[2]-positions[5])).toBeCloseTo(6);
+    expect(Math.abs(positions[0]-positions[3])+Math.abs(positions[2]-positions[5])).toBeCloseTo(4);
     for(const [index,face] of faces.entries()){
       const result=game.apply(`dam-${index}`,{kind:'dam',faces:[face]});expect(result.ok).toBe(true);
       expect(game.damFaces.get(`${face.axis}:${face.index}`)).toBe(9);

@@ -11,7 +11,11 @@ test('Alle Werkzeuge sind nach Flutbeginn in Pause nutzbar und die Uhr läuft da
   const paused=await page.locator('#time').textContent();
   for(const mode of ['trench','dam','demolish']) {
     await page.locator(`[data-mode="${mode}"]`).click();
-    if(mode==='demolish')await page.mouse.click(600,320);
+    if(mode==='demolish'){
+      for(const [x,y] of [[600,320],[620,320],[680,330],[750,320],[550,370],[620,365],[770,375],[520,390],[830,355],[560,245],[410,225],[450,230],[600,210],[515,220],[675,225]]) {
+        await page.mouse.click(x,y);if(await page.locator('#preview').isVisible()){await expect(page.locator('#preview-text')).not.toHaveText('Kosten werden geprüft …');if(await page.locator('#confirm').isEnabled())break;await page.locator('#cancel').click();}
+      }
+    }
     else {await page.mouse.click(800,360);await page.mouse.click(850,385);}
     await expect(page.locator('#confirm')).toBeEnabled();
     const before=await page.locator('#budget').textContent();
@@ -31,7 +35,11 @@ test('Alle Werkzeuge lassen sich bei laufender Flut bestätigen',async({page})=>
   const start=await page.locator('#time').textContent();
   for(const mode of ['trench','dam','demolish']) {
     await page.locator(`[data-mode="${mode}"]`).click();
-    if(mode==='demolish')await page.mouse.click(600,320);
+    if(mode==='demolish'){
+      for(const [x,y] of [[600,320],[620,320],[680,330],[750,320],[550,370],[620,365],[770,375],[520,390],[830,355],[560,245],[410,225],[450,230],[600,210],[515,220],[675,225]]) {
+        await page.mouse.click(x,y);if(await page.locator('#preview').isVisible()){await expect(page.locator('#preview-text')).not.toHaveText('Kosten werden geprüft …');if(await page.locator('#confirm').isEnabled())break;await page.locator('#cancel').click();}
+      }
+    }
     else {await page.mouse.click(800,360);await page.mouse.click(850,385);}
     await expect(page.locator('#confirm')).toBeEnabled();
     const before=await page.locator('#budget').textContent();

@@ -198,7 +198,7 @@ export class World {
     if(signature!==this.damSignature) {
       this.damSignature=signature; this.damMesh?.dispose(false,true);this.damMesh=undefined;
       const lines=dams.map(([key,crest])=>{const [axis,raw]=key.split(':'),index=Number(raw); return this.facePoints({axis:axis as 'x'|'y',index},crest+0.5);});
-      if(lines.length)this.damMesh=damRibbon(this.scene,lines,this.cell*1.5,new Color3(0.85,0.28,0.08),'confirmed-dams');
+      if(lines.length)this.damMesh=damRibbon(this.scene,lines,this.cell,new Color3(0.85,0.28,0.08),'confirmed-dams');
     }
   }
   private updateTrenches(cells:number[]):void {
@@ -344,10 +344,20 @@ export class World {
     let lines:Vector3[][]=[];
     if(action.kind==='dam') {
       lines=action.faces.map(face=>this.facePoints(face,damCrest(face,this.width,this.height,this.bed,this.scenario.parameters.damHeight)+0.5));
-      if(lines.length)this.previewDamMesh=damRibbon(this.scene,lines,this.cell*1.5,new Color3(1,0.5,0.06),'preview-dam');
+      if(lines.length)this.previewDamMesh=damRibbon(this.scene,lines,this.cell,new Color3(1,0.5,0.06),'preview-dam');
       return;
     }
-    for(const [a,b] of trenchRouteSegments(action.cells,this.width)){
+    if(action.wide){
+      const selected=new Set(action.cells);
+      for(const i of selected){
+        const x=i%this.width,y=Math.floor(i/this.width),h=this.bed[i]+this.currentDepth[i]+1.5;
+        const p=(dx:number,dy:number)=>new Vector3((x+dx)*this.cell-this.width*this.cell/2,h,(y+dy)*this.cell-this.height*this.cell/2);
+        for(const [dx,dy,a,b] of [[0,-1,[0,0],[1,0]],[1,0,[1,0],[1,1]],[0,1,[1,1],[0,1]],[-1,0,[0,1],[0,0]]] as [number,number,number[],number[]][]){
+          const nx=x+dx,ny=y+dy;if(nx>=0&&nx<this.width&&ny>=0&&ny<this.height&&selected.has(ny*this.width+nx))continue;
+          lines.push([p(a[0],a[1]),p(b[0],b[1])]);this.previewTrenchCells.push(i,i);
+        }
+      }
+    } else for(const [a,b] of trenchRouteSegments(action.cells,this.width)){
       const point=(i:number)=>{const x=i%this.width,y=Math.floor(i/this.width),east=y*this.width+Math.min(x+1,this.width-1),south=Math.min(y+1,this.height-1)*this.width+x;return new Vector3((x+.5)*this.cell-this.width*this.cell/2,(this.bed[east]+this.currentDepth[east]+this.bed[south]+this.currentDepth[south])/2+1.5,(y+.5)*this.cell-this.height*this.cell/2);};
       const first=point(a),last=point(b);if(a===b){first.x-=this.cell*.25;last.x+=this.cell*.25;}
       const dx=last.x-first.x,dz=last.z-first.z,length=Math.hypot(dx,dz);

@@ -1,10 +1,11 @@
 import type { Building, Scenario } from '../scenario';
 import { ShallowWaterSolver } from './solver';
 import { damCrest } from './dam-height';
+import { wideTrenchCells } from './path';
 
 export type Face = { axis: 'x' | 'y'; index: number };
-export type Action = { kind: 'dam'; faces: Face[] } | { kind: 'trench'; cells: number[] } | { kind: 'demolish'; buildingId: string };
-export type ActionResult = { ok: true; cost: number; budget: number; loweredCrests?: number; buildingBlockedFaces?: number; reusedCells?: number; nearBoundaryGap?: boolean; nearDamGap?: boolean; nearOutletGap?: boolean } | { ok: false; reason: string; budget: number };
+export type Action = { kind: 'dam'; faces: Face[]; wide?: boolean } | { kind: 'trench'; cells: number[]; wide?: boolean } | { kind: 'demolish'; buildingId: string };
+export type ActionResult = { ok: true; cost: number; budget: number; loweredCrests?: number; buildingBlockedFaces?: number; reusedCells?: number; reusedFaces?: number; clippedCells?: number; resolvedFaces?: Face[]; resolvedCells?: number[]; nearBoundaryGap?: boolean; nearDamGap?: boolean; nearOutletGap?: boolean } | { ok: false; reason: string; budget: number };
 export interface BuildingStatus { id: string; value: number; damage: number; demolished: boolean; exposure: number }
 interface BuildingState extends Omit<BuildingStatus,'exposure'> { cells: number[]; neighbours: number[] }
 const key = (face: Face) => `${face.axis}:${face.index}`;
@@ -117,7 +118,7 @@ export class Game {
   }
   preview(action:Action):ActionResult {
     const p=this.scenario.parameters,s=this.solver;
-    let cost=0,loweredCrests=0,buildingBlockedFaces=0,reusedCells=0,nearBoundaryGap=false,nearDamGap=false,nearOutletGap=false;
+    let cost=0,loweredCrests=0,buildingBlockedFaces=0,reusedCells=0,reusedFaces=0,clippedCells=0,nearBoundaryGap=false,nearDamGap=false,nearOutletGap=false; let resolvedFaces:Face[]|undefined,resolvedCells:number[]|undefined;
     if(!action || typeof action!=='object') return {ok:false,reason:'Ungültige Aktion.',budget:this.budget};
     if(action.kind==='dam') {
       if(!Array.isArray(action.faces)||!action.faces.length||action.faces.length>500) return {ok:false,reason:'Ungültiger Dammverlauf.',budget:this.budget};
@@ -129,7 +130,7 @@ export class Game {
         const valid=face.axis==='x'?x>0&&x<s.width&&y>=0&&y<s.height:x>=0&&x<s.width&&y>0&&y<s.height;
         if(!valid) return {ok:false,reason:'Der Damm darf nicht auf dem Kartenrand verlaufen. Endpunkte weiter innen wählen.',budget:this.budget};
         if(seen.has(key(face))) return {ok:false,reason:'Der Dammverlauf kreuzt sich selbst.',budget:this.budget};
-        if(this.damFaces.has(key(face))) return {ok:false,reason:'Hier steht bereits ein Damm. Endpunkte anders wählen.',budget:this.budget};
+        if(this.damFaces.has(key(face)) && !action.wide) return {ok:false,reason:'Hier steht bereits ein Damm. Endpunkte anders wählen.',budget:this.budget};
         const b=y*s.width+x,a=face.axis==='x'?b-1:b-s.width;
         if((this.occupied[a]||this.occupied[b]) && p.damHeight<=1000) buildingBlockedFaces++;
         const ends=face.axis==='x'?[[x,y],[x,y+1]]:[[x,y],[x+1,y]];
@@ -161,7 +162,20 @@ export class Game {
           return existingVertices.has(neighbour)&&!vertices.has(neighbour);
         });
       });
-      cost=action.faces.length*p.damCostPerCell;
+      if(action.wide) {
+        const expanded=new Map<string,Face>();
+        for(const face of action.faces){
+          const x=face.axis==='x'?face.index%(s.width+1):face.index%s.width,y=Math.floor(face.index/(face.axis==='x'?s.width+1:s.width));
+          for(const offset of [-1,0,1]){
+            const nx=x+(face.axis==='x'?offset:0),ny=y+(face.axis==='y'?offset:0);
+            if(face.axis==='x'?nx>0&&nx<s.width&&ny>=0&&ny<s.height:nx>=0&&nx<s.width&&ny>0&&ny<s.height){const f:Face={axis:face.axis,index:face.axis==='x'?ny*(s.width+1)+nx:ny*s.width+nx};expanded.set(key(f),f);}
+          }
+        }
+        resolvedFaces=[...expanded.values()];reusedFaces=resolvedFaces.filter(f=>this.damFaces.has(key(f))).length;
+        if(reusedFaces===resolvedFaces.length)return {ok:false,reason:'Hier steht bereits ein Damm. Endpunkte anders wählen.',budget:this.budget};
+        buildingBlockedFaces=resolvedFaces.filter(f=>{const x=f.axis==='x'?f.index%(s.width+1):f.index%s.width,y=Math.floor(f.index/(f.axis==='x'?s.width+1:s.width)),b=y*s.width+x,a=f.axis==='x'?b-1:b-s.width;return !!(this.occupied[a]||this.occupied[b]);}).length;
+      }
+      cost=Math.ceil(((resolvedFaces?.length??action.faces.length)-reusedFaces)*p.damCostPerCell/(action.wide?3:1));
     } else if(action.kind==='trench') {
       if(!Array.isArray(action.cells)||!action.cells.length||action.cells.length>500) return {ok:false,reason:'Ungültiger Grabenverlauf.',budget:this.budget};
       const seen=new Set<number>(); let previous: number | undefined;
@@ -173,12 +187,17 @@ export class Game {
         if(previous!==undefined && Math.abs(i%s.width-previous%s.width)+Math.abs(Math.floor(i/s.width)-Math.floor(previous/s.width))!==1) return {ok:false,reason:'Grabenverlauf ist nicht zusammenhängend.',budget:this.budget};
         previous=i; seen.add(i);
       }
-      if(reusedCells===action.cells.length) return {ok:false,reason:'Hier wurde bereits gegraben. Endpunkte anders wählen.',budget:this.budget};
+      if(action.wide){
+        resolvedCells=wideTrenchCells(action.cells,s.width,s.height);
+        const unblocked=resolvedCells.filter(i=>!this.occupied[i]);clippedCells=resolvedCells.length-unblocked.length;resolvedCells=unblocked;
+        reusedCells=resolvedCells.filter(i=>this.trenchCells.has(i)).length;seen.clear();for(const i of resolvedCells)seen.add(i);
+      }
+      if(reusedCells===(resolvedCells?.length??action.cells.length)) return {ok:false,reason:'Hier wurde bereits gegraben. Endpunkte anders wählen.',budget:this.budget};
       nearOutletGap=[action.cells[0],action.cells[action.cells.length-1]].some(i=>{
         const x=i%s.width,y=Math.floor(i/s.width);
-        return (s.openBoundary.left&&x===1)||(s.openBoundary.right&&x===s.width-2)||(s.openBoundary.top&&y===1)||(s.openBoundary.bottom&&y===s.height-2);
+        return ((s.openBoundary.left&&x===1&&!seen.has(i-1))||(s.openBoundary.right&&x===s.width-2&&!seen.has(i+1))||(s.openBoundary.top&&y===1&&!seen.has(i-s.width))||(s.openBoundary.bottom&&y===s.height-2&&!seen.has(i+s.width)));
       });
-      cost=(action.cells.length-reusedCells)*p.trenchCostPerCell;
+      cost=Math.ceil(((resolvedCells?.length??action.cells.length)-reusedCells)*p.trenchCostPerCell/(action.wide?3:1));
       for(const face of this.scenario.surveyCrests) {
         const x=face.axis==='x'?face.index%(s.width+1):face.index%s.width;
         const y=face.axis==='x'?Math.floor(face.index/(s.width+1)):Math.floor(face.index/s.width);
@@ -191,7 +210,7 @@ export class Game {
       cost=Math.ceil(b.value*p.demolitionCostFraction);
     } else return {ok:false,reason:'Unbekanntes Werkzeug.',budget:this.budget};
     if(cost>this.budget) return {ok:false,reason:'Budget reicht nicht aus.',budget:this.budget};
-    return {ok:true,cost,budget:this.budget-cost,...(loweredCrests?{loweredCrests}:{}),...(buildingBlockedFaces?{buildingBlockedFaces}:{}),...(reusedCells?{reusedCells}:{}),...(nearBoundaryGap?{nearBoundaryGap:true}:{}),...(nearDamGap?{nearDamGap:true}:{}),...(nearOutletGap?{nearOutletGap:true}:{})};
+    return {ok:true,cost,budget:this.budget-cost,...(loweredCrests?{loweredCrests}:{}),...(buildingBlockedFaces?{buildingBlockedFaces}:{}),...(reusedCells?{reusedCells}:{}),...(reusedFaces?{reusedFaces}:{}),...(clippedCells?{clippedCells}:{}),...(resolvedFaces?{resolvedFaces}:{}),...(resolvedCells?{resolvedCells}:{}),...(nearBoundaryGap?{nearBoundaryGap:true}:{}),...(nearDamGap?{nearDamGap:true}:{}),...(nearOutletGap?{nearOutletGap:true}:{})};
   }
   hasProcessedAction(id:string):boolean { return this.actionResults.has(id); }
   apply(id:string,action:Action):ActionResult {
@@ -200,10 +219,10 @@ export class Game {
     const result=this.preview(action); this.actionResults.set(id,result);
     if(!result.ok) return result;
     const s=this.solver,p=this.scenario.parameters;
-    if(action.kind==='dam') for(const face of action.faces) {
-      this.damFaces.set(key(face),damCrest(face,s.width,s.height,s.bed,p.damHeight));
+    if(action.kind==='dam') for(const face of result.resolvedFaces??action.faces) {
+      if(!this.damFaces.has(key(face)))this.damFaces.set(key(face),damCrest(face,s.width,s.height,s.bed,p.damHeight));
     }
-    else if(action.kind==='trench') {for(const i of action.cells) if(!this.trenchCells.has(i)) {s.bed[i]-=p.trenchDepth;this.trenchCells.add(i);}}
+    else if(action.kind==='trench') {for(const i of result.resolvedCells??action.cells) if(!this.trenchCells.has(i)) {s.bed[i]-=p.trenchDepth;this.trenchCells.add(i);}}
     else {const b=this.byId.get(action.buildingId)!;b.demolished=true;for(const i of b.cells)this.occupied[i]--;}
     this.budget=result.budget; this.rebuildCrests();
     return result;

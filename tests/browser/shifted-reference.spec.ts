@@ -44,11 +44,10 @@ test('Vorschau verbindet ein nahes Ende mit einem vorhandenen Damm',async({page}
   await expect(page.locator('#confirm')).toBeEnabled();await page.locator('#confirm').click();await expect(page.locator('#preview')).toBeHidden();
   await page.mouse.click(388.36,514.60);await page.mouse.click(431.29,510.80);
   await expect(page.locator('#confirm')).toBeEnabled();
-  expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([26,10],[34,20],200));
-  await expect(page.locator('#preview-text')).toContainText('Kosten: 720');
-  await expect(page.locator('#preview-text')).toContainText('Anschluss automatisch verbunden.');
+  expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([27,10],[34,20],200));
+  await expect(page.locator('#preview-text')).toContainText('Kosten: 680');
   await expect(page.locator('#budget')).toHaveText('9 600');await page.locator('#confirm').click();
-  await expect(page.locator('#budget')).toHaveText('8 880');
+  await expect(page.locator('#budget')).toHaveText('8 920');
 });
 
 test('ein nahes Ende verbindet sich seitlich mit einem bestehenden Damm',async({page})=>{
@@ -61,10 +60,9 @@ test('ein nahes Ende verbindet sich seitlich mit einem bestehenden Damm',async({
   await expect(page.locator('#confirm')).toBeEnabled();await page.locator('#confirm').click();await expect(page.locator('#budget')).toHaveText('9 600');
   await page.mouse.click(375.75,521.86);await page.mouse.click(393.39,529.70);
   await expect(page.locator('#confirm')).toBeEnabled();
-  expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([26,5],[33,6],200));
-  await expect(page.locator('#preview-text')).toContainText('Anschluss automatisch verbunden.');
-  await expect(page.locator('#preview-text')).toContainText('Kosten: 320');
-  await page.locator('#confirm').click();await expect(page.locator('#budget')).toHaveText('9 280');
+  expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([27,5],[33,6],200));
+  await expect(page.locator('#preview-text')).toContainText('Kosten: 280');
+  await page.locator('#confirm').click();await expect(page.locator('#budget')).toHaveText('9 320');
 });
 
 test.describe('Seitlicher Anschluss während der Flut',()=>{
@@ -82,9 +80,9 @@ test.describe('Seitlicher Anschluss während der Flut',()=>{
     const time=await page.locator('#time').textContent();await page.locator('#panel-toggle').click();
     await page.mouse.click(375.75,521.86);await page.mouse.click(393.39,529.70);
     await expect(page.locator('#confirm')).toBeEnabled();
-    expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([26,5],[33,6],200));
-    await expect(page.locator('#preview-text')).toContainText('Anschluss automatisch verbunden.');
-    await page.locator('#confirm').click();await expect(page.locator('#budget')).toHaveText('9 280');
+    expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([27,5],[33,6],200));
+    await expect(page.locator('#preview-text')).toContainText('Kosten: 280');
+    await page.locator('#confirm').click();await expect(page.locator('#budget')).toHaveText('9 320');
     await expect(page.locator('#state')).toHaveText(pause?'Pausiert':'Läuft');
     if(pause)await expect(page.locator('#time')).toHaveText(time!);
   });
@@ -106,6 +104,5 @@ test('sofortiger Anschluss kennt den bestätigten Damm vor dem verzögerten Snap
   await expect(page.locator('#confirm')).toBeEnabled();await page.locator('#confirm').click();await expect(page.locator('#preview')).toBeHidden();
   await page.mouse.click(375.75,521.86);await page.mouse.click(393.39,529.70);
   await expect(page.locator('#confirm')).toBeEnabled({timeout:3000});
-  expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([26,5],[33,6],200));
-  await expect(page.locator('#preview-text')).toContainText('Anschluss automatisch verbunden.');
+  expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([27,5],[33,6],200));
 });

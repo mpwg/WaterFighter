@@ -4,7 +4,7 @@ import { World } from './render/world';
 import { displayDamage } from './render/building-status';
 import type { Scenario } from './scenario';
 import type { Action } from './simulation/game';
-import { arcadeDamPath, arcadeTrenchPath, damPath, trenchPath } from './simulation/path';
+import { arcadeDamPath, arcadeTrenchPath, damPath, trenchPath, wideTrenchCells } from './simulation/path';
 import './style.css';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -66,20 +66,20 @@ function describeDraft(action:Action):string {
   const building=scenario.buildings.find(b=>b.id===action.buildingId);
   return building?`Gebäudeverlust insgesamt: ${number(Math.round(building.area*p.buildingValuePerSquareMetre))}`:'Gebäudeabriss';
 }
-function showDraft(action:Action) {if(!round)return; draft=action;previewId=`${round}-${++serial}`;preview.hidden=false;syncToolHint();confirm.disabled=true;previewText.textContent='Kosten werden geprüft …';world?.showPreview(action);worker?.postMessage({type:'preview',round,id:previewId,action});}
+function showDraft(action:Action) {if(!round)return; draft=action;previewId=`${round}-${++serial}`;preview.hidden=false;syncToolHint();confirm.disabled=true;previewText.textContent='Kosten werden geprüft …';world?.showPreview(action.kind==='trench'&&action.wide&&scenario?{kind:'trench',wide:true,cells:wideTrenchCells(action.cells,scenario.grid.width,scenario.grid.height)}:action);worker?.postMessage({type:'preview',round,id:previewId,action});}
 function pathAction(a:{x:number;y:number},b:{x:number;y:number}):Action|undefined {
   if(!scenario)return; const {width:w,height:h,cellSize:c}=scenario.grid;
   if(mode==='trench') {
     let x=Math.max(0,Math.min(w-1,Math.floor(a.x/c))),y=Math.max(0,Math.min(h-1,Math.floor(a.y/c)));
     const tx=Math.max(0,Math.min(w-1,Math.floor(b.x/c))),ty=Math.max(0,Math.min(h-1,Math.floor(b.y/c)));
     const cells=arcadeTrenchPath([x,y],[tx,ty],w,h,visibleTrenches,scenario.parameters.outflowEdges);
-    draftSnapped=JSON.stringify(cells)!==JSON.stringify(trenchPath([x,y],[tx,ty],w));return {kind:'trench',cells};
+    draftSnapped=JSON.stringify(cells)!==JSON.stringify(trenchPath([x,y],[tx,ty],w));return {kind:'trench',cells,wide:true};
   }
   if(mode==='dam') {
     let x=Math.max(0,Math.min(w,Math.round(a.x/c))),y=Math.max(0,Math.min(h,Math.round(a.y/c)));
     const tx=Math.max(0,Math.min(w,Math.round(b.x/c))),ty=Math.max(0,Math.min(h,Math.round(b.y/c)));const faces=arcadeDamPath([x,y],[tx,ty],w,h,visibleDams);
     draftSnapped=JSON.stringify(faces)!==JSON.stringify(damPath([x,y],[tx,ty],w));
-    return faces.length?{kind:'dam',faces}:undefined;
+    return faces.length?{kind:'dam',faces,wide:true}:undefined;
   }
 }
 function selectAt(x:number,y:number) {
@@ -138,12 +138,12 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
     const pending=pendingPresentation.get(data.id);
     if(!data.preview && pending) {if(data.result.ok) pending.revision=data.revision;else pendingPresentation.delete(data.id);}
     if(data.id!==previewId) return;
-    if(data.preview) {confirm.disabled=!data.result.ok;previewText.textContent=data.result.ok?`${draft?describeDraft(draft)+' · ':''}Kosten: ${data.result.cost} · Budget danach: ${data.result.budget}${draftSnapped?' · Anschluss automatisch verbunden. Prüfe den angezeigten Verlauf.':''}${data.result.loweredCrests?` · Senkt ${data.result.loweredCrests} modellierte ${data.result.loweredCrests===1?'Geländekante':'Geländekanten'}; der Wasserverlauf kann sich ändern.`:''}${data.result.buildingBlockedFaces?` · ${data.result.buildingBlockedFaces} ${data.result.buildingBlockedFaces===1?'Dammkante ist':'Dammkanten sind'} durch Gebäude bereits gesperrt.`:''}${data.result.nearBoundaryGap?' · Ein Dammende liegt eine Rasterkante vor dem Kartenrand; dort kann eine Öffnung bleiben.':''}${data.result.nearDamGap?' · Ein Dammende liegt eine Rasterkante von einem bestehenden Damm entfernt; dazwischen kann eine Öffnung bleiben.':''}${data.result.nearOutletGap?' · Ein Grabenende liegt eine Zelle vor einem offenen Modellrand. Prüfe den Anschluss.':''}${data.result.reusedCells?` · ${data.result.reusedCells} ${data.result.reusedCells===1?'Zelle ist':'Zellen sind'} bereits ausgehoben und werden nicht erneut vertieft oder bezahlt.`:''}`:data.result.reason;}
+    if(data.preview) {if(data.result.ok&&draft?.kind==='dam'&&data.result.resolvedFaces)world?.showPreview({kind:'dam',faces:data.result.resolvedFaces});else if(data.result.ok&&draft?.kind==='trench'&&data.result.resolvedCells)world?.showPreview({kind:'trench',wide:true,cells:data.result.resolvedCells});confirm.disabled=!data.result.ok;previewText.textContent=data.result.ok?`${draft?describeDraft(draft)+' · ':''}Kosten: ${data.result.cost} · Budget danach: ${data.result.budget}${draftSnapped?' · Anschluss automatisch verbunden. Prüfe den angezeigten Verlauf.':''}${data.result.loweredCrests?` · Senkt ${data.result.loweredCrests} modellierte ${data.result.loweredCrests===1?'Geländekante':'Geländekanten'}; der Wasserverlauf kann sich ändern.`:''}${data.result.buildingBlockedFaces?` · ${data.result.buildingBlockedFaces} ${data.result.buildingBlockedFaces===1?'Dammkante ist':'Dammkanten sind'} durch Gebäude bereits gesperrt.`:''}${data.result.nearBoundaryGap?' · Ein Dammende liegt eine Rasterkante vor dem Kartenrand; dort kann eine Öffnung bleiben.':''}${data.result.nearDamGap?' · Ein Dammende liegt eine Rasterkante von einem bestehenden Damm entfernt; dazwischen kann eine Öffnung bleiben.':''}${data.result.nearOutletGap?' · Ein Grabenende liegt eine Zelle vor einem offenen Modellrand. Prüfe den Anschluss.':''}${data.result.clippedCells?` · Grabenbreite spart ${data.result.clippedCells} ${data.result.clippedCells===1?'Gebäudezelle':'Gebäudezellen'} aus.`:''}${data.result.reusedFaces?` · ${data.result.reusedFaces} Dammkanten bestehen bereits und werden nicht erneut bezahlt.`:''}${data.result.reusedCells?` · ${data.result.reusedCells} ${data.result.reusedCells===1?'Zelle ist':'Zellen sind'} bereits ausgehoben und werden nicht erneut vertieft oder bezahlt.`:''}`:data.result.reason;}
     else {setAwaiting(false);if(data.result.ok){
       // The worker confirmed this exact draft; allow immediate follow-up placement
       // even if its next authoritative snapshot is still being rendered.
-      if(draft?.kind==='dam')visibleDams=[...new Set([...visibleDams,...draft.faces.map(f=>`${f.axis}:${f.index}`)])];
-      else if(draft?.kind==='trench')visibleTrenches=[...new Set([...visibleTrenches,...draft.cells])];
+      if(draft?.kind==='dam')visibleDams=[...new Set([...visibleDams,...(data.result.resolvedFaces??draft.faces).map(f=>`${f.axis}:${f.index}`)])];
+      else if(draft?.kind==='trench')visibleTrenches=[...new Set([...visibleTrenches,...(data.result.resolvedCells??draft.cells)])];
       setMessage(`Maßnahme bestätigt. Kosten: ${data.result.cost}.`);clearDraft();confirmationTimer=setTimeout(()=>{confirmationTimer=undefined;setMessage(mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.');},4000);}else{previewText.textContent=data.result.reason;confirm.disabled=true;}}
   }
   else if(data.type==='result' && data.round===round && !fatalError) { running=false; finished=true; world?.setFlowRunning(false,speed);inspection.hidden=true;inspection.textContent='';clearDraft();run.disabled=true; stateLabel.textContent='Beendet';compactStatus.textContent=`${timeLabel.textContent} · Budget ${budgetLabel.textContent} · ${stateLabel.textContent}`; setMessage('Die Runde ist beendet.');

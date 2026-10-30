@@ -60,7 +60,7 @@ export function arcadeDamPath(start:Point,end:Point,width:number,height:number,e
     if(!faces.length)continue;
     if(faces.every(face=>{
       const x=face.axis==='x'?face.index%(width+1):face.index%width,y=Math.floor(face.index/(face.axis==='x'?width+1:width));
-      return !keys.has(`${face.axis}:${face.index}`) && (face.axis==='x'?x>0&&x<width&&y>=0&&y<height:x>=0&&x<width&&y>0&&y<height);
+      return face.axis==='x'?x>0&&x<width&&y>=0&&y<height:x>=0&&x<width&&y>0&&y<height;
     }))return faces;
   }
   return damPath(start,end,width);
@@ -77,4 +77,11 @@ export function arcadeTrenchPath(start:Point,end:Point,width:number,height:numbe
   const a=candidates(start),b=candidates(end);
   if(a[0]===b[0]&&a[1]===b[1]&&(start[0]!==end[0]||start[1]!==end[1]))return trenchPath(start,end,width);
   return trenchPath(a,b,width);
+}
+
+/** Three-cell-wide footprint clipped to the model boundary. */
+export function wideTrenchCells(cells:readonly number[],width:number,height:number):number[] {
+  const expanded=new Set(cells);
+  for(const i of cells){const x=i%width,y=Math.floor(i/width);for(const [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]]){const nx=x+dx,ny=y+dy;if(nx>=0&&nx<width&&ny>=0&&ny<height)expanded.add(ny*width+nx);}}
+  return [...expanded];
 }

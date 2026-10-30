@@ -91,6 +91,38 @@ describe('Bauaktionen und Schäden',()=>{
   });
 });
 
+describe('Breite Arcade-Werkzeuge',()=>{
+  it('berechnet Dammfläche, Überlappung und Kosten nur für neue Kanten',()=>{
+    const g=new Game({...scenario,buildings:[]}),volume=g.solver.volume();
+    const a={kind:'dam' as const,faces:damPath([2,1],[2,3],5),wide:true};
+    const first=g.preview(a);expect(first.ok).toBe(true);if(!first.ok)return;
+    expect(first.resolvedFaces).toHaveLength(6);expect(first.cost).toBe(2*scenario.parameters.damCostPerCell);
+    expect(g.apply('first-wide',a)).toEqual(first);expect(g.solver.volume()).toBe(volume);
+    const b={kind:'dam' as const,faces:damPath([2,2],[2,4],5),wide:true},second=g.preview(b);
+    expect(second.ok).toBe(true);if(!second.ok)return;
+    expect(second.reusedFaces).toBe(3);expect(second.cost).toBe(1*scenario.parameters.damCostPerCell);
+    expect(g.apply('second-wide',b)).toEqual(second);expect(g.apply('second-wide',b)).toEqual(second);
+    expect(g.damFaces.size).toBe(9);expect(g.solver.volume()).toBe(volume);
+  });
+  it('gräbt eine breite Fläche atomar und berechnet nur neue Zellen',()=>{
+    const g=new Game({...scenario,buildings:[]}),volume=g.solver.volume();
+    const a={kind:'trench' as const,cells:[6,7],wide:true};const first=g.preview(a);
+    expect(first.ok).toBe(true);if(!first.ok)return;
+    expect(first.resolvedCells).toHaveLength(8);expect(first.cost).toBe(Math.ceil(8*scenario.parameters.trenchCostPerCell/3));
+    expect(g.apply('first-wide',a)).toEqual(first);expect(g.solver.volume()).toBe(volume);
+    const second=g.preview({kind:'trench',cells:[7,8],wide:true});expect(second.ok).toBe(true);if(!second.ok)return;
+    expect(second.reusedCells).toBeGreaterThan(0);expect(second.cost).toBe(Math.ceil((second.resolvedCells!.length-second.reusedCells!)*scenario.parameters.trenchCostPerCell/3));
+  });
+  it('spart ein Gebäude in der Grabenbreite aus und zeigt die tatsächliche Fläche',()=>{
+    const g=new Game(scenario),volume=g.solver.volume();
+    const action={kind:'trench' as const,cells:[6,7],wide:true};const preview=g.preview(action);
+    expect(preview).toMatchObject({ok:true,clippedCells:1});if(!preview.ok)return;
+    expect(preview.resolvedCells).not.toContain(12);expect(g.apply('clipped',action)).toEqual(preview);
+    expect(g.solver.volume()).toBe(volume);expect(g.buildings[0].demolished).toBe(false);
+    expect(g.preview({kind:'trench',cells:[12],wide:true})).toMatchObject({ok:false,reason:expect.stringContaining('Gebäude versperrt')});
+  });
+});
+
 describe('Hydraulische Wirkung der Werkzeuge',()=>{
   it('schließt eine kleine Dammlücke durch den automatischen Anschluss auch hydraulisch',()=>{
     const w=12,h=6,bed=Array(w*h).fill(0);

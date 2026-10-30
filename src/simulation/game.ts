@@ -4,7 +4,7 @@ import { damCrest } from './dam-height';
 
 export type Face = { axis: 'x' | 'y'; index: number };
 export type Action = { kind: 'dam'; faces: Face[] } | { kind: 'trench'; cells: number[] } | { kind: 'demolish'; buildingId: string };
-export type ActionResult = { ok: true; cost: number; budget: number; loweredCrests?: number; buildingBlockedFaces?: number; reusedCells?: number; nearBoundaryGap?: boolean } | { ok: false; reason: string; budget: number };
+export type ActionResult = { ok: true; cost: number; budget: number; loweredCrests?: number; buildingBlockedFaces?: number; reusedCells?: number; nearBoundaryGap?: boolean; nearDamGap?: boolean } | { ok: false; reason: string; budget: number };
 export interface BuildingStatus { id: string; value: number; damage: number; demolished: boolean; exposure: number }
 interface BuildingState extends Omit<BuildingStatus,'exposure'> { cells: number[]; neighbours: number[] }
 const key = (face: Face) => `${face.axis}:${face.index}`;
@@ -111,7 +111,7 @@ export class Game {
   }
   preview(action:Action):ActionResult {
     const p=this.scenario.parameters,s=this.solver;
-    let cost=0,loweredCrests=0,buildingBlockedFaces=0,reusedCells=0,nearBoundaryGap=false;
+    let cost=0,loweredCrests=0,buildingBlockedFaces=0,reusedCells=0,nearBoundaryGap=false,nearDamGap=false;
     if(!action || typeof action!=='object') return {ok:false,reason:'Ungültige Aktion.',budget:this.budget};
     if(action.kind==='dam') {
       if(!Array.isArray(action.faces)||!action.faces.length||action.faces.length>500) return {ok:false,reason:'Ungültiger Dammverlauf.',budget:this.budget};
@@ -147,6 +147,14 @@ export class Game {
         const [x,y]=vertex.split(',').map(Number);
         return count===1&&!existingVertices.has(vertex)&&((x===1||x===s.width-1)&&y>0&&y<s.height||(y===1||y===s.height-1)&&x>0&&x<s.width);
       });
+      nearDamGap=[...vertices].some(([vertex,count])=>{
+        if(count!==1||existingVertices.has(vertex))return false;
+        const [x,y]=vertex.split(',').map(Number);
+        return [[x-1,y],[x+1,y],[x,y-1],[x,y+1]].some(([vx,vy])=>{
+          const neighbour=`${vx},${vy}`;
+          return existingVertices.has(neighbour)&&!vertices.has(neighbour);
+        });
+      });
       cost=action.faces.length*p.damCostPerCell;
     } else if(action.kind==='trench') {
       if(!Array.isArray(action.cells)||!action.cells.length||action.cells.length>500) return {ok:false,reason:'Ungültiger Grabenverlauf.',budget:this.budget};
@@ -173,7 +181,7 @@ export class Game {
       cost=Math.ceil(b.value*p.demolitionCostFraction);
     } else return {ok:false,reason:'Unbekanntes Werkzeug.',budget:this.budget};
     if(cost>this.budget) return {ok:false,reason:'Budget reicht nicht aus.',budget:this.budget};
-    return {ok:true,cost,budget:this.budget-cost,...(loweredCrests?{loweredCrests}:{}),...(buildingBlockedFaces?{buildingBlockedFaces}:{}),...(reusedCells?{reusedCells}:{}),...(nearBoundaryGap?{nearBoundaryGap:true}:{})};
+    return {ok:true,cost,budget:this.budget-cost,...(loweredCrests?{loweredCrests}:{}),...(buildingBlockedFaces?{buildingBlockedFaces}:{}),...(reusedCells?{reusedCells}:{}),...(nearBoundaryGap?{nearBoundaryGap:true}:{}),...(nearDamGap?{nearDamGap:true}:{})};
   }
   hasProcessedAction(id:string):boolean { return this.actionResults.has(id); }
   apply(id:string,action:Action):ActionResult {

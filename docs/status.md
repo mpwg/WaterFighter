@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Die Dammvorschau weist zusätzlich darauf hin, wenn ein freies Dammende eine Rasterkante von einem bestehenden Damm entfernt liegt. Die betroffene südliche Verschiebung wurde mit Desktop-Mausaktionen und abgeglichener Worker-Geometrie geprüft; ein Regeltest prüft direkte Anschlüsse, Bestätigung und einmalige Kosten. Build, 81 Vitest-Tests und drei Desktopbrowserfälle bestanden. Der Hinweis erkennt nicht jede mögliche Lücke; menschliche Verständlichkeit und vollständige Browserrunden nach dieser Änderung bleiben offen.
+
 Ein [Gegenversuch zu den fünf vom südlichen Graben gesenkten DGM-Kanten](review-gebaeudevergleich.md#einfluss-der-geländekanten-am-südlichen-graben) erhält diese modellierten Kronen im Speicher: Der Graben bleibt gegenüber der Dammkontrolle wirtschaftlich wirksam und ergibt geringeren Schaden als die reguläre Absenkung. Alle fünf Kanten lassen sich auf Typ-1-Bruchlinien im Szenario zurückführen; ihre reale Funktion und eine fachliche Freigabe sind damit nicht geklärt.
 
 Drei [aufeinanderfolgende Desktop-Produktionsrunden nach dem Dammhinweis](browser-pruefung.md#drei-produktionsrunden-nach-dem-dammhinweis) bestanden mit allen drei Werkzeugen und zwei Ergebnisneustarts. Die gewählten Testmaßnahmen verfehlten das Schadensziel; Heap- und RSS-Endstichproben stiegen und erlauben keine abschließende Aussage über langfristige Speicherstabilität.

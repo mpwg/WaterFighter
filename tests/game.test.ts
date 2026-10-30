@@ -6,6 +6,17 @@ const base=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'
 const scenario={...base,grid:{...base.grid,width:5,height:5,cellSize:4},terrain:Array(25).fill(0),bed:Array(25).fill(0),initialDepth:Array(25).fill(0),waterMask:Array(25).fill(0),surveyCrests:[],parameters:{...base.parameters,inflowCells:[0],inflowCurve:[[0,0],[300,0]],outflowEdges:[]},buildings:[{id:'house',area:16,height:8,heightEstimated:true,polygon:{outer:[[8,8],[12,8],[12,12],[8,12],[8,8]],holes:[]}}]};
 
 describe('Bauaktionen und Schäden',()=>{
+  it('weist auf eine einzelne fehlende Kante zwischen Dämmen hin',()=>{
+    const g=new Game(scenario),first={kind:'dam' as const,faces:damPath([1,2],[2,2],5)};
+    expect(g.apply('first',first).ok).toBe(true);
+    const before=g.budget,volume=g.solver.volume(),gap={kind:'dam' as const,faces:damPath([3,2],[4,2],5)};
+    const preview=g.preview(gap);expect(preview).toMatchObject({ok:true,nearDamGap:true});
+    expect(g.budget).toBe(before);expect(g.solver.volume()).toBe(volume);
+    expect(g.apply('gap',gap)).toEqual(preview);expect(g.budget).toBe(before-scenario.parameters.damCostPerCell);
+    expect(g.apply('gap',gap)).toEqual(preview);expect(g.budget).toBe(before-scenario.parameters.damCostPerCell);
+    const joined=new Game(scenario);expect(joined.apply('first',first).ok).toBe(true);
+    expect(joined.preview({kind:'dam',faces:damPath([2,2],[3,2],5)})).not.toHaveProperty('nearDamGap');
+  });
   it('weist auf ein freies Dammende eine Rasterkante vor dem Rand hin',()=>{
     const g=new Game(scenario), near={kind:'dam' as const,faces:damPath([2,1],[2,3],5)};
     const before=g.budget,volume=g.solver.volume();

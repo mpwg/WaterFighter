@@ -775,3 +775,15 @@ Die ergänzte macOS-Variante von `processTreeRss` summiert die von `ps` gemeldet
 | 3 | 768,7 MB | 768,2 MB | 46,2 / 58,1 MB |
 
 Die Gesamtsumme nach Runde 3 lag unter jener nach Runde 1; die drei Endwerte zeigen keine monotone Zunahme. RSS zählt gemeinsam genutzte Seiten möglicherweise mehrfach, enthält nicht zuverlässig alle Grafikzuweisungen und misst weder privaten Speicher noch außerhalb des Prozessbaums laufende Dienste. Die wenigen Stichproben beweisen weder Leckfreiheit noch langfristige Speicherstabilität. Die Funktion wurde zusätzlich mit einem laufenden Kindprozess und einer nicht existierenden Prozesskennung auf diesem Mac geprüft; für Linux bleibt die bestehende `/proc`-Messung erhalten.
+
+## Safari 27.2 auf dem korrigierten Szenario 1.5
+
+Am 30. Oktober 2026 wurde der Produktionsbuild von `27d99ce` auf macOS 27.2 arm64 mit Safari 27.2 und `WATERFIGHTER_SAFARI_FULL=1 bun tools/observe-safari.mjs` geprüft. Der lokal ausgelieferte komprimierte Szenariodatensatz ergab nach Entpacken SHA-256 `f27c6082e7dee7444d20439bd94f14203abe04de412dde2ebedb9cfde7cebdd0`. Start, Pause, Neustart und Vorschau/Bestätigung aller drei Werkzeuge funktionierten. Eine unbehandelte 2×-Runde endete nach 150,679 s bei 05:00 mit 94.368 Schaden und 10.000 Budgetrest; das Ziel wurde verfehlt. „Neue Runde“ setzte Zeit, Budget und Schadensanzeige zurück. Der Lauf nutzte feste Testkoordinaten und belegt keine menschliche Bedienung.
+
+Anschließend wurde das Skript um einen Hashabgleich des ausgelieferten Szenarios mit der lokalen Quelldatei ergänzt. Die geänderte Fassung bestand den kurzen Safari-Werkzeugtest und meldete `1.5-draft` mit dem genannten Hash; die vollständige Runde wurde mit der unmittelbar vorherigen Skriptfassung ausgeführt. Browserlauf und der Beginn der Chromium-Drei-Runden-Prüfung liefen parallel; die Zeiten sind keine isolierte Leistungsmessung.
+
+### Drei Chromium-Runden auf 1.5
+
+Auf demselben Produktionsbuild lief `bun tools/observe-three-rounds.mjs --actions` mit Chromium 156.0.8078.4 auf macOS 27.2. In allen drei 2×-Runden wurden Graben, Damm und Abriss bei 00:01 in Pause bestätigt; zwei Neustarts setzten Zeit, Budget und Schadensanzeige zurück. Jede Runde endete mit 172.605 Gesamtschaden und 526 Budgetrest, also außerhalb des Ziels; diese Maßnahmen sind ein Stabilitätstest und keine Schutzstrategie. Die Runden dauerten einschließlich der Aktionen 156,987, 156,710 und 156,794 s.
+
+Die Prozessbaum-RSS-Summen vor/nach den Runden betrugen 692,4/759,6, 766,5/780,3 und 785,5/775,2 MB; der JavaScript-Heap danach 43,6, 50,7 und 57,1 MB. Die erste Runde lief parallel zur Safari-Prüfung. RSS zählt gemeinsame Seiten möglicherweise mehrfach, erfasst nicht zuverlässig den gesamten Grafikspeicher und ist kein privater Speicher. Drei Stichproben mit steigenden Heapwerten und ohne erzwungene Sammlung beweisen weder ein Leck noch langfristige Stabilität. Die Messung und automatisierten Testkoordinaten ersetzen keine menschliche Spielabnahme.

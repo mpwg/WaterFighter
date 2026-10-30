@@ -1,5 +1,7 @@
 /** Desktop smoke test against Safari through a locally started safaridriver. */
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { gunzipSync } from 'node:zlib';
 const base=process.env.WATERFIGHTER_SAFARIDRIVER??'http://127.0.0.1:4445';
 async function command(path,body,method='POST') {const r=await fetch(base+path,{method,headers:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(JSON.stringify(d));return d.value;}
 const session=await command('/session',{capabilities:{alwaysMatch:{browserName:'safari',platformName:'macOS'}}});
@@ -7,7 +9,15 @@ const sid=session.sessionId,prefix=`/session/${sid}`;
 let failed=false,phase="Initialisierung";
 try {
   await command(prefix+'/window/rect',{x:0,y:0,width:1200,height:800});
-  await command(prefix+'/url',{url:process.env.WATERFIGHTER_URL??'http://127.0.0.1:4173/'});
+  const url=process.env.WATERFIGHTER_URL??'http://127.0.0.1:4173/';
+  await command(prefix+'/url',{url});
+  const response=await fetch(new URL('scenarios/brigittenau-v1.json.bin',url));
+  if(!response.ok)throw new Error(`Szenariodownload: HTTP ${response.status}`);
+  const bytes=gunzipSync(Buffer.from(await response.arrayBuffer()));
+  const scenarioHash=createHash('sha256').update(bytes).digest('hex');
+  const expectedHash=createHash('sha256').update(readFileSync('public/scenarios/brigittenau-v1.json')).digest('hex');
+  if(scenarioHash!==expectedHash)throw new Error('Ausgeliefertes Szenario stimmt nicht mit dem Arbeitsstand überein');
+  const scenarioVersion=JSON.parse(bytes.toString('utf8')).version;
   const script=async code=>command(prefix+'/execute/sync',{script:code,args:[]});
   let state;
   for(let i=0;i<100;i++) {state=await script('return {message:document.querySelector("#message")?.textContent,enabled:!document.querySelector("#run")?.disabled};');if(state.enabled)break;await new Promise(r=>setTimeout(r,200));}
@@ -61,7 +71,7 @@ try {
     if(!afterResultReset.resultHidden || afterResultReset.time!=='00:00' || afterResultReset.state!=='Vorbereitung' || afterResultReset.budget.replace(/\s/g,'')!=='10000' || afterResultReset.damage!=='Flut 0 · Abriss 0')throw new Error('Neustart nach Ergebnis fehlgeschlagen: '+JSON.stringify(afterResultReset));
   }
   const screenshot=await command(prefix+'/screenshot',undefined,'GET');writeFileSync('/tmp/waterfighter-safari.png',Buffer.from(screenshot,'base64'));
-  const report={version:session.capabilities.browserVersion,initial:state,running,paused,reset,toolResults,fullRound,afterResultReset};writeFileSync('/tmp/waterfighter-safari.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+  const report={version:session.capabilities.browserVersion,scenarioVersion,scenarioHash,initial:state,running,paused,reset,toolResults,fullRound,afterResultReset};writeFileSync('/tmp/waterfighter-safari.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
   if(running.state!=='Läuft'||paused.state!=='Pausiert'||reset.state!=='Vorbereitung'||reset.time!=='00:00')throw new Error('Safari-Ablauf fehlgeschlagen');
 } catch (error) {
   failed=true;

@@ -27,14 +27,23 @@ if([start,end].some(([x,y])=>x<0||y<0||x>=solver.width||y>=solver.height)){
 }
 const cells=trenchPath(start,end,solver.width),preview=game.preview({kind:'trench',cells});
 if(!preview.ok){console.log(JSON.stringify({scenario:scenario.version,strategy:north?'north':'south',endpoint,dx,dy,start,end,accepted:false,reason:preview.reason,budget:game.budget}));process.exit(0);}
+const retainedKey=process.argv.find(arg=>arg.startsWith('--retain='))?.slice(9);
+const retained=retainedKey?scenario.surveyCrests.find(face=>`${face.axis}:${face.index}`===retainedKey):undefined;
+if(retainedKey){
+  if(!retained)throw Error('Geländekante nicht gefunden');
+  const x=retained.axis==='x'?retained.index%(solver.width+1):retained.index%solver.width,y=retained.axis==='x'?Math.floor(retained.index/(solver.width+1)):Math.floor(retained.index/solver.width),b=y*solver.width+x,a=retained.axis==='x'?b-1:b-solver.width;
+  if(!cells.includes(a)||!cells.includes(b))throw Error('Graben kreuzt die Geländekante nicht');
+}
 const at=150;let applied=false,cost=0,volumeChange=0;
 while(solver.time<scenario.parameters.duration-1e-9){
   if(!applied&&solver.time>=at-1e-9){
     const before=solver.volume(),result=game.apply('trench',{kind:'trench',cells});
-    if(!result.ok)throw Error(result.reason);cost=result.cost;volumeChange=solver.volume()-before;applied=true;
+    if(!result.ok)throw Error(result.reason);cost=result.cost;volumeChange=solver.volume()-before;
+    if(retained){const field=retained.axis==='x'?solver.crestX:solver.crestY;field[retained.index]=Math.max(field[retained.index],retained.crest);}
+    applied=true;
   }
   const t=solver.time,dt=solver.step(Math.min(1,scenario.parameters.duration-t,applied?Infinity:at-t));
   game.addInflow(t,dt);game.updateDamage(dt);
 }
-console.log(JSON.stringify({scenario:scenario.version,strategy:north?'north':'south',endpoint,dx,dy,start,end,accepted:true,at,cells:cells.length,cost,volumeChange,budget:game.budget,
+console.log(JSON.stringify({scenario:scenario.version,strategy:north?'north':'south',endpoint,dx,dy,start,end,accepted:true,at,cells:cells.length,cost,volumeChange,retained:retainedKey??null,budget:game.budget,
   ...game.totals(),relativeBalance:Math.abs(solver.volume()-initial-solver.inflow+solver.outflow-solver.roundoffVolume)/(initial+solver.inflow)}));

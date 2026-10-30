@@ -6,6 +6,10 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Die kompakte [Übersicht des spielbaren Prototyps](prototyp-status.md) bündelt Startanleitung, aktuelle Vergleichsrunden und offene Abnahmen; die nachfolgenden Einträge erhalten die ausführliche Chronologie.
+
+Die aktuelle Darstellung zeigt den Graben als goldgelbes Band mit violetter Markierung am offenen Modellrand und lokalen Richtungspfeilen. Eine vollständige Chromium-Produktionsrunde mit spätem Graben erreichte 6.330 Schaden und 6.540 Restbudget; Neustart und Unterpfadprüfung bestanden. Build und 83 Vitest-Tests bestanden. Drei untersuchte Verschiebungen des südlichen Grabens verursachen weiterhin jeweils über 190.000 Schaden; die Ursache ist nicht abschließend geklärt. Siehe [Vergleich und Aufnahmen](review-gebaeudevergleich.md#platzierung-und-sichtbarkeit-auf-16).
+
 [Drei aufeinanderfolgende Produktionsrunden auf 1.6](browser-pruefung.md#drei-produktionsrunden-auf-16) bestanden in Chromium mit allen Werkzeugen und zwei Ergebnisneustarts. Die Testmaßnahmen verfehlten das Ziel; Speicherstichproben erlauben keine abschließende Aussage über langfristige Stabilität.
 
 Eine [Abrisssuche ohne vorbereitete Dämme](review-gebaeudevergleich.md#größerer-abriss-ohne-vorbereitete-dämme) auf 1.6 fand neben dem kleinen Kandidaten ein größeres Bürogebäude: Sein Abriss ist numerisch vor Beginn sowie bei 60, 120 und 180 s wirtschaftlich, verfehlt allein jedoch das Schadensziel. Bei 240 s und mit den getesteten Dammführungen ist er nachteilig. Eine vollständige Chromium-Runde mit spätem Abriss und Neustart bestand mit Testkoordinaten; ein menschlicher Spieltest fehlt.

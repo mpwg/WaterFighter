@@ -58,7 +58,7 @@ it('zeichnet nur bestätigte Grabenzellen und entfernt die Markierung beim Neust
   const {Scene}=await import('@babylonjs/core/scene');
   const {StandardMaterial}=await import('@babylonjs/core/Materials/standardMaterial');
   const engine=new NullEngine(),scene=new Scene(engine),material=new StandardMaterial('trench',scene);
-  const world={width:2,height:2,cell:4,bed:[0,0,0,0],currentDepth:new Float32Array(4),scene,trenchMaterial:material,
+  const world={width:2,height:2,cell:4,bed:[0,0,0,0],currentDepth:new Float32Array(4),scene,trenchMaterial:material,scenario:{parameters:{outflowEdges:[]}},
     wetVertices:new Uint8Array(9),waterIndexBuffer:new Uint16Array(24),wetTopologyReady:false,waterPositions:new Float32Array(27),waterColors:new Float32Array(36),
     water:{setIndices:vi.fn(),updateVerticesData:vi.fn()}} as any;
   try {
@@ -67,14 +67,39 @@ it('zeichnet nur bestätigte Grabenzellen und entfernt die Markierung beim Neust
     expect(world.trenchMesh.name).toBe('confirmed-trenches');expect(world.trenchMesh.isPickable).toBe(false);
     expect(world.trenchMesh.getTotalVertices()).toBe(8);expect(world.trenchMesh.getTotalIndices()).toBe(12);
     expect(world.trenchRouteMesh.name).toBe('trench-route-overlay');expect(world.trenchRouteMesh.isPickable).toBe(false);
-    expect(world.trenchRouteMesh.renderingGroupId).toBe(1);expect(world.trenchRouteCells).toEqual([0,1]);
+    expect(world.trenchRouteMesh.renderingGroupId).toBe(1);expect(world.trenchRouteCells).toEqual([0,0,1,1]);
+    expect(world.trenchRouteMesh.getTotalVertices()).toBe(4);expect(world.trenchRouteMesh.getTotalIndices()).toBe(6);
     World.prototype.updateWater.call(world,new Float32Array([3,3,3,3]));
     expect(world.trenchRoutePositions[1]).toBeCloseTo(3.65);expect(world.trenchRoutePositions[4]).toBeCloseTo(3.65);
     World.prototype.updateWater.call(world,new Float32Array([1,2,3,4]));
-    expect(world.trenchRoutePositions[1]).toBeCloseTo(3.15);expect(world.trenchRoutePositions[4]).toBeCloseTo(3.65);
+    expect(world.trenchRoutePositions[1]).toBeCloseTo(3.15);expect(world.trenchRoutePositions[4]).toBeCloseTo(3.15);expect(world.trenchRoutePositions[7]).toBeCloseTo(3.65);
     const old=world.trenchMesh,oldRoute=world.trenchRouteMesh;(World.prototype as any).updateTrenches.call(world,[]);
     expect(old.isDisposed()).toBe(true);expect(world.trenchMesh).toBeUndefined();expect(oldRoute.isDisposed()).toBe(true);expect(world.trenchRouteMesh).toBeUndefined();
     expect(world.flowTrenchCells).toEqual([]);
+    world.scenario.parameters.outflowEdges=['left'];(World.prototype as any).updateTrenches.call(world,[0,1]);
+    expect(world.trenchRouteMesh.getTotalVertices()).toBe(8);
+    expect(world.trenchRoutePositions[6*3]).toBeCloseTo(-4);
+    expect(world.trenchOutletMesh.name).toBe('trench-outlet');expect(world.trenchOutletMesh.isPickable).toBe(false);
+    expect(world.trenchOutletCells).toEqual([0,0,0,0,0,0]);
+    World.prototype.updateWater.call(world,new Float32Array([3,3,3,3]));
+    expect(world.trenchOutletMesh.getVerticesData('position')[1]).toBeCloseTo(5);
+    const outlet=world.trenchOutletMesh;(World.prototype as any).updateTrenches.call(world,[]);expect(outlet.isDisposed()).toBe(true);
+  } finally {scene.dispose();engine.dispose();}
+});
+
+it('hält die Graben-Vorschau zusammenhängend über steigendem Wasser',async()=>{
+  const {NullEngine}=await import('@babylonjs/core/Engines/nullEngine');
+  const {Scene}=await import('@babylonjs/core/scene');
+  const engine=new NullEngine(),scene=new Scene(engine);
+  const world={width:2,height:2,cell:4,bed:[0,0,0,0],currentDepth:new Float32Array(4),scene,previewTrenchCells:[],
+    wetVertices:new Uint8Array(9),waterIndexBuffer:new Uint16Array(24),wetTopologyReady:false,waterPositions:new Float32Array(27),waterColors:new Float32Array(36),water:{setIndices:vi.fn(),updateVerticesData:vi.fn()}} as any;
+  try {
+    World.prototype.showPreview.call(world,{kind:'trench',cells:[0,1]});
+    expect(world.previewMesh.isPickable).toBe(false);expect(world.previewMesh.renderingGroupId).toBe(2);
+    expect(world.previewTrenchCells).toEqual([0,1,0,1,0,1]);
+    World.prototype.updateWater.call(world,new Float32Array([3,3,3,3]));
+    const positions=world.previewMesh.getVerticesData('position');expect(positions[1]).toBeCloseTo(4.5);expect(positions[4]).toBeCloseTo(4.5);
+    World.prototype.showPreview.call(world);expect(world.previewMesh).toBeUndefined();expect(world.previewTrenchCells).toEqual([]);
   } finally {scene.dispose();engine.dispose();}
 });
 
@@ -102,7 +127,7 @@ it('enlarges overview flow arrows while keeping trench markers close to their ce
     flowPositions:new Float32Array(36),flowLines:{updateVerticesData:vi.fn()}} as any;
   (World.prototype as any).animateFlow.call(world,0);
   expect(world.flowPositions[3]-world.flowPositions[0]).toBe(24);
-  expect(world.flowPositions[21]-world.flowPositions[18]).toBeCloseTo(6,5);
+  expect(world.flowPositions[21]-world.flowPositions[18]).toBeCloseTo(32,5);
 });
 
 it('keeps regular flow markers near the sampled cell centre and above the rendered surface',()=>{

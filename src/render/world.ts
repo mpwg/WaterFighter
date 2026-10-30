@@ -50,12 +50,16 @@ export class World {
   private readonly landPositions: Float32Array;
   private previewMesh?: LinesMesh;
   private previewStart?: {x:number;y:number};
+  private previewTrenchCells:number[] = [];
   private damMesh?: LinesMesh;
   private trenchMesh?: Mesh;
-  private trenchRouteMesh?: LinesMesh;
+  private trenchRouteMesh?: Mesh;
   private trenchRoutePositions?: Float32Array;
   private trenchRouteCells: number[] = [];
+  private trenchOutletMesh?: LinesMesh;
+  private trenchOutletCells:number[] = [];
   private readonly trenchMaterial: StandardMaterial;
+  private readonly trenchRouteMaterial: StandardMaterial;
   private surveyMesh?: LinesMesh;
   private damSignature = '';
   private terrainRevision = -1;
@@ -82,6 +86,7 @@ export class World {
     this.land=land; landData.applyToMesh(land,true); this.landPositions=new Float32Array(landData.positions!);
     const landMat=new StandardMaterial('land-material',this.scene); landMat.diffuseColor=new Color3(0.61,0.68,0.52); landMat.specularColor=Color3.Black(); landMat.backFaceCulling=false; landMat.emissiveColor=new Color3(0.22,0.25,0.19); land.material=landMat;
     this.trenchMaterial=new StandardMaterial('trench-material',this.scene);this.trenchMaterial.diffuseColor=new Color3(0.68,0.39,0.16);this.trenchMaterial.emissiveColor=new Color3(0.25,0.12,0.04);this.trenchMaterial.specularColor=Color3.Black();this.trenchMaterial.backFaceCulling=false;
+    this.trenchRouteMaterial=new StandardMaterial('trench-route-material',this.scene);this.trenchRouteMaterial.emissiveColor=new Color3(0.95,0.62,0.08);this.trenchRouteMaterial.disableLighting=true;this.trenchRouteMaterial.backFaceCulling=false;
     this.water=new Mesh('water',this.scene); this.water.isPickable=true; const waterData=this.gridData(scenario.bed,true);
     waterData.applyToMesh(this.water,true); this.water.hasVertexAlpha=true;
     this.waterPositions=new Float32Array(waterData.positions!); this.waterColors=new Float32Array(waterData.colors!);
@@ -111,6 +116,7 @@ export class World {
     const regularCount=Math.ceil(this.width/12)*Math.ceil(this.height/12),count=regularCount+MAX_TRENCH_FLOW_SAMPLES;
     this.flowLines=CreateLineSystem('flow',{lines:Array.from({length:count*3},()=>[Vector3.Zero(),Vector3.Zero()]),colors:flowLineColors(regularCount,MAX_TRENCH_FLOW_SAMPLES),useVertexAlpha:false,updatable:true},this.scene);
     this.flowLines.isPickable=false;
+    this.flowLines.renderingGroupId=2;
     // Dynamic markers start at the origin; their initial bounds do not follow updates.
     this.flowLines.alwaysSelectAsActiveMesh=true;
     this.flowPositions=new Float32Array(count*18);
@@ -185,6 +191,7 @@ export class World {
     this.flowTrenchCells=trenchFlowCells(cells);
     this.trenchMesh?.dispose();this.trenchMesh=undefined;
     this.trenchRouteMesh?.dispose();this.trenchRouteMesh=undefined;this.trenchRoutePositions=undefined;this.trenchRouteCells=[];
+    this.trenchOutletMesh?.dispose();this.trenchOutletMesh=undefined;this.trenchOutletCells=[];
     if(!cells.length)return;
     const positions:number[]=[],indices:number[]=[];
     for(const i of cells){
@@ -198,18 +205,40 @@ export class World {
     const mesh=new Mesh('confirmed-trenches',this.scene),data=new VertexData();data.positions=positions;data.indices=indices;
     const normals:number[]=[];VertexData.ComputeNormals(positions,indices,normals);data.normals=normals;data.applyToMesh(mesh);
     mesh.material=this.trenchMaterial;mesh.isPickable=false;this.trenchMesh=mesh;
-    // Schematic centreline stays visible above water and buildings, without affecting picking.
-    const segments=trenchRouteSegments(cells,this.width),lines=segments.map(([a,b])=>{
-      this.trenchRouteCells.push(a,b);
+    // A wider schematic ribbon stays legible in overview without affecting picking.
+    const segments=trenchRouteSegments(cells,this.width),routePositions:number[]=[],routeIndices:number[]=[];
+    const appendRoute=(a:number,b:number,edge?:'left'|'right'|'top'|'bottom')=>{
+      this.trenchRouteCells.push(a,a,b,b);
       const point=(i:number)=>new Vector3(((i%this.width)+.5)*this.cell-this.width*this.cell/2,this.bed[i]+this.currentDepth[i]+.65,(Math.floor(i/this.width)+.5)*this.cell-this.height*this.cell/2);
       const first=point(a),last=point(b);
-      if(a===b){first.x-=this.cell*.25;last.x+=this.cell*.25;}
-      return [first,last];
-    });
-    this.trenchRouteMesh=CreateLineSystem('trench-route-overlay',{lines,updatable:true},this.scene);
-    this.trenchRouteMesh.color=new Color3(0.27,0.13,0.04);this.trenchRouteMesh.isPickable=false;
+      if(edge==='left')last.x-=this.cell*.5;else if(edge==='right')last.x+=this.cell*.5;else if(edge==='top')last.z-=this.cell*.5;else if(edge==='bottom')last.z+=this.cell*.5;
+      else if(a===b){first.x-=this.cell*.25;last.x+=this.cell*.25;}
+      const dx=last.x-first.x,dz=last.z-first.z,length=Math.hypot(dx,dz),ox=-dz/length*this.cell,oz=dx/length*this.cell,base=routePositions.length/3;
+      routePositions.push(first.x+ox,first.y,first.z+oz,first.x-ox,first.y,first.z-oz,last.x+ox,last.y,last.z+oz,last.x-ox,last.y,last.z-oz);
+      routeIndices.push(base,base+1,base+2,base+1,base+3,base+2);
+    };
+    for(const [a,b] of segments)appendRoute(a,b);
+    const open=new Set(this.scenario.parameters.outflowEdges),outletLines:Vector3[][]=[],selected=new Set(cells);
+    const outlet=(i:number,edge:'left'|'right'|'top'|'bottom',position:number)=>{
+      const height=this.bed[i]+this.currentDepth[i]+2;
+      for(const segment of boundaryArrowLines({edge,position,kind:'outflow'},this.width,this.height,this.cell)){
+        outletLines.push(segment.map(([x,y])=>new Vector3(x-this.width*this.cell/2,height,y-this.height*this.cell/2)));
+        this.trenchOutletCells.push(i,i);
+      }
+    };
+    for(const i of new Set(cells)){
+      const x=i%this.width,y=Math.floor(i/this.width);
+      if(x===0&&open.has('left')){appendRoute(i,i,'left');if(!selected.has(i-this.width))outlet(i,'left',y+.5);}
+      if(x===this.width-1&&open.has('right')){appendRoute(i,i,'right');if(!selected.has(i-this.width))outlet(i,'right',y+.5);}
+      if(y===0&&open.has('top')){appendRoute(i,i,'top');if(x===0||!selected.has(i-1))outlet(i,'top',x+.5);}
+      if(y===this.height-1&&open.has('bottom')){appendRoute(i,i,'bottom');if(x===0||!selected.has(i-1))outlet(i,'bottom',x+.5);}
+    }
+    this.trenchRouteMesh=new Mesh('trench-route-overlay',this.scene);
+    const routeData=new VertexData();routeData.positions=routePositions;routeData.indices=routeIndices;routeData.applyToMesh(this.trenchRouteMesh,true);
+    this.trenchRouteMesh.material=this.trenchRouteMaterial;this.trenchRouteMesh.isPickable=false;
     this.trenchRouteMesh.renderingGroupId=1;this.trenchRouteMesh.alwaysSelectAsActiveMesh=true;
     this.trenchRoutePositions=new Float32Array(this.trenchRouteMesh.getVerticesData(VertexBuffer.PositionKind)!);
+    if(outletLines.length){this.trenchOutletMesh=CreateLineSystem('trench-outlet',{lines:outletLines,updatable:true},this.scene);this.trenchOutletMesh.color=new Color3(0.55,0.12,0.48);this.trenchOutletMesh.isPickable=false;this.trenchOutletMesh.renderingGroupId=2;this.trenchOutletMesh.alwaysSelectAsActiveMesh=true;}
   }
   private updateSurveyRidges():void {
     this.surveyMesh?.dispose();
@@ -277,7 +306,7 @@ export class World {
     return surface+1.5;
   }
   showPreview(action?:Action):void {
-    this.previewMesh?.dispose(); this.previewMesh=undefined;this.previewStart=undefined;
+    this.previewMesh?.dispose(); this.previewMesh=undefined;this.previewStart=undefined;this.previewTrenchCells=[];
     for(const m of this.scene.meshes) if(m.metadata?.buildingId) m.renderOverlay=false;
     if(!action)return;
     if(action.kind==='demolish') {
@@ -300,8 +329,16 @@ export class World {
     }
     let lines:Vector3[][]=[];
     if(action.kind==='dam') lines=action.faces.map(face=>this.facePoints(face,damCrest(face,this.width,this.height,this.bed,this.scenario.parameters.damHeight)+0.5));
-    else lines=action.cells.map(i=>{const x=i%this.width,y=Math.floor(i/this.width),h=this.bed[i]+1;return [new Vector3((x+.2)*this.cell-this.width*this.cell/2,h,(y+.5)*this.cell-this.height*this.cell/2),new Vector3((x+.8)*this.cell-this.width*this.cell/2,h,(y+.5)*this.cell-this.height*this.cell/2)];});
-    if(lines.length){this.previewMesh=CreateLineSystem('preview',{lines},this.scene);this.previewMesh.color=new Color3(1,0.38,0.08);this.previewMesh.isPickable=false;}
+    else for(const [a,b] of trenchRouteSegments(action.cells,this.width)){
+      const point=(i:number)=>{const x=i%this.width,y=Math.floor(i/this.width),east=y*this.width+Math.min(x+1,this.width-1),south=Math.min(y+1,this.height-1)*this.width+x;return new Vector3((x+.5)*this.cell-this.width*this.cell/2,(this.bed[east]+this.currentDepth[east]+this.bed[south]+this.currentDepth[south])/2+1.5,(y+.5)*this.cell-this.height*this.cell/2);};
+      const first=point(a),last=point(b);if(a===b){first.x-=this.cell*.25;last.x+=this.cell*.25;}
+      const dx=last.x-first.x,dz=last.z-first.z,length=Math.hypot(dx,dz);
+      for(const offset of [-this.cell*.75,0,this.cell*.75]){
+        const ox=-dz/length*offset,oz=dx/length*offset;
+        lines.push([new Vector3(first.x+ox,first.y,first.z+oz),new Vector3(last.x+ox,last.y,last.z+oz)]);this.previewTrenchCells.push(a,b);
+      }
+    }
+    if(lines.length){this.previewMesh=CreateLineSystem('preview',{lines,updatable:true},this.scene);this.previewMesh.color=new Color3(1,0.38,0.08);this.previewMesh.isPickable=false;this.previewMesh.renderingGroupId=2;this.previewMesh.alwaysSelectAsActiveMesh=true;}
   }
   inspect(clientX:number,clientY:number):string {
     const building=this.pick(clientX,clientY,true);
@@ -325,7 +362,7 @@ export class World {
       // Keep each marker centre near the cell whose velocity it represents.
       const ux=a.vx/speed,uy=a.vy/speed,phase=((now*Math.min(speed,3)/5+i*.37)%1-.5)*this.cell*0.75;
       const x=a.x+ux*phase,y=a.y+uy*phase;
-      writeFlowArrow(positions,i*18,x,y,a.height,ux,uy,i<regularCount?length:Math.min(length,this.cell*1.5));
+      writeFlowArrow(positions,i*18,x,y,a.height,ux,uy,i<regularCount?length:Math.max(this.cell*3,Math.min(length*2.5,this.cell*8)));
     }
     this.flowLines.updateVerticesData(VertexBuffer.PositionKind,positions);
   }
@@ -368,6 +405,13 @@ export class World {
     if(topologyChanged){this.water.setIndices(visibleWaterIndices(this.width,this.height,this.wetVertices,this.waterIndexBuffer),undefined,true);this.wetTopologyReady=true;}
     this.water.updateVerticesData(VertexBuffer.PositionKind,this.waterPositions,true);
     this.water.updateVerticesData(VertexBuffer.ColorKind,this.waterColors);
+    if(this.previewMesh&&this.previewTrenchCells?.length){
+      const positions=this.previewMesh.getVerticesData(VertexBuffer.PositionKind);
+      if(positions){for(let v=0;v<this.previewTrenchCells.length;v++){
+        const i=this.previewTrenchCells[v],x=i%this.width,y=Math.floor(i/this.width),east=y*this.width+Math.min(x+1,this.width-1),south=Math.min(y+1,this.height-1)*this.width+x;
+        positions[v*3+1]=(this.bed[east]+depth[east]+this.bed[south]+depth[south])/2+1.5;
+      }this.previewMesh.updateVerticesData(VertexBuffer.PositionKind,positions,true);}
+    }
     if(this.trenchRouteMesh&&this.trenchRoutePositions){
       for(let v=0;v<this.trenchRouteCells.length;v++){
         const i=this.trenchRouteCells[v],x=i%this.width,y=Math.floor(i/this.width);
@@ -375,6 +419,10 @@ export class World {
         this.trenchRoutePositions[v*3+1]=(this.bed[east]+depth[east]+this.bed[south]+depth[south])/2+.65;
       }
       this.trenchRouteMesh.updateVerticesData(VertexBuffer.PositionKind,this.trenchRoutePositions,true);
+    }
+    if(this.trenchOutletMesh&&this.trenchOutletCells.length){
+      const positions=this.trenchOutletMesh.getVerticesData(VertexBuffer.PositionKind);
+      if(positions){for(let v=0;v<this.trenchOutletCells.length;v++){const i=this.trenchOutletCells[v];positions[v*3+1]=this.bed[i]+depth[i]+2;}this.trenchOutletMesh.updateVerticesData(VertexBuffer.PositionKind,positions,true);}
     }
   }
   setFlowRunning(running:boolean,speed:1|2):void {this.flowClock.setRate(running?speed:0,performance.now()/1000);}

@@ -4,7 +4,7 @@ import { damCrest } from './dam-height';
 
 export type Face = { axis: 'x' | 'y'; index: number };
 export type Action = { kind: 'dam'; faces: Face[] } | { kind: 'trench'; cells: number[] } | { kind: 'demolish'; buildingId: string };
-export type ActionResult = { ok: true; cost: number; budget: number; loweredCrests?: number; buildingBlockedFaces?: number; reusedCells?: number; nearBoundaryGap?: boolean; nearDamGap?: boolean } | { ok: false; reason: string; budget: number };
+export type ActionResult = { ok: true; cost: number; budget: number; loweredCrests?: number; buildingBlockedFaces?: number; reusedCells?: number; nearBoundaryGap?: boolean; nearDamGap?: boolean; nearOutletGap?: boolean } | { ok: false; reason: string; budget: number };
 export interface BuildingStatus { id: string; value: number; damage: number; demolished: boolean; exposure: number }
 interface BuildingState extends Omit<BuildingStatus,'exposure'> { cells: number[]; neighbours: number[] }
 const key = (face: Face) => `${face.axis}:${face.index}`;
@@ -111,7 +111,7 @@ export class Game {
   }
   preview(action:Action):ActionResult {
     const p=this.scenario.parameters,s=this.solver;
-    let cost=0,loweredCrests=0,buildingBlockedFaces=0,reusedCells=0,nearBoundaryGap=false,nearDamGap=false;
+    let cost=0,loweredCrests=0,buildingBlockedFaces=0,reusedCells=0,nearBoundaryGap=false,nearDamGap=false,nearOutletGap=false;
     if(!action || typeof action!=='object') return {ok:false,reason:'Ungültige Aktion.',budget:this.budget};
     if(action.kind==='dam') {
       if(!Array.isArray(action.faces)||!action.faces.length||action.faces.length>500) return {ok:false,reason:'Ungültiger Dammverlauf.',budget:this.budget};
@@ -168,6 +168,10 @@ export class Game {
         previous=i; seen.add(i);
       }
       if(reusedCells===action.cells.length) return {ok:false,reason:'Hier wurde bereits gegraben. Endpunkte anders wählen.',budget:this.budget};
+      nearOutletGap=[action.cells[0],action.cells[action.cells.length-1]].some(i=>{
+        const x=i%s.width,y=Math.floor(i/s.width);
+        return (s.openBoundary.left&&x===1)||(s.openBoundary.right&&x===s.width-2)||(s.openBoundary.top&&y===1)||(s.openBoundary.bottom&&y===s.height-2);
+      });
       cost=(action.cells.length-reusedCells)*p.trenchCostPerCell;
       for(const face of this.scenario.surveyCrests) {
         const x=face.axis==='x'?face.index%(s.width+1):face.index%s.width;
@@ -181,7 +185,7 @@ export class Game {
       cost=Math.ceil(b.value*p.demolitionCostFraction);
     } else return {ok:false,reason:'Unbekanntes Werkzeug.',budget:this.budget};
     if(cost>this.budget) return {ok:false,reason:'Budget reicht nicht aus.',budget:this.budget};
-    return {ok:true,cost,budget:this.budget-cost,...(loweredCrests?{loweredCrests}:{}),...(buildingBlockedFaces?{buildingBlockedFaces}:{}),...(reusedCells?{reusedCells}:{}),...(nearBoundaryGap?{nearBoundaryGap:true}:{}),...(nearDamGap?{nearDamGap:true}:{})};
+    return {ok:true,cost,budget:this.budget-cost,...(loweredCrests?{loweredCrests}:{}),...(buildingBlockedFaces?{buildingBlockedFaces}:{}),...(reusedCells?{reusedCells}:{}),...(nearBoundaryGap?{nearBoundaryGap:true}:{}),...(nearDamGap?{nearDamGap:true}:{}),...(nearOutletGap?{nearOutletGap:true}:{})};
   }
   hasProcessedAction(id:string):boolean { return this.actionResults.has(id); }
   apply(id:string,action:Action):ActionResult {

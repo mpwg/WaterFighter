@@ -1,11 +1,21 @@
 import { describe,expect,it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { Game } from '../src/simulation/game';
-import { damPath } from '../src/simulation/path';
+import { damPath, trenchPath } from '../src/simulation/path';
 const base=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
 const scenario={...base,grid:{...base.grid,width:5,height:5,cellSize:4},terrain:Array(25).fill(0),bed:Array(25).fill(0),initialDepth:Array(25).fill(0),waterMask:Array(25).fill(0),surveyCrests:[],parameters:{...base.parameters,inflowCells:[0],inflowCurve:[[0,0],[300,0]],outflowEdges:[]},buildings:[{id:'house',area:16,height:8,heightEstimated:true,polygon:{outer:[[8,8],[12,8],[12,12],[8,12],[8,8]],holes:[]}}]};
 
 describe('Bauaktionen und Schäden',()=>{
+  it('weist auf ein Grabenende knapp vor einem offenen Modellrand hin',()=>{
+    const open={...scenario,parameters:{...scenario.parameters,outflowEdges:['left' as const]}},g=new Game(open),volume=g.solver.volume(),budget=g.budget;
+    const near={kind:'trench' as const,cells:trenchPath([1,4],[3,4],5)},connected={kind:'trench' as const,cells:trenchPath([0,4],[3,4],5)};
+    const preview=g.preview(near);expect(preview).toMatchObject({ok:true,nearOutletGap:true});
+    expect(g.preview(connected)).not.toHaveProperty('nearOutletGap');
+    expect(new Game(scenario).preview(near)).not.toHaveProperty('nearOutletGap');
+    expect(g.budget).toBe(budget);expect(g.solver.volume()).toBe(volume);
+    expect(g.apply('near-outlet',near)).toEqual(preview);expect(g.apply('near-outlet',near)).toEqual(preview);
+    expect(g.budget).toBe(budget-3*open.parameters.trenchCostPerCell);expect(g.solver.volume()).toBe(volume);
+  });
   it('weist auf eine einzelne fehlende Kante zwischen Dämmen hin',()=>{
     const g=new Game(scenario),first={kind:'dam' as const,faces:damPath([1,2],[2,2],5)};
     expect(g.apply('first',first).ok).toBe(true);

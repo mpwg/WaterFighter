@@ -2,6 +2,8 @@
 
 WaterFighter ist ein browserbasierter Prototyp eines Hochwasserschutzspiels in einem realen Wiener Donauviertel. Er umfasst das Szenario, drei Bauwerkzeuge, eine Flutrunde und die Ergebnisanzeige. Die Szenario- und Geräteabnahme ist noch unvollständig. Die Anwendung ist keine Hochwasserprognose.
 
+Der [aktuelle Prototyp-Zwischenstand](docs/prototyp-status.md) enthält Startanleitung, vergleichbare Referenzrunden, eine kurze Kriterienmatrix und das zurückgestellte Feintuning.
+
 Der Szenarioentwurf `1.6-draft` entfernt elf OSM-Dachflächen einschließlich einer Multipolygonrelation aus der geschlossenen Gebäude- und Sperrenmodellierung. Die numerischen und Browsernachweise für frühere Szenarioversionen sind historisch; die erneute Prüfung auf 1.6 läuft. Ein [kleiner wirtschaftlicher Abriss](docs/review-gebaeudevergleich.md#korrektur-der-dachrelation-auf-16) ist in einer automatisierten Runde geprüft. Ein [größeres Gebäude](docs/review-gebaeudevergleich.md#größerer-abriss-ohne-vorbereitete-dämme) ist ohne die getesteten Dämme numerisch wirtschaftlich abzureißen, erreicht allein aber nicht das Schadensziel. Menschliches Auffinden bleibt ungeprüft. Kleine Gebäude lassen sich bei eindeutigem Beinahetreffer auswählen; ein Kreuz markiert die Vorschau.
 
 ## Einrichtung und Prüfung
@@ -30,7 +32,7 @@ Für eine beobachtete Runde beschreibt [Spieltest ohne Testkoordinaten](docs/spi
 
 Das Spiel setzt aktuelle stabile Versionen von Safari, Chrome oder Firefox mit WebGL2 voraus. Ältere Browser werden nicht gesondert unterstützt; Safari und echte Mobilgeräte sind noch nicht abgenommen.
 
-Auf dem aktuellen Mac bestanden Build und 81 automatisierte Tests sowie sechs gezielte Chromium-Desktopfälle für `1.6-draft`. [Vollständige automatisierte Desktoprunden](docs/browser-pruefung.md#desktopbrowser-auf-szenario-16) bestanden in Safari, Google Chrome und Firefox; Firefox protokollierte Zugriffsfehler. Mobile Tests werden auf Nutzerwunsch vorläufig ausgelassen. Einzelheiten und offene Kriterien stehen in [status.md](docs/status.md).
+Auf dem aktuellen Mac bestanden Build und 83 automatisierte Tests sowie gezielte Chromium-Desktopfälle für `1.6-draft`. [Vollständige automatisierte Desktoprunden](docs/browser-pruefung.md#desktopbrowser-auf-szenario-16) bestanden in Safari, Google Chrome und Firefox; Firefox protokollierte Zugriffsfehler. Mobile Tests werden auf Nutzerwunsch vorläufig ausgelassen. Einzelheiten und offene Kriterien stehen in [status.md](docs/status.md).
 
 Die Typprüfung verwendet ES2025-Bibliothekstypen und prüft auch die TypeScript-Diagnoseprogramme und Konfigurationsdateien. Vite erzeugt den Produktionsbuild mit `esnext` für aktuelle Browser. Das TypeScript-Ziel allein legt das Vite-Ausgabeziel nicht fest; Bibliothekstypen ersetzen keine Prüfung der tatsächlich verfügbaren Browser-APIs.
 

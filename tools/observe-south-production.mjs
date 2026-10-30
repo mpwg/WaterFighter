@@ -3,6 +3,7 @@ import {readFileSync,writeFileSync} from 'node:fs';
 import {chromium} from '@playwright/test';
 import {damPath,trenchPath} from '../src/simulation/path.ts';
 const delayed=process.argv.includes('--after-flood');
+const capture=process.argv.includes('--capture');
 const points=JSON.parse(readFileSync('tests/fixtures/south-screen-points.json','utf8'));
 const fixture=JSON.parse(readFileSync('tests/fixtures/review-strategies.json','utf8'));
 if(fixture.scenario!==points.scenario)throw Error('Szenarioversion stimmt nicht');
@@ -57,8 +58,17 @@ try {
  await page.locator('#panel-toggle').click();await page.waitForFunction(()=>document.querySelector('#budget').textContent.replace(/\s/g,'')==='6540');
  if(delayed)await page.getByRole('button',{name:'Fortsetzen'}).click();
  else {await page.locator('#speed').click();start=Date.now();await page.locator('#run').click();}
+ const screenshots=[];
+ if(capture){
+  await page.locator('#panel-toggle').click();
+  for(const target of [180,240]){
+   await page.waitForFunction(target=>{const [m,s]=document.querySelector('#time').textContent.split(':').map(Number);return m*60+s>=target;},target,{timeout:180000});
+   const time=await page.locator('#time').textContent(),file=`/tmp/waterfighter-south-normal-${target}.png`;
+   await page.screenshot({path:file});screenshots.push({time,file});
+  }
+ }
  await page.waitForFunction(()=>!document.querySelector('#result').hidden,null,{timeout:240000});
- const report={scenario,browser:browser.version(),viewport:points.viewport,pausedAt,selected,actions,wallSeconds:(Date.now()-start)/1000,title:await page.locator('#result-title').textContent(),result:await page.locator('#result-details').textContent(),errors};
+ const report={scenario,browser:browser.version(),viewport:points.viewport,pausedAt,selected,actions,screenshots,wallSeconds:(Date.now()-start)/1000,title:await page.locator('#result-title').textContent(),result:await page.locator('#result-details').textContent(),errors};
  if(report.title!=='Schadensziel erreicht'||errors.length)throw Error(JSON.stringify(report));
  await page.locator('#again').click();await page.waitForFunction(()=>document.querySelector('#result').hidden&&document.querySelector('#time').textContent==='00:00'&&document.querySelector('#budget').textContent.replace(/\s/g,'')==='10000');
  report.resetScore=await page.locator('#damage-total').textContent();

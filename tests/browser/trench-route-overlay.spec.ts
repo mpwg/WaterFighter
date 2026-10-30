@@ -33,7 +33,7 @@ test('bestätigte Grabentrasse bleibt bei künstlich erhöhtem Wasser sichtbar',
     const withLine=await pixels(a),without=await pixels(b);let count=0;
     for(let i=0;i<withLine.length;i+=4){
       const delta=Math.abs(withLine[i]-without[i])+Math.abs(withLine[i+1]-without[i+1])+Math.abs(withLine[i+2]-without[i+2]);
-      if(delta>50&&withLine[i]<150&&withLine[i+1]<140&&withLine[i+2]<120&&withLine[i]>withLine[i+1]*1.1)count++;
+      if(delta>50&&withLine[i]>180&&withLine[i+1]>100&&withLine[i+2]<90&&withLine[i]>withLine[i+1]*1.1)count++;
     }
     return count;
   },[withRoute,withoutRoute].map(bytes=>`data:image/png;base64,${bytes.toString('base64')}`));

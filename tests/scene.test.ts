@@ -34,3 +34,11 @@ it('tessellates a long preview over levees and current floodwater',()=>{
  const path=previewGeometry(t,[{x:1,y:3.5},{x:7,y:3.5}],d);
  expect(path.length).toBe(25);expect(path.find(p=>p.x===9)?.y).toBeCloseTo(1.9);expect(path.find(p=>p.x===11)?.y).toBeCloseTo(2.35);
 });
+it('keeps the first pointer owner when additional or repeated downs arrive',()=>{
+ const event=(pointerId:number)=>({pointerId} as PointerEvent),calls:unknown[]=[];
+ const track=createPointerTrack((phase,pick)=>calls.push([phase,pick]));
+ track('down',event(1),10);track('down',event(2),20);track('down',event(1),30);
+ track('move',event(2),40);track('up',event(2),50);track('up',event(1));
+ track('down',event(2),60);track('cancel',event(2));
+ expect(calls).toEqual([['down',10],['up',10],['down',60],['cancel',60]]);
+});

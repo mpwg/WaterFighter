@@ -18,6 +18,8 @@ Die vom Server ausgegebene `http://…:4173/`-Adresse auf dem Testgerät öffnen
 
 Auf dem hier verwendeten Linux-Rechner wurde ein isolierter Produktionsbuild kurz an dessen private Adresse gebunden. HTML und das komprimierte Szenario ließen sich über diese Adresse **vom selben Rechner** mit HTTP 200 abrufen; Chromium lud das Szenario und meldete den Worker als bereit. Ein Zugriff von einem zweiten Gerät wurde dabei nicht geprüft.
 
+Am 30. Oktober 2026 wurde der Produktionsbuild mit Anwendungscode `853cc90` erneut an eine private IPv4-Adresse dieses Rechners gebunden. HTML und Szenariopaket lieferten über diese Adresse HTTP 200; Playwright-Chromium 156.0.8078.4 auf demselben Rechner lud die Anwendung und bestätigte Start und Pause ohne protokollierte Seitenfehler. Die private Adresse ist umgebungsabhängig und kann sich ändern. Auch diese Prüfung belegt keine Verbindung von einem zweiten Gerät und ersetzt keinen Spieltest.
+
 ## Zwei Versuche
 
 1. Die Person spielt eine vollständige erste Runde selbstständig. Die beobachtende Person greift nur bei technischen Problemen ein und notiert gegebenenfalls die Hilfe; sie gibt keine Platzierungstipps.

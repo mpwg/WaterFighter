@@ -33,6 +33,7 @@ type Mode='camera'|'dam'|'trench'|'demolish';
 let world:World|undefined, scenario:Scenario|undefined, round=0, running=false, finished=false, fatalError=false, speed:1|2=1;
 const pendingPresentation=new Map<string,{round:number;confirmedAt:number;confirmedRunning:boolean;confirmedSpeed:1|2;confirmedVisible:boolean;revision?:number;scheduled?:boolean}>();
 let mode:Mode='camera', modeRevision=0, first:{x:number;y:number}|undefined, draft:Action|undefined, previewId='', serial=0, awaiting=false;
+let confirmationTimer:ReturnType<typeof setTimeout>|undefined;
 const resultPanel=app.querySelector<HTMLElement>('#result')!, resultTitle=app.querySelector<HTMLElement>('#result-title')!, resultDetails=app.querySelector<HTMLElement>('#result-details')!;
 app.querySelector<HTMLButtonElement>('#again')!.onclick=()=>{if(round)worker?.postMessage({type:'reset',round});};
 const preview=app.querySelector<HTMLDivElement>('#preview')!,previewText=app.querySelector<HTMLElement>('#preview-text')!,confirm=app.querySelector<HTMLButtonElement>('#confirm')!,cancel=app.querySelector<HTMLButtonElement>('#cancel')!,budgetLabel=app.querySelector<HTMLElement>('#budget')!;
@@ -40,7 +41,7 @@ function syncToolHint(){
   toolHint.textContent=message.textContent;
   toolHint.hidden=!gamePanel.hidden||mode==='camera'||!preview.hidden||finished||fatalError||!toolHint.textContent;
 }
-function setMessage(text:string){message.textContent=text;syncToolHint();}
+function setMessage(text:string){if(confirmationTimer!==undefined){clearTimeout(confirmationTimer);confirmationTimer=undefined;}message.textContent=text;syncToolHint();}
 function setAwaiting(value:boolean) {awaiting=value;cancel.disabled=value;for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=value||fatalError;}
 function clearDraft() {first=undefined;draft=undefined;previewId='';setAwaiting(false);preview.hidden=true;confirm.disabled=true;world?.showPreview();syncToolHint();}
 function chooseMode(next:Mode) { mode=next;modeRevision++;inspection.hidden=true;inspection.textContent='';clearDraft(); for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.setAttribute('aria-pressed',String(b.dataset.mode===mode)); setMessage(mode==='camera'?'Karte verschieben und zoomen.':mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.'); }
@@ -117,7 +118,7 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
     if(!data.preview && pending) {if(data.result.ok) pending.revision=data.revision;else pendingPresentation.delete(data.id);}
     if(data.id!==previewId) return;
     if(data.preview) {confirm.disabled=!data.result.ok;previewText.textContent=data.result.ok?`${draft?describeDraft(draft)+' · ':''}Kosten: ${data.result.cost} · Budget danach: ${data.result.budget}${data.result.loweredCrests?` · Senkt ${data.result.loweredCrests} modellierte ${data.result.loweredCrests===1?'Geländekante':'Geländekanten'}; der Wasserverlauf kann sich ändern.`:''}${data.result.buildingBlockedFaces?` · ${data.result.buildingBlockedFaces} ${data.result.buildingBlockedFaces===1?'Dammkante ist':'Dammkanten sind'} durch Gebäude bereits gesperrt.`:''}${data.result.reusedCells?` · ${data.result.reusedCells} ${data.result.reusedCells===1?'Zelle ist':'Zellen sind'} bereits ausgehoben und werden nicht erneut vertieft oder bezahlt.`:''}`:data.result.reason;}
-    else {setAwaiting(false);if(data.result.ok){setMessage(`Maßnahme bestätigt. Kosten: ${data.result.cost}.`);clearDraft();}else{previewText.textContent=data.result.reason;confirm.disabled=true;}}
+    else {setAwaiting(false);if(data.result.ok){setMessage(`Maßnahme bestätigt. Kosten: ${data.result.cost}.`);clearDraft();confirmationTimer=setTimeout(()=>{confirmationTimer=undefined;setMessage(mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.');},4000);}else{previewText.textContent=data.result.reason;confirm.disabled=true;}}
   }
   else if(data.type==='result' && data.round===round && !fatalError) { running=false; finished=true; world?.setFlowRunning(false,speed);inspection.hidden=true;inspection.textContent='';clearDraft();run.disabled=true; stateLabel.textContent='Beendet';compactStatus.textContent=`${timeLabel.textContent} · Budget ${budgetLabel.textContent} · ${stateLabel.textContent}`; setMessage('Die Runde ist beendet.');
     const number=(n:number)=>Math.round(n).toLocaleString('de-AT');

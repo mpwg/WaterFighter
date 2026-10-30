@@ -32,3 +32,26 @@ test('ungültige Gebäudeauswahl wird auch ohne Menü erklärt',async({page})=>{
   await expect(page.locator('#preview')).toBeHidden();
   await expect(page.locator('#budget')).toHaveText('10 000');
 });
+
+test('Bestätigung weicht einem Bedienhinweis',async({page})=>{
+  test.setTimeout(30000);
+  await page.setViewportSize({width:1200,height:800});await page.goto('/');
+  await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('[data-mode="trench"]').click();await page.locator('#panel-toggle').click();
+  await page.mouse.click(800,360);await page.mouse.click(850,385);
+  await expect(page.locator('#confirm')).toBeEnabled();await page.locator('#confirm').click();
+  const hint=page.locator('#tool-hint');await expect(hint).toContainText('Maßnahme bestätigt.');
+  await expect(hint).toHaveText('Start und Ende auf der Karte antippen.',{timeout:7000});
+});
+
+test('Neue Auswahl verhindert den alten Bestätigungs-Timer',async({page})=>{
+  test.setTimeout(30000);
+  await page.setViewportSize({width:1200,height:800});await page.goto('/');
+  await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('[data-mode="trench"]').click();await page.locator('#panel-toggle').click();
+  await page.mouse.click(800,360);await page.mouse.click(850,385);
+  await expect(page.locator('#confirm')).toBeEnabled();await page.locator('#confirm').click();
+  const hint=page.locator('#tool-hint');await expect(hint).toContainText('Maßnahme bestätigt.');
+  await page.mouse.click(800,360);await expect(hint).toHaveText('Endpunkt auf der Karte antippen.');
+  await page.waitForTimeout(4500);await expect(hint).toHaveText('Endpunkt auf der Karte antippen.');
+});

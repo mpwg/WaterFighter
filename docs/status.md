@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Eine bestätigte Maßnahme zeigt ihre Kosten vier Sekunden lang; danach erscheint wieder der zur Werkzeugwahl passende Bedienhinweis. Eine neue Auswahl oder ein neuer Hinweis beendet den alten Timer. Produktionsbuild, 72 Vitest- und zwei Python-Tests sowie gezielte Chromium-Prüfungen für Hinweise, Vorschauen und ausstehende Aktionen bestanden; die vollständige Browser-Suite für diese Änderung ist noch offen.
+
 Auf dem isolierten Produktionsbuild `a836551` bestanden [drei vollständige Runden mit allen Werkzeugen und Neustarts](browser-pruefung.md#drei-runden-mit-direktem-gebäudezugriff) in Chrome. Die verwendeten Maßnahmen verfehlten das Schadensziel; unabhängige menschliche und echte Geräteprüfungen bleiben offen.
 
 Firefox 159 bestand auf dem isolierten Build `506ed5c` mit Anwendungscode `a51f659` und ergänzten Abriss-Testpunkten einen automatisierten Werkzeugtest sowie eine vollständige unbehandelte 2×-Runde: [Prüfbeleg](browser-pruefung.md#firefox-runde-mit-näherer-kartenansicht). Menschliche Abnahme, tatsächliches Safari und echte Geräte bleiben offen.

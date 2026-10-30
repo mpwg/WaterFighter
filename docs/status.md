@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Firefox 159 bestand auf dem isolierten Build `506ed5c` mit Anwendungscode `a51f659` und ergänzten Abriss-Testpunkten einen automatisierten Werkzeugtest sowie eine vollständige unbehandelte 2×-Runde: [Prüfbeleg](browser-pruefung.md#firefox-runde-mit-näherer-kartenansicht). Menschliche Abnahme, tatsächliches Safari und echte Geräte bleiben offen.
+
 Auf dem isolierten Produktionsbuild `4dfe2e7` mit näherem Kartenzoom bestanden [alle 89 Chromium-Fälle](browser-pruefung.md#gesamtsuite-mit-näherem-kartenzoom). Menschliche Bedienung, tatsächliches Safari und echte Geräte bleiben offen.
 
 Ein [Produktionslauf mit spätem Landgraben](browser-pruefung.md#später-landgraben-mit-babylonjs-9331) erreichte auf `1e770da` mit Babylon.js 9.33.1 das Schadensziel und bestand den Neustart. Ein erster Versuch endete mit ungeklärtem Browserabbruch; die Wiederholung gelang. Menschliche Bedienung, echte Geräte und spätere Änderungen bleiben separat zu prüfen.

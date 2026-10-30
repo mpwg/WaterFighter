@@ -358,3 +358,22 @@ Die Typprüfung und alle 73 Vitest-Tests bestanden. Diese zwei Raster liefern ä
 Für den lokalen Vergleich wurden die Zustände mit `WATERFIGHTER_GRID_OUTPUT=/tmp/wf-grid-4.json bun tools/compare-grid-refinement.ts 1` und entsprechend Faktor 2 nach `/tmp/wf-grid-2.json` geschrieben; `bun tools/compare-grid-results.ts /tmp/wf-grid-4.json /tmp/wf-grid-2.json` vergleicht Gebäude und Endtiefen. Die Summe der absoluten gebäudeweisen Schadensunterschiede betrug 7.322,44, obwohl sich die Gesamtsummen nur um 1.343,18 unterscheiden. Beispiele: `w1343275154-0` stieg von 8.754,22 auf den vollen Wert 11.491; `w316294475-0` fiel von 1.502,63 auf 0 und `w501079921-0` von 1.487 auf 0. Die Ursache einzelner Abweichungen ist damit nicht identifiziert.
 
 Für den Vergleich der Endtiefen wurden je vier 2-m-Zellen auf eine 4-m-Zelle gemittelt. Über die gesamte Karte ergibt sich eine integrierte absolute Differenz von 37.988,76 m³; die größte lokale Differenz beträgt 2,376 m, in 782 der 40.000 Zellen beträgt sie mehr als 0,5 m. Darin sind Wasser- und Gebäudezellen enthalten; die Zahlen vergleichen ausschließlich den Zustand bei 300 s, nicht den gesamten Verlauf. Die ähnlichen globalen Summen dürfen daher nicht als Nachweis lokaler Übereinstimmung interpretiert werden.
+
+### Überlagerte Gebäude und als Gebäude erfasste Dächer
+
+Die Gebäudespur lässt sich mit `WATERFIGHTER_GRID_DIAGNOSTICS=/tmp/wf-trace-4.json bun tools/compare-grid-refinement.ts 1` und entsprechend Faktor 2 wiederholen. Sie zählt belegte Zellen und Nachbarn, erfasst maximale Nachbartiefe und addiert die Schrittzeiten mit mindestens 0,05 m Nachbartiefe. Die Nachbarzellen können von anderen Gebäuden belegt sein; das ist eine Rasterbeobachtung, keine Identifikation eines realen Wasserwegs.
+
+| Gebäude | Raster | Eigene Zellen | Nachbarn / davon von anderen Gebäuden belegt | Maximale Nachbartiefe | Zeit ab 0,05 m | Schaden |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `w316294475-0` | 4 m | 9 | 13 / 10 | 0,989 m | 141,87 s | 1.502,63 |
+| `w316294475-0` | 2 m | 38 | 23 / 23 | 0 m | 0 s | 0 |
+| `w501079921-0` | 4 m | 10 | 13 / 10 | 2,971 m | 177,40 s | 1.487 |
+| `w501079921-0` | 2 m | 38 | 23 / 23 | 0 m | 0 s | 0 |
+| `w1343275154-0` | 4 m | 73 | 58 / 21 | 0,986 m | 165,33 s | 8.754,22 |
+| `w1343275154-0` | 2 m | 287 | 114 / 41 | 1,613 m | 167,64 s | 11.491 |
+
+Die beiden ersten Grundrisse liegen innerhalb des Umrisses von `w316294474-0`. Die [aktuelle OSM-Version 7 dieses Objekts](https://www.openstreetmap.org/way/316294474) trägt `building=roof` und wurde am 10. Juli 2026 zuletzt geändert, also vor dem dokumentierten Rohdatenabruf. Die beiden eingeschlossenen Objekte tragen `building=transportation`. Die Pipeline übernimmt derzeit alle `building`-Werte in dieselbe Liste und modelliert das Dach wie ein geschlossenes Gebäude mit Wert und hydraulischer Blockade. Auch `w1343275154-0` und `w219815193-0` sind laut OSM Dächer. Damit ist die oben beobachtete fehlende Exposition der eingeschlossenen Gebäude im 2-m-Modell durch die Belegung ihrer gesamten Nachbarschaft erklärt; eine reale Schutzwirkung des Daches ist nicht belegt.
+
+Eine API-Abfrage der im Szenario enthaltenen OSM-Wege am 30. Oktober 2026 identifizierte zehn Wege mit `building=roof`: `219815193`, `243958257`, `316294474`, `1193005551`, `1343275154`, `1508204653`, `1537035387`, `1537035388`, `1537035389` und `1537035391`. Die zugehörigen aktuellen Versionen waren zum dokumentierten Rohdatenabruf bereits vorhanden. Diese Prüfung umfasst die ausgegebenen OSM-Wege; sie ist keine vollständige fachliche Klassifikation aller Gebäude und Relationen.
+
+`bun tools/compare-roof-exclusion.ts baseline --without-roofs` und dieselben Aufrufe für `shield`, `land-divert`, `divert`, `south-control` und `south-divert` entfernen diese zehn Einträge **nur im Speicher**. Ohne Maßnahmen beträgt der Schaden 94.376,50, mit der Dammstrategie 7.274,23 bei 8.800 Restbudget und mit der nördlichen Damm-Graben-Kombination 0 bei 7.510 Restbudget. Die südliche Kontrolle ergibt 19.287,45 und die Variante mit Graben 13.716,19 bei 6.540 Restbudget. Die relativen Bilanzfehler lagen jeweils unter 0,1 %. Das sind explorative Modellläufe, keine Änderung oder Abnahme des ausgelieferten Szenarios. Insbesondere müssen Pipeline, Szenarioversion, Referenzen und Browserprüfungen gemeinsam angepasst und neu geprüft werden. Der bisherige Nutzenbeleg für den Einzelabriss von `w316294474-0` betrifft ein Dach und ist kein belastbarer Nachweis eines sinnvollen Gebäudeabrisses.

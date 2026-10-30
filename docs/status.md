@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+**Korrekturbedarf im Szenario:** Die [Untersuchung überlagerter Gebäude](solverbericht.md#überlagerte-gebäude-und-als-gebäude-erfasste-dächer) zeigt, dass zehn als `building=roof` gekennzeichnete OSM-Wege als geschlossene, schadenspflichtige Gebäude modelliert werden. Darunter ist `w316294474-0`; dessen bisheriger Einzelabriss ist daher kein belastbarer Gebäudeabriss-Nutzenbeleg. Explorative Läufe ohne die Dächer bleiben mit zwei Schutzansätzen unter dem Ziel. Die ausgelieferte Version ist noch unverändert: Pipeline und Szenarioversion korrigieren, Referenzen und Abrissnutzen neu bestimmen und Browserprüfungen wiederholen.
+
 Ein [Rastervergleich des unbehandelten Wiener Szenarios](solverbericht.md#rasterverfeinerung-des-unbehandelten-wiener-szenarios) unterteilt das vorhandene 4-m-Raster künstlich auf 2 m. Der Flutschaden änderte sich um +0,967 %, das Endvolumen um +1,454 %; beide Wasserbilanzen lagen unter 0,1 %. Einzelne Gebäudeschäden und lokale Endtiefen unterscheiden sich dagegen deutlich. Maßnahmen und feinere Rohdaten wurden nicht verglichen, daher ist die räumliche Szenarioabnahme weiterhin offen.
 
 Eine erneute [Drei-Runden-Prüfung mit RSS-Stichproben](browser-pruefung.md#drei-desktop-runden-mit-rss-stichproben-auf-macos) bestand auf macOS mit allen Werkzeugen und zwei Neustarts. Die Prozesssummen am Rundenende betrugen 839,0, 762,3 und 768,2 MB; sie zeigen in diesem Lauf keine monotone Zunahme, erlauben aber keinen Nachweis langfristiger Speicherstabilität. Der Nutzer meldete, dass derzeit keine Person für den unabhängigen Spieltest verfügbar ist.

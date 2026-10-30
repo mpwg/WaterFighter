@@ -2,6 +2,8 @@
 
 WaterFighter ist ein browserbasierter Prototyp eines Hochwasserschutzspiels in einem realen Wiener Donauviertel. Er umfasst das Szenario, drei Bauwerkzeuge, eine Flutrunde und die Ergebnisanzeige. Die Szenario- und Geräteabnahme ist noch unvollständig. Die Anwendung ist keine Hochwasserprognose.
 
+Der aktuelle Szenarioentwurf behandelt einige OSM-Dächer noch als geschlossene Gebäude. Die [Analyse und der nötige Korrekturschritt](docs/solverbericht.md#überlagerte-gebäude-und-als-gebäude-erfasste-dächer) sind dokumentiert; insbesondere ist ein bisheriger Einzelabriss-Nachweis dadurch nicht belastbar.
+
 ## Einrichtung und Prüfung
 
 Voraussetzung: [Bun 1.4.4](https://bun.com/docs/installation) im PATH; TypeScript 7 und Babylon.js 9.33.1 werden über die Lockdatei installiert; für Browserprüfungen zusätzlich ein von Playwright unterstützter Browser mit seinen Systembibliotheken.

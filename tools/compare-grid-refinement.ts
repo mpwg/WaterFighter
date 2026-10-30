@@ -28,11 +28,27 @@ function refine(s:Scenario):Scenario {
 }
 const scenario=factor===1?original:refine(original);
 const game=new Game(scenario),solver=game.solver,initial=solver.volume(),started=performance.now();
+const ids=['w316294475-0','w501079921-0','w1343275154-0'];
+const trace=process.env.WATERFIGHTER_GRID_DIAGNOSTICS?ids.map(id=>{
+  const building=game.buildings.find(b=>b.id===id);
+  if(!building)throw Error(`Gebäude fehlt: ${id}`);
+  const others=new Set(game.buildings.filter(b=>b.id!==id).flatMap(b=>b.cells));
+  const owners=game.buildings.filter(b=>b.id!==id && b.cells.some(i=>building.neighbours.includes(i))).map(b=>b.id);
+  return {building,maxDepth:0,maxDepthTime:0,wetSeconds:0,blockedNeighbours:building.neighbours.filter(i=>others.has(i)).length,owners};
+}):[];
 while(solver.time<scenario.parameters.duration-1e-9) {
   const time=solver.time,dt=solver.step(Math.min(1,scenario.parameters.duration-time));
   game.addInflow(time,dt);game.updateDamage(dt);
+  for(const t of trace) {
+    const depth=t.building.neighbours.reduce((max,i)=>Math.max(max,solver.h[i]),0);
+    if(depth>t.maxDepth){t.maxDepth=depth;t.maxDepthTime=solver.time;}
+    if(depth>=0.05)t.wetSeconds+=dt;
+  }
 }
 if(process.env.WATERFIGHTER_GRID_OUTPUT)writeFileSync(process.env.WATERFIGHTER_GRID_OUTPUT,JSON.stringify({factor,buildings:game.status(),depth:Array.from(solver.h)}));
+if(trace.length)writeFileSync(process.env.WATERFIGHTER_GRID_DIAGNOSTICS!,JSON.stringify(trace.map(t=>({id:t.building.id,
+  cells:t.building.cells,neighbours:t.building.neighbours,blockedNeighbours:t.blockedNeighbours,owners:t.owners,
+  damage:t.building.damage,maxDepth:t.maxDepth,maxDepthTime:t.maxDepthTime,wetSeconds:t.wetSeconds})),null,2));
 console.log(JSON.stringify({version:scenario.version,factor,cellSize:solver.cellSize,steps:solver.steps,
   wallSeconds:(performance.now()-started)/1000,initialVolume:initial,finalVolume:solver.volume(),
   inflow:solver.inflow,outflow:solver.outflow,relativeBalance:Math.abs(solver.volume()-initial-solver.inflow+solver.outflow-solver.roundoffVolume)/(initial+solver.inflow),...game.totals()}));

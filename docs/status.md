@@ -10,6 +10,8 @@ Die Rückstandsmeldung verschwindet nach dem Aufholen oder Pausieren und übersc
 
 Eine [vollständige Produktionsrunde mit spätem Grabeneingriff](browser-pruefung.md#produktionsrunde-nach-der-rückstandsmeldung) auf demselben Anwendungscode erreichte das Ziel und setzte beim Neustart Zeit, Budget und Schaden zurück. Sie verwendete automatisierte Testkoordinaten; unabhängige menschliche und echte Geräteprüfungen bleiben offen.
 
+Eine [Wiederholung mit synchroner Zwischenabfrage](browser-pruefung.md#schadensanzeige-während-einer-produktionsrunde) zeigt während der laufenden Runde Gesamtschaden, Ziel und getrennte Flut- und Abrisswerte. Menschliche Verständlichkeit und Geräteansichten bleiben offen.
+
 Eine bestätigte Maßnahme zeigt ihre Kosten vier Sekunden lang; danach erscheint wieder der zur Werkzeugwahl passende Bedienhinweis. Eine neue Auswahl oder ein neuer Hinweis beendet den alten Timer. Produktionsbuild, 72 Vitest- und zwei Python-Tests sowie [alle 93 Chromium-Fälle](browser-pruefung.md#gesamtsuite-nach-der-bestätigungsrückmeldung) auf `2c5506c` bestanden. Echte Geräte und menschliche Bedienung bleiben offen.
 
 Auf dem isolierten Produktionsbuild `a836551` bestanden [drei vollständige Runden mit allen Werkzeugen und Neustarts](browser-pruefung.md#drei-runden-mit-direktem-gebäudezugriff) in Chrome. Die verwendeten Maßnahmen verfehlten das Schadensziel; unabhängige menschliche und echte Geräteprüfungen bleiben offen.

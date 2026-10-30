@@ -681,3 +681,11 @@ Zwei neue Fälle verändern testseitig den gemeldeten Rückstand in echten Worke
 Am 30. Oktober 2026 spielte `bun tools/observe-land-production.mjs --after-flood` den Produktionsbuild mit Anwendungscode `80cc37a` und Szenario `1.4-draft` in Chrome 156.0.8078.73 unter Linux mit Softwaregrafik. Drei Dämme wurden in der Vorbereitung bestätigt; bei 02:31 pausierte der Test und bestätigte den nördlichen Landgraben. Die Worker-Vorschau wurde testseitig mitgelesen; die Auswahl verwendete feste Bildschirmkoordinaten und eine Endpunktkorrektur um einen CSS-Pixel. Die Uhr blieb während der Pause stehen.
 
 Die 2×-Runde erreichte nach 156,533 s einschließlich Bedienung das Ziel mit 1.351 Flutschaden, keinem Abrissverlust und 7.510 Budgetrest. Seitenfehler wurden nicht protokolliert; der Neustart stellte Zeit, Budget und Schaden zurück. Der automatisierte Lauf ist weder ein menschlicher Spieltest noch eine echte Geräte- oder Leistungsabnahme.
+
+### Schadensanzeige während einer Produktionsrunde
+
+Am 30. Oktober 2026 wurde `tools/observe-land-production.mjs` um eine Prüfung eines von null verschiedenen, laufend angezeigten Schadens ergänzt und die Runde mit `--after-flood` auf dem Produktionsbuild mit Anwendungscode `80cc37a` wiederholt. Die Umgebung und die vorbereiteten Maßnahmen entsprachen der [vorigen Runde](#produktionsrunde-nach-der-rückstandsmeldung); der Graben wurde bei 02:31 in Pause bestätigt.
+
+Bei 02:32 zeigte eine gemeinsame Browserabfrage während laufender Simulation „Schaden 60 / 50.000“ und „Flut 60 · Abriss 0“. Die Runde erreichte nach 156,173 s einschließlich Bedienung das Ziel mit 1.346 Flutschaden und 7.510 Budgetrest; Seitenfehler wurden nicht protokolliert. Der Neustart stellte Zeit, Budget und Schaden zurück. In einem vorherigen Versuch hatte das Skript Gesamtschaden und Aufschlüsselung getrennt abgefragt, während die Simulation weiterlief; diese Werte stammten daher möglicherweise aus unterschiedlichen Snapshots und eignen sich nicht zum Vergleich. Die Wiederholung liest beide Angaben synchron.
+
+Dies ist eine automatisierte Stichprobe mit festen Testkoordinaten auf Linux und Softwaregrafik; sie belegt weder menschliche Verständlichkeit noch eine Geräte- oder Leistungsabnahme.

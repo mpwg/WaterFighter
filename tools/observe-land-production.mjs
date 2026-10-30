@@ -48,8 +48,14 @@ try {
  await page.locator('#panel-toggle').click();await page.waitForFunction(()=>document.querySelector('#budget').textContent.replace(/\s/g,'')==='7510');
  if(delayed)await page.getByRole('button',{name:'Fortsetzen'}).click();
  else {await page.locator('#speed').click();start=Date.now();await page.locator('#run').click();}
+ await page.waitForFunction(()=>{
+  const score=document.querySelector('#damage-total').textContent;
+  const match=score.match(/^Schaden\s+([\d\s.]+)\s*\//);
+  return document.querySelector('#state').textContent==='Läuft' && match && Number(match[1].replace(/[\s.]/g,''))>0;
+ },null,{timeout:240000});
+ const runningDamage=await page.evaluate(()=>({time:document.querySelector('#time').textContent,total:document.querySelector('#damage-total').textContent,breakdown:document.querySelector('#damage-breakdown').textContent}));
  await page.waitForFunction(()=>!document.querySelector('#result').hidden,null,{timeout:240000});
- const report={scenario,browser:browser.version(),viewport:points.viewport,pausedAt,selected,actions,wallSeconds:(Date.now()-start)/1000,title:await page.locator('#result-title').textContent(),result:await page.locator('#result-details').textContent(),errors};
+ const report={scenario,browser:browser.version(),viewport:points.viewport,pausedAt,selected,actions,runningDamage,wallSeconds:(Date.now()-start)/1000,title:await page.locator('#result-title').textContent(),result:await page.locator('#result-details').textContent(),errors};
  if(report.title!=='Schadensziel erreicht'||errors.length)throw Error(JSON.stringify(report));
  await page.locator('#again').click();await page.waitForFunction(()=>document.querySelector('#result').hidden&&document.querySelector('#time').textContent==='00:00'&&document.querySelector('#budget').textContent.replace(/\s/g,'')==='10000');
  report.resetScore=await page.locator('#damage-total').textContent();

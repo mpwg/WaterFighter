@@ -251,6 +251,20 @@ Der Zehn-Minuten-Lauf `bun tools/check-scenario-balance.ts` auf dem gelieferten 
 
 Der Gesamtschaden betrug 138.852,13, der relative Wasserbilanzfehler 8,40 × 10⁻¹⁴. Die Werte sind Zellmaxima zu unterschiedlichen Zeitpunkten und keine Messungen oder Kalibrierung eines realen Hochwassers. Die 90 Zuflusszellen erhalten eine vorgegebene künstliche Zuflusskurve; ihr Rand und die fehlende gemessene Bathymetrie begrenzen die physikalische Aussage. Der Versuch lokalisiert die Spitzen, belegt aber nicht ihre reale Plausibilität und ersetzt keine Sensitivitäts- oder Geräteprüfung.
 
+#### Fläche und Dauer hoher modellierter Landtiefen
+
+Am 30. Oktober 2026 wertete `bun tools/summarize-depth-footprint.ts` die unveränderte unbehandelte 300-s-Runde von `1.4-draft` aus. Nach jedem CFL-begrenzten Schritt und der Zuflusszugabe zählt das Skript die als Land maskierten 4 × 4 m großen Zellen oberhalb der jeweiligen Tiefenschwelle. Die gleichzeitig betroffene Fläche ist die größte Zellenzahl eines solchen Zeitpunkts mal 16 m²; die betrachteten Zeitpunkte unterscheiden sich zwischen den Schwellen. „Ab Zeile 5“ schließt die ersten fünf Rasterzeilen am oberen Zuflussrand aus; es ist keine Begrenzung des Abstands zu anderen Rändern.
+
+| Wassertiefe mindestens | Größte gleichzeitige Landfläche | Größte gleichzeitige Fläche ab Zeile 5 | Landzellen mindestens 60 s über Schwelle |
+| --- | ---: | ---: | ---: |
+| 0,5 m | 18.816 m² | 16.848 m² | 1.058 |
+| 1 m | 8.048 m² | 6.784 m² | 429 |
+| 2 m | 2.464 m² | 1.920 m² | 103 |
+
+Die Maxima der beiden Flächenspalten werden unabhängig bestimmt und müssen nicht gleichzeitig auftreten. Die Dauer addiert Schrittzeiten, in denen die Tiefe am Schrittende die Schwelle erreicht; sie ist eine zeitdiskrete Näherung und muss nicht zusammenhängend sein. Die Landmaske kann auch Gebäudezellen enthalten; die Zahlen sind daher keine Wohn-, Straßen- oder Schadensflächen. Der relative Wasserbilanzfehler beträgt `8,40 × 10⁻¹⁴`, der Gesamtschaden 138.852,13. Zwei weitere Läufe erzeugten bytegleiche JSON-Ausgaben (SHA-256 `f16febd5133e6894f1c0d327b3e3fb6dc083af1bd8e40b40e617a14e12d9f0c9`); die Typprüfung bestand.
+
+Die Ergebnisse zeigen, dass Tiefen ab zwei Metern im Modell nicht ausschließlich auf die Zuflusszelle oder einen einzelnen Moment beschränkt sind. Sie belegen weder die räumliche Konvergenz noch reale Wasserstände, da Zufluss, Gewässersohle und Rand modelliert sind. Eine fachliche Kalibrierung und die Einordnung der betroffenen Flächen bleiben offen.
+
 ### Schrittweitenvergleich auf Version 1.4
 
 Am 29. Oktober 2026 wurden `bun tools/compare-timesteps.ts SCHRITT baseline` und `bun tools/compare-timesteps.ts SCHRITT bank` mit den maximalen Schrittweiten 1 und 0,05 s auf dem ausgelieferten `1.4-draft` über jeweils 300 simulierte Sekunden ausgeführt. Der Solver begrenzt beide Vorgaben zusätzlich durch CFL. `bank` setzt die elf Dammabschnitte aus `tests/fixtures/strategy.json` vor Beginn; dies ist die ältere, längere Dammstrategie, nicht die kürzere Reviewreferenz.

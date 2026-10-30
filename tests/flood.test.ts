@@ -120,3 +120,17 @@ it('exposes waterfront homes while a closed gate measurably reduces damage',()=>
   });stepGame(open,360);stepGame(closed,360);const a=snapshotGame(open).results,b=snapshotGame(closed).results;expect(a.damagedBuildings).toBeGreaterThanOrEqual(4);expect(b.meanDamage).toBeLessThan(a.meanDamage);expect(Math.abs(open.simulation.accounting.error)).toBeLessThan(1e-5);
 },60000);
 it('reports never exposed residents separately from rescued residents',()=>{const g=createGame();const result=snapshotGame(g).results;expect(result.safePeople).toBe(result.totalPeople);expect(result.threatenedPeople).toBe(0);});
+it('seals a closed vertex-coordinate square against hydraulic leakage',()=>{
+ const t=createTerrain(8,8);t.heights.fill(0);t.obstacles.fill(0);t.river.fill(0);t.gates=[];
+ const g=createGame(t);const points=[{x:2,y:2},{x:5,y:2},{x:5,y:5},{x:2,y:5},{x:2,y:2}];
+ expect(commandGame(g,{type:'barrier',points}).ok).toBe(true);stepGame(g,2);g.simulation.depths[3*8+3]=.5;
+ for(let i=0;i<100;i++)stepSimulation(g.simulation,.1,false);
+ let outside=0;for(let y=0;y<8;y++)for(let x=0;x<8;x++)if(x<2||x>=5||y<2||y>=5)outside+=g.simulation.depths[y*8+x];
+ expect(outside).toBe(0);expect(waterVolume(g.simulation)).toBeCloseTo(2,10);
+});
+it('deduplicates reversed diagonal segments and removes every original edge',()=>{
+ const g=createGame();const points=[{x:100,y:150},{x:105,y:155}];commandGame(g,{type:'pause'});
+ commandGame(g,{type:'barrier',points});const keys=[...g.barriers.keys()].sort(),resources=g.resources;
+ commandGame(g,{type:'barrier',points:[...points].reverse()});expect([...g.barriers.keys()].sort()).toEqual(keys);expect(g.resources).toBe(resources);
+ commandGame(g,{type:'remove',points:[...points].reverse()});expect(g.barriers.size).toBe(0);expect(g.resources).toBe(900);
+});

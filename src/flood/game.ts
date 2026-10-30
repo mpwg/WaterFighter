@@ -18,7 +18,7 @@ export function createGame(terrain:Terrain=createTerrain()):Game {
     })),rescued:0,gateOpen:Object.fromEntries(terrain.gates.map(g=>[g.id,true]))
   };
 }
-/** Rasterize a polyline along cell boundaries: horizontal segments block north/south flow. */
+/** Points are grid vertices. Each segment separates the two cells beside its edge. */
 function edges(g:Game,points:Point[]):Barrier[]|undefined {
   const {
     width:w,height:h
@@ -27,14 +27,17 @@ function edges(g:Game,points:Point[]):Barrier[]|undefined {
   if(points.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.x<1||p.y<1||p.x>=w-1||p.y>=h-1))return;
   const found=new Map<string,Barrier>();
   const add=(x:number,y:number,horizontal:boolean)=>{
-    const a=y*w+x,b=horizontal?a+w:a+1,key=edgeKey(a,b);
+    const a=horizontal?(y-1)*w+x:y*w+x-1,b=horizontal?a+w:a+1,key=edgeKey(a,b);
     found.set(key,{
       key,a,b,x,y,height:BARRIER_HEIGHT,progress:0,status:g.phase==='paused'?'queued':'building',cost:2
     });
   };
   for(let p=1;p<points.length;p++){
-    let x=Math.floor(points[p-1].x),y=Math.floor(points[p-1].y);
-    const tx=Math.floor(points[p].x),ty=Math.floor(points[p].y);
+    // Canonical endpoint order makes the staircase independent of drawing direction.
+    const first=points[p-1],second=points[p];
+    const [from,to]=first.x<second.x||(first.x===second.x&&first.y<=second.y)?[first,second]:[second,first];
+    let x=Math.floor(from.x),y=Math.floor(from.y);
+    const tx=Math.floor(to.x),ty=Math.floor(to.y);
     const dx=Math.abs(tx-x),dy=Math.abs(ty-y),sx=Math.sign(tx-x),sy=Math.sign(ty-y);
     let error=dx-dy;
     while(x!==tx||y!==ty){

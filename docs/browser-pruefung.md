@@ -902,3 +902,8 @@ Vite in der Kopie auf Port 5174 und `safaridriver -p 4445` starten; anschließen
 ## Safari-Kurzprüfung nach der Grabendarstellung
 
 Am 30. Oktober 2026 wurde der lokale Produktionsbuild mit `bun tools/observe-safari.mjs` über tatsächliches Safari 27.2 und Safari WebDriver auf macOS geprüft. Das ausgelieferte Szenario `1.6-draft` entsprach dem lokalen Szenario-Hash `dc43e606bf9ff4e06507714a3be27aaab27c6a0ac0eeeaaca308810089896b80`. Laden, Start, Pause und Rücksetzen auf 00:00 sowie Auswahl, bestätigbare Vorschau, Bestätigung und Budgetübernahme für Graben, Damm und Abriss bestanden. Die Auswahl erfolgte automatisiert mit festen Bildschirmkoordinaten. Dies war ein Desktop-Kurztest, keine vollständige Runde und keine menschliche Bewertung der Sichtbarkeit.
+
+
+## Produktionsrunde nach Korrektur der Grabenschäden
+
+Auf dem korrigierten Produktionsbuild bestand `bun tools/observe-south-production.mjs --after-flood` mit Chromium 156.0.8078.4 und 1600 × 1000 Desktop-Viewport. Drei Dämme wurden in Vorbereitung und der südliche Graben bei 02:30 in Pause bestätigt. Bei 05:00 wurden 2.625 Flutschaden und 6.540 Budgetrest angezeigt, das Ziel erreicht und anschließend beim Ergebnisneustart der Schaden auf null gesetzt. Der Lauf dauerte 164,718 s einschließlich Pause; Seitenfehler wurden nicht protokolliert. Die Auswahl nutzte projizierte Testkoordinaten und eine instrumentierte Endpunktsuche. Dies belegt keine menschliche Verständlichkeit oder Geräteabnahme. Drei gezielte Desktopfälle in `south-trench-blocked.spec.ts` und `trench-route-overlay.spec.ts` bestanden ebenfalls.

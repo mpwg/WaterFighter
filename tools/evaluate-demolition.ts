@@ -5,13 +5,13 @@ import { damPath } from '../src/simulation/path';
 import { validateScenario } from '../src/scenario';
 
 const [mode,id,timeArg]=process.argv.slice(2),at=Number(timeArg);
-if(!['baseline','shield'].includes(mode) || !id || !Number.isFinite(at) || at<0 || at>=300)
-  throw Error('Aufruf: baseline|shield control|GEBÄUDE-ID SEKUNDEN');
+if(!['baseline','shield','south-control'].includes(mode) || !id || !Number.isFinite(at) || at<0 || at>=300)
+  throw Error('Aufruf: baseline|shield|south-control control|GEBÄUDE-ID SEKUNDEN');
 const scenario=validateScenario(JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8')));
 const fixture=JSON.parse(readFileSync('tests/fixtures/review-strategies.json','utf8'));
 if(fixture.scenario!==scenario.version)throw Error('Szenarioversion stimmt nicht');
 const game=new Game(scenario),s=game.solver,initial=s.volume();
-if(mode==='shield')for(const [i,step] of fixture.strategies.shield.entries()) {
+if(mode!=='baseline')for(const [i,step] of fixture.strategies[mode].entries()) {
   const result=game.apply(`dam-${i}`,{kind:'dam',faces:damPath(step.start,step.end,s.width)});
   if(!result.ok)throw Error(result.reason);
 }

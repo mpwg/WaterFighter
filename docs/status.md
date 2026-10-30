@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Bei der südlichen Dammführung wurde auf `1.5-draft` ein [größerer wirtschaftlicher Einzelabriss](review-gebaeudevergleich.md#wirtschaftlicher-abriss-bei-südlicher-dammführung) gefunden: Bei 180 s verbessert er den Gesamtschaden nach Kosten um 1.598,58; die numerische Runde hält das Schadensziel ein. Eine Desktop-Vorschau wurde mit Testkoordinaten ausgewählt. Menschliches Auffinden und eine vollständige Browserrunde mit dieser Kombination bleiben offen.
+
 Ein [Zwölf-Runden-Kurztest mit Worker- und Seiten-Garbage-Collection](browser-pruefung.md#kurze-neustartrunden-mit-garbage-collection) wurde auf `1.5-draft` unter macOS wiederholt. Er verlief ohne protokollierte Seitenfehler; die Speicherstichproben belegen keine langfristige Stabilität und ersetzen keine vollen Runden.
 
 Die [Datenlizenz-Bestandsaufnahme](datenlizenz-pruefung.md) bezieht sich nun auf `1.5-draft`. Der lokale Produktionsbuild von `b41de50` wurde erneut unter einem Unterpfad mit Chromium geprüft; das heruntergeladene Szenariopaket stimmt entpackt mit der Quelldatei überein. Die rechtliche Einordnung der kombinierten Daten und die dauerhafte Bereitstellung bleiben offen.

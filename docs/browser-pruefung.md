@@ -1,5 +1,11 @@
 # Browser- und Stabilitätsprüfung
 
+## Drei Produktionsrunden nach dem Dammhinweis
+
+Am 30. Oktober 2026 führte `bun tools/observe-three-rounds.mjs --actions` auf Anwendungscode `c49b5ad`, Szenario `1.5-draft`, drei vollständige aufeinanderfolgende 2×-Runden in Chromium 156.0.8078.4 auf macOS aus. In jeder Runde wurden nach Flutbeginn in Pause ein Graben, ein Damm und ein Gebäudeabriss mit festen Mauskoordinaten bestätigt, anschließend Zoom und Fortsetzen geprüft. Die Kosten betrugen 650, 1.000 und 7.824; das Ergebnis jeder Runde zeigte 172.605 Gesamtschaden und 526 Budgetrest und verfehlte das Ziel. Zwischen den Runden setzte der Ergebnisneustart Zeit, Zustand, Budget und Schäden zurück. Es wurden keine Seitenfehler oder Abstürze protokolliert; die Rundendauern einschließlich Pause betrugen 157,018, 157,017 und 156,927 s.
+
+Der gemessene Seiten-Heap am Rundenende betrug 41.448.693, 46.086.581 und 54.344.333 Bytes; die Prozessbaum-RSS-Summe einschließlich Testprozess 844.054.528, 861.765.632 und 874.741.760 Bytes bei jeweils sechs Prozessen. Die Stichproben steigen in diesem Lauf. Ohne erzwungene Sammlung und längere Beobachtung belegen sie weder ein Speicherleck noch langfristige Stabilität; RSS kann gemeinsame Seiten mehrfach zählen und GPU-Speicher auslassen. Der Test ist keine menschliche Bedienprüfung, keine Leistungsmessung und keine mobile Abnahme.
+
 ## Safari nach Änderung der Schadensanzeige
 
 Am 30. Oktober 2026 prüfte `WATERFIGHTER_SAFARI_FULL=1 bun tools/observe-safari.mjs` den lokalen Produktionsbuild von Anwendungscode `d05c395` in tatsächlichem Safari 27.2 über `safaridriver` auf macOS 27.2. Der geladene Szenarioentwurf `1.5-draft` hatte den erwarteten SHA-256 `f27c6082e7dee7444d20439bd94f14203abe04de412dde2ebedb9cfde7cebdd0`. Start, Pause, Neustart sowie Auswahl und Bestätigung aller drei Werkzeuge wurden mit festen Mauskoordinaten geprüft; zwischen den Werkzeugen wurde jeweils neu gestartet. Eine anschließende unbehandelte 2×-Runde endete nach 150,858 s bei 05:00 mit 94.368 Gesamtschaden und 10.000 Budgetrest; sie verfehlte das Ziel. Nach dem Ergebnisneustart standen Zeit, Budget und Schaden wieder auf den Ausgangswerten. Der Lauf ist automatisiert, ohne Maßnahmen während der vollständigen Runde, und ersetzt keine menschliche Abnahme.

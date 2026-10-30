@@ -1,5 +1,15 @@
 # Gebäudevergleich der Referenzstrategien
 
+## Korrektur der Dachrelation auf 1.6
+
+Die als `building=roof` erfasste Relation `r4257449-0` wurde in 1.5 irrtümlich als geschlossenes Gebäude gewertet. Ein Vergleich auf dem historischen 1.5-Paket mit `WATERFIGHTER_SCENARIO=<1.5.json> bun tools/compare-roof-relation.ts STRATEGIE [--exclude]` änderte ausschließlich diese Gebäudeliste im Speicher; alle Maßnahmen wurden vor Flutbeginn gesetzt. Ohne Maßnahmen stieg der Gesamtschaden nach Entfernen des Daches von 94.376,50 auf 164.817,51. Mit zwei Dämmen fiel er von 7.274,23 auf 1.299,32; bei südlicher Dammkontrolle von 19.287,45 auf 9.025,76 und mit südlichem Graben von 13.716,19 auf 6.557,91. Die drei Dämme mit nördlichem Graben ergaben in beiden Fällen 0 Schaden. Alle Läufe erfüllten die 0,1-%-Bilanzschranke. Die Werte zeigen eine erhebliche Modellwirkung und sind keine reale Gefahrenbewertung.
+
+Die Korrektur ist in `1.6-draft` ausgeliefert. Ein zeitlich angeglichener Vergleich mit südlichen Dämmen bei 180 s ergab 9.025,76 Schaden ohne Abriss und 8.960,93 mit Abriss `w316294475-0` bei 154 Kosten: Dieser bisherige Kandidat ist damit nach Kosten nicht mehr wirtschaftlich. Die folgenden 1.5-Vergleiche sind historisch.
+
+Die anschließende Suche mit `bun tools/evaluate-demolition.ts south-control GEBÄUDE-ID 180` verglich alle 91 nach den südlichen Dämmen bezahlbaren Einzelabrisse mit einer zeitlich identischen Kontrolle. Die [Einzelwerte](demolition-south-1.6.json) enthalten Kosten und Bilanz; in allen Fällen war die sofortige Volumenänderung null und der relative Bilanzfehler unter 0,1 %. Nur `w1207502028-0` war nach Kosten wirtschaftlich: 8.841,37 Gesamtschaden und 7 Kosten gegenüber 9.025,76 ohne Abriss, ein Vorteil von 177,39. Der Kandidat ist mit 6,58 m² sehr klein. Im Chromium-Entwicklungsbrowser wurde seine Vorschau mit testseitig projizierter Position ausgewählt und zeigte 66 Verlust und 7 Kosten; menschliches Auffinden und eine vollständige Runde mit diesem Abriss bleiben offen. Die früheren Nachweise für den größeren Abriss sind nicht auf 1.6 übertragbar.
+
+Eine vollständige Produktionsrunde mit `bun tools/observe-south-production.mjs --after-flood` in Chromium 156.0.8078.4 bestätigte auf `1.6-draft` drei Dämme vor Beginn und den südlichen Graben in Pause bei 02:31. Das Ergebnis erreichte das Ziel mit 6.329 Schaden und 6.540 Budgetrest; der Ergebnisneustart setzte Zeit, Budget und Schaden zurück. Es wurden keine Seitenfehler protokolliert. Die Auswahl verwendete feste Testkoordinaten und eine instrumentierte Endpunktsuche; die Laufzeit von 165,436 s einschließlich Pause bei parallelen numerischen Berechnungen ist keine Leistungsmessung und belegt keine menschliche Auffindbarkeit.
+
 ## Aktueller Vergleich mit direkter Dammführung
 
 **Stand:** Diese Vergleiche gelten für die direkte Dammführung und die erweiterten Referenzaktionen im aktuellen Anwendungscode.

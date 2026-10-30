@@ -9,7 +9,7 @@ try {
  await page.goto(process.env.WATERFIGHTER_URL??'http://127.0.0.1:5173/');
  await page.waitForFunction(()=>!document.querySelector('#run').disabled&&window.__wfBuildingSnapshot);
  const scenario=await page.evaluate(async()=>{const response=await fetch('./scenarios/brigittenau-v1.json.bin');if(!response.ok||!response.body)throw Error('Szenario fehlt');return (await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).json()).version;});
- if(scenario!=='1.5-draft')throw Error(`Unerwartetes Szenario: ${scenario}`);
+ if(scenario!=='1.6-draft')throw Error(`Unerwartetes Szenario: ${scenario}`);
  const take=()=>page.evaluate(async()=>{
    const {world}=await import(document.querySelector('script[src*="/src/main.ts"]').src);
    const target=world.currentBuildings.get('r9350494-0'),mesh=world.scene.getMeshByName('building-r9350494-0');

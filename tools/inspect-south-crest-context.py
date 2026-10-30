@@ -4,7 +4,7 @@ from pathlib import Path
 from shapely.geometry import LineString, Polygon
 
 s = json.loads(Path('public/scenarios/brigittenau-v1.json').read_text())
-if s['version'] != '1.5-draft':
+if s['version'] != '1.6-draft':
     raise ValueError('Szenarioversion stimmt nicht')
 w, c = s['grid']['width'], s['grid']['cellSize']
 target = {('x', 6266), ('x', 6664), ('x', 8054), ('y', 5643), ('y', 6434)}

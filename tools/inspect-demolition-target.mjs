@@ -13,7 +13,7 @@ try {
   await page.locator('[data-mode=demolish]').click();await page.locator('#panel-toggle').click();
   const screen=await page.evaluate(async target=>{
     const {world}=await import(document.querySelector('script[src*="/src/main.ts"]').src);
-    if(world.scenario.version!=='1.5-draft')throw Error('Unerwartetes Szenario');
+    if(world.scenario.version!=='1.6-draft')throw Error('Unerwartetes Szenario');
     const {Vector3,Matrix}=await import('/node_modules/@babylonjs/core/Maths/math.vector.js');
     const mesh=world.scene.getMeshByName(`building-${target}`);if(!mesh)throw Error('Gebäude fehlt');
     const bounds=mesh.getBoundingInfo().boundingBox,center=bounds.centerWorld.clone();center.y=bounds.maximumWorld.y;
@@ -26,5 +26,5 @@ try {
   const expected=target==='w1207502028-0'?['Kosten: 7','Gebäudeverlust insgesamt: 66']:target==='w316294475-0'?['Kosten: 154','Gebäudeverlust insgesamt: 1 533']:['Kosten:','Gebäudeverlust insgesamt:'];
   if(!expected.every(part=>preview?.replace(/\s/g,' ').includes(part)))throw Error(`Unerwartete Vorschau: ${preview}`);
   await page.screenshot({path:'/tmp/wf-demolition-target.png'});
-  console.log(JSON.stringify({browser:browser.version(),scenario:'1.5-draft',target,screen,preview}));
+  console.log(JSON.stringify({browser:browser.version(),scenario:'1.6-draft',target,screen,preview}));
 } finally {await browser.close();}

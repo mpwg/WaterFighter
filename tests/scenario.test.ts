@@ -7,7 +7,7 @@ describe('Szenariolader', () => {
     const parsed = validateScenario(scenario);
     expect(parsed.grid.width * parsed.grid.cellSize).toBe(800);
     expect(parsed.buildings.length).toBeGreaterThan(0);
-    expect(parsed.version).toBe('1.5-draft');
+    expect(parsed.version).toBe('1.6-draft');
     expect(parsed.parameters.trenchDepth).toBe(3);
     expect(parsed.parameters.outflowEdges).toEqual(['bottom','right','left']);
     expect(parsed.parameters.inflowCells).toHaveLength(90);
@@ -18,6 +18,7 @@ describe('Szenariolader', () => {
     expect(parsed.parameters.outflowEdges).toEqual(adjustment.outflowEdges);
     expect(parsed.adjustments).toContain(adjustment.diversionNote);
     expect(parsed.adjustments).toContain(adjustment.roofNote);
+    expect(adjustment.excludedRoofBuildings).toContain('r4257449-0');
     expect(parsed.buildings.some(b=>adjustment.excludedRoofBuildings.includes(b.id))).toBe(false);
   });
   it('weist beschädigte Raster und unbekannte Versionen zurück', () => {

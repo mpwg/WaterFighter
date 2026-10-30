@@ -16,7 +16,7 @@ if source.resolve() == target.resolve():
 data = source.read_bytes()
 if hashlib.sha256(data).hexdigest() != 'bf7f274f8899ac3fa0332e2df2936423d06795a0bb193d4e7328aa0925512470':
     raise SystemExit('Das 1.4-Paket hat nicht die erwartete Prüfsumme.')
-adjustment = json.loads((Path(__file__).resolve().parent / 'scenario-adjustments.json').read_text(encoding='utf-8'))
+adjustment = json.loads((Path(__file__).resolve().parent.parent / 'tests/fixtures/scenario-adjustments-1.5.json').read_text(encoding='utf-8'))
 scenario = json.loads(data)
 roofs = set(adjustment['excludedRoofBuildings'])
 if scenario['version'] != '1.4-draft' or adjustment['version'] != '1.5-draft' or len(roofs) != len(adjustment['excludedRoofBuildings']):

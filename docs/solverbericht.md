@@ -1,5 +1,9 @@
 # Solver: Zwischenstand und Messung
 
+## Zehn Minuten auf 1.6
+
+Am 30. Oktober 2026 bestanden `bun tools/check-scenario-balance.ts` und `bun tools/check-intervention-balance.ts` auf `1.6-draft` jeweils 600 simulierte Sekunden. Ohne Eingriffe betrug der relative Bilanzfehler 9,54 × 10⁻¹⁴ und die maximale Tiefe 12,88 m. Mit drei vorbereiteten Dämmen sowie zwei verbundenen Gräben und Abriss bei 150 s betrug er 1,57 × 10⁻¹³ und die maximale Tiefe 13,20 m. In beiden Fällen blieben die geprüften Tiefen und Impulse endlich und die Tiefe nichtnegativ. Die Aktionsprüfung kontrollierte Wassererhaltung, einmalige Kosten, überlappende Grabenzellen und Abrissverlust. Die Läufe waren teilweise parallel und keine Leistungsmessung; die reguläre Runde endet bei 300 s und reale Kalibrierung bleibt offen.
+
 Stand: 29. Oktober 2026. Dies ist keine vollständige Solver- oder Geräteabnahme.
 
 **Geltung älterer Dammvergleiche:** Seit der direkten Rasterführung für schräge Dämme ändert `damPath` die Aktionsgeometrie. Die folgenden dammbasierten Referenzzahlen, Zeitvergleiche und Ansichten stammen, soweit nicht ausdrücklich anders bezeichnet, aus dem früheren Code `b526c29` oder davor und sind mit dem aktuellen Pfad nicht unverändert reproduzierbar. Die aktuellen Strategien und Kontrollläufe stehen im [Gebäudevergleich](review-gebaeudevergleich.md#aktueller-vergleich-mit-direkter-dammführung). Solverfälle ohne Dämme sind dadurch nicht geändert.

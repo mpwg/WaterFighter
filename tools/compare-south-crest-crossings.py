@@ -5,7 +5,7 @@ from shapely.geometry import LineString
 from breakline_faces import derive_faces
 
 s = json.loads(Path('public/scenarios/brigittenau-v1.json').read_text())
-if s['version'] != '1.5-draft':
+if s['version'] != '1.6-draft':
     raise ValueError('Szenarioversion stimmt nicht')
 w, c = s['grid']['width'], s['grid']['cellSize']
 rows = []

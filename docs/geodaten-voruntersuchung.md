@@ -1,5 +1,13 @@
 # Voruntersuchung Wiener Geodaten
 
+## Szenario 1.6: zusätzliche Dachrelation
+
+Am 30. Oktober 2026 wurde in den erneut bezogenen OSM-Daten die Multipolygonrelation `4257449` mit `building=roof` festgestellt. Sie war in `1.5-draft` als geschlossenes Gebäude `r4257449-0` enthalten und überlappt im Szenario unter anderem Bahnhofsgrundrisse. Analog zu den zehn bereits ausgeschlossenen Dach-Wegen wird sie in `1.6-draft` nicht als geschlossene hydraulische Sperre oder schadenspflichtiges Gebäude modelliert. Die reale Konstruktion und ihre Stützen sind nicht vermessen; ein weiteres überlappendes Objekt mit `building=bridge`, `building:part=yes` und `layer=1` bleibt fachlich zu prüfen.
+
+`tools/scenario-adjustments.json` ergänzt die Relation und den Anpassungshinweis; die Aufbereitung kontrolliert das OSM-Tag wie bei den übrigen Dächern. `python3 tools/migrate-roof-relation.py <1.5.json> <1.6.json>` setzt ein mit dem historischen SHA-256 `f27c6082e7dee7444d20439bd94f14203abe04de412dde2ebedb9cfde7cebdd0` geprüftes Paket voraus und ändert nur Version, Dachhinweis und Gebäudeliste. Das Ergebnis enthält 93 Gebäude und hat SHA-256 `dc43e606bf9ff4e06507714a3be27aaab27c6a0ac0eeeaaca308810089896b80`.
+
+`python tools/verify-refreshed-sources.py raw-data` baute das Szenario unabhängig mit den erneut bezogenen Quellen und der geänderten Pipeline auf. Die Roh-Ausgabe hatte SHA-256 `02bb87c22aa1eaed03f419baaeb7d406d47595e16453956dcd4b2a3f98181aca`; nach Normalisierung ausschließlich der neun abweichenden OSM-Quellhash-Metadaten war sie bytegleich mit dem ausgelieferten 1.6-Paket. Die historischen OSM-Rohbytes fehlen weiterhin. Die frühere 1.5-Archivmigration verwendet ihre festgehaltene historische Anpassungsdatei unter `tests/fixtures/`.
+
 Stand: 29. Oktober 2026. Dieser Ausschnitt und das Prüfskript sind vorläufig; sie sind **kein fertiges Spielszenario**.
 
 **Hinweis zur Dammführung:** Die unten dokumentierten Vergleiche mit Referenzdämmen wurden mit der früheren rechtwinkligen Dammführung durchgeführt. Für die aktuelle direkte Dammführung gelten die neuen Werte im [Gebäudevergleich](review-gebaeudevergleich.md#aktueller-vergleich-mit-direkter-dammführung); Geodaten und Untersuchungen ohne Dämme sind davon nicht verändert.

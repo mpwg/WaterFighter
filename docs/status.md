@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Ein [Rastervergleich des unbehandelten Wiener Szenarios](solverbericht.md#rasterverfeinerung-des-unbehandelten-wiener-szenarios) unterteilt das vorhandene 4-m-Raster künstlich auf 2 m. Der Flutschaden änderte sich um +0,967 %, das Endvolumen um +1,454 %; beide Wasserbilanzen lagen unter 0,1 %. Einzelne Gebäudeschäden und lokale Endtiefen unterscheiden sich dagegen deutlich. Maßnahmen und feinere Rohdaten wurden nicht verglichen, daher ist die räumliche Szenarioabnahme weiterhin offen.
+
 Eine erneute [Drei-Runden-Prüfung mit RSS-Stichproben](browser-pruefung.md#drei-desktop-runden-mit-rss-stichproben-auf-macos) bestand auf macOS mit allen Werkzeugen und zwei Neustarts. Die Prozesssummen am Rundenende betrugen 839,0, 762,3 und 768,2 MB; sie zeigen in diesem Lauf keine monotone Zunahme, erlauben aber keinen Nachweis langfristiger Speicherstabilität. Der Nutzer meldete, dass derzeit keine Person für den unabhängigen Spieltest verfügbar ist.
 
 Eine neue [räumliche Konvergenzprüfung](solverbericht.md#räumliche-verfeinerung-einer-analytischen-dammbruchwelle) vergleicht eine synthetische Dammbruchwelle mit der analytischen Ritter-Lösung: Der integrierte Tiefenfehler sinkt bei vier Zellweiten von 1,4922 auf 0,5727 m². Produktionsbuild und alle 73 Vitest-Tests bestanden auf macOS 27.2. Dies belegt nicht die räumliche Konvergenz oder reale Plausibilität des Wiener Szenarios.

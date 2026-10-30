@@ -338,3 +338,23 @@ Am 30. Oktober 2026 wurde der Solver auf macOS 27.2 arm64 mit Bun 1.4.4 gegen di
 | 0,25 m | 227 | 0,5727 |
 
 `tests/dam-break-convergence.test.ts` verlangt bei jeder Verfeinerung einen mindestens 10 % kleineren Fehler und bei 0,25 m weniger als 0,65 m². `bun run build` und `bun run test` bestanden auf dem aktuellen Stand mit 73 Tests. Die Werte belegen Konvergenz für diesen idealisierten trockenen Dammbruch; sie belegen keine räumliche Konvergenz des Wiener Szenarios mit Gebäuden, Bruchkanten und Randzufluss und keine reale Hochwasservorhersage.
+
+## Rasterverfeinerung des unbehandelten Wiener Szenarios
+
+Am 30. Oktober 2026 verglich `bun tools/compare-grid-refinement.ts 1` und `bun tools/compare-grid-refinement.ts 2` auf macOS 27.2 arm64 mit Bun 1.4.4 dieselbe unbehandelte 300-s-Runde von `1.4-draft`. Die 2-m-Variante unterteilt jede 4-m-Zelle in vier Zellen mit identischer Gelände-, Bett- und Anfangstiefe; sie lädt keine feineren Höhendaten. Jede vorhandene DGM-Zellkante wird in zwei Kanten gleicher Höhe aufgeteilt; die 90 Zuflusszellen am oberen Rand werden zu 180 Zellen mit derselben Gesamtzuflusskurve. Gebäudegeometrien bleiben in Metern unverändert und werden auf dem jeweiligen Raster neu erfasst. Der Solver verwendet bei beiden Läufen maximal 1 s und seine CFL-Grenze.
+
+| Größe | 4 m | 2 m | Änderung gegenüber 4 m |
+| --- | ---: | ---: | ---: |
+| Anfangsvolumen | 499.584 m³ | 499.584 m³ | 0 % |
+| Zufluss | 1.710.000 m³ | 1.710.000 m³ | rund 0 % |
+| Endvolumen | 1.082.177,91 m³ | 1.097.916,10 m³ | +1,454 % |
+| Abfluss | 1.127.406,09 m³ | 1.111.667,90 m³ | −1,396 % |
+| Flutschaden | 138.852,13 | 140.195,32 | +0,967 % |
+| CFL-Schritte | 3.578 | 7.260 | — |
+| Relativer Bilanzfehler | 8,41 × 10⁻¹⁴ | 1,13 × 10⁻¹³ | — |
+
+Die Typprüfung und alle 73 Vitest-Tests bestanden. Diese zwei Raster liefern ähnliche aggregierte Werte für die unbehandelte Runde; sie belegen keine Konvergenzordnung, keine Übereinstimmung lokaler Wassertiefen oder einzelner Gebäude und keine reale Plausibilität. Insbesondere ändern sich die gerasterten Gebäudeumrisse und die numerischen Zeitschritte, während die Höhen stückweise konstant bleiben. Maßnahmen, feiner aufbereitete Rohdaten und ein drittes Raster wurden nicht verglichen; die eigentliche Szenarioabnahme bleibt offen.
+
+Für den lokalen Vergleich wurden die Zustände mit `WATERFIGHTER_GRID_OUTPUT=/tmp/wf-grid-4.json bun tools/compare-grid-refinement.ts 1` und entsprechend Faktor 2 nach `/tmp/wf-grid-2.json` geschrieben; `bun tools/compare-grid-results.ts /tmp/wf-grid-4.json /tmp/wf-grid-2.json` vergleicht Gebäude und Endtiefen. Die Summe der absoluten gebäudeweisen Schadensunterschiede betrug 7.322,44, obwohl sich die Gesamtsummen nur um 1.343,18 unterscheiden. Beispiele: `w1343275154-0` stieg von 8.754,22 auf den vollen Wert 11.491; `w316294475-0` fiel von 1.502,63 auf 0 und `w501079921-0` von 1.487 auf 0. Die Ursache einzelner Abweichungen ist damit nicht identifiziert.
+
+Für den Vergleich der Endtiefen wurden je vier 2-m-Zellen auf eine 4-m-Zelle gemittelt. Über die gesamte Karte ergibt sich eine integrierte absolute Differenz von 37.988,76 m³; die größte lokale Differenz beträgt 2,376 m, in 782 der 40.000 Zellen beträgt sie mehr als 0,5 m. Darin sind Wasser- und Gebäudezellen enthalten; die Zahlen vergleichen ausschließlich den Zustand bei 300 s, nicht den gesamten Verlauf. Die ähnlichen globalen Summen dürfen daher nicht als Nachweis lokaler Übereinstimmung interpretiert werden.

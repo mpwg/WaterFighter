@@ -14,6 +14,8 @@ Der [aktuelle Produktionsbuild unter einem Unterpfad](browser-pruefung.md#aktuel
 
 Die [Datenlizenz-Prüfung](datenlizenz-pruefung.md#konkrete-verknüpfung-der-quellen) benennt nun die Kombination von Wiener Höhen und OSM-Gewässermaske im Simulationsbett und die daraus folgenden konkreten Prüfungsfragen. Eine anwendbare Sondererlaubnis oder abschließende Rechtsfreigabe ist dadurch nicht nachgewiesen.
 
+Der bei OpenStreetMap verlinkte Wiener [Bescheid zur Sondererlaubnis](datenlizenz-pruefung.md#konkrete-verknüpfung-der-quellen) wurde im Originaltext geprüft: Er betrifft basemap.at; die im Szenario direkt bezogenen DGM-Daten werden darin nicht genannt. Die Lizenzprüfung der Kombination bleibt offen.
+
 Eine [aktuelle vollständige Produktionsrunde](browser-pruefung.md#produktionsrunde-nach-der-kompakten-spielhilfe) mit spätem Grabeneingriff erreichte das Ziel, zeigte laufende Schäden und setzte beim Neustart Zeit, Budget und Schaden zurück. Der Test nutzte feste Koordinaten; menschliche Bedienung und Geräteabnahme bleiben offen.
 
 Die Rückstandsmeldung ist nun auch im Kartenmodus bei ausgeblendetem Menü sichtbar; eine Kartenabfrage erscheint nach dem Aufholen wieder oder kann die Meldung durch eine neue Abfrage ersetzen. Produktionsbuild, 72 Vitest-Tests und [alle 98 Chromium-Fälle](browser-pruefung.md#rückstandsmeldung-bei-ausgeblendetem-kartenmenü) auf Anwendungscode `853cc90` bestanden. Echte Geräte und menschliche Bedienung bleiben offen.

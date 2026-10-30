@@ -13,3 +13,24 @@ describe('scene hydraulic geometry',()=>{
  const s=snapshotGame(createGame(t));expect(()=>assertSnapshot(t,s)).not.toThrow();expect(()=>assertSnapshot(t,{...s,width:9})).toThrow();
  });
 });
+
+import {createPointerTrack} from '../src/scene/input';
+describe('scene pointer termination',()=>{
+ const event=(pointerId:number)=>({pointerId} as PointerEvent);
+ it('delivers off-terrain release using last valid pick, exactly once',()=>{
+ const calls:unknown[]=[];const track=createPointerTrack((phase,pick)=>calls.push([phase,pick]));
+ track('down',event(1),{x:1});track('move',event(1),{x:2});track('up',event(1));track('cancel',event(1));
+ expect(calls).toEqual([['down',{x:1}],['move',{x:2}],['up',{x:2}]]);
+ });
+ it('cancels on capture loss and ignores unrelated pointers or unstarted gestures',()=>{
+ const calls:unknown[]=[];const track=createPointerTrack((phase,pick)=>calls.push([phase,pick]));
+ track('up',event(1));track('down',event(1),4);track('up',event(2),8);track('cancel',event(1));track('up',event(1));
+ expect(calls).toEqual([['down',4],['cancel',4]]);
+ });
+});
+import {previewGeometry} from '../src/scene/geometry';
+it('tessellates a long preview over levees and current floodwater',()=>{
+ const t=createTerrain(8,8);t.heights.fill(0);t.heights[3*8+4]=1.55;const d=new Float32Array(64);d[3*8+5]=2;
+ const path=previewGeometry(t,[{x:1,y:3.5},{x:7,y:3.5}],d);
+ expect(path.length).toBe(25);expect(path.find(p=>p.x===9)?.y).toBeCloseTo(1.9);expect(path.find(p=>p.x===11)?.y).toBeCloseTo(2.35);
+});

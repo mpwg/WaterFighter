@@ -19,3 +19,17 @@ export function cellGeometry(t:Terrain, depths?:Float32Array) {
 export function assertSnapshot(t:Terrain,s:Snapshot) {
   if(s.width!==t.width||s.height!==t.height||s.cellSize!==t.cellSize||s.depths.length!==t.heights.length)throw new Error('Scene snapshot does not match terrain');
 }
+/** Quarter-cell sampling follows levees and current water; rendered in a depth-cleared overlay. */
+export function previewGeometry(t:Terrain,points:import('../flood/types').Point[],depths?:Float32Array) {
+ const result:{x:number;y:number;z:number}[]=[];
+ for(let k=1;k<points.length;k++){
+  const a=points[k-1],b=points[k],steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)*4));
+  for(let n=k===1?0:1;n<=steps;n++){
+   const x=a.x+(b.x-a.x)*n/steps,y=a.y+(b.y-a.y)*n/steps;
+   let h=-Infinity;
+   for(const ox of [-.05,.05])for(const oy of [-.05,.05]){const cx=Math.max(0,Math.min(t.width-1,Math.floor(x+ox))),cy=Math.max(0,Math.min(t.height-1,Math.floor(y+oy))),i=cy*t.width+cx;h=Math.max(h,t.heights[i]+(depths?.[i]??0));}
+   result.push({x:x*t.cellSize,y:h+.35,z:y*t.cellSize});
+  }
+ }
+ return result;
+}

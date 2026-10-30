@@ -1,16 +1,18 @@
-import {WebGPUEngine,Scene,ArcRotateCamera,Vector3,Color3,Color4,HemisphericLight,DirectionalLight,ShadowGenerator,Mesh,MeshBuilder,VertexData,StandardMaterial,PointerEventTypes,Matrix,RawTexture,Constants,Texture} from '@babylonjs/core';
+import {WebGPUEngine,Scene,ArcRotateCamera,Vector3,Color3,Color4,HemisphericLight,DirectionalLight,ShadowGenerator,Mesh,MeshBuilder,VertexData,StandardMaterial,Matrix,RawTexture,Constants,Texture} from '@babylonjs/core';
 import type {Terrain,Snapshot,Point} from '../flood/types';
-import {cellGeometry,assertSnapshot} from './geometry';
+import {cellGeometry,assertSnapshot,previewGeometry} from './geometry';
+import {createPointerTrack} from './input';
 export type Quality='low'|'high';
 export interface ScenePick {point:Point;buildingId?:number;gateId?:number;button:number;originalEvent:PointerEvent}
 export interface Preview {points:Point[];valid:boolean;cost:number;reason?:string}
-export interface LandscapeOptions {quality?:Quality;onPointer?:(phase:'down'|'move'|'up',pick:ScenePick)=>void;onDeviceLost?:(message:string)=>void}
+export interface LandscapeOptions {quality?:Quality;onPointer?:(phase:'down'|'move'|'up'|'cancel',pick:ScenePick)=>void;onDeviceLost?:(message:string)=>void}
 /** Call createLandscape(terrain), await initialize(canvas), then update(workerSnapshot). */
 export function createLandscape(terrain:Terrain,options:LandscapeOptions={}) {
  let engine:WebGPUEngine,scene:Scene,camera:ArcRotateCamera,water:Mesh,preview:Mesh|undefined;
  let observer:ResizeObserver|undefined,disposed=false,lastTime=-1,previewState:Preview|undefined;
  const houses=new Map<number,Mesh>(),gates=new Map<number,Mesh>(),barriers=new Map<string,Mesh>();
  let shadow:ShadowGenerator;
+ let latestDepths:Float32Array|undefined,removePointerListeners:(()=>void)|undefined;
  const quality=options.quality??'high',size=terrain.cellSize;
  const surface=(x:number,y:number)=>terrain.heights[Math.min(terrain.height-1,Math.max(0,Math.floor(y)))*terrain.width+Math.min(terrain.width-1,Math.max(0,Math.floor(x)))];
  const materials=new Map<string,StandardMaterial>();
@@ -80,12 +82,17 @@ export function createLandscape(terrain:Terrain,options:LandscapeOptions={}) {
   }
   const ripples=new RawTexture(normalPixels,resolution,resolution,Constants.TEXTUREFORMAT_RGBA,scene,true,false,Texture.TRILINEAR_SAMPLINGMODE);ripples.wrapU=ripples.wrapV=Texture.WRAP_ADDRESSMODE;ripples.level=.45;wm.bumpTexture=ripples;
 
-  const observerToken=scene.onPointerObservable.add(info=>{
-   const phase=info.type===PointerEventTypes.POINTERDOWN?'down':info.type===PointerEventTypes.POINTERUP?'up':info.type===PointerEventTypes.POINTERMOVE?'move':undefined;if(!phase)return;
-   const e=info.event as PointerEvent;const hit=scene.pick(scene.pointerX,scene.pointerY,m=>m===ground||m.metadata?.buildingId!==undefined||m.metadata?.gateId!==undefined);if(!hit?.pickedPoint)return;
-   options.onPointer?.(phase,{point:{x:hit.pickedPoint.x/size,y:hit.pickedPoint.z/size},buildingId:hit.pickedMesh?.metadata?.buildingId,gateId:hit.pickedMesh?.metadata?.gateId,button:e.button,originalEvent:e});
-  });
-  void observerToken;
+  const track=createPointerTrack<ScenePick>((phase,pick,event)=>options.onPointer?.(phase,{...pick,button:event.button,originalEvent:event}));
+  const pickEvent=(e:PointerEvent)=>{
+   const rect=canvas.getBoundingClientRect();const hit=scene.pick((e.clientX-rect.left)*engine.getRenderWidth()*engine.getHardwareScalingLevel()/rect.width,(e.clientY-rect.top)*engine.getRenderHeight()*engine.getHardwareScalingLevel()/rect.height,m=>m===ground||m.metadata?.buildingId!==undefined||m.metadata?.gateId!==undefined);
+   return hit?.pickedPoint?{point:{x:hit.pickedPoint.x/size,y:hit.pickedPoint.z/size},buildingId:hit.pickedMesh?.metadata?.buildingId,gateId:hit.pickedMesh?.metadata?.gateId,button:e.button,originalEvent:e}:undefined;
+  };
+  const down=(e:PointerEvent)=>{const pick=pickEvent(e);if(pick)canvas.setPointerCapture(e.pointerId);track('down',e,pick);};
+  const move=(e:PointerEvent)=>track('move',e,pickEvent(e));
+  const up=(e:PointerEvent)=>track('up',e,pickEvent(e));
+  const cancel=(e:PointerEvent)=>track('cancel',e);
+  canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',cancel);canvas.addEventListener('lostpointercapture',cancel);
+  removePointerListeners=()=>{canvas.removeEventListener('pointerdown',down);canvas.removeEventListener('pointermove',move);canvas.removeEventListener('pointerup',up);canvas.removeEventListener('pointercancel',cancel);canvas.removeEventListener('lostpointercapture',cancel);};
   observer=new ResizeObserver(()=>engine.resize());observer.observe(canvas);
   canvas.addEventListener('contextmenu',preventContext);
   engine.runRenderLoop(()=>{if(!disposed){ripples.uOffset=performance.now()*.000012;ripples.vOffset=Math.sin(performance.now()*.0001)*.018;scene.render();}});
@@ -93,7 +100,7 @@ export function createLandscape(terrain:Terrain,options:LandscapeOptions={}) {
   return diagnostics();
  }
  function preventContext(e:Event){e.preventDefault();}
- function update(snapshot:Snapshot){assertSnapshot(terrain,snapshot);if(!scene||disposed)return;if(snapshot.time!==lastTime){geometry(water,snapshot.depths);lastTime=snapshot.time;}
+ function update(snapshot:Snapshot){assertSnapshot(terrain,snapshot);latestDepths=snapshot.depths;if(!scene||disposed)return;if(snapshot.time!==lastTime){geometry(water,snapshot.depths);lastTime=snapshot.time;}
   for(const state of snapshot.buildings){const house=houses.get(state.buildingId);if(house)house.visibility=1;}
   for(const gate of snapshot.gates){const m=gates.get(gate.id);if(m)m.position.y=gate.open?3.6:1.125;}
   const keys=new Set(snapshot.barriers.map(b=>b.key));for(const [key,m] of barriers)if(!keys.has(key)){m.dispose();barriers.delete(key);}
@@ -101,9 +108,9 @@ export function createLandscape(terrain:Terrain,options:LandscapeOptions={}) {
    if(!m){m=box('sandbags '+b.key,x,z,horizontal?size:.7,horizontal?.7:size,1,material('sandbags',[.65,.58,.38]));barriers.set(b.key,m);}m.scaling.y=Math.max(.12,b.height*b.progress);m.position.y=Math.max(terrain.heights[b.a],terrain.heights[b.b])+m.scaling.y/2;m.visibility=b.status==='queued'?.5:1;
   }
  }
- function setPreview(state?:Preview){previewState=state;preview?.dispose();preview=undefined;if(!scene||!state||state.points.length<2)return;const lines=state.points.map(p=>new Vector3(p.x*size,surface(p.x,p.y)+.3,p.y*size));preview=MeshBuilder.CreateLines('barrier preview',{points:lines},scene);(preview as import('@babylonjs/core').LinesMesh).color=state.valid?new Color3(.75,.93,.36):new Color3(1,.22,.12);preview.isPickable=false;}
+ function setPreview(state?:Preview){previewState=state;preview?.dispose();preview=undefined;if(!scene||!state||state.points.length<2)return;const lines=previewGeometry(terrain,state.points,latestDepths).map(p=>new Vector3(p.x,p.y,p.z));preview=MeshBuilder.CreateLines('barrier preview',{points:lines},scene);(preview as import('@babylonjs/core').LinesMesh).color=state.valid?new Color3(.75,.93,.36):new Color3(1,.22,.12);preview.isPickable=false;preview.renderingGroupId=3;scene.setRenderingAutoClearDepthStencil(3,true,true,true);}
  function project(point:Point){const v=Vector3.Project(new Vector3(point.x*size,surface(point.x,point.y),point.y*size),Matrix.Identity(),scene.getTransformMatrix(),camera.viewport.toGlobal(engine.getRenderWidth(),engine.getRenderHeight()));const rect=engine.getRenderingCanvas()!.getBoundingClientRect();return {x:rect.left+v.x/engine.getRenderWidth()*rect.width,y:rect.top+v.y/engine.getRenderHeight()*rect.height};}
  function diagnostics(){return {backend:'WebGPU' as const,quality,adapter:engine?.getInfo()??null,limits:engine?{maxTextureDimension2D:engine.currentLimits.maxTextureDimension2D,maxBufferSize:engine.currentLimits.maxBufferSize}:null,renderWidth:engine?.getRenderWidth(),renderHeight:engine?.getRenderHeight(),preview:previewState?{valid:previewState.valid,cost:previewState.cost,reason:previewState.reason}:null};}
- function dispose(){disposed=true;observer?.disconnect();engine?.getRenderingCanvas()?.removeEventListener('contextmenu',preventContext);scene?.dispose();engine?.dispose();}
+ function dispose(){disposed=true;removePointerListeners?.();observer?.disconnect();engine?.getRenderingCanvas()?.removeEventListener('contextmenu',preventContext);scene?.dispose();engine?.dispose();}
  return {initialize,update,dispose,setPreview,resetCamera,project,diagnostics,zoom:(factor:number)=>{camera.radius=Math.max(120,Math.min(850,camera.radius*factor));},pan:(dx:number,dy:number)=>{camera.target.addInPlace(new Vector3(dx*size,0,dy*size));}};
 }

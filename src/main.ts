@@ -1,31 +1,724 @@
-import './style.css';
-import {createGame,command,step,advance,FIXED_DT} from './core/game';
-import {DEVICES,SLOTS,WAVES,MAX_TIME} from './core/arena';
-import type {Command,DeviceKind,AbilityKind} from './core/types';
-import {ArenaView} from './render/arena';
-let state=createGame();let selected:{kind:'slot'|'house';id:string}|null=null;let ability:AbilityKind|null=null;let sound=true;let audio:AudioContext|null=null;let soundEvent=0;let panelKey="";let forecastKey="";let resultKey="";let labelsKey="";
-const app=document.querySelector<HTMLDivElement>('#app')!;
-app.innerHTML=`<header><a class="brand" href="./"><span class="brand-icon">≈</span><div>FLUTWEHR<small>WIEN HÄLT ZUSAMMEN.</small></div></a><div class="head-note">EIN KLEINES WIEN. EINE GROSSE AUFGABE.</div><div class="settings"><button data-testid="sound" id="sound" aria-pressed="true">♪ Ton an</button><button data-testid="shake" id="shake" aria-pressed="true">↝ Wackeln an</button></div></header><main><section class="arena"><canvas id="arena" aria-label="Spielarena mit Bauplätzen und Häusern"></canvas><div class="map-label map-north">DONAUKANAL <span>→</span></div><div class="map-label map-south">WIENFLUSS <span>↑</span></div><div class="arena-top"><span class="live-dot"></span><span id="phase-label">DEINE STADT BRAUCHT DICH</span></div><div id="intro" class="intro"><span class="eyebrow">DIE FLUT KOMMT.</span><h1>Wien geht<br>nicht baden.</h1><p>Baue deine Flutwehr, halte die Wasserzüge auf<br>mindestens 12 von 24 Bewohnern müssen sicher bleiben.</p><button class="primary" data-testid="start" id="start">Stadt beschützen <span>→</span></button><small>3 Minuten · 5 Wellen · Eine Stadt</small></div><div id="result" class="intro hidden"></div><div id="paused" class="pause-overlay hidden"><span>Ⅱ</span><h2>Eine kurze Verschnaufpause.</h2><button class="primary" id="resume" data-testid="resume">Weiterspielen →</button></div><div id="house-labels" aria-live="off"></div><div id="notice" role="status" class="notice"></div><div class="legend"><span><i class="slot-dot"></i> Bauplatz wählen</span><span><i class="house-dot"></i> Haus retten</span><span>✦ Stephansdom & Riesenrad</span></div></section><aside><section class="hud"><div class="section-title">EINSATZZENTRALE <span id="clock">00:00 / 03:00</span></div><div class="stats"><div><span>⚡ ENERGIE</span><strong id="energy">150</strong></div><div><span>♡ IN SICHERHEIT</span><strong><b id="safe">0</b><em>/ 24</em></strong></div></div><div class="substats"><span>Wellen <b id="waves">0 / 5</b></span><span>Punkte <b id="score">0</b></span></div></section><section class="selection" id="selection"></section><section class="abilities"><div class="section-title">RETTUNGSTEAM <span>HAUS WÄHLEN</span></div><button id="cushion" data-testid="ability-cushion" class="ability"><span class="ability-icon">◉</span><span><b>Luftkissen</b><small>6 Sekunden Schutz · 20 s Abklingzeit</small></span><em id="cushion-time">Bereit</em></button><button id="boat" data-testid="ability-boat" class="ability"><span class="ability-icon">⛵</span><span><b>Rettungsboot</b><small>Evakuiert in 2 s · 25 s Abklingzeit</small></span><em id="boat-time">Bereit</em></button></section><section class="forecast"><div class="section-title">FLUTPROGNOSE <span>5 WELLEN</span></div><div id="forecast"></div></section><div class="controls"><button id="pause" data-testid="pause">Ⅱ Pause</button><button id="restart" data-testid="restart">↻ Neustart</button></div></aside></main><footer><b>SO HÄLTST DU WIEN TROCKEN</b><span>① Gelben Bauplatz anklicken & Gerät bauen</span><span>② Geräte einmal verbessern</span><span>③ Haus wählen & Bewohner retten</span></footer>`;
-const $=(id:string)=>document.getElementById(id)!;
-const view=new ArenaView($('arena') as HTMLCanvasElement,(kind,id)=>{if(state.phase!=='running')return;selected={kind,id};if(kind==='house'&&ability){act({type:'ability',kind:ability,houseId:id});ability=null;}update();});
-function tone(){if(!sound)return;try{audio??=new AudioContext();const osc=audio.createOscillator(),gain=audio.createGain();osc.connect(gain);gain.connect(audio.destination);osc.type='sine';osc.frequency.setValueAtTime(440,audio.currentTime);osc.frequency.exponentialRampToValueAtTime(180,audio.currentTime+.12);gain.gain.setValueAtTime(.035,audio.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.15);osc.start();osc.stop(audio.currentTime+.16);}catch{}}
-function act(c:Command){const ok=command(state,c);if(ok)tone();if(c.type==='reset'){selected=null;ability=null;soundEvent=0;}update();return ok;}
-$('start').onclick=()=>act({type:'start'});$('resume').onclick=()=>act({type:'resume'});$('pause').onclick=()=>act({type:state.phase==='paused'?'resume':'pause'});$('restart').onclick=()=>act({type:'reset'});
-$('sound').onclick=()=>{sound=!sound;$('sound').textContent=sound?'♪ Ton an':'♪ Ton aus';$('sound').setAttribute('aria-pressed',String(sound));};$('shake').onclick=()=>{view.shake=!view.shake;$('shake').textContent=view.shake?'↝ Wackeln an':'↝ Wackeln aus';$('shake').setAttribute('aria-pressed',String(view.shake));};
-for(const kind of ['cushion','boat'] as const)$(kind).onclick=()=>{if(state.phase!=='running')return;if(selected?.kind==='house')act({type:'ability',kind,houseId:selected.id});else{ability=ability===kind?null:kind;update();}};
-function time(t:number){return `${String(Math.floor(t/60)).padStart(2,'0')}:${String(Math.floor(t%60)).padStart(2,'0')}`;}
-function update(){view.selected=selected?.id??null;const active=state.phase==='running';$('energy').textContent=String(Math.floor(state.energy));$('safe').textContent=String(state.safeResidents);$('clock').textContent=`${time(state.time)} / ${time(MAX_TIME)}`;$('waves').textContent=`${state.completedWaves.length} / 5`;$('score').textContent=String(state.score);$('intro').classList.toggle('hidden',state.phase!=='ready');$('paused').classList.toggle('hidden',state.phase!=='paused');$('pause').textContent=state.phase==='paused'?'▶ Weiter':'Ⅱ Pause';($('pause') as HTMLButtonElement).disabled=!['running','paused'].includes(state.phase);$('phase-label').textContent=active?'EINSATZ LÄUFT':state.phase==='paused'?'EINSATZ PAUSIERT':'DEINE STADT BRAUCHT DICH';
- const finished=state.phase==='won'||state.phase==='lost';$('result').classList.toggle('hidden',!finished);if(finished&&resultKey!==state.phase){resultKey=state.phase;$('result').innerHTML=`<span class="eyebrow">EINSATZ BEENDET</span><h1>${state.phase==='won'?'Wien hält<br>zusammen.':'Die Flut war<br>stärker.'}</h1><p>${state.safeResidents} von ${state.totalResidents} Bewohnern sicher · ${state.score} Punkte</p><button class="primary" id="again" data-testid="again">Noch eine Runde →</button>`;$('again').onclick=()=>act({type:'reset'});}
- if(!finished)resultKey='';const nextPanelKey=JSON.stringify([selected,state.phase,state.devices.map(d=>[d.slotId,d.kind,d.level]),selected?.kind==='house'?state.houses.filter(h=>h.id===selected?.id).map(h=>[h.id,h.health,h.evacuated,h.threatened,h.evacuationAt===null?null:Math.ceil(Math.max(0,h.evacuationAt-state.time)*10),Math.ceil((h.damageIn??0)*10),Math.ceil(Math.max(0,h.shieldUntil-state.time))]):null,Object.values(DEVICES).map(d=>[state.energy>=d.cost,state.energy>=d.upgradeCost])]);const panel=$('selection');if(panelKey!==nextPanelKey){panelKey=nextPanelKey;if(selected?.kind==='slot'){const slotId=selected.id;const d=state.devices.find(d=>d.slotId===slotId);panel.innerHTML=`<div class="section-title">BAUPLATZ ${SLOTS.findIndex(x=>x.id===slotId)+1}<span>${d?'GERÄT IM EINSATZ':'DIREKT BAUEN'}</span></div>`+(d?`<h2>${DEVICES[d.kind].name} <span class="level">STUFE ${d.level}</span></h2><p>${DEVICES[d.kind].description}</p><button class="upgrade" data-testid="upgrade" ${!active||d.level===2||state.energy<DEVICES[d.kind].upgradeCost?'disabled':''}>${d.level===2?'✓ Voll verbessert':`↑ Verbessern · ⚡ ${DEVICES[d.kind].upgradeCost}`}</button><small class="hint">${d.level===2?'Maximale Wirkung erreicht.':`${d.kind==='pump'?`${DEVICES[d.kind].power} → ${DEVICES[d.kind].upgradedPower} Stärke pro Impuls`:d.kind==='freeze'?`${Math.round(DEVICES[d.kind].power*100)} % → ${Math.round(DEVICES[d.kind].upgradedPower*100)} % Resttempo`:`${Math.round(DEVICES[d.kind].power*100)} % → ${Math.round(DEVICES[d.kind].upgradedPower*100)} % Rückstoß`}; Reichweite ${Math.round(DEVICES[d.kind].range*100)} % → ${Math.round(DEVICES[d.kind].upgradedRange*100)} %.`}</small>`:Object.entries(DEVICES).map(([kind,spec])=>`<button class="device" data-kind="${kind}" data-testid="build-${kind}" ${!active||state.energy<spec.cost?'disabled':''}><span class="device-icon ${kind}">${kind==='pump'?'↻':kind==='freeze'?'❄':'↗'}</span><span><b>${spec.name}</b><small>${spec.description}</small><small>Reichweite ${Math.round(spec.range*100)} % der Route</small></span><em>⚡${spec.cost}</em></button>`).join(''));panel.querySelectorAll<HTMLButtonElement>('[data-kind]').forEach(b=>b.onclick=()=>act({type:'build',slotId,kind:b.dataset.kind as DeviceKind}));const up=panel.querySelector<HTMLButtonElement>('.upgrade');if(up)up.onclick=()=>act({type:'upgrade',slotId});}
- else if(selected?.kind==='house'){const h=state.houses.find(x=>x.id===selected!.id)!;panel.innerHTML=`<div class="section-title">HAUS AUSGEWÄHLT<span>${h.residents} BEWOHNER</span></div><h2>${h.name}</h2><div class="hearts">${'♥'.repeat(h.health)}${'♡'.repeat(3-h.health)}</div><p>${h.evacuated?'✓ Alle Bewohner evakuiert':h.health===0?'Haus verloren':h.evacuationAt!==null?`Rettungsboot unterwegs · ${Math.max(0,h.evacuationAt-state.time).toFixed(1)} s`:h.shieldUntil>state.time?`◉ Geschützt für ${Math.ceil(h.shieldUntil-state.time)} s`:h.threatened?`⚠ Nächster Schaden in ${(h.damageIn??0).toFixed(1)} s`:'Das Haus ist momentan sicher.'}</p><small class="hint">Wähle unten Luftkissen oder Rettungsboot.</small>`;}
- else panel.innerHTML=`<div class="section-title">DEINE FLUTWEHR<span>LOS GEHT’S</span></div><h2>Hier wird Wien gerettet.</h2><p>Klicke auf einen <b>gelben Bauplatz</b> in der Stadt. Pumpe, Gefriergerät oder Wasserwerfer? Du entscheidest.</p><div class="mini-tools"><span>↻ Stärke senken</span><span>❄ Verlangsamen</span><span>↗ Zurückschieben</span></div>`;
- }
- for(const kind of ['cushion','boat'] as const){const left=Math.max(0,state.cooldowns[kind]-state.time);($(kind) as HTMLButtonElement).disabled=!active||left>0;$(kind).classList.toggle('chosen',ability===kind);$(kind+'-time').textContent=left>0?`${Math.ceil(left)} s`:ability===kind?'Haus wählen':'Bereit';}
- const nextForecastKey=`${Math.floor(state.time)}:${state.completedWaves.join(',')}`;if(forecastKey!==nextForecastKey){forecastKey=nextForecastKey;$('forecast').innerHTML=WAVES.map(w=>`<div class="wave ${state.completedWaves.includes(w.id)?'complete':state.time>=w.warningAt?'current':''}"><span>${state.completedWaves.includes(w.id)?'✓':String(w.id).padStart(2,'0')}</span><div><b>${w.name}</b><small>${w.id===3?'⚠ Wienfluss öffnet sich · ':''}${w.spawns.map(x=>x.routeId==='wien'?'Wienfluss':'Donaukanal').filter((x,i,a)=>a.indexOf(x)===i).join(' + ')}</small></div><em>${state.time<w.at?`${Math.ceil(w.at-state.time)} s`:state.completedWaves.includes(w.id)?'klar':'läuft'}</em></div>`).join('');}
- const recent=[...state.events].reverse().find(e=>e.message&&state.time-e.time<5);$('notice').textContent=ability?'Wähle jetzt ein Haus für '+(ability==='boat'?'das Rettungsboot.':'das Luftkissen.'):state.lastError??recent?.message??'';$('notice').classList.toggle('visible',!!$('notice').textContent);
- const nextLabelsKey=JSON.stringify([state.phase,Math.floor(state.time*2),state.houses.map(h=>[h.health,h.evacuated,h.threatened,h.shieldUntil,h.evacuationAt])]);if(labelsKey!==nextLabelsKey){labelsKey=nextLabelsKey;$('house-labels').innerHTML=state.houses.map(h=>{const p=view.project('house',h.id);const rect=view.canvas.getBoundingClientRect();return `<button data-house="${h.id}" class="house-label ${h.threatened?'danger':''} ${h.evacuated?'rescued':''}" style="left:${p.x-rect.left}px;top:${p.y-rect.top-35}px" ${!active?'disabled':''} aria-label="${h.name}, ${h.health} Leben"><span>${h.evacuated?'✓ Evakuiert · ':''}${h.health===0?'Verloren':'♥'.repeat(h.health)}</span>${h.health>0&&h.shieldUntil>state.time?`<b>◉ Schutz ${(h.shieldUntil-state.time).toFixed(1)} s</b>`:h.threatened&&h.health>0?`<b>⚠ ${(h.damageIn??0).toFixed(1)} s</b>`:''}${h.evacuationAt!==null?'<b>⛵ Rettung läuft</b>':''}</button>`;}).join('');$('house-labels').querySelectorAll<HTMLButtonElement>('[data-house]').forEach(b=>b.onclick=()=>{selected={kind:'house',id:b.dataset.house!};if(ability){act({type:'ability',kind:ability,houseId:selected.id});ability=null;}update();});}
- for(const e of state.events)if(e.id>soundEvent){soundEvent=e.id;if(['damage','rescue','warning'].includes(e.type))tone();}view.update(state);
+import { SCENARIO } from "./core/arena";
+import { advance, command, createGame, getResult, inflowAt } from "./core/game";
+import type { Command, GameState, Preparation, Selection } from "./core/types";
+import { ArenaView } from "./render/arena";
+import "./style.css";
+
+const app = document.querySelector<HTMLDivElement>("#app")!;
+const towns = SCENARIO.nodes.filter((n) => n.kind === "town");
+const basins = SCENARIO.nodes.filter((n) => n.kind === "basin");
+const gates = SCENARIO.links.filter((l) => l.kind === "gate");
+const nodeSpec = (id: string) => SCENARIO.nodes.find((n) => n.id === id)!;
+const time = (s: number) =>
+  `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+const damagePoints = (n: number) =>
+  `${Math.round(n).toLocaleString("de-AT")} Schadenspunkte`;
+const escapeHTML = (s: string) =>
+  s.replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ]!,
+  );
+let state = createGame();
+let selection: Selection = null;
+let category: Preparation["kind"] = "reinforce";
+let panelKey = "";
+let lastFrame = performance.now();
+let lastUpdate = 0;
+let lastEvents = "";
+let hold: {
+  button: HTMLButtonElement;
+  id: string;
+  start: number;
+  frame: number;
+  source: "pointer" | "keyboard";
+} | null = null;
+
+const forecast = Array.from(
+  { length: 91 },
+  (_, i) => `${i ? "L" : "M"}${12 + i * 4.2},${75 - inflowAt(i * 2) * 1.3}`,
+).join(" ");
+app.innerHTML = /* HTML */ `<div class="page">
+  <header class="masthead">
+    <div>
+      <span class="eyebrow">WATERFIGHTER / EINSATZ 01</span>
+      <h1>Die Donau kommt<span class="period">.</span></h1>
+    </div>
+    <div class="masthead-right">
+      <span class="badge">HQ100 <small>JAHRHUNDERTHOCHWASSER</small></span>
+      <div class="top-controls">
+        <button id="pause" data-testid="pause">Pause</button
+        ><button id="reset" data-testid="reset">Neustart</button>
+      </div>
+    </div>
+  </header>
+  <div class="statusbar">
+    <div>
+      <span>VERBLEIBENDE ZEIT</span
+      ><strong id="time-left" data-testid="time-left"></strong>
+    </div>
+    <div>
+      <span>MENSCHEN SICHER</span><strong id="safe" data-testid="safe"></strong>
+    </div>
+    <div>
+      <span>SACHSCHADEN</span><strong id="damage" data-testid="damage"></strong>
+    </div>
+    <b id="phase" class="phase"></b>
+  </div>
+  <main class="workspace">
+    <section class="map-column" aria-label="Einsatzkarte">
+      <div class="map-head">
+        <span>01 / DONAUABSCHNITT TULLN – WIEN</span
+        ><span>INTERAKTIVE EINSATZKARTE</span>
+      </div>
+      <div class="map-wrap">
+        <canvas id="arena" data-testid="arena"></canvas>
+        <div id="map-banner" class="map-banner" hidden>EINSATZ PAUSIERT</div>
+      </div>
+      <div class="map-foot">
+        <span><i class="dot water"></i> Fluss & Rückhalt</span
+        ><span><i class="dot town"></i> Gemeinden</span
+        ><span><i class="dot gate"></i> Wehre & Dämme</span
+        ><span class="scale">N ↑</span>
+      </div>
+    </section>
+    <aside id="sidebar" class="sidebar">
+      <section id="intro" class="section intro">
+        <span class="eyebrow">LAGEBESPRECHUNG / 00</span>
+        <h2>Lenke das Wasser.<br />Schütze die Menschen.</h2>
+        <p>
+          Leite Wasser durch Wehre in Rückhalteräume. Evakuiere gefährdete Orte.
+          Wäge jeden Eingriff gegen mögliche Schäden ab.
+        </p>
+      </section>
+      <section class="section">
+        <div class="section-title">
+          <span id="panel-heading"></span><span id="panel-counter"></span>
+        </div>
+        <div id="panel" data-testid="selection-panel"></div>
+      </section>
+      <section class="section">
+        <div class="section-title">ANLAGEN DIREKT WÄHLEN</div>
+        <h3>WEHRE</h3>
+        <div id="gate-list" class="quick-list"></div>
+        <h3>DÄMME</h3>
+        <div id="site-list" class="quick-list"></div>
+        <h3>GEMEINDEN</h3>
+        <div id="town-list" class="quick-list"></div>
+      </section>
+      <section class="section forecast">
+        <div class="section-title">
+          <span>ZUFLUSSPROGNOSE</span><span>0–3 MIN.</span>
+        </div>
+        <svg
+          viewBox="0 0 400 92"
+          role="img"
+          aria-label="Zuflussprognose mit Spitzen bei 0:52 und 1:52"
+        >
+          <path class="grid" d="M12 75H390M12 44H390M12 13H390" />
+          <path class="curve" d="${forecast}" />
+          <line
+            id="forecast-cursor"
+            class="cursor"
+            x1="12"
+            x2="12"
+            y1="4"
+            y2="79"
+          />
+          <text x="99" y="17">1. SCHEITEL</text>
+          <text x="226" y="17">2. SCHEITEL</text>
+          <text x="12" y="90">0:00</text>
+          <text x="354" y="90">3:00</text>
+        </svg>
+        <div class="forecast-caption">
+          <span>AKTUELL <b id="inflow"></b></span
+          ><span>MAX. 45 Einheiten/s</span>
+        </div>
+      </section>
+      <section class="section">
+        <div class="section-title">MELDUNGEN</div>
+        <div id="events" class="events" role="log" aria-live="polite"></div>
+      </section>
+    </aside>
+  </main>
+  <footer>
+    WATERFIGHTER — EINSATZKARTE WIEN
+    <span>SIMULIERTES SZENARIO · ENTSCHEIDUNGEN WIRKEN SOFORT</span>
+  </footer>
+</div>`;
+const $ = (id: string) => document.getElementById(id)!;
+const view = new ArenaView($("arena") as HTMLCanvasElement, select);
+
+function cancelHold(): void {
+  if (!hold) return;
+  cancelAnimationFrame(hold.frame);
+  hold.button.style.setProperty("--hold-progress", "0%");
+  hold.button.classList.remove("holding");
+  hold = null;
 }
-let last=performance.now(),acc=0,ui=0;view.engine.runRenderLoop(()=>{const now=performance.now();acc+=Math.min(.2,(now-last)/1000);last=now;while(acc>=FIXED_DT){step(state,FIXED_DT);acc-=FIXED_DT;}ui+=1;if(ui%3===0)update();view.render();});document.addEventListener('visibilitychange',()=>{if(document.hidden&&state.phase==='running')act({type:'pause'});});window.addEventListener('keydown',e=>{if(e.code==='Space'&&['running','paused'].includes(state.phase)){e.preventDefault();act({type:state.phase==='running'?'pause':'resume'});}});
-if(new URLSearchParams(location.search).has('test'))Object.assign(window,{__waterfighter:{get state(){return state;},advance(seconds:number){advance(state,seconds);update();view.render();},command(c:Command){const ok=act(c);view.render();return ok;},project:(kind:'slot'|'house',id:string)=>view.project(kind,id)}});
-update();view.render();
+function select(next: Selection): void {
+  cancelHold();
+  selection = next;
+  panelKey = "";
+  refresh(true);
+}
+function act(c: Command): boolean {
+  if (c.type === "pause" || c.type === "reset") cancelHold();
+  const ok = command(state, c);
+  if (c.type === "reset" && ok) {
+    selection = null;
+    category = "reinforce";
+    lastEvents = "";
+    lastFrame = performance.now();
+    $("sidebar").scrollTop = 0;
+  }
+  if (["prepare", "reset", "start"].includes(c.type)) panelKey = "";
+  refresh(true);
+  return ok;
+}
+
+function preparationPanel(): string {
+  const labels = {
+    reinforce: "Dämme",
+    capacity: "Rückhalt",
+    evacuation: "Rettung",
+  };
+  const descriptions = {
+    reinforce: "Vorab verstärkte Schutzdämme erhöhen die Überlaufschwelle.",
+    capacity: "Rückhalteräume nehmen mehr Wasser auf.",
+    evacuation: "Vorbereitete Gemeinden werden schneller evakuiert.",
+  };
+  const targets =
+    category === "reinforce"
+      ? SCENARIO.sites
+      : category === "capacity"
+        ? basins
+        : towns;
+  return /* HTML */ `<div class="slots" aria-label="Drei Auswahlplätze">
+      ${[0, 1, 2]
+        .map((i) => {
+          const p = state.preparations[i];
+          const name = p
+            ? p.kind === "reinforce"
+              ? SCENARIO.sites.find((s) => s.id === p.targetId)!.name
+              : nodeSpec(p.targetId).name
+            : "Maßnahme wählen";
+          return /* HTML */ `<div class="slot ${p ? "filled" : ""}">
+            <span>0${i + 1}</span><b>${escapeHTML(name)}</b>
+          </div>`;
+        })
+        .join("")}
+    </div>
+    <div class="tabs" role="tablist" aria-label="Maßnahmenkategorie">
+      ${(["reinforce", "capacity", "evacuation"] as const).map((k) => `<button role="tab" aria-selected="${category === k}" class="${category === k ? "active" : ""}" data-category="${k}">${labels[k]}</button>`).join("")}
+    </div>
+    <p class="panel-copy">${descriptions[category]}</p>
+    <div class="targets">
+      ${targets
+        .map((t) => {
+          const chosen = state.preparations.some(
+            (p) => p.kind === category && p.targetId === t.id,
+          );
+          return /* HTML */ `<button
+            class="target ${chosen ? "chosen" : ""}"
+            data-prep="${t.id}"
+            data-testid="prepare-${t.id}"
+            aria-pressed="${chosen}"
+          >
+            <span>${escapeHTML(t.name)}</span
+            ><b>${chosen ? "✓ GEWÄHLT" : "+ WÄHLEN"}</b>
+          </button>`;
+        })
+        .join("")}
+    </div>
+    <button
+      class="primary start"
+      data-action="start"
+      data-testid="start"
+      ${state.preparations.length === 3 ? "" : "disabled"}
+    >
+      Einsatz starten <span>→</span>
+    </button>`;
+}
+
+function selectedPanel(): string {
+  if (!selection)
+    return /* HTML */ `<div class="empty">
+      <span class="compass">✦</span>
+      <h2>Wähle ein Ziel auf der Karte.</h2>
+      <p>
+        Steuere Wehre, baue Notdämme oder schicke Rettungsteams in gefährdete
+        Gemeinden.
+      </p>
+      <small>Alle Wehre und Gemeinden sind auch unten anwählbar.</small>
+    </div>`;
+  if (selection.kind === "gate") {
+    const link = gates.find((g) => g.id === selection!.id);
+    if (!link) return "<p>Unbekanntes Wehr.</p>";
+    return /* HTML */ `<span class="eyebrow">WASSERLENKUNG / WEHR</span>
+      <h2>${escapeHTML(link.name)}</h2>
+      <p class="panel-copy">Stellung ändern · Stellzeit 1,2 s</p>
+      <div class="metric">
+        <span>AKTUELLE STELLUNG</span><b id="gate-status"></b>
+      </div>
+      <div class="positions">
+        ${([0, 0.5, 1] as const).map((v, i) => `<button data-gate="${v}" data-testid="gate-${link.id}-${i}" class="position"><span>${["ZU", "HALB", "OFFEN"][i]}</span><small>${["0 %", "50 %", "100 %"][i]}</small></button>`).join("")}
+      </div>
+      <p class="small" id="gate-timer"></p>`;
+  }
+  if (selection.kind === "site") {
+    const site = SCENARIO.sites.find((s) => s.id === selection!.id);
+    if (!site) return "<p>Unbekannte Dammstelle.</p>";
+    return /* HTML */ `<span class="eyebrow">SCHUTZLINIE / DAMM</span>
+      <h2>${escapeHTML(site.name)}</h2>
+      <div class="metric"><span>STATUS</span><b id="site-status"></b></div>
+      <div class="metric">
+        <span>BAUEINSÄTZE ÜBRIG</span><b id="builds-left"></b>
+      </div>
+      <button
+        class="secondary full"
+        data-action="build"
+        data-testid="build-${site.id}"
+      >
+        Notdamm bauen <small>3 s Bauzeit</small>
+      </button>
+      <div class="danger-area">
+        <span class="eyebrow">IRREVERSIBLER EINGRIFF</span>
+        <p>
+          Öffnung flutet
+          <strong>${escapeHTML(nodeSpec(site.receiverId).name)}</strong>. Zum
+          Bestätigen 0,9 s gedrückt halten.
+        </p>
+        <button
+          class="breach"
+          data-breach="${site.id}"
+          data-testid="breach-${site.id}"
+          style="--hold-progress:0%"
+        >
+          <span class="hold-fill"></span
+          ><span class="hold-label">Damm gedrückt halten & öffnen</span>
+        </button>
+      </div>`;
+  }
+  const spec = SCENARIO.nodes.find((n) => n.id === selection!.id);
+  if (!spec) return "<p>Unbekannter Ort.</p>";
+  if (spec.kind === "town")
+    return /* HTML */ `<span class="eyebrow">GEMEINDE / RETTUNG</span>
+      <h2>${escapeHTML(spec.name)}</h2>
+      <div class="metric"><span>SPIELPEGEL</span><b id="node-depth"></b></div>
+      <div class="metric"><span>SACHSCHADEN</span><b id="town-damage"></b></div>
+      <div class="metric">
+        <span>GERETTET / GESAMT</span><b id="town-rescued"></b>
+      </div>
+      <div class="teams">
+        ${[0, 1].map((i) => `<button class="team" data-team="${i}" data-testid="team-${i + 1}"><b>TEAM ${i + 1}</b><span id="team-label-${i}"></span></button>`).join("")}
+      </div>
+      <p class="small">Erneut klicken, um ein Team abzuziehen.</p>`;
+  if (spec.kind === "basin")
+    return /* HTML */ `<span class="eyebrow">RÜCKHALT / BECKEN</span>
+      <h2>${escapeHTML(spec.name)}</h2>
+      <div class="metric"><span>FÜLLUNG</span><b id="basin-fill"></b></div>
+      <div class="meter"><span id="basin-meter"></span></div>
+      <p class="small">Ein Wehr lenkt Wasser in diesen Rückhalteraum.</p>`;
+  return /* HTML */ `<span class="eyebrow">DONAU / FLUSSABSCHNITT</span>
+    <h2>${escapeHTML(spec.name)}</h2>
+    <div class="metric"><span>SPIELPEGEL</span><b id="node-depth"></b></div>
+    <p class="small">Pegeländerung durch Zufluss, Wehre und Überläufe.</p>`;
+}
+
+function resultPanel(): string {
+  const r = state.result ?? getResult(state);
+  const affected = towns.filter((t) => {
+    const n = state.nodes.find((n) => n.id === t.id)!;
+    return n.exposed || n.damage > 0.001;
+  });
+  return /* HTML */ `<div class="result">
+    <span class="eyebrow">EINSATZ BEENDET</span>
+    <h2>Die Bilanz.</h2>
+    <div class="result-numbers">
+      <div><b>${r.safe}</b><span>MENSCHEN SICHER</span></div>
+      <div><b>${r.rescued}</b><span>DAVON GERETTET</span></div>
+      <div><b>${r.inNeed}</b><span>NOCH IN NOT</span></div>
+    </div>
+    <div class="metric">
+      <span>SACHSCHÄDEN</span><b>${damagePoints(r.damage)}</b>
+    </div>
+    <div class="metric">
+      <span>SACHWERTE ERHALTEN</span><b>${damagePoints(r.preserved)}</b>
+    </div>
+    <p class="small">
+      Betroffene Gemeinden:
+      ${affected.length ? affected.map((t) => escapeHTML(t.name)).join(", ") : "keine"}.
+    </p>
+    <button class="primary" data-action="reset" data-testid="again">
+      Neuen Einsatz beginnen →
+    </button>
+  </div>`;
+}
+
+function updatePanel(): void {
+  const key =
+    state.phase === "ready"
+      ? `ready:${category}:${state.preparations.map((p) => `${p.kind}-${p.targetId}`).join(",")}`
+      : state.phase === "finished"
+        ? "result"
+        : `live:${selection?.kind}:${selection?.id}`;
+  if (panelKey !== key) {
+    cancelHold();
+    $("panel").innerHTML =
+      state.phase === "ready"
+        ? preparationPanel()
+        : state.phase === "finished"
+          ? resultPanel()
+          : selectedPanel();
+    panelKey = key;
+    if (key === "result") $("sidebar").scrollTop = 0;
+  }
+  $("panel-heading").textContent =
+    state.phase === "ready"
+      ? "VORBEREITUNG"
+      : state.phase === "finished"
+        ? "EINSATZERGEBNIS"
+        : "EINSATZSTEUERUNG";
+  $("panel-counter").textContent =
+    state.phase === "ready"
+      ? `${state.preparations.length} / 3 GEWÄHLT`
+      : `${state.buildsLeft} BAUEINSÄTZE`;
+  if (state.phase === "ready" || state.phase === "finished" || !selection)
+    return;
+  const enabled = state.phase === "running";
+  if (selection.kind === "gate") {
+    const g = state.gates.find((g) => g.id === selection!.id)!;
+    const busy = g.readyAt > state.time;
+    $("gate-status").textContent = busy
+      ? "STELLT UM"
+      : g.opening === 0
+        ? "GESCHLOSSEN"
+        : g.opening === 0.5
+          ? "HALB OFFEN"
+          : "OFFEN";
+    $("gate-timer").textContent = busy
+      ? `Noch ${(g.readyAt - state.time).toFixed(1)} s Stellzeit`
+      : "Wehr bereit";
+    $("panel")
+      .querySelectorAll<HTMLButtonElement>("[data-gate]")
+      .forEach((b) => {
+        b.disabled = !enabled || busy || Number(b.dataset.gate) === g.opening;
+        b.classList.toggle("current", Number(b.dataset.gate) === g.opening);
+      });
+  } else if (selection.kind === "site") {
+    const s = state.sites.find((s) => s.id === selection!.id)!;
+    $("site-status").textContent = s.breached
+      ? "DAUERHAFT GEÖFFNET"
+      : s.buildingUntil !== null
+        ? `BAU LÄUFT · ${(s.buildingUntil - state.time).toFixed(1)} s`
+        : s.built
+          ? "NOTDAMM STEHT"
+          : "UNVERÄNDERT";
+    $("builds-left").textContent = String(state.buildsLeft);
+    (
+      $("panel").querySelector('[data-action="build"]') as HTMLButtonElement
+    ).disabled =
+      !enabled ||
+      s.breached ||
+      s.built ||
+      s.buildingUntil !== null ||
+      !state.buildsLeft;
+    ($("panel").querySelector("[data-breach]") as HTMLButtonElement).disabled =
+      !enabled || s.breached || s.buildingUntil !== null;
+  } else {
+    const spec = nodeSpec(selection.id),
+      n = state.nodes.find((n) => n.id === spec.id)!;
+    const depth = $("panel").querySelector("#node-depth");
+    if (depth) depth.textContent = n.depth.toFixed(2);
+    if (spec.kind === "town") {
+      $("town-damage").textContent = damagePoints(n.damage * spec.assetValue);
+      $("town-rescued").textContent =
+        `${Math.floor(n.rescued)} / ${spec.residents}`;
+      $("panel")
+        .querySelectorAll<HTMLButtonElement>("[data-team]")
+        .forEach((b) => {
+          const i = Number(b.dataset.team),
+            assigned = state.teams[i];
+          b.disabled = !enabled;
+          b.classList.toggle("assigned", assigned === spec.id);
+          $(`team-label-${i}`).textContent =
+            assigned === spec.id
+              ? "Hier eingesetzt · abziehen"
+              : assigned
+                ? `Von ${nodeSpec(assigned).name} hierher`
+                : "Hier einsetzen";
+        });
+    } else if (spec.kind === "basin") {
+      const fraction = Math.min(1, n.depth / spec.capacityDepth);
+      $("basin-fill").textContent =
+        `${Math.round(fraction * 100)} % · Spielpegel ${n.depth.toFixed(2)}`;
+      ($("basin-meter") as HTMLElement).style.width = `${fraction * 100}%`;
+    }
+  }
+}
+
+function refresh(force = false): void {
+  updatePanel();
+  const r = getResult(state);
+  $("time-left").textContent = time(
+    Math.max(0, SCENARIO.duration - state.time),
+  );
+  $("safe").textContent = `${r.safe} / ${r.total}`;
+  $("damage").textContent = damagePoints(r.damage);
+  $("phase").textContent = {
+    ready: "VORBEREITUNG",
+    running: "EINSATZ LÄUFT",
+    paused: "PAUSIERT",
+    finished: "EINSATZ BEENDET",
+  }[state.phase];
+  $("intro").hidden = state.phase !== "ready";
+  $("map-banner").hidden = state.phase !== "paused";
+  const pause = $("pause") as HTMLButtonElement;
+  pause.disabled = state.phase === "ready" || state.phase === "finished";
+  pause.textContent = state.phase === "paused" ? "Weiter" : "Pause";
+  $("inflow").textContent = `${Math.round(inflowAt(state.time))} Einheiten/s`;
+  const cursor = $("forecast-cursor"),
+    x = String(12 + Math.min(180, state.time) * 2.1);
+  cursor.setAttribute("x1", x);
+  cursor.setAttribute("x2", x);
+  const messages = [...state.events]
+    .reverse()
+    .filter((e) => ["warning", "flood", "breach", "finish"].includes(e.type))
+    .slice(0, 3);
+  const eventKey = `${state.lastError ?? ""}:${messages.map((e) => e.id).join(",")}`;
+  if (force || lastEvents !== eventKey) {
+    lastEvents = eventKey;
+    $("events").innerHTML =
+      (state.lastError
+        ? `<div class="event error">${escapeHTML(state.lastError)}</div>`
+        : "") +
+      (messages.length
+        ? messages
+            .map(
+              (e) =>
+                `<div class="event"><time>${time(e.time)}</time><span>${escapeHTML(e.message)}</span></div>`,
+            )
+            .join("")
+        : '<p class="small">Noch keine Warnungen. Beobachte die Prognose.</p>');
+  }
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-select]")
+    .forEach((b) =>
+      b.classList.toggle(
+        "selected",
+        b.dataset.select === `${selection?.kind}:${selection?.id}`,
+      ),
+    );
+  view.update(state, selection);
+  view.render();
+}
+
+function startHold(
+  button: HTMLButtonElement,
+  source: "pointer" | "keyboard",
+): void {
+  if (
+    hold ||
+    button.disabled ||
+    state.phase !== "running" ||
+    selection?.kind !== "site" ||
+    selection.id !== button.dataset.breach
+  )
+    return;
+  const id = button.dataset.breach!,
+    start = performance.now();
+  hold = { button, id, start, frame: 0, source };
+  button.classList.add("holding");
+  const run = (now: number) => {
+    if (
+      !hold ||
+      hold.button !== button ||
+      state.phase !== "running" ||
+      selection?.id !== id ||
+      document.hidden
+    ) {
+      cancelHold();
+      return;
+    }
+    const ratio = Math.min(1, (now - start) / 900);
+    button.style.setProperty("--hold-progress", `${ratio * 100}%`);
+    if (ratio >= 1) {
+      cancelHold();
+      act({ type: "breach", id });
+      return;
+    }
+    hold.frame = requestAnimationFrame(run);
+  };
+  hold.frame = requestAnimationFrame(run);
+}
+
+$("gate-list").innerHTML = gates
+  .map(
+    (g) =>
+      `<button data-select="gate:${g.id}" data-testid="select-${g.id}">${escapeHTML(g.name)} <span>↗</span></button>`,
+  )
+  .join("");
+$("site-list").innerHTML = SCENARIO.sites
+  .map(
+    (site) =>
+      `<button data-select="site:${site.id}" data-testid="select-${site.id}">${escapeHTML(site.name)} <span>↗</span></button>`,
+  )
+  .join("");
+$("town-list").innerHTML = towns
+  .map(
+    (t) =>
+      `<button data-select="node:${t.id}" data-testid="select-${t.id}">${escapeHTML(t.name)} <span>↗</span></button>`,
+  )
+  .join("");
+app.addEventListener("click", (event) => {
+  const b = (event.target as Element).closest<HTMLButtonElement>("button");
+  if (!b) return;
+  if (b.dataset.breach) {
+    event.preventDefault();
+    return;
+  }
+  if (b.id === "pause")
+    return void act({ type: state.phase === "paused" ? "resume" : "pause" });
+  if (b.id === "reset" || b.dataset.action === "reset")
+    return void act({ type: "reset" });
+  if (b.dataset.category) {
+    category = b.dataset.category as Preparation["kind"];
+    panelKey = "";
+    refresh(true);
+    return;
+  }
+  if (b.dataset.prep) {
+    const id = b.dataset.prep;
+    act({ type: "prepare", preparation: { kind: category, targetId: id } });
+    select({ kind: category === "reinforce" ? "site" : "node", id });
+    return;
+  }
+  if (b.dataset.action === "start") return void act({ type: "start" });
+  if (b.dataset.select) {
+    const [kind, id] = b.dataset.select.split(":");
+    select({ kind: kind as "node" | "gate" | "site", id });
+    return;
+  }
+  if (b.dataset.gate && selection?.kind === "gate")
+    return void act({
+      type: "gate",
+      id: selection.id,
+      opening: Number(b.dataset.gate) as 0 | 0.5 | 1,
+    });
+  if (b.dataset.action === "build" && selection?.kind === "site")
+    return void act({ type: "build", id: selection.id });
+  if (b.dataset.team && selection?.kind === "node") {
+    const index = Number(b.dataset.team);
+    act({
+      type: "team",
+      index,
+      townId: state.teams[index] === selection.id ? null : selection.id,
+    });
+  }
+});
+app.addEventListener("pointerdown", (event) => {
+  const b = (event.target as Element).closest<HTMLButtonElement>(
+    "[data-breach]",
+  );
+  if (b && event.isPrimary && event.button === 0) {
+    event.preventDefault();
+    startHold(b, "pointer");
+  }
+});
+window.addEventListener("pointerup", cancelHold);
+window.addEventListener("pointercancel", cancelHold);
+app.addEventListener("pointerout", (event) => {
+  if (!hold || hold.source !== "pointer") return;
+  const next = event.relatedTarget;
+  if (
+    event.target === hold.button &&
+    !(next instanceof Node && hold.button.contains(next))
+  )
+    cancelHold();
+});
+app.addEventListener("focusout", (event) => {
+  if (hold?.source === "keyboard" && event.target === hold.button) cancelHold();
+});
+window.addEventListener("pointermove", (event) => {
+  if (!hold || hold.source !== "pointer") return;
+  const r = hold.button.getBoundingClientRect();
+  if (
+    event.clientX < r.left ||
+    event.clientX > r.right ||
+    event.clientY < r.top ||
+    event.clientY > r.bottom
+  )
+    cancelHold();
+});
+app.addEventListener("keydown", (event) => {
+  const target = event.target as HTMLElement;
+  if (
+    (event.code === "Space" || event.code === "Enter") &&
+    target.matches("[data-breach]")
+  ) {
+    event.preventDefault();
+    if (!event.repeat) startHold(target as HTMLButtonElement, "keyboard");
+  }
+});
+window.addEventListener("keyup", (event) => {
+  if (
+    hold?.source === "keyboard" &&
+    (event.code === "Space" || event.code === "Enter")
+  ) {
+    event.preventDefault();
+    cancelHold();
+  }
+});
+document.addEventListener("keydown", (event) => {
+  if (
+    event.code !== "Space" ||
+    event.repeat ||
+    event.defaultPrevented ||
+    !["running", "paused"].includes(state.phase)
+  )
+    return;
+  if (
+    (event.target as HTMLElement).closest(
+      'button,a,input,select,textarea,[role="button"],[contenteditable]',
+    )
+  )
+    return;
+  event.preventDefault();
+  act({ type: state.phase === "running" ? "pause" : "resume" });
+});
+window.addEventListener("blur", cancelHold);
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    cancelHold();
+    if (state.phase === "running") act({ type: "pause" });
+  }
+});
+function frame(now: number): void {
+  const dt = Math.min(0.1, Math.max(0, (now - lastFrame) / 1000));
+  lastFrame = now;
+  if (state.phase === "running") {
+    advance(state, dt);
+    if (now - lastUpdate > 100 || state.result !== null) {
+      lastUpdate = now;
+      refresh();
+    } else view.render();
+  }
+  requestAnimationFrame(frame);
+}
+if (new URLSearchParams(location.search).get("test") === "1")
+  Object.assign(window, {
+    __waterfighter: {
+      state: (): GameState => state,
+      command: (c: Command): boolean => act(c),
+      advance: (seconds: number): void => {
+        advance(state, seconds);
+        refresh(true);
+      },
+      select: (next: Selection): void => select(next),
+    },
+  });
+refresh(true);
+requestAnimationFrame(frame);

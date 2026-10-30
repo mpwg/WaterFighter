@@ -8,6 +8,8 @@ Stand: 30. Oktober 2026.
 
 Auf Ansichten bis 600 × 500 CSS-Pixel öffnet ein direkter Hilfeknopf die vorhandene Spielanleitung. Im schmalen Querformat wird die geöffnete Anleitung zum Lesen verbreitert; die Maßnahmenvorschau bleibt darüber bedienbar. Produktionsbuild und [alle 104 Chromium-Fälle](browser-pruefung.md#direkter-hilfezugang-auf-sehr-kleinen-ansichten) auf Anwendungscode `ff7e58c` bestanden. Auf dem vorherigen Anwendungscode `64f1f17` bestanden 72 Vitest-Tests und zwei Python-Tests. Menschliche Verständlichkeit und echte Geräte bleiben gesondert zu prüfen.
 
+Die [kompakte Spielhilfe](browser-pruefung.md#firefox-prüfung-der-kompakten-spielhilfe) ließ sich auf demselben Anwendungscode auch in Firefox 159 bei 500 × 320 CSS-Pixeln mit emuliertem Touch öffnen und schließen. Echte Geräte und die menschliche Verständlichkeit bleiben offen.
+
 Die Rückstandsmeldung ist nun auch im Kartenmodus bei ausgeblendetem Menü sichtbar; eine Kartenabfrage erscheint nach dem Aufholen wieder oder kann die Meldung durch eine neue Abfrage ersetzen. Produktionsbuild, 72 Vitest-Tests und [alle 98 Chromium-Fälle](browser-pruefung.md#rückstandsmeldung-bei-ausgeblendetem-kartenmenü) auf Anwendungscode `853cc90` bestanden. Echte Geräte und menschliche Bedienung bleiben offen.
 
 Die [Firefox-Prüfung der Rückstandsmeldung](browser-pruefung.md#firefox-prüfung-der-rückstandsmeldung) bestätigte auch Wiederherstellung und Vorrang einer neuen Kartenabfrage; der Rückstand war testseitig gesetzt. Sie umfasste alle drei Werkzeuge, aber keine vollständige Runde.

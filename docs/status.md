@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+**Anschluss-Grenzfälle:** Bei vertauschten Dammendpunkten bleibt der tatsächlich erzeugte Verlauf gleich; identische Punkte erzeugen keinen Damm. Ein kurzer Graben wird nicht auf eine einzelne Zelle verkürzt, wenn beide Enden auf denselben Anschluss einrasten würden. 89 Tests, Typprüfung und sechs gezielte Chromium-Desktopfälle im Entwicklungsserver bestanden. Der laufende Übergabebuild bleibt unverändert.
+
 **Damm-Darstellung im Quellstand:** Vorschau und bestätigte Dämme erscheinen als orange Bänder mit sechs Metern schematischer Breite; die Simulation verwendet weiterhin die bestätigten Sperrkanten. Eine Sichtkontrolle der normalen Desktopübersicht, 87 Tests, Typprüfung, isolierter Build und fünf gezielte Chromium-Desktopfälle bestanden. Die tatsächliche Spielverständlichkeit und eine physisch breitere Werkzeugwirkung sind damit nicht belegt. Der Übergabebuild auf Port 4173 wurde nicht überschrieben.
 
 **Arcade-Anschlüsse im Quellstand:** Dammenden innerhalb von zwei Rasterzellen können an freie Dammenden oder einen Kartenrand anschließen; Grabenenden können an bestehende Gräben oder offene Modellränder anschließen. Die Vorschau und Kostenprüfung erhalten den tatsächlich erzeugten Verlauf. 87 Vitest-Tests, Typprüfung, ein isolierter Produktionsbuild und sieben gezielte Chromium-Desktopfälle im Entwicklungsserver bestanden. Für die laufende Nutzerübergabe unter Port 4173 wurde der Produktionsbuild nicht überschrieben. Spürbare Werkzeugbreite, weitere Anschlussfälle und menschliche Verständlichkeit bleiben offen; die Arcade-Anforderung ist nicht vollständig abgenommen.

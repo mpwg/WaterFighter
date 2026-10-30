@@ -46,6 +46,8 @@ function damVertices(dams:Iterable<string>,width:number):Point[] {
 }
 /** Ends near existing free dam ends or map edges snap at most two cells. */
 export function arcadeDamPath(start:Point,end:Point,width:number,height:number,existing:Iterable<string>):Face[] {
+  if(start[0]===end[0]&&start[1]===end[1])return [];
+  if(start[0]>end[0]||(start[0]===end[0]&&start[1]>end[1]))return arcadeDamPath(end,start,width,height,existing).reverse();
   const keys=new Set(existing),ends=damVertices(keys,width);
   const candidates=(p:Point)=>{
     const [x,y]=p,edges:Point[]=[[0,y],[width,y],[x,0],[x,height]];
@@ -73,5 +75,6 @@ export function arcadeTrenchPath(start:Point,end:Point,width:number,height:numbe
     return nearby(p,[...edges,...trenches])[0]??p;
   };
   const a=candidates(start),b=candidates(end);
-  return trenchPath(a[0]===b[0]&&a[1]===b[1]&&(start[0]!==end[0]||start[1]!==end[1])?start:a, b,width);
+  if(a[0]===b[0]&&a[1]===b[1]&&(start[0]!==end[0]||start[1]!==end[1]))return trenchPath(start,end,width);
+  return trenchPath(a,b,width);
 }

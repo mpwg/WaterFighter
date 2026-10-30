@@ -17,3 +17,16 @@ it('schließt Grabenenden nur an offene Ränder oder bestehende Gräben an',()=>
   expect(arcadeTrenchPath([1,10],[8,10],20,20,[],[])).toEqual(trenchPath([1,10],[8,10],20));
   expect(arcadeTrenchPath([5,10],[8,10],20,20,[10*20+4],[])).toEqual(trenchPath([4,10],[8,10],20));
 });
+
+ it('vertauscht Dammendpunkte ohne Änderung der tatsächlich erzeugten Strecke',()=>{
+  const existing=damPath([5,2],[5,8],20).map(f=>`${f.axis}:${f.index}`);
+  for(let x=3;x<=7;x++)for(let y=7;y<=9;y++)for(let X=3;X<=7;X++)for(let Y=7;Y<=9;Y++){
+    const a:[number,number]=[x,y],b:[number,number]=[X,Y];
+    expect(arcadeDamPath(a,b,20,20,existing)).toEqual(arcadeDamPath(b,a,20,20,existing).reverse());
+    if(x===X&&y===Y)expect(arcadeDamPath(a,b,20,20,existing)).toEqual([]);
+  }
+});
+it('erhält einen kurzen Graben, wenn beide Enden auf dieselbe Zelle einrasten würden',()=>{
+  const path=arcadeTrenchPath([4,10],[5,10],20,20,[204],[]);
+  expect(path).toEqual(trenchPath([4,10],[5,10],20));
+});

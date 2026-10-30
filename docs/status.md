@@ -6,7 +6,7 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
-Bei der südlichen Dammführung wurde auf `1.5-draft` ein [größerer wirtschaftlicher Einzelabriss](review-gebaeudevergleich.md#wirtschaftlicher-abriss-bei-südlicher-dammführung) gefunden: Bei 180 s verbessert er den Gesamtschaden nach Kosten um 1.598,58; die numerische Runde hält das Schadensziel ein. Eine vollständige Desktop-Produktionsrunde mit Abriss bei 03:00 erreichte das Ziel und bestand den Ergebnisneustart. Die Auswahl nutzte Testkoordinaten; menschliches Auffinden bleibt offen.
+Bei der südlichen Dammführung wurde auf `1.5-draft` ein [größerer wirtschaftlicher Einzelabriss](review-gebaeudevergleich.md#wirtschaftlicher-abriss-bei-südlicher-dammführung) gefunden: Bei 180 s verbessert er den Gesamtschaden nach Kosten um 1.598,58; ein Gebäudevergleich weist die Entlastung zweier Gebäude und den Verlust des abgerissenen Gebäudes einzeln aus. Eine vollständige Desktop-Produktionsrunde mit Abriss bei 03:00 erreichte das Ziel und bestand den Ergebnisneustart. Die Auswahl nutzte Testkoordinaten; menschliches Auffinden bleibt offen.
 
 Ein [Zwölf-Runden-Kurztest mit Worker- und Seiten-Garbage-Collection](browser-pruefung.md#kurze-neustartrunden-mit-garbage-collection) wurde auf `1.5-draft` unter macOS wiederholt. Er verlief ohne protokollierte Seitenfehler; die Speicherstichproben belegen keine langfristige Stabilität und ersetzen keine vollen Runden.
 

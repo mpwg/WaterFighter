@@ -1,0 +1,1925 @@
+{
+  "scenario": "1.5-draft",
+  "at": 180,
+  "control": {
+    "scenario": "1.5-draft",
+    "mode": "south-control",
+    "id": "control",
+    "at": 180,
+    "cost": 0,
+    "beforeDamage": 965.1676731202978,
+    "volumeChange": 0,
+    "budget": 8240,
+    "floodDamage": 19287.450993696842,
+    "demolitionLoss": 0,
+    "totalDamage": 19287.450993696842,
+    "buildings": [
+      {
+        "id": "r11949528-0",
+        "value": 54909,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r13394381-0",
+        "value": 78239,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1527644-0",
+        "value": 4557,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1527645-0",
+        "value": 7441,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1559413-0",
+        "value": 197,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577740-0",
+        "value": 7730,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577742-0",
+        "value": 6751,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577743-0",
+        "value": 8649,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577745-0",
+        "value": 6148,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577746-0",
+        "value": 5905,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577748-0",
+        "value": 4927,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577749-0",
+        "value": 4247,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577750-0",
+        "value": 5548,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r4257449-0",
+        "value": 22826,
+        "damage": 9704.436642094814,
+        "demolished": false,
+        "exposure": 0.45264794965568445
+      },
+      {
+        "id": "r9350494-0",
+        "value": 200504,
+        "damage": 6864.463840175606,
+        "demolished": false,
+        "exposure": 0.06407731224962881
+      },
+      {
+        "id": "w1042830933-0",
+        "value": 348,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104342467-0",
+        "value": 467,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365903-0",
+        "value": 4910,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365905-0",
+        "value": 8787,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365906-0",
+        "value": 2633,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365911-0",
+        "value": 2607,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365913-0",
+        "value": 11867,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365920-0",
+        "value": 818,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365921-0",
+        "value": 4290,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365924-0",
+        "value": 2918,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365926-0",
+        "value": 4893,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365928-0",
+        "value": 4186,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365933-0",
+        "value": 2287,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365935-0",
+        "value": 4075,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365937-0",
+        "value": 4801,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104372038-0",
+        "value": 1863,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104372043-0",
+        "value": 5279,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104372045-0",
+        "value": 2571,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104594082-0",
+        "value": 16035,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104594084-0",
+        "value": 6607,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104594087-0",
+        "value": 6368,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104739508-0",
+        "value": 1921,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104739568-0",
+        "value": 945,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104821882-0",
+        "value": 6490,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105039856-0",
+        "value": 4319,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105039874-0",
+        "value": 3675,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105039888-0",
+        "value": 337,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105049966-0",
+        "value": 6907,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105049976-0",
+        "value": 6336,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105049981-0",
+        "value": 5634,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105055176-0",
+        "value": 1534,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105055181-0",
+        "value": 187,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105055216-0",
+        "value": 2230,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105065173-0",
+        "value": 98,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105065174-0",
+        "value": 4687,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105065183-0",
+        "value": 353,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105065184-0",
+        "value": 1950,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105065185-0",
+        "value": 2302,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105310525-0",
+        "value": 11106,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w106178347-0",
+        "value": 1387,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w106178348-0",
+        "value": 40478,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w106306350-0",
+        "value": 298,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035987-0",
+        "value": 7078,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035988-0",
+        "value": 8427,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035989-0",
+        "value": 1492,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035991-0",
+        "value": 7427,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035993-0",
+        "value": 34134,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035996-0",
+        "value": 4483,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035997-0",
+        "value": 1361,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107036000-0",
+        "value": 2816,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107036005-0",
+        "value": 5141,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107036006-0",
+        "value": 6259,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107036007-0",
+        "value": 8104,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107252029-0",
+        "value": 123,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107252029-1",
+        "value": 512,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107252031-0",
+        "value": 792,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107252059-0",
+        "value": 3333,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107252139-0",
+        "value": 2569,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w1133399445-0",
+        "value": 65721,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w1184608697-0",
+        "value": 9323,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w1193400636-0",
+        "value": 260,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w1206474283-0",
+        "value": 109351,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w1207502028-0",
+        "value": 66,
+        "damage": 44.806578867551046,
+        "demolished": false,
+        "exposure": 0.7389450525598065
+      },
+      {
+        "id": "w1376744111-0",
+        "value": 65,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w1536984753-0",
+        "value": 134,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w177928758-0",
+        "value": 3406,
+        "damage": 1168.960483124627,
+        "demolished": false,
+        "exposure": 0.16898673018219165
+      },
+      {
+        "id": "w27898142-0",
+        "value": 19215,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w316294475-0",
+        "value": 1533,
+        "damage": 1043.8475821574089,
+        "demolished": false,
+        "exposure": 0.5310283947302682
+      },
+      {
+        "id": "w33581744-0",
+        "value": 16017,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w491428570-0",
+        "value": 38167,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w501079920-0",
+        "value": 997,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w501079921-0",
+        "value": 1487,
+        "damage": 460.93586727683083,
+        "demolished": false,
+        "exposure": 0.29939357838734865
+      },
+      {
+        "id": "w50593126-0",
+        "value": 5290,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w50593138-0",
+        "value": 5619,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w50593163-0",
+        "value": 5627,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w59061042-0",
+        "value": 5870,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w62073983-0",
+        "value": 19183,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w672557666-0",
+        "value": 952,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w971637862-0",
+        "value": 321,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      }
+    ],
+    "relativeBalance": 3.6880573573511525e-15
+  },
+  "intervention": {
+    "scenario": "1.5-draft",
+    "mode": "south-control",
+    "id": "w316294475-0",
+    "at": 180,
+    "cost": 154,
+    "beforeDamage": 965.1676731202978,
+    "beforeBuilding": {
+      "id": "w316294475-0",
+      "value": 1533,
+      "damage": 119.22668066575845,
+      "demolished": false,
+      "exposure": 0.564947664197814
+    },
+    "volumeChange": 0,
+    "budget": 8086,
+    "floodDamage": 16001.871036892766,
+    "demolitionLoss": 1533,
+    "totalDamage": 17534.871036892764,
+    "buildings": [
+      {
+        "id": "r11949528-0",
+        "value": 54909,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r13394381-0",
+        "value": 78239,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1527644-0",
+        "value": 4557,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1527645-0",
+        "value": 7441,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1559413-0",
+        "value": 197,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577740-0",
+        "value": 7730,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577742-0",
+        "value": 6751,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577743-0",
+        "value": 8649,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577745-0",
+        "value": 6148,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577746-0",
+        "value": 5905,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577748-0",
+        "value": 4927,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577749-0",
+        "value": 4247,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r1577750-0",
+        "value": 5548,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "r4257449-0",
+        "value": 22826,
+        "damage": 8045.374635764709,
+        "demolished": false,
+        "exposure": 0.3756125452777548
+      },
+      {
+        "id": "r9350494-0",
+        "value": 200504,
+        "damage": 6281.938946862818,
+        "demolished": false,
+        "exposure": 0.05777986424171174
+      },
+      {
+        "id": "w1042830933-0",
+        "value": 348,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104342467-0",
+        "value": 467,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365903-0",
+        "value": 4910,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365905-0",
+        "value": 8787,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365906-0",
+        "value": 2633,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365911-0",
+        "value": 2607,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365913-0",
+        "value": 11867,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365920-0",
+        "value": 818,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365921-0",
+        "value": 4290,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365924-0",
+        "value": 2918,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365926-0",
+        "value": 4893,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365928-0",
+        "value": 4186,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365933-0",
+        "value": 2287,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365935-0",
+        "value": 4075,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104365937-0",
+        "value": 4801,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104372038-0",
+        "value": 1863,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104372043-0",
+        "value": 5279,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104372045-0",
+        "value": 2571,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104594082-0",
+        "value": 16035,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104594084-0",
+        "value": 6607,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104594087-0",
+        "value": 6368,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104739508-0",
+        "value": 1921,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104739568-0",
+        "value": 945,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w104821882-0",
+        "value": 6490,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105039856-0",
+        "value": 4319,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105039874-0",
+        "value": 3675,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105039888-0",
+        "value": 337,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105049966-0",
+        "value": 6907,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105049976-0",
+        "value": 6336,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105049981-0",
+        "value": 5634,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105055176-0",
+        "value": 1534,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105055181-0",
+        "value": 187,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105055216-0",
+        "value": 2230,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105065173-0",
+        "value": 98,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105065174-0",
+        "value": 4687,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105065183-0",
+        "value": 353,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105065184-0",
+        "value": 1950,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105065185-0",
+        "value": 2302,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w105310525-0",
+        "value": 11106,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w106178347-0",
+        "value": 1387,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w106178348-0",
+        "value": 40478,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w106306350-0",
+        "value": 298,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035987-0",
+        "value": 7078,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035988-0",
+        "value": 8427,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035989-0",
+        "value": 1492,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035991-0",
+        "value": 7427,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035993-0",
+        "value": 34134,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035996-0",
+        "value": 4483,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107035997-0",
+        "value": 1361,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107036000-0",
+        "value": 2816,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107036005-0",
+        "value": 5141,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107036006-0",
+        "value": 6259,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107036007-0",
+        "value": 8104,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107252029-0",
+        "value": 123,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107252029-1",
+        "value": 512,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107252031-0",
+        "value": 792,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107252059-0",
+        "value": 3333,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w107252139-0",
+        "value": 2569,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w1133399445-0",
+        "value": 65721,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w1184608697-0",
+        "value": 9323,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w1193400636-0",
+        "value": 260,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w1206474283-0",
+        "value": 109351,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w1207502028-0",
+        "value": 66,
+        "damage": 44.66110386378168,
+        "demolished": false,
+        "exposure": 0.7338085842461551
+      },
+      {
+        "id": "w1376744111-0",
+        "value": 65,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w1536984753-0",
+        "value": 134,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w177928758-0",
+        "value": 3406,
+        "damage": 1168.960483124627,
+        "demolished": false,
+        "exposure": 0.16898673018219165
+      },
+      {
+        "id": "w27898142-0",
+        "value": 19215,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w316294475-0",
+        "value": 1533,
+        "damage": 119.22668066575845,
+        "demolished": true,
+        "exposure": 0
+      },
+      {
+        "id": "w33581744-0",
+        "value": 16017,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w491428570-0",
+        "value": 38167,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w501079920-0",
+        "value": 997,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w501079921-0",
+        "value": 1487,
+        "damage": 460.93586727683083,
+        "demolished": false,
+        "exposure": 0.29939357838734865
+      },
+      {
+        "id": "w50593126-0",
+        "value": 5290,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w50593138-0",
+        "value": 5619,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w50593163-0",
+        "value": 5627,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w59061042-0",
+        "value": 5870,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w62073983-0",
+        "value": 19183,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w672557666-0",
+        "value": 952,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      },
+      {
+        "id": "w971637862-0",
+        "value": 321,
+        "damage": 0,
+        "demolished": false,
+        "exposure": 0
+      }
+    ],
+    "relativeBalance": 3.898803492056932e-15
+  },
+  "comparison": [
+    {
+      "id": "r4257449-0",
+      "control": 9704.436642094814,
+      "intervention": 8045.374635764709,
+      "delta": 1659.0620063301049
+    },
+    {
+      "id": "r9350494-0",
+      "control": 6864.463840175606,
+      "intervention": 6281.938946862818,
+      "delta": 582.5248933127878
+    },
+    {
+      "id": "w1207502028-0",
+      "control": 44.806578867551046,
+      "intervention": 44.66110386378168,
+      "delta": 0.14547500376936284
+    },
+    {
+      "id": "r11949528-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "r13394381-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "r1527644-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "r1527645-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "r1559413-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "r1577740-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "r1577742-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "r1577743-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "r1577745-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "r1577746-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "r1577748-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "r1577749-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "r1577750-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w1042830933-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104342467-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104365903-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104365905-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104365906-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104365911-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104365913-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104365920-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104365921-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104365924-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104365926-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104365928-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104365933-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104365935-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104365937-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104372038-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104372043-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104372045-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104594082-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104594084-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104594087-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104739508-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104739568-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w104821882-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105039856-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105039874-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105039888-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105049966-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105049976-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105049981-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105055176-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105055181-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105055216-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105065173-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105065174-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105065183-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105065184-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105065185-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w105310525-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w106178347-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w106178348-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w106306350-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107035987-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107035988-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107035989-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107035991-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107035993-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107035996-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107035997-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107036000-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107036005-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107036006-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107036007-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107252029-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107252029-1",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107252031-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107252059-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w107252139-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w1133399445-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w1184608697-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w1193400636-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w1206474283-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w1376744111-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w1536984753-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w177928758-0",
+      "control": 1168.960483124627,
+      "intervention": 1168.960483124627,
+      "delta": 0
+    },
+    {
+      "id": "w27898142-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w33581744-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w491428570-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w501079920-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w501079921-0",
+      "control": 460.93586727683083,
+      "intervention": 460.93586727683083,
+      "delta": 0
+    },
+    {
+      "id": "w50593126-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w50593138-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w50593163-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w59061042-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w62073983-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w672557666-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w971637862-0",
+      "control": 0,
+      "intervention": 0,
+      "delta": 0
+    },
+    {
+      "id": "w316294475-0",
+      "control": 1043.8475821574089,
+      "intervention": 1533,
+      "delta": -489.15241784259115
+    }
+  ]
+}

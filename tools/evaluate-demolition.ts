@@ -34,4 +34,4 @@ while(s.time<scenario.parameters.duration-1e-9) {
   game.addInflow(t,dt);game.updateDamage(dt);
 }
 console.log(JSON.stringify({scenario:scenario.version,mode,id,at,cost,beforeDamage,beforeBuilding,volumeChange,budget:game.budget,
-  ...game.totals(),relativeBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow)}));
+  ...game.totals(),...(process.argv.includes('--buildings')?{buildings:game.status()}:{}),relativeBalance:Math.abs(s.volume()-initial-s.inflow+s.outflow-s.roundoffVolume)/(initial+s.inflow)}));

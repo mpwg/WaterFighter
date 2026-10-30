@@ -2,6 +2,8 @@
 import {readFileSync,writeFileSync} from 'node:fs';
 import {chromium} from '@playwright/test';
 import {damPath} from '../src/simulation/path.ts';
+const small=process.argv.includes('--small');
+const target=small?{id:'w1207502028-0',x:485.2301579898596,y:484.41121819158855,cost:7,budget:8233}:{id:'w316294475-0',x:439.81117482960224,y:488.34501120457134,cost:154,budget:8086};
 const points=JSON.parse(readFileSync('tests/fixtures/south-screen-points.json','utf8'));
 const fixture=JSON.parse(readFileSync('tests/fixtures/review-strategies.json','utf8'));
 const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined});
@@ -30,15 +32,15 @@ try {
  await page.getByRole('button',{name:'Pause'}).click();await page.waitForFunction(()=>document.querySelector('#state').textContent==='Pausiert');
  const pausedAt=await page.locator('#time').textContent();
  await page.locator('[data-mode="demolish"]').click();await page.locator('#panel-toggle').click();
- await page.mouse.click(439.81117482960224,488.34501120457134);
- await confirm({kind:'demolish',buildingId:'w316294475-0'},154);
+ await page.mouse.click(target.x,target.y);
+ await confirm({kind:'demolish',buildingId:target.id},target.cost);
  if(await page.locator('#time').textContent()!==pausedAt)throw Error('Zeit lief während der Pause weiter');
- await page.locator('#panel-toggle').click();await page.waitForFunction(()=>document.querySelector('#budget').textContent.replace(/\s/g,'')==='8086');
+ await page.locator('#panel-toggle').click();await page.waitForFunction(budget=>document.querySelector('#budget').textContent.replace(/\s/g,'')===String(budget),target.budget);
  await page.getByRole('button',{name:'Fortsetzen'}).click();
  await page.waitForFunction(()=>!document.querySelector('#result').hidden,null,{timeout:240000});
- const report={scenario,browser:browser.version(),viewport:points.viewport,pausedAt,actions,wallSeconds:(Date.now()-start)/1000,title:await page.locator('#result-title').textContent(),result:await page.locator('#result-details').textContent(),errors};
+ const report={scenario,browser:browser.version(),target:target.id,viewport:points.viewport,pausedAt,actions,wallSeconds:(Date.now()-start)/1000,title:await page.locator('#result-title').textContent(),result:await page.locator('#result-details').textContent(),errors};
  if(report.title!=='Schadensziel erreicht'||errors.length)throw Error(JSON.stringify(report));
  await page.locator('#again').click();await page.waitForFunction(()=>document.querySelector('#result').hidden&&document.querySelector('#time').textContent==='00:00'&&document.querySelector('#budget').textContent.replace(/\s/g,'')==='10000');
  report.resetScore=await page.locator('#damage-total').textContent();if(!report.resetScore.includes('Schaden 0 /'))throw Error('Schaden nach Neustart nicht zurückgesetzt');
- writeFileSync('/tmp/waterfighter-south-demolition.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+ writeFileSync(small?'/tmp/waterfighter-south-small-demolition.json':'/tmp/waterfighter-south-demolition.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 } finally {await browser.close();}

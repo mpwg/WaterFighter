@@ -40,6 +40,29 @@ try {
     toolResults.push({mode,preview:preview.text,budget:await script('return document.querySelector("#budget").textContent')});
     await click('#reset');await new Promise(r=>setTimeout(r,300));
   }
+  let backlogCheck=null;
+  if(process.env.WATERFIGHTER_FIREFOX_BACKLOG==='1') {
+    phase='Rückstandsanzeige';
+    if(!await script('return window.__wfBacklogHook===true'))throw Error('Testinstrumentierung für Rückstand fehlt');
+    await click('#run');await click('#panel-toggle');await pointer(650,450);
+    const before=await script('return {visible:!document.querySelector("#inspection").hidden,text:document.querySelector("#inspection").textContent}');
+    if(!before.visible||!before.text)throw Error(`Kartenabfrage fehlt: ${JSON.stringify(before)}`);
+    await script('window.__wfBacklog=3;return null');
+    let warning;
+    for(let i=0;i<100;i++){warning=await script('return {visible:!document.querySelector("#tool-hint").hidden,text:document.querySelector("#tool-hint").textContent,inspectionHidden:document.querySelector("#inspection").hidden}');if(warning.visible&&warning.text==='Simulation holt 3.0 s Rückstand auf.'&&warning.inspectionHidden)break;await new Promise(r=>setTimeout(r,100));}
+    if(!warning.visible||warning.text!=='Simulation holt 3.0 s Rückstand auf.'||!warning.inspectionHidden)throw Error(`Rückstand nicht sichtbar: ${JSON.stringify(warning)}`);
+    await script('window.__wfBacklog=0;return null');
+    let restored;
+    for(let i=0;i<100;i++){restored=await script('return {visible:!document.querySelector("#inspection").hidden,text:document.querySelector("#inspection").textContent,hintHidden:document.querySelector("#tool-hint").hidden}');if(restored.visible&&restored.hintHidden)break;await new Promise(r=>setTimeout(r,100));}
+    if(!restored.visible||!restored.hintHidden||restored.text!==before.text)throw Error(`Kartenabfrage nicht wiederhergestellt: ${JSON.stringify(restored)}`);
+    await script('window.__wfBacklog=3;return null');
+    for(let i=0;i<100;i++){if(await script('return !document.querySelector("#tool-hint").hidden'))break;await new Promise(r=>setTimeout(r,100));}
+    await pointer(700,450);await new Promise(r=>setTimeout(r,1000));
+    const nextInspection=await script('return {visible:!document.querySelector("#inspection").hidden,text:document.querySelector("#inspection").textContent,hintHidden:document.querySelector("#tool-hint").hidden}');
+    if(!nextInspection.visible||!nextInspection.hintHidden||!nextInspection.text)throw Error(`Neue Kartenabfrage nicht sichtbar: ${JSON.stringify(nextInspection)}`);
+    backlogCheck={before,warning,restored,nextInspection};await script('window.__wfBacklog=undefined;return null');await click('#panel-toggle');await click('#reset');
+    for(let i=0;i<100;i++){if(await script('return document.querySelector("#state").textContent==="Vorbereitung"'))break;await new Promise(r=>setTimeout(r,100));}
+  }
   let hintChecks=null;
   if(process.env.WATERFIGHTER_FIREFOX_HINT==='1') {
     phase='Bestätigungshinweis';hintChecks=[];
@@ -75,7 +98,7 @@ try {
     if(!fullRound.visible)throw new Error(`Vollständige Runde nicht beendet: ${JSON.stringify(fullRound)}`);
   }
   const screenshot=await command(prefix+'/screenshot',undefined,'GET');writeFileSync('/tmp/waterfighter-firefox.png',Buffer.from(screenshot,'base64'));
-  const report={version:session.capabilities.browserVersion,initial:state,running,paused,reset,toolResults,hintChecks,fullRound};writeFileSync('/tmp/waterfighter-firefox.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+  const report={version:session.capabilities.browserVersion,initial:state,running,paused,reset,toolResults,backlogCheck,hintChecks,fullRound};writeFileSync('/tmp/waterfighter-firefox.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
   if(running.state!=='Läuft'||paused.state!=='Pausiert'||reset.state!=='Vorbereitung'||reset.time!=='00:00')throw new Error('Firefox-Ablauf fehlgeschlagen');
 } catch (error) {
   failed=true;

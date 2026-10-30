@@ -20,7 +20,7 @@ export interface Scenario {
 export function validateScenario(value: unknown): Scenario {
   if (!value || typeof value !== 'object') throw new Error('Szenario ist kein Objekt.');
   const s = value as Scenario;
-  if (s.id !== 'brigittenau' || s.version !== '1.4-draft') throw new Error('Unbekannte Szenarioversion.');
+  if (s.id !== 'brigittenau' || s.version !== '1.5-draft') throw new Error('Unbekannte Szenarioversion.');
   const g = s.grid;
   if (!g || !Number.isInteger(g.width) || !Number.isInteger(g.height) || g.width < 1 || g.height < 1 || g.width * g.height > 1_000_000 || !Number.isFinite(g.cellSize) || g.cellSize <= 0 || !Array.isArray(g.origin) || g.origin.length !== 2 || !g.origin.every(Number.isFinite) || g.crs !== 'EPSG:31256' || g.rowDirection !== 'south') throw new Error('Ungültiges Szenarioraster.');
   if (g.heightReference !== 'Wiener Null (EPSG:8881)') throw new Error('Ungültiger Höhenbezug; Wiener Null erforderlich.');

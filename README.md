@@ -2,7 +2,7 @@
 
 WaterFighter ist ein browserbasierter Prototyp eines Hochwasserschutzspiels in einem realen Wiener Donauviertel. Er umfasst das Szenario, drei Bauwerkzeuge, eine Flutrunde und die Ergebnisanzeige. Die Szenario- und Geräteabnahme ist noch unvollständig. Die Anwendung ist keine Hochwasserprognose.
 
-Der aktuelle Szenarioentwurf behandelt einige OSM-Dächer noch als geschlossene Gebäude. Die [Analyse und der nötige Korrekturschritt](docs/solverbericht.md#überlagerte-gebäude-und-als-gebäude-erfasste-dächer) sind dokumentiert; insbesondere ist ein bisheriger Einzelabriss-Nachweis dadurch nicht belastbar.
+Der Szenarioentwurf `1.5-draft` entfernt zehn identifizierte OSM-Dächer aus der Gebäude- und Sperrenmodellierung. Die [Analyse und Grenzen](docs/solverbericht.md#überlagerte-gebäude-und-als-gebäude-erfasste-dächer) sind dokumentiert. Ein neuer wirtschaftlich sinnvoller Einzelabriss ist noch nicht nachgewiesen; die bisherigen Nachweise für `1.4-draft` sind historisch.
 
 ## Einrichtung und Prüfung
 
@@ -28,7 +28,7 @@ Für eine beobachtete Runde beschreibt [Spieltest ohne Testkoordinaten](docs/spi
 
 Das Spiel setzt aktuelle stabile Versionen von Safari, Chrome oder Firefox mit WebGL2 voraus. Ältere Browser werden nicht gesondert unterstützt; Safari und echte Mobilgeräte sind noch nicht abgenommen.
 
-Auf dem aktuellen Mac bestanden Build und 73 Modelltests sowie ein automatisierter Safari-Lauf mit vollständiger Runde. Die Modelltests umfassen eine [Konvergenzprüfung gegen eine analytische Dammbruchwelle](docs/solverbericht.md#räumliche-verfeinerung-einer-analytischen-dammbruchwelle). Für den Safari-WebDriver muss „Entfernte Automationen und externe Agenten erlauben“ aktiviert sein; Safari wird für den Test durch den WebDriver gestartet. Mobile Tests werden auf Nutzerwunsch vorläufig ausgelassen. Einzelheiten und offene Kriterien stehen in [status.md](docs/status.md).
+Auf dem aktuellen Mac bestanden Build und 73 Modelltests; die vollständige automatisierte Safari-Runde stammt noch vom vorherigen Szenario. Die Modelltests umfassen eine [Konvergenzprüfung gegen eine analytische Dammbruchwelle](docs/solverbericht.md#räumliche-verfeinerung-einer-analytischen-dammbruchwelle). Für den Safari-WebDriver muss „Entfernte Automationen und externe Agenten erlauben“ aktiviert sein; Safari wird für den Test durch den WebDriver gestartet. Mobile Tests werden auf Nutzerwunsch vorläufig ausgelassen. Einzelheiten und offene Kriterien stehen in [status.md](docs/status.md).
 
 Die Typprüfung verwendet ES2025-Bibliothekstypen und prüft auch die TypeScript-Diagnoseprogramme und Konfigurationsdateien. Vite erzeugt den Produktionsbuild mit `esnext` für aktuelle Browser. Das TypeScript-Ziel allein legt das Vite-Ausgabeziel nicht fest; Bibliothekstypen ersetzen keine Prüfung der tatsächlich verfügbaren Browser-APIs.
 
@@ -46,7 +46,7 @@ Weiße Strömungspfeile zeigen die berechnete Richtung nahe der jeweils abgetast
 
 Blaue Pfeile kennzeichnen die Zuflussbereiche; violette Pfeile markieren offene Modellränder, über die Wasser den Ausschnitt verlassen kann. Die Pfeile sind schematisch und keine Aussage über eine sichere reale Ableitung.
 
-Der Szenarioentwurf `1.4-draft` verwendet einen offenen westlichen Modellrand und 3 m Grabentiefe als Spielannahmen. Wasser außerhalb des Ausschnitts wird nicht weiter simuliert. Die numerischen Referenzstrategien stehen in `tests/fixtures/review-strategies.json`; ihr [Gebäudevergleich](docs/review-gebaeudevergleich.md) erklärt Wirkung und Grenzen. Bilanz und Wertung lassen sich mit `bun tools/reference-strategies.ts baseline`, `shield`, `land-divert` beziehungsweise `divert` nachvollziehen. Schräge Damm- und Grabenverläufe folgen einer verbundenen Rasterlinie zwischen den ausgewählten Punkten. Ein [zweiter numerischer Kandidat](docs/review-gebaeudevergleich.md#getrennter-südlicher-graben-mit-dammöffnung) und seine Kontrolle sind als `south-divert` und `south-control` nachvollziehbar; ihre Platzierung ist empfindlich und noch nicht menschlich geprüft.
+Der Szenarioentwurf `1.5-draft` verwendet weiterhin einen offenen westlichen Modellrand und 3 m Grabentiefe als Spielannahmen. Wasser außerhalb des Ausschnitts wird nicht weiter simuliert. Die numerischen Referenzstrategien stehen in `tests/fixtures/review-strategies.json` und lassen sich mit `bun tools/reference-strategies.ts baseline`, `shield`, `land-divert`, `south-control` oder `south-divert` nachvollziehen. Frühere [Gebäudevergleiche](docs/review-gebaeudevergleich.md) beziehen sich auf `1.4-draft` und müssen für die neue Version erneut geprüft werden. Schräge Damm- und Grabenverläufe folgen einer verbundenen Rasterlinie; menschliche Platzierung bleibt offen.
 
 Gräben dürfen an bereits ausgehobene Zellen anschließen. Die Vorschau nennt die wiederverwendeten Zellen; Kosten und Vertiefung betreffen nur neue Zellen. Eine vollständig vorhandene Strecke wird abgelehnt.
 

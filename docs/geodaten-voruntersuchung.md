@@ -526,3 +526,9 @@ Ergänzend zur Verschiebung des ganzen Damms wurde jeweils nur sein Start- oder 
 | Ende | +1 | 47.716,77 | 36.207,05 | 11.509,72 |
 
 Alle vier Grabenrunden erreichen das Ziel mit 7.100 Budgetrest; die jeweilige Schadensminderung übersteigt die Grabenkosten von 1.700. Alle Aktionen sind zulässig, die relativen Wasserbilanzfehler liegen unter 1,19 × 10⁻¹³. Die Kontrolle hat jeweils 8.800 Budgetrest. Diese vier Fälle prüfen nur den vertikalen Versatz eines einzelnen Endpunkts um 4 m; andere Platzierungen, menschliches Auffinden und echte Geräte sind damit nicht abgenommen.
+
+## Szenarioentwurf 1.5: Dachflächen
+
+Die zehn in der [Dachuntersuchung](solverbericht.md#überlagerte-gebäude-und-als-gebäude-erfasste-dächer) identifizierten OSM-Dachflächen werden in `1.5-draft` nicht als geschlossene, schadenspflichtige Gebäude oder hydraulische Sperren modelliert und derzeit nicht dargestellt. Die expliziten Kennungen und der Hinweis stehen getrennt in `tools/scenario-adjustments.json`. `tools/build-scenario.py` kontrolliert bei einem Neuaufbau, dass alle erwarteten Flächen vorhanden sind und jeweils das OSM-Tag `building=roof` tragen. Diese Vereinfachung modelliert keine Stützen und belegt keine reale hydraulische Wirkung.
+
+Auf dem aktuellen Mac lagen die ursprünglichen Rohdateien nicht vor. Deshalb wurde das exakt prüfsummengeprüfte, zuvor unabhängig reproduzierte `1.4-draft`-Paket mit `python3 tools/migrate-roof-scenario.py <1.4.json> <1.5.json>` transformiert. Zwei Ausführungen ergaben bytegleich SHA-256 `f27c6082e7dee7444d20439bd94f14203abe04de412dde2ebedb9cfde7cebdd0`; neben Version und Anpassungshinweis änderte sich nur die Gebäudeliste von 104 auf 94 Einträge. Ein unabhängiger Neuaufbau aus den elf dokumentierten Rohdateien mit der geänderten Pipeline wurde auf diesem Rechner **nicht** ausgeführt und bleibt offen. Die Datenquellen und ihre Prüfpflichten bleiben unverändert.

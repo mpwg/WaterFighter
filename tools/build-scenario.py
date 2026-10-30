@@ -23,6 +23,7 @@ from breakline_faces import derive_faces
 ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / 'raw-data'
 OUT = ROOT / 'public/scenarios/brigittenau-v1.json'
+adjustment = json.loads((ROOT / 'tools/scenario-adjustments.json').read_text(encoding='utf-8'))
 X, Y, SIZE, CELL = 3900, 344150, 800, 4
 N = SIZE // CELL
 EXTENT = box(X, Y, X + SIZE, Y + SIZE)
@@ -121,17 +122,24 @@ for name in sorted(n for n in SOURCES if n.startswith('building-relations/')):
     _, extra_nodes, extra_ways = parse_osm(RAW / name)
     nodes.update(extra_nodes); ways.update(extra_ways)
 buildings, roads, barriers, crossings = [], [], [], []
+excluded_roofs = set(adjustment['excludedRoofBuildings'])
+found_roofs = set()
 def add_building(ident, geometry, tags):
     if not geometry.is_valid: raise ValueError(f'Ungültiges Gebäude {ident}')
     for index, part in enumerate(polygon_parts(geometry.intersection(EXTENT))):
         if part.area < 1: continue
+        part_id = ident+'-'+str(index)
+        if part_id in excluded_roofs:
+            if tags.get('building') != 'roof': raise ValueError(f'Erwartetes Dach hat andere OSM-Tags: {part_id}')
+            found_roofs.add(part_id)
+            continue
         try:
             height = float(tags.get('height',''))
             if not math.isfinite(height) or height <= 0 or height > 150: raise ValueError()
             estimated = False
         except ValueError:
             height, estimated = 12, True
-        buildings.append({'id': ident+'-'+str(index), 'polygon': local_polygon(part), 'area': round(part.area,2), 'height': height, 'heightEstimated': estimated})
+        buildings.append({'id': part_id, 'polygon': local_polygon(part), 'area': round(part.area,2), 'height': height, 'heightEstimated': estimated})
 
 members_of_buildings = set()
 for relation in root.findall('relation'):
@@ -172,6 +180,7 @@ for way in ways.values():
                 if 'bridge' in tags or 'tunnel' in tags:
                     crossings.append({'id': way.attrib['id'], 'bridge': tags.get('bridge'), 'tunnel': tags.get('tunnel'), 'points': coordinates})
 buildings.sort(key=lambda b:b['id']); roads.sort(key=lambda r:(r['id'],r['points'])); barriers.sort(key=lambda r:(r['id'],r['points'])); crossings.sort(key=lambda r:(r['id'],r['points']))
+if found_roofs != excluded_roofs: raise ValueError(f'Erwartete Dachflächen fehlen: {sorted(excluded_roofs-found_roofs)}')
 # Keep 3D survey breaklines independently of the averaged elevation raster.
 # Their attributes do not by themselves identify hydraulic barriers or culverts.
 breaklines = []
@@ -196,7 +205,6 @@ with zipfile.ZipFile(RAW / '35_2_dgm_bk.zip') as archive:
 water_mask = rasterize([(mapping(g), 1) for _,g in water_geometries if not g.is_empty], out_shape=(N,N), transform=TRANSFORM, fill=0, dtype='uint8')
 # DGM liefert keine bathymetrische Aufnahme: synthetische Sohle und Anfangspegel
 # sind explizit spielerische Annahmen, die bei der Kalibrierung geändert werden können.
-adjustment = json.loads((ROOT / 'tools/scenario-adjustments.json').read_text(encoding='utf-8'))
 water_level = 2.0
 bed_depth = 2.0
 bed = terrain.copy()
@@ -209,7 +217,7 @@ scenario = {
  'buildings':buildings, 'roads':roads, 'barriers':barriers, 'crossings':crossings, 'breaklines':breaklines,
  'water': [{'id':ident, 'polygons':[local_polygon(p) for p in polygon_parts(g)]} for ident,g in water_geometries],
  'parameters': {'duration':300, 'budget':10000, 'damageTarget':50000, 'waterLevel':water_level, 'manning':0.025, 'damHeight':4.0, 'damCostPerCell':40, 'trenchDepth':adjustment['trenchDepth'], 'trenchCostPerCell':25, 'buildingValuePerSquareMetre':10, 'demolitionCostFraction':0.1, 'damageDepth':1, 'damageDuration':120, 'inflowCells':[x for x in range(min(N, adjustment['inflowMaxColumnExclusive'])) if water_mask[0,x] == 1], 'inflowCurve':adjustment['inflowCurve'], 'outflowEdges':adjustment['outflowEdges']},
- 'adjustments': [adjustment['inflowNote'], adjustment['diversionNote'], 'Typ-1-Bruchlinien werden mit einer 0,15-m-Schwelle auf Zellkanten gerastert; ihre Höhen dienen näherungsweise als überströmbare Kronen. Formlinien werden nicht als Barrieren behandelt. Durchlässe und die hydraulische Wirkung sind nicht vermessen.', 'OSM-Gewässerflächen erhalten eine künstliche, ebene Sohle bei 0 m Wiener Null und einen Anfangsspiegel bei 2 m Wiener Null. Dies ist keine gemessene Bathymetrie.', 'Gebäude ohne verwendbare Höhenangabe erhalten 12 m Darstellungshöhe.'],
+ 'adjustments': [adjustment['inflowNote'], adjustment['diversionNote'], 'Typ-1-Bruchlinien werden mit einer 0,15-m-Schwelle auf Zellkanten gerastert; ihre Höhen dienen näherungsweise als überströmbare Kronen. Formlinien werden nicht als Barrieren behandelt. Durchlässe und die hydraulische Wirkung sind nicht vermessen.', 'OSM-Gewässerflächen erhalten eine künstliche, ebene Sohle bei 0 m Wiener Null und einen Anfangsspiegel bei 2 m Wiener Null. Dies ist keine gemessene Bathymetrie.', 'Gebäude ohne verwendbare Höhenangabe erhalten 12 m Darstellungshöhe.', adjustment['roofNote']],
  'sources': {'osm':'© OpenStreetMap-Mitwirkende, ODbL 1.0, https://www.openstreetmap.org/copyright und https://opendatacommons.org/licenses/odbl/1-0/', 'terrain':'Datenquelle: Stadt Wien - data.wien.gv.at, CC BY 4.0, https://creativecommons.org/licenses/by/4.0/', 'sha256':SOURCES},
 }
 scenario['surveyCrests'] = derive_faces(scenario)

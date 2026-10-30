@@ -11,3 +11,5 @@ Rohdaten-URLs, Abrufdatum, Prüfsummen und Reproduktionshinweise stehen in der [
 Ab Szenarioversion `1.3-draft` verteilt das Spiel einen künstlichen Zufluss mit 75 % der früheren Kurve auf 90 Gewässerzellen am oberen Rand. Die Parameter liegen in `tools/scenario-adjustments.json`; sie sind Spielannahmen und keine Messwerte.
 
 Ab `1.4-draft` beträgt die spielerische Grabentiefe 3 m und der westliche Modellrand ist zusätzlich offen. Wasser, das dort den berechneten Ausschnitt verlässt, wird außerhalb nicht weiter simuliert. Am Rand liegt unter anderem das OSM-Gebäude Rivergate; die Öffnung ist keine Aussage über eine sichere reale Ableitung oder die dortigen Folgen.
+
+Ab `1.5-draft` werden zehn identifizierte OSM-Dachflächen (`building=roof`) nicht als geschlossene Gebäude, hydraulische Sperren oder schadenspflichtige Objekte verwendet und derzeit nicht dargestellt. Ihre Kennungen und diese Spielannahme stehen in `tools/scenario-adjustments.json`; die Pipeline kontrolliert beim Neuaufbau die jeweiligen OSM-Tags. Stützen und tatsächliche hydraulische Wirkung sind nicht vermessen.

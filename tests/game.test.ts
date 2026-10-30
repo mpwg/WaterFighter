@@ -104,7 +104,7 @@ it('meldet eine Kantenabsenkung auch beim Anschluss an einen bestehenden Graben'
 });
 
 it('meldet die zwei untersuchten Geländekanten im ausgelieferten Szenario',()=>{
-  expect(base.version).toBe('1.4-draft');
+  expect(base.version).toBe('1.5-draft');
   const g=new Game(base),action={kind:'trench' as const,cells:[7036,7037,7038]};
   const before=[g.solver.crestX[7072],g.solver.crestX[7073]];
   const preview=g.preview(action);

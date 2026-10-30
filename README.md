@@ -54,4 +54,4 @@ Die Browserprüfung baut zuerst die aktuelle Produktion und startet sie auf eine
 
 Der frühere Geodaten-/Solver-Prototyp ist aus diesem Branch entfernt. Die unveränderte Git-Referenz `prototype/v1` (`baf0b198732377907eab29eb45869d6da7d5b1cd`) enthält seinen vollständigen historischen Stand; frühere Abnahmeaussagen gelten ausschließlich dort.
 
-Menschliche Spielspaßabnahme, Touch, Safari und echte mobile Geräte bleiben ausdrücklich offen. Es gibt keinen Release, keine Kampagne und keinen Multiplayer.
+Menschliche Spielspaßabnahme, ein echter Browser-Tabwechsel und eine Hörprobe bleiben offen. Touch, Safari und echte mobile Geräte sind nicht abgenommen. Es gibt keinen Release, keine Kampagne und keinen Multiplayer.

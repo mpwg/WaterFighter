@@ -1,12 +1,22 @@
 /** Smoke test against an official Firefox via a locally started geckodriver. */
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { gunzipSync } from 'node:zlib';
 const base=process.env.WATERFIGHTER_GECKODRIVER??'http://127.0.0.1:4444';
 async function command(path,body,method='POST') {const r=await fetch(base+path,{method,headers:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(JSON.stringify(d));return d.value;}
 const session=await command('/session',{capabilities:{alwaysMatch:{browserName:'firefox','moz:firefoxOptions':{binary:process.env.WATERFIGHTER_FIREFOX,args:process.env.WATERFIGHTER_FIREFOX_HEADLESS==='0'?[]:['-headless'],prefs:{'webgl.force-enabled':true,'webgl.disabled':false,'gfx.webrender.software':true}}}}});
 const sid=session.sessionId,prefix=`/session/${sid}`;
 let failed=false,phase="Initialisierung";
 try {
-  await command(prefix+'/url',{url:process.env.WATERFIGHTER_URL??'http://127.0.0.1:4173/'});
+  const url=process.env.WATERFIGHTER_URL??'http://127.0.0.1:4173/';
+  await command(prefix+'/url',{url});
+  const response=await fetch(new URL('scenarios/brigittenau-v1.json.bin',url));
+  if(!response.ok)throw new Error(`Szenariodownload: HTTP ${response.status}`);
+  const bytes=gunzipSync(Buffer.from(await response.arrayBuffer()));
+  const scenarioHash=createHash('sha256').update(bytes).digest('hex');
+  const expectedHash=createHash('sha256').update(readFileSync('public/scenarios/brigittenau-v1.json')).digest('hex');
+  if(scenarioHash!==expectedHash)throw new Error('Ausgeliefertes Szenario stimmt nicht mit dem Arbeitsstand überein');
+  const scenarioVersion=JSON.parse(bytes.toString('utf8')).version;
   const script=async code=>command(prefix+'/execute/sync',{script:code,args:[]});
   let state;
   for(let i=0;i<100;i++) {state=await script('return {message:document.querySelector("#message")?.textContent,enabled:!document.querySelector("#run")?.disabled};');if(state.enabled)break;await new Promise(r=>setTimeout(r,200));}
@@ -97,8 +107,18 @@ try {
     fullRound.wallSeconds=(Date.now()-started)/1000;
     if(!fullRound.visible)throw new Error(`Vollständige Runde nicht beendet: ${JSON.stringify(fullRound)}`);
   }
+  let afterResultReset=null;
+  if(fullRound) {
+    await click('#again');
+    for(let i=0;i<100;i++){
+      afterResultReset=await script('return {resultHidden:document.querySelector("#result").hidden,time:document.querySelector("#time").textContent,state:document.querySelector("#state").textContent,budget:document.querySelector("#budget").textContent,damage:document.querySelector("#damage-breakdown").textContent}');
+      if(afterResultReset.resultHidden && afterResultReset.time==='00:00' && afterResultReset.state==='Vorbereitung' && afterResultReset.budget.replace(/\s/g,'')==='10000' && afterResultReset.damage==='Flut 0 · Abriss 0')break;
+      await new Promise(r=>setTimeout(r,100));
+    }
+    if(!afterResultReset.resultHidden || afterResultReset.time!=='00:00' || afterResultReset.state!=='Vorbereitung' || afterResultReset.budget.replace(/\s/g,'')!=='10000' || afterResultReset.damage!=='Flut 0 · Abriss 0')throw Error(`Neustart nach Ergebnis fehlgeschlagen: ${JSON.stringify(afterResultReset)}`);
+  }
   const screenshot=await command(prefix+'/screenshot',undefined,'GET');writeFileSync('/tmp/waterfighter-firefox.png',Buffer.from(screenshot,'base64'));
-  const report={version:session.capabilities.browserVersion,initial:state,running,paused,reset,toolResults,backlogCheck,hintChecks,fullRound};writeFileSync('/tmp/waterfighter-firefox.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+  const report={version:session.capabilities.browserVersion,scenarioVersion,scenarioHash,initial:state,running,paused,reset,toolResults,backlogCheck,hintChecks,fullRound,afterResultReset};writeFileSync('/tmp/waterfighter-firefox.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
   if(running.state!=='Läuft'||paused.state!=='Pausiert'||reset.state!=='Vorbereitung'||reset.time!=='00:00')throw new Error('Firefox-Ablauf fehlgeschlagen');
 } catch (error) {
   failed=true;

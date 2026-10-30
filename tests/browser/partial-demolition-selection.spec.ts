@@ -1,6 +1,6 @@
 import {expect,test} from '@playwright/test';
 
-test('Gebäude der erfolgreichen Abrissstrategie ist über die Karte auswählbar',async({page})=>{
+test('Bürogebäude ist für die Abrissvorschau über die Karte auswählbar',async({page})=>{
   await page.addInitScript(()=>{
     const Original=window.Worker;
     window.Worker=class extends Original {

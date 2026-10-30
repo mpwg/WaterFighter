@@ -607,3 +607,9 @@ Am 30. Oktober 2026 wurde `bun tools/inspect-restart-memory.mjs` auf einem isoli
 Ohne erzwungene Worker-Sammlung stieg die Renderer-PSS-Summe von 170.727.424 Bytes nach Runde 1 auf 205.901.824 Bytes nach Runde 12; der Seiten-Heap nach Sammlung stieg von 12.356.476 auf 12.929.688 Bytes. Mit Worker-Sammlung betrug die Renderer-PSS-Summe 160.595.968 beziehungsweise 195.096.576 Bytes und der Seiten-Heap 12.352.192 beziehungsweise 12.945.044 Bytes. Im zweiten Lauf lag die Renderer-PSS nach Runde 10 bei 154.806.272 Bytes und nach Runde 11 bei 194.293.760 Bytes; auch mehrere andere Prozessgruppen zeigten dort einen sprunghaften PSS-Anstieg bei nahezu unverändertem RSS. PSS hängt von der Verteilung gemeinsam genutzter Seiten ab; die Messung belegt deshalb keine bestimmte Ursache oder ein Speicherleck.
 
 Die Kurzrunden und erzwungenen Sammlungen sind Diagnosebedingungen, keine Abnahme über vollständige Flutverläufe. Der [separate Drei-Runden-Lauf mit Maßnahmen](#drei-runden-mit-allen-werkzeugen) und echte Geräte bleiben für die Beurteilung relevant; langsame Speicherprobleme sind weiterhin nicht ausgeschlossen.
+
+### Vollständiger Browserdurchgang mit direktem Gebäudezugriff
+
+Der Produktionsbuild von Anwendungscode `a836551` wurde in einem isolierten Git-Archiv erstellt und mit Playwright in Chrome 156.0.8078.73 unter Linux mit Softwaregrafik geprüft. Alle 91 Browserprüfungen bestanden mit einem Testworker in 7,0 Minuten. Dazu gehören Gebäudeauswahl, Abrissvorschau und -bestätigung, Werkzeugaktionen, Kartenbedienung und Neustart. Die isolierte Testkonfiguration verwendete einen eigenen lokalen Port; Anwendung und Tests selbst wurden dafür nicht geändert.
+
+Dies sind automatisierte Desktopprüfungen einschließlich emulierter Touch-Eingaben. Sie ersetzen weder einen unabhängigen menschlichen Spieltest noch die Abnahme auf echten Mobilgeräten oder in Safari.

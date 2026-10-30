@@ -4,7 +4,7 @@ import { World } from './render/world';
 import { displayDamage } from './render/building-status';
 import type { Scenario } from './scenario';
 import type { Action } from './simulation/game';
-import { damPath, trenchPath } from './simulation/path';
+import { arcadeDamPath, arcadeTrenchPath } from './simulation/path';
 import './style.css';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -37,6 +37,7 @@ const timeLabel=app.querySelector<HTMLElement>('#time')!, stateLabel=app.querySe
 type Mode='camera'|'dam'|'trench'|'demolish';
 let world:World|undefined, scenario:Scenario|undefined, round=0, running=false, finished=false, fatalError=false, speed:1|2=1;
 const pendingPresentation=new Map<string,{round:number;confirmedAt:number;confirmedRunning:boolean;confirmedSpeed:1|2;confirmedVisible:boolean;revision?:number;scheduled?:boolean}>();
+let visibleDams:string[]=[],visibleTrenches:number[]=[];
 let mode:Mode='camera', modeRevision=0, first:{x:number;y:number}|undefined, draft:Action|undefined, previewId='', serial=0, awaiting=false;
 let confirmationTimer:ReturnType<typeof setTimeout>|undefined;
 let backlogActive=false, backlogMessageVisible=false;
@@ -70,11 +71,11 @@ function pathAction(a:{x:number;y:number},b:{x:number;y:number}):Action|undefine
   if(!scenario)return; const {width:w,height:h,cellSize:c}=scenario.grid;
   if(mode==='trench') {
     let x=Math.max(0,Math.min(w-1,Math.floor(a.x/c))),y=Math.max(0,Math.min(h-1,Math.floor(a.y/c)));
-    const tx=Math.max(0,Math.min(w-1,Math.floor(b.x/c))),ty=Math.max(0,Math.min(h-1,Math.floor(b.y/c)));return {kind:'trench',cells:trenchPath([x,y],[tx,ty],w)};
+    const tx=Math.max(0,Math.min(w-1,Math.floor(b.x/c))),ty=Math.max(0,Math.min(h-1,Math.floor(b.y/c)));return {kind:'trench',cells:arcadeTrenchPath([x,y],[tx,ty],w,h,visibleTrenches,scenario.parameters.outflowEdges)};
   }
   if(mode==='dam') {
     let x=Math.max(0,Math.min(w,Math.round(a.x/c))),y=Math.max(0,Math.min(h,Math.round(a.y/c)));
-    const tx=Math.max(0,Math.min(w,Math.round(b.x/c))),ty=Math.max(0,Math.min(h,Math.round(b.y/c)));const faces=damPath([x,y],[tx,ty],w);
+    const tx=Math.max(0,Math.min(w,Math.round(b.x/c))),ty=Math.max(0,Math.min(h,Math.round(b.y/c)));const faces=arcadeDamPath([x,y],[tx,ty],w,h,visibleDams);
     return faces.length?{kind:'dam',faces}:undefined;
   }
 }
@@ -99,13 +100,14 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
   if(isReady(data) && !fatalError) {
     if(data.round<=round)return;
     if(data.round!==round+1 || data.scenarioId!==scenario?.id)throw new Error('Ungültige Rundenfolge');
-    round=data.round; pendingPresentation.clear(); running=false; finished=false; backlogActive=false; speed=1; chooseMode('camera'); world?.resetView(); resultPanel.hidden=true; run.textContent='Simulation starten'; speedButton.textContent='1×';
+    round=data.round; visibleDams=[];visibleTrenches=[];pendingPresentation.clear(); running=false; finished=false; backlogActive=false; speed=1; chooseMode('camera'); world?.resetView(); resultPanel.hidden=true; run.textContent='Simulation starten'; speedButton.textContent='1×';
     damageTotal.textContent=`Schaden 0 / ${scenario?.parameters.damageTarget.toLocaleString('de-AT')??'–'}`;damageBreakdown.textContent='Flut 0 · Abriss 0';
     run.disabled=false; reset.disabled=false; speedButton.disabled=false;
     setMessage('Wiener Szenario geladen. Die Wasserberechnung ist bereit.'); stateLabel.textContent='Vorbereitung'; timeLabel.textContent='00:00';compactStatus.textContent=`${timeLabel.textContent} · Budget ${budgetLabel.textContent} · ${stateLabel.textContent}`;
   } else if(data.type==='snapshot') {
     if(data.round===round && world && !fatalError) {
       const n=data.buffer.byteLength/16;
+      visibleDams=data.dams.map(([key])=>key);visibleTrenches=data.trenches;
       world.setFlowRunning(data.running && !finished,data.speed);world.updateState(new Float32Array(data.buffer,n*12,n),data.buildings,data.dams,data.revision,data.trenches); world.updateWater(new Float32Array(data.buffer,0,n),new Float32Array(data.buffer,n*4,n),new Float32Array(data.buffer,n*8,n)); budgetLabel.textContent=Math.round(data.budget).toLocaleString('de-AT'); running=data.running;
       damageTotal.textContent=`Schaden ${displayDamage(data.totalDamage)} / ${displayDamage(scenario!.parameters.damageTarget)}`;damageBreakdown.textContent=`Flut ${displayDamage(data.floodDamage)} · Abriss ${displayDamage(data.demolitionLoss)}`;
       const seconds=Math.floor(data.time); timeLabel.textContent=`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;

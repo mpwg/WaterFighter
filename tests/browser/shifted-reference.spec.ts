@@ -18,7 +18,7 @@ test('Verschobener Referenzdamm bleibt zulässig; ein Verlauf am Kartenrand wird
   await expect(page.locator('#budget')).toHaveText('10 000');
 });
 
-test('Vorschau warnt vor einem Dammende eine Rasterkante vor dem Rand',async({page})=>{
+test('Vorschau verbindet ein nahes Dammende mit dem Rand',async({page})=>{
   await page.addInitScript(()=>{const Original=window.Worker;window.Worker=class extends Original {
     override postMessage(message:any,options?:any){if(message?.type==='preview'&&message.action?.kind==='dam')(window as any).damPreview=message.action.faces;return super.postMessage(message,options);}
   };});
@@ -26,13 +26,13 @@ test('Vorschau warnt vor einem Dammende eine Rasterkante vor dem Rand',async({pa
   await page.locator('[data-mode="dam"]').click();await page.locator('#panel-toggle').click();
   await page.mouse.click(363.14,526.56);await page.mouse.click(385.84,513.48);
   await expect(page.locator('#confirm')).toBeEnabled();
-  expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([26,1],[26,10],200));
-  await expect(page.locator('#preview-text')).toContainText('Ein Dammende liegt eine Rasterkante vor dem Kartenrand; dort kann eine Öffnung bleiben.');
+  expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([26,0],[26,10],200));
+  await expect(page.locator('#preview-text')).toContainText('Kosten: 400');
   await expect(page.locator('#budget')).toHaveText('10 000');await page.locator('#cancel').click();
   await expect(page.locator('#budget')).toHaveText('10 000');
 });
 
-test('Vorschau weist auf eine Rasterkante Abstand zu einem vorhandenen Damm hin',async({page})=>{
+test('Vorschau verbindet ein nahes Ende mit einem vorhandenen Damm',async({page})=>{
   await page.addInitScript(()=>{const Original=window.Worker;window.Worker=class extends Original {
     override postMessage(message:any,options?:any){if(message?.type==='preview'&&message.action?.kind==='dam')(window as any).damPreview=message.action.faces;return super.postMessage(message,options);}
   };});
@@ -42,8 +42,8 @@ test('Vorschau weist auf eine Rasterkante Abstand zu einem vorhandenen Damm hin'
   await expect(page.locator('#confirm')).toBeEnabled();await page.locator('#confirm').click();await expect(page.locator('#preview')).toBeHidden();
   await page.mouse.click(388.36,514.60);await page.mouse.click(431.29,510.80);
   await expect(page.locator('#confirm')).toBeEnabled();
-  expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([27,10],[34,20],200));
-  await expect(page.locator('#preview-text')).toContainText('Ein Dammende liegt eine Rasterkante von einem bestehenden Damm entfernt; dazwischen kann eine Öffnung bleiben.');
-  await expect(page.locator('#budget')).toHaveText('9 600');await page.locator('#cancel').click();
-  await expect(page.locator('#budget')).toHaveText('9 600');
+  expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([26,10],[34,20],200));
+  await expect(page.locator('#preview-text')).toContainText('Kosten: 720');
+  await expect(page.locator('#budget')).toHaveText('9 600');await page.locator('#confirm').click();
+  await expect(page.locator('#budget')).toHaveText('8 880');
 });

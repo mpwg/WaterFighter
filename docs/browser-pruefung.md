@@ -613,3 +613,9 @@ Die Kurzrunden und erzwungenen Sammlungen sind Diagnosebedingungen, keine Abnahm
 Der Produktionsbuild von Anwendungscode `a836551` wurde in einem isolierten Git-Archiv erstellt und mit Playwright in Chrome 156.0.8078.73 unter Linux mit Softwaregrafik geprüft. Alle 91 Browserprüfungen bestanden mit einem Testworker in 7,0 Minuten. Dazu gehören Gebäudeauswahl, Abrissvorschau und -bestätigung, Werkzeugaktionen, Kartenbedienung und Neustart. Die isolierte Testkonfiguration verwendete einen eigenen lokalen Port; Anwendung und Tests selbst wurden dafür nicht geändert.
 
 Dies sind automatisierte Desktopprüfungen einschließlich emulierter Touch-Eingaben. Sie ersetzen weder einen unabhängigen menschlichen Spieltest noch die Abnahme auf echten Mobilgeräten oder in Safari.
+
+### Später Abriss mit direktem Gebäudezugriff
+
+Auf dem isolierten Produktionsbuild von Anwendungscode `a836551` spielte `bun tools/observe-partial-production.mjs --demolition` in Chrome 156.0.8078.73 unter Linux mit Softwaregrafik die vorbereitete Dammkombination und einen späteren Abriss. Bei 03:01 wurde pausiert und das Zielgebäude über einen vorgegebenen Bildschirmtreffer abgefragt: 1.462 Flutschaden bei 11.056 Gebäudewert und 1,00 m Wassertiefe am Rand. Die Abrissvorschau zeigte 11.056 Gesamtverlust und 1.106 Kosten; die Aktion wurde bestätigt und die Runde fortgesetzt.
+
+Nach 155,35 s erreichte die 2×-Runde das Schadensziel mit 31.076 Flutschaden, 11.056 Abrissverlust, 42.132 Gesamtschaden und 7.734 Budgetrest. Seitenfehler wurden nicht protokolliert; nach Neustart zeigte die Anzeige wieder null Schaden. Der Abrissverlust ist im Gesamtschaden enthalten. Der automatisierte Lauf mit festem Klickpunkt belegt keine menschliche Auffindbarkeit oder echte Geräteabnahme.

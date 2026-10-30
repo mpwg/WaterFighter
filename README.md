@@ -8,6 +8,20 @@ Der [aktuelle Prototyp-Zwischenstand](docs/prototyp-status.md) enthält Startanl
 
 Der Szenarioentwurf `1.6-draft` entfernt elf OSM-Dachflächen einschließlich einer Multipolygonrelation aus der geschlossenen Gebäude- und Sperrenmodellierung. Die numerischen und Browsernachweise für frühere Szenarioversionen sind historisch; die erneute Prüfung auf 1.6 läuft. Ein [kleiner wirtschaftlicher Abriss](docs/review-gebaeudevergleich.md#korrektur-der-dachrelation-auf-16) ist in einer automatisierten Runde geprüft. Ein [größeres Gebäude](docs/review-gebaeudevergleich.md#größerer-abriss-ohne-vorbereitete-dämme) ist ohne die getesteten Dämme numerisch wirtschaftlich abzureißen, erreicht allein aber nicht das Schadensziel. Menschliches Auffinden bleibt ungeprüft. Kleine Gebäude lassen sich bei eindeutigem Beinahetreffer auswählen; ein Kreuz markiert die Vorschau.
 
+## In VS Code selbst starten
+
+1. In VS Code den Ordner `/Users/mat/code/WaterFighter` öffnen und über **Terminal → Neues Terminal** das integrierte Terminal öffnen.
+2. Die Abhängigkeiten installieren und den Entwicklungsserver starten:
+
+   ```sh
+   bun install --frozen-lockfile
+   bun run dev
+   ```
+
+3. Die im Terminal angezeigte lokale Adresse im Browser öffnen. Zum Beenden im Terminal **Strg+C** drücken.
+
+Voraussetzung ist Bun; auf diesem Mac liegt es unter `/opt/homebrew/bin/bun` (Version 1.4.4). Falls `bun` im VS-Code-Terminal nicht gefunden wird, für dieses Terminal `export PATH="/opt/homebrew/bin:$PATH"` ausführen und die Befehle wiederholen. Zum Spielen ist keine Browser-Testinstallation nötig. Der Entwicklungsserver lädt den aktuellen Quellstand und das mitgelieferte Szenario; temporäre Prüfbauten oder bereits laufende Vorschauprozesse sind nicht erforderlich.
+
 ## Einrichtung und Prüfung
 
 Voraussetzung: [Bun 1.4.4](https://bun.com/docs/installation) im PATH; TypeScript 7 und Babylon.js 9.33.1 werden über die Lockdatei installiert; für Browserprüfungen zusätzlich ein von Playwright unterstützter Browser mit seinen Systembibliotheken.
@@ -46,7 +60,7 @@ Wenn die laufende Berechnung mehr als zwei Sekunden Rückstand hat, erscheint ei
 
 Die Kopfzeile zeigt laufend Gesamtschaden, Ziel sowie Flut- und Abrissverluste, auch bei ausgeblendetem Menü. Gebäude werden nach Zustand eingefärbt; im Kartenmodus zeigt Antippen zusätzlich Zustand, Schaden und Wassertiefe am Gebäuderand als Text. Bei Wasser nennt die Kartenabfrage Tiefe und Wasserspiegel über Wiener Null; bei ausgeblendetem Menü erscheint sie mit dem Zeitpunkt der Abfrage. So lassen sich Wasserstände auf beiden Seiten eines Damms vergleichen.
 
-Bestätigte Dämme erscheinen als orange Linien und bestätigte Gräben als braune Geländeflächen. Eine schematische dunkelbraune Linie zeigt den Grabenverlauf auch über Wasser und Gebäuden; sie ist eine Kartenüberlagerung. Schräge Gräben folgen rasterverbunden der Verbindung zwischen den beiden gewählten Punkten; die Vorschau zeigt den tatsächlichen Verlauf.
+Bestätigte Dämme erscheinen als schematische orange Bänder und bestätigte Gräben als braune Geländeflächen. Ein schematisches goldgelbes Band zeigt den Grabenverlauf auch über Wasser und Gebäuden; sie ist eine Kartenüberlagerung. Schräge Gräben folgen rasterverbunden der Verbindung zwischen den beiden gewählten Punkten; die Vorschau zeigt den tatsächlichen Verlauf.
 
 Helle Strömungspfeile zeigen die berechnete Richtung nahe der jeweils abgetasteten Wasserzelle. Entlang bestätigter Gräben sind die Pfeile dunkelblau, wenn dort genügend Wasser und Strömung vorhanden sind. Die Größe der regulären Pfeile passt sich begrenzt dem Zoom an; schmale Grabenmarker können trotz der Farbe in der Übersicht schwer erkennbar sein. Eine [Safari-Sichtprobe](docs/browser-pruefung.md#dunkle-grabenpfeile-in-safari) dokumentiert die Darstellung und ihre Grenzen.
 

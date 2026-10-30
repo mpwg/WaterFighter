@@ -6,6 +6,9 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+**Übergabe zur eigenen Erprobung:** Der aktuelle Repository-Quellstand ist maßgeblich; die [VS-Code-Startanleitung](../README.md#in-vs-code-selbst-starten) verwendet `bun install --frozen-lockfile` und `bun run dev`. Am 30. Oktober 2026 wurden Installation und ein unabhängig gestarteter Entwicklungsserver geprüft: Chromium lud die aktuelle Anwendung und das mitgelieferte Szenario `1.6-draft`, dessen entpackter Hash der Quelldatei entsprach; keine Seitenfehler wurden protokolliert. Der Nutzer möchte zunächst selbst spielen und danach Feedback geben. Weitere Umsetzung und Feintuning warten darauf; die Arcade-Platzierung, tatsächliche Werkzeugbreite und menschliche Verständlichkeit sind nicht vollständig abgenommen. Mobile Tests bleiben auf Nutzerwunsch ausgesetzt. Der zuletzt beobachtete automatisierte Safari-Ergebnisneustart schlug fehl; Ursache offen.
+
+
 **Aktueller isolierter Build:** Auf Anwendungscode `2cb4233` bestanden `bun run typecheck` und `bun x vite build --outDir /private/tmp/waterfighter-current-check --emptyOutDir`. Die laufenden Übergabebuilds wurden dabei nicht überschrieben. Vite meldet weiterhin einen JavaScript-Chunk über 500 kB.
 
 **Sofortiger Folgeanschluss:** Nach einer erfolgreichen Worker-Bestätigung berücksichtigt die nächste Vorschau den bestätigten Damm oder Graben bereits vor dem zugehörigen Snapshot. Ein Desktopbrowsertest verzögerte den ersten Aktionssnapshot künstlich um fünf Sekunden und bestätigte dennoch die korrekte seitliche Anschlussvorschau. 92 Tests und Typprüfung bestanden. Die laufenden Übergabebuilds wurden nicht überschrieben.

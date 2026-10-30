@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Ein [Vergleich aller 24 einzelnen Endpunktverschiebungen der südlichen Dämme](review-gebaeudevergleich.md#einzelne-endpunktverschiebungen-der-südlichen-dämme) auf `1.5-draft` ergab 20 zulässige zielerreichende, eine zulässige zielverfehlende und drei abgelehnte Varianten. Die mögliche Lücke wird durch die Berechnung nicht automatisch für Menschen verständlich; menschliche Bedienung bleibt offen.
+
 Die [erneut bezogenen Quellen](geodaten-voruntersuchung.md#unabhängiger-neuaufbau-mit-erneut-bezogenen-quellen) sind zusätzlich als prüfsummengesichertes lokales Archiv unter `raw-data/` gesichert. Ein Neuaufbau aus dem entpackten Archiv reproduziert das Szenario nach der dokumentierten OSM-Hash-Normalisierung. Historische OSM-Bytes und eine unabhängige dauerhafte Sicherung fehlen weiterhin.
 
 Die Gebäudeabfrage und die laufende Schadensanzeige stellen positive Werte unter 0,5 als „< 1“ statt als null dar. Ein Unit-Test und ein Desktop-Produktionsbrowsertest mit gezielt eingespeistem Snapshot prüfen die Anzeige; Build und 79 Vitest-Tests bestanden. Nach dieser Änderung bestanden eine [Chromium-Runde mit spätem Abriss](review-gebaeudevergleich.md#wirtschaftlicher-abriss-bei-südlicher-dammführung), eine [unbehandelte Safari-Runde](browser-pruefung.md#safari-nach-änderung-der-schadensanzeige) sowie [vollständige Chrome- und Firefox-Runden](browser-pruefung.md#wiederholung-nach-änderung-der-schadensanzeige). Firefox protokollierte weiterhin Zugriffsfehler.

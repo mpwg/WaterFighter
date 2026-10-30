@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+**Sofortiger Folgeanschluss:** Nach einer erfolgreichen Worker-Bestätigung berücksichtigt die nächste Vorschau den bestätigten Damm oder Graben bereits vor dem zugehörigen Snapshot. Ein Desktopbrowsertest verzögerte den ersten Aktionssnapshot künstlich um fünf Sekunden und bestätigte dennoch die korrekte seitliche Anschlussvorschau. 92 Tests und Typprüfung bestanden. Die laufenden Übergabebuilds wurden nicht überschrieben.
+
 **Anschluss bei laufender und pausierter Flut:** Zwei gezielte Chromium-Desktopfälle im Entwicklungsserver bauten einen Damm vor der Flut und bestätigten anschließend einen automatisch seitlich angeschlossenen Damm bei laufender Uhr beziehungsweise in Pause. Vorschau, Hinweis, tatsächlicher Verlauf und Budget stimmten; in Pause blieb die Uhr stehen. Menschliche Bedienbarkeit bleibt offen.
 
 **Tatsächliche Grabenbreite noch offen:** Eine Untersuchung der südlichen Referenztrasse `(0,46)` → `(47,26)` auf dem aktuellen Szenario ergänzt jede der 68 Trassenzellen um ihre unmittelbaren orthogonalen Nachbarn. Daraus entstehen 165 unterschiedliche Zellen; drei liegen in Gebäudegrundrissen (`(5,45)`, `(4,46)`, `(9,41)`). Die geltende Validierung würde eine solche ungefilterte Maßnahme ablehnen und ihre Zellkosten wären anders. Eine breitere hydraulische Maßnahme muss daher ihre tatsächlich betroffenen Zellen, Hindernisse, Anschluss, Kosten und Vorschau zusammenhängend behandeln; die bestehenden Bänder sind schematisch. Die lokale Spielversion wurde nicht verändert.

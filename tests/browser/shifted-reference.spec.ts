@@ -89,3 +89,23 @@ test.describe('Seitlicher Anschluss während der Flut',()=>{
     if(pause)await expect(page.locator('#time')).toHaveText(time!);
   });
 });
+
+test('sofortiger Anschluss kennt den bestätigten Damm vor dem verzögerten Snapshot',async({page})=>{
+  await page.addInitScript(()=>{const Original=window.Worker;window.Worker=class extends Original {
+    override set onmessage(handler:((this:Worker,ev:MessageEvent)=>any)|null){
+      super.onmessage=handler?function(ev:MessageEvent){
+        if(ev.data?.type==='snapshot'&&ev.data.revision===1){setTimeout(()=>handler.call(this,ev),5000);return;}
+        handler.call(this,ev);
+      }:null;
+    }
+    override postMessage(message:any,options?:any){if(message?.type==='preview'&&message.action?.kind==='dam')(window as any).damPreview=message.action.faces;return super.postMessage(message,options);}
+  };});
+  await page.setViewportSize({width:1600,height:1000});await page.goto('/');await expect(page.locator('#run')).toBeEnabled();
+  await page.locator('[data-mode="dam"]').click();await page.locator('#panel-toggle').click();
+  await page.mouse.click(360.62,528.01);await page.mouse.click(385.84,513.48);
+  await expect(page.locator('#confirm')).toBeEnabled();await page.locator('#confirm').click();await expect(page.locator('#preview')).toBeHidden();
+  await page.mouse.click(375.75,521.86);await page.mouse.click(393.39,529.70);
+  await expect(page.locator('#confirm')).toBeEnabled({timeout:3000});
+  expect(await page.evaluate(()=>(window as any).damPreview)).toEqual(damPath([26,5],[33,6],200));
+  await expect(page.locator('#preview-text')).toContainText('Anschluss automatisch verbunden.');
+});

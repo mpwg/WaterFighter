@@ -737,3 +737,9 @@ Das Skript betätigte den 44 × 44 Pixel großen Hilfeknopf mit emulierten Touch
 Am 30. Oktober 2026 prüfte `bun tools/verify-static-subpath.mjs` den Produktionsbuild mit Anwendungscode `ff7e58c` unter dem lokalen statischen Pfad `/waterfighter/` in Playwright-Chromium 156.0.8078.4 auf Linux mit Softwaregrafik. Anwendung, Worker und Szenario luden; eine Dammvorschau wurde bestätigt, die Simulation lief bis 00:01, wurde pausiert und neu gestartet. Der Quellenhinweis und das komprimierte Szenariopaket waren erreichbar; der direkte Szenariolink und der Link im Quellenhinweis zeigten auf dasselbe Paket, dessen entpackte Bytes der Quelldatei entsprachen. Alle protokollierten Anfragen waren erfolgreich; Seitenfehler wurden nicht protokolliert.
 
 Dies prüft die lokale Bereitstellung unter einem Unterpfad, keine dauerhafte öffentliche Bereitstellung, vollständige Spielrunde oder Lizenzfreigabe.
+
+### Produktionsrunde nach der kompakten Spielhilfe
+
+Am 30. Oktober 2026 spielte `bun tools/observe-land-production.mjs --after-flood` den Produktionsbuild mit Anwendungscode `ff7e58c` und Szenario `1.4-draft` in Chrome 156.0.8078.73 unter Linux mit Softwaregrafik. Drei Dämme wurden in der Vorbereitung bestätigt; bei 02:31 pausierte der Test und bestätigte den nördlichen Landgraben. Die Worker-Vorschau wurde testseitig mitgelesen; die Auswahl verwendete feste Bildschirmkoordinaten und eine Endpunktkorrektur um einen CSS-Pixel. Die Uhr blieb während der Pause stehen.
+
+Bei 02:32 zeigte eine gemeinsame Browserabfrage während laufender Simulation „Schaden 63 / 50.000“ und „Flut 63 · Abriss 0“. Die 2×-Runde erreichte nach 157,060 s einschließlich Bedienung das Ziel mit 1.362 Flutschaden, keinem Abrissverlust und 7.510 Budgetrest. Seitenfehler wurden nicht protokolliert; der Neustart stellte Zeit, Budget und Schaden zurück. Dieser Lauf ist keine menschliche Spielprüfung oder Geräte- und Leistungsabnahme.

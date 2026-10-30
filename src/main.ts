@@ -28,6 +28,8 @@ let panelKey = "";
 let lastFrame = performance.now();
 let lastUpdate = 0;
 let lastEvents = "";
+let transientError: { message: string; time: number; eventId: number } | null =
+  null;
 let hold: {
   button: HTMLButtonElement;
   id: string;
@@ -164,6 +166,13 @@ function select(next: Selection): void {
 function act(c: Command): boolean {
   if (c.type === "pause" || c.type === "reset") cancelHold();
   const ok = command(state, c);
+  transientError = ok
+    ? null
+    : {
+        message: state.lastError ?? "Eingriff nicht möglich.",
+        time: state.time,
+        eventId: state.nextEventId - 1,
+      };
   if (c.type === "reset" && ok) {
     selection = null;
     category = "reinforce";
@@ -485,8 +494,14 @@ function refresh(force = false): void {
     .reverse()
     .filter((e) => ["warning", "flood", "breach", "finish"].includes(e.type))
     .slice(0, 3);
+  if (
+    transientError &&
+    (state.time - transientError.time >= 3 ||
+      (messages[0]?.id ?? 0) > transientError.eventId)
+  )
+    transientError = null;
   const latestWarning =
-    state.lastError ??
+    transientError?.message ??
     messages[0]?.message ??
     "Prognose beachten und drei Maßnahmen wählen.";
   if ($("latest-warning").textContent !== latestWarning)

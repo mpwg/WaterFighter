@@ -28,3 +28,9 @@ Stand: 30. Oktober 2026. HQ100 ist implementiert und automatisiert in Desktop-Ch
 - `bun run test`: 25 Kernprüfungen bestanden. `bun run test:browser`: acht Browserprüfungen bestanden. Ein 15-Sekunden-Lauf nutzte echte RAF-Zeit; die vollständige Runde verwendete die nur mit `?test=1` erreichbare Beschleunigung.
 - `bun --bun tools/compare-rounds.ts`: acht deterministische HQ100-Strategien mit identischen drei Speicher-Vorbereitungen; [Werte und Grenzen](vergleichsrunden.md).
 - Browser: Chromium 156.0.8078.4, macOS/Darwin 27.2.0 arm64, Viewports 1280×800 und 1440×960. [Start](v3-start.png), [Echtzeit nach 15 s](v3-echtzeit.png), [Flut nach weiteren 90 beschleunigten Simulationssekunden](v3-flut.png), [Ergebnis](v3-ergebnis.png). Diese Screenshots sind Desktop-Chrome-Belege, keine Geräte- oder menschliche Abnahme.
+
+## Abschlussreview
+
+Der Gesamtvergleich von V2 (`106c26a`) bis V3 und das abgegrenzte Nachreview des letzten Fixes (`25907f2..ea064b3`) sind abgeschlossen. Keine offenen wichtigen Codebefunde. Korrigiert wurden insbesondere eine falsche Flutbehauptung bei Rückfluss durch einen geöffneten Damm und die Anzeige von Rettungs-/Bauabschlüssen. Der letzte geprüfte Implementierungsstand bestand 25 Kern- und 8 Browserprüfungen einschließlich Produktionsbuild. Damit ist HQ100 technisch bereit für die menschliche Abnahme, aber noch nicht vollständig abgenommen; die oben genannten offenen Kriterien bleiben bestehen.
+
+Die Umsetzung bleibt lokal committet auf `codex/donau-v3` im vorhandenen Checkout, ohne zusätzlichen Worktree. Es gab keinen Push, Merge oder Release. Die vier weiteren Hochwasserklassen bleiben gemäß Meilensteinentscheidung bis zum menschlichen Spieltest zurückgestellt.

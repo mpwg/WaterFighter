@@ -1,10 +1,10 @@
 /** Smoke test against an official Firefox via a locally started geckodriver. */
 import { writeFileSync } from 'node:fs';
-const base='http://127.0.0.1:4444';
+const base=process.env.WATERFIGHTER_GECKODRIVER??'http://127.0.0.1:4444';
 async function command(path,body,method='POST') {const r=await fetch(base+path,{method,headers:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(JSON.stringify(d));return d.value;}
 const session=await command('/session',{capabilities:{alwaysMatch:{browserName:'firefox','moz:firefoxOptions':{binary:process.env.WATERFIGHTER_FIREFOX,args:process.env.WATERFIGHTER_FIREFOX_HEADLESS==='0'?[]:['-headless'],prefs:{'webgl.force-enabled':true,'webgl.disabled':false,'gfx.webrender.software':true}}}}});
 const sid=session.sessionId,prefix=`/session/${sid}`;
-let failed=false;
+let failed=false,phase="Initialisierung";
 try {
   await command(prefix+'/url',{url:process.env.WATERFIGHTER_URL??'http://127.0.0.1:4173/'});
   const script=async code=>command(prefix+'/execute/sync',{script:code,args:[]});
@@ -54,6 +54,7 @@ try {
   if(running.state!=='Läuft'||paused.state!=='Pausiert'||reset.state!=='Vorbereitung'||reset.time!=='00:00')throw new Error('Firefox-Ablauf fehlgeschlagen');
 } catch (error) {
   failed=true;
+  console.error(`Firefox-Prüfung fehlgeschlagen bei: ${phase}`);
   throw error;
 } finally {
   try {await command(prefix,undefined,'DELETE');}

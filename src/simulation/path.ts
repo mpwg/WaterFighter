@@ -37,14 +37,14 @@ function nearby(point:Point,candidates:Point[],radius=2):Point[] {
     .sort((a,b)=>a.d-b.d || a.p[1]-b.p[1] || a.p[0]-b.p[0]).map(({p})=>p);
 }
 function damVertices(dams:Iterable<string>,width:number):Point[] {
-  const counts=new Map<string,number>();
+  const vertices=new Set<string>();
   for(const key of dams){
     const [axis,raw]=key.split(':'),i=Number(raw),x=axis==='x'?i%(width+1):i%width,y=Math.floor(i/(axis==='x'?width+1:width));
-    for(const [vx,vy] of axis==='x'?[[x,y],[x,y+1]]:[[x,y],[x+1,y]]){const k=`${vx},${vy}`;counts.set(k,(counts.get(k)??0)+1);}
+    for(const [vx,vy] of axis==='x'?[[x,y],[x,y+1]]:[[x,y],[x+1,y]]){vertices.add(`${vx},${vy}`);}
   }
-  return [...counts].filter(([,count])=>count===1).map(([k])=>k.split(',').map(Number) as Point);
+  return [...vertices].map(k=>k.split(',').map(Number) as Point);
 }
-/** Ends near existing free dam ends or map edges snap at most two cells. */
+/** Ends near any existing dam vertex or map edge snap at most two cells. */
 export function arcadeDamPath(start:Point,end:Point,width:number,height:number,existing:Iterable<string>):Face[] {
   if(start[0]===end[0]&&start[1]===end[1])return [];
   if(start[0]>end[0]||(start[0]===end[0]&&start[1]>end[1]))return arcadeDamPath(end,start,width,height,existing).reverse();

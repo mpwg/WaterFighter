@@ -907,3 +907,10 @@ Am 30. Oktober 2026 wurde der lokale Produktionsbuild mit `bun tools/observe-saf
 ## Produktionsrunde nach Korrektur der Grabenschäden
 
 Auf dem korrigierten Produktionsbuild bestand `bun tools/observe-south-production.mjs --after-flood` mit Chromium 156.0.8078.4 und 1600 × 1000 Desktop-Viewport. Drei Dämme wurden in Vorbereitung und der südliche Graben bei 02:30 in Pause bestätigt. Bei 05:00 wurden 2.625 Flutschaden und 6.540 Budgetrest angezeigt, das Ziel erreicht und anschließend beim Ergebnisneustart der Schaden auf null gesetzt. Der Lauf dauerte 164,718 s einschließlich Pause; Seitenfehler wurden nicht protokolliert. Die Auswahl nutzte projizierte Testkoordinaten und eine instrumentierte Endpunktsuche. Dies belegt keine menschliche Verständlichkeit oder Geräteabnahme. Drei gezielte Desktopfälle in `south-trench-blocked.spec.ts` und `trench-route-overlay.spec.ts` bestanden ebenfalls.
+
+
+## Drei Produktionsrunden nach der Schadenskorrektur
+
+`bun tools/observe-three-rounds.mjs --actions` absolvierte auf dem korrigierten Produktionsbuild und Szenario `1.6-draft` drei aufeinanderfolgende vollständige Desktoprunden in Chromium 156.0.8078.4 bei 2×. In jeder Runde wurden bei 00:01 in Pause Graben, Damm und Abriss mit festen Testkoordinaten bestätigt; Budgetübernahme, Fortsetzen und Ergebnis wurden geprüft. Zwei Neustarts setzten Zeit, Zustand, Budget und Schäden zurück. Die Gesamtschäden betrugen 243.028, 243.029 und 243.028 bei jeweils 526 Budgetrest; die Testmaßnahmen verfehlten das Ziel. Die Laufzeiten betrugen 157,255, 157,168 und 157,123 Sekunden. Seitenfehler oder Abstürze wurden nicht gemeldet.
+
+Der JavaScript-Heap am Rundenende betrug 44.028.714, 47.407.052 und 54.305.275 Bytes; der RSS der sechs Browserprozesse 850.247.680, 861.945.856 und 876.707.840 Bytes. Diese wenigen Stichproben steigen und belegen keine langfristige Speicherstabilität. Der automatisierte Lauf ersetzt weder eine unabhängige Spielprüfung noch Tests auf echten mobilen Geräten.

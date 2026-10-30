@@ -669,3 +669,9 @@ Am 30. Oktober 2026 prüfte `WATERFIGHTER_FIREFOX_FULL=1 WATERFIGHTER_FIREFOX_HI
 Bei verborgenem Menü zeigte der erste bestätigte Graben zunächst die Kosten und nach 4,5 s wieder den Hinweis zur Start- und Endpunktwahl. Nach einer weiteren Bestätigung wurde unmittelbar ein neuer Startpunkt gewählt; auch nach 4,5 s blieb der Hinweis zur Endpunktwahl erhalten. Dazwischen setzte der Test die Runde zurück. Zusätzlich funktionierten Start, Pause, Neustart sowie Vorschau und Bestätigung aller drei Werkzeuge. Die anschließende unbehandelte 2×-Runde endete nach 150,977 s bei 05:00 mit sichtbarem Ergebnis, 138.836 Flutschaden und 10.000 Budgetrest; das Ziel wurde verfehlt.
 
 Die Prüfung ist automatisiert und ersetzt weder menschliche Bedienung noch echte Geräte oder tatsächliches Safari. Der frühere [WebDriver-Abbruch](#firefox-wiederholung-nach-zoomänderung-abgebrochen) bleibt ungeklärt.
+
+### Rückstandsmeldung und vollständige Chromium-Suite
+
+Am 30. Oktober 2026 bestanden auf dem Anwendungscode `80cc37a` der Produktionsbuild mit Typprüfung, 72 Vitest-Tests, zwei Python-Tests für Bruchkanten und alle 95 Playwright-Browserfälle. Die Browser-Suite lief mit zwei Workern in sechs Minuten im Playwright-Chromium 156.0.8078.4 unter Linux mit Softwaregrafik. Für die Browserbibliotheken und Schriften wurden die lokalen Verzeichnisse `/tmp/waterfighter-libs` und `/tmp/waterfighter-fonts` verwendet. Der Produktionsbuild meldete weiterhin eine Größenwarnung für einen JavaScript-Chunk.
+
+Zwei neue Fälle verändern testseitig den gemeldeten Rückstand in echten Worker-Snapshots: Sie prüfen das Verschwinden der Rückstandsmeldung beim Aufholen und Pausieren sowie den Vorrang einer neuen Punktauswahl während und nach dem Aufholen. Die übrige Suite umfasst unter anderem Vorschauen, Werkzeugaktionen, emulierten Touch und Neustarts. Der künstlich gesetzte Rückstand ist kein Leistungstest; menschliche Bedienung, Safari und echte Mobilgeräte bleiben ungeprüft.

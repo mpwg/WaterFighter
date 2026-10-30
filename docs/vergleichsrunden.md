@@ -1,31 +1,18 @@
-# Deterministische Vergleichsrunden
+# Vergleichsrunden · HQ100
 
-Stand: 30. Oktober 2026. Ausgeführt auf dem Arcade-Core dieser Branch.
+Die reproduzierbare Runde lässt sich mit `bun --bun tools/compare-rounds.ts` ausführen. Alle Läufe verwenden dasselbe HQ100-Szenario, dieselben drei Vorbereitungen (Speichererweiterung für b1, b2 und b3) und die volle Simulationsdauer von 180 Sekunden. Die Tabelle zeigt die Ausgabe am 30. Oktober 2026.
 
-## Reproduktion und Regeln
+| Strategie | Sicher | Gerettet | In Not | Sachschaden | Bilanzfehler |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Ohne Eingriff | 225 | 0 | 385 | 468,473 | 7,049e-12 |
+| Alle Wehre offen | 225 | 0 | 385 | 408,400 | 1,705e-11 |
+| Alle Wehre geschlossen | 225 | 0 | 385 | 468,473 | 7,049e-12 |
+| Rettung Tulln + Korneuburg ab Beginn | 390 | 165 | 220 | 468,473 | 7,049e-12 |
+| Dammöffnung d3 (Wien Nord) bei 52 s | 225 | 0 | 385 | 500,000 | 5,912e-12 |
+| Rettung Wien Nord + Zentrum ab Beginn, Öffnung d4 bei 88 s | 365 | 300 | 245 | 594,095 | 6,821e-13 |
 
-```sh
-bun --bun run tools/compare-rounds.ts
-```
+„Ohne Eingriff“ lässt die standardmäßig geschlossenen Wehre unangetastet. „Alle Wehre geschlossen“ sendet zu Beginn Schließbefehle; sie sind redundant, weil alle Wehre bereits geschlossen starten. Beide Zeilen sind deshalb absichtlich ein identischer Wasserlauf und bilden keine zwei unterschiedlichen Strategien. „Alle Wehre offen“ gibt allen vier Wehren bei Sekunde 0 einen Öffnungsbefehl. Die Stellzeit beträgt 1,2 Sekunden.
 
-Jeder Durchlauf startet mit demselben Spielzustand und 100 Energie. Die Simulationszeit wird in festen Schritten von 1/30 Sekunde fortgeführt, höchstens bis `MAX_TIME = 180`. Ein Lauf endet früher, wenn der Core Sieg oder Niederlage feststellt. Es gibt keine Zufallswerte.
+Die Rettungsstrategien setzen je ein Team zu Beginn auf die genannten Gemeinden. Die erste Dammöffnung führt Wasser in Wien Nord, die zweite in Wien Zentrum; ein Notdamm wird dabei nicht gebaut. „Sicher“ umfasst die anfangs nicht exponierten Einwohner und gerettete Einwohner exponierter Gemeinden. „In Not“ ist die verbleibende Bevölkerung. Sachschaden ist der mit den Sachwerten gewichtete Schadenswert. Der Bilanzfehler ist `abs(Speichervolumen − Anfangsvolumen − Zufluss + Abfluss)` am Rundenende.
 
-Der Kaufschritt läuft zu jeder vollen simulierten Sekunde vor dem nächsten Zeitschritt. Bauplätze werden in der Reihenfolge `SLOTS` geprüft; der Slotindex wählt zyklisch die Gerätereihenfolge des Plans. Sobald ein Kauf finanzierbar ist, wird gebaut. Es gibt keine Ausbauten. Rettungsläufe verwenden denselben Bauplan wie „Pumpe/Freeze/Cannon“ und lösen zusätzlich das Boot für das erste bedrohte, noch stehende und noch nicht evakuierte Haus aus, sobald die globale Boot-Abklingzeit abgelaufen ist.
-
-## Ergebnisse
-
-| Strategie | Simulierte Zeit (s) | Restenergie | Ausgaben | Geräte | Sicher (von 24) | Punkte | Wellen | Ende |
-|---|---:|---:|---:|---:|---:|---:|---:|---|
-| Nichtstun | 77,97 | 250,0 | 0 | 0 | 0 | 0 | 2/5 | lost |
-| Pumpe only | 146,67 | 233,3 | 300 | 6 | 0 | 177 | 4/5 | lost |
-| Freeze only | 107,70 | 85,4 | 300 | 6 | 0 | 0 | 2/5 | lost |
-| Cannon only | 105,87 | 81,7 | 300 | 6 | 0 | 0 | 2/5 | lost |
-| Pumpe/Freeze/Pumpe | 152,23 | 250,0 | 300 | 6 | 16 | 630 | 5/5 | won |
-| Pumpe/Freeze/Cannon | 154,20 | 250,0 | 300 | 6 | 16 | 638 | 5/5 | won |
-| Pumpe/Freeze/Cannon + Rettung nach Durchbruch | 154,20 | 250,0 | 300 | 6 | 20 | 638 | 5/5 | won |
-
-Restenergie ist der Energiebestand beim Rundenende; Ausgaben summieren die Baukosten. „Sicher“ umfasst Bewohner in stehenden Häusern sowie erfolgreich evakuierte Bewohner. Die Tabelle bestätigt in diesem Modell, dass die beiden Mischpläne die fünf Wellen abschließen und mindestens 12 von 24 Bewohnern sichern; die Boot-Aktion sichert in diesem Lauf weitere vier Bewohner.
-
-## Grenzen
-
-Der Läufer vergleicht eine feste, einfache Kaufregel und genau eine Rettungsregel. Er optimiert weder Platzierung noch Ausbau, Schutzzeitpunkt oder Rettungsziel. Diese Zahlen prüfen die deterministische Ressourcen- und Rundenlogik; sie belegen keinen menschlichen Spielspaß und ersetzen keinen manuellen Spieltest.
+Diese Messung belegt für genau diese Konfiguration, dass Öffnen der Wehre den Sachschaden senkt, ohne in diesem Lauf mehr Menschen zu retten. Die gezielte Rettung verbessert die Zahl sicherer Einwohner; eine Dammöffnung kann den Sachschaden erhöhen. Daraus folgt keine allgemeine Rangfolge für andere Vorbereitungen oder Eingriffszeitpunkte. Die Ausgabe der Vergleichsrunde ist deterministisch und dient als reproduzierbarer Modellvergleich, nicht als Nachweis realistischer Hochwasserwirkung.

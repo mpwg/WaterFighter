@@ -12,9 +12,6 @@
     "test:browser": "bun run build && bun --bun playwright test",
     "preview": "bun --bun vite preview --host 127.0.0.1"
   },
-  "dependencies": {
-    "@babylonjs/core": "9.33.1"
-  },
   "devDependencies": {
     "@playwright/test": "1.64.1",
     "@types/node": "^26.6.6",

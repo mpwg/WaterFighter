@@ -1,90 +1,161 @@
 import { describe, expect, it } from 'vitest';
-import { advance, command, createGame, FIXED_DT, step } from '../src/core/game';
-import { DEVICES, HOUSES, MAX_TIME, SLOTS, WAVES, pointOnRoute } from '../src/core/arena';
-import type { DeviceKind, GameState } from '../src/core/types';
-function running(){const s=createGame();command(s,{type:'start'});return s;}
-function scenario(kinds:DeviceKind[]){
- const s=running();let spent=0;
- for(let t=0;t<MAX_TIME;t++){
-  for(let i=0;i<SLOTS.length;i++)if(!s.devices.some(d=>d.slotId===SLOTS[i].id)){
-   if(command(s,{type:'build',slotId:SLOTS[i].id,kind:kinds[i%kinds.length]}))spent+=DEVICES[kinds[i%kinds.length]].cost;
-  }
-  advance(s,1);
- }
- return {s,spent};
+import { SCENARIO } from '../src/core/arena';
+import { advance, command, createGame, FIXED_DT, getResult, inflowAt, step } from '../src/core/game';
+import type { GameState } from '../src/core/types';
+
+function running(): GameState {
+  const s = createGame();
+  for (const targetId of ['b1', 'b2', 'b3']) command(s, { type: 'prepare', preparation: { kind: 'capacity', targetId } });
+  expect(command(s, { type: 'start' })).toBe(true);
+  return s;
 }
-describe('deterministischer Arcade-Core',()=>{
- it('liefert fünf überlappende Wellen und eine zweite angekündigte Route',()=>{
-  expect(WAVES).toHaveLength(5);expect(WAVES[0].at).toBe(5);expect(WAVES[2].warningAt).toBeLessThan(WAVES[2].at);
-  expect(pointOnRoute('danube',0)).toEqual({x:-15,z:3});expect(pointOnRoute('wien',1)).toEqual({x:15,z:-4});
- });
- it('startet mit Energie für genau zwei Geräte und vollen Häusern',()=>{
-  const s=running();expect(command(s,{type:'build',slotId:SLOTS[0].id,kind:'pump'})).toBe(true);
-  expect(command(s,{type:'build',slotId:SLOTS[1].id,kind:'freeze'})).toBe(true);
-  expect(command(s,{type:'build',slotId:SLOTS[2].id,kind:'cannon'})).toBe(false);expect(s.houses.every(h=>h.health===3)).toBe(true);
- });
- it('führt unabhängig von Zeitportionen dieselben festen Schritte aus',()=>{
-  const a=running(),b=running();advance(a,20);for(let i=0;i<200;i++)advance(b,.1);expect(a).toEqual(b);
-  expect(()=>step(a,.1)).toThrow();expect(FIXED_DT).toBe(1/30);
- });
- it('verbietet Aktionen und Zeitfortschritt in Pause; Reset ist identisch',()=>{
-  const s=running();advance(s,8);command(s,{type:'pause'});const before=structuredClone(s);advance(s,10);expect(s).toEqual(before);
-  expect(command(s,{type:'build',slotId:SLOTS[0].id,kind:'pump'})).toBe(false);
-  expect(command(s,{type:'ability',kind:'cushion',houseId:s.houses[0].id})).toBe(false);
-  command(s,{type:'resume'});advance(s,1);expect(s.time).toBe(9);command(s,{type:'reset'});expect(s).toEqual(createGame());
- });
- it('bedroht ungeschützte Häuser vor Sekunde 15 und zeigt drei Schadenstufen',()=>{
-  const s=running();advance(s,14);const h=s.houses[0];expect(h.threatened).toBe(true);expect(h.damageIn).toBeGreaterThan(0);expect(h.health).toBe(3);
-  advance(s,2);expect(h.health).toBe(2);advance(s,2);expect(h.health).toBe(1);advance(s,2);expect(h.health).toBe(0);
- });
- it('Schutz ist sofort bereit, unterbricht Kontakt und lädt 20 Sekunden',()=>{
-  const s=running();advance(s,14);const h=s.houses[0];expect(h.contact).toBeGreaterThan(0);
-  expect(command(s,{type:'ability',kind:'cushion',houseId:h.id})).toBe(true);expect(h.contact).toBe(0);advance(s,6);expect(h.health).toBe(3);
-  expect(command(s,{type:'ability',kind:'cushion',houseId:h.id})).toBe(false);expect(s.cooldowns.cushion).toBe(34);
- });
- it('evakuiert nach Durchbruch in zwei Sekunden und hält Bewohner nach Gebäudeverlust sicher',()=>{
-  const s=running();advance(s,14);const h=s.houses[0];expect(command(s,{type:'ability',kind:'boat',houseId:h.id})).toBe(true);
-  advance(s,1);expect(h.evacuated).toBe(false);advance(s,1);expect(h.evacuated).toBe(true);expect(s.cooldowns.boat).toBe(39);
-  advance(s,164);expect(h.health).toBe(0);expect(s.safeResidents).toBe(h.residents);expect(s.phase).toBe('lost');
- });
- it('rettet aus einem Haus mit einem Trefferpunkt genau vor dem nächsten Schaden',()=>{
-  const s=running(),h=s.houses[0];while(h.health===3||h.health===2)step(s);
-  expect(h.health).toBe(1);expect(command(s,{type:'ability',kind:'boat',houseId:h.id})).toBe(true);
-  advance(s,2);expect(h.evacuated).toBe(true);expect(h.health).toBe(0);
-  expect(command(s,{type:'ability',kind:'cushion',houseId:h.id})).toBe(false);
-  expect(command(s,{type:'ability',kind:'boat',houseId:h.id})).toBe(false);
- });
- it('kombiniert alle drei Werkzeuge erfolgreich; Wasserwerfer verbessert frühe Abwehr',()=>{
-  const three=scenario(['pump','freeze','cannon']);const two=scenario(['pump','freeze','pump']);
-  expect(three.spent).toBe(two.spent);expect(three.s.safeResidents).toBe(16);expect(three.s.phase).toBe('won');
-  expect(three.s.score).toBeGreaterThan(two.s.score);
- });
- it('verweigert Boote für unbedrohte oder zerstörte Häuser',()=>{
-  const s=running();expect(command(s,{type:'ability',kind:'boat',houseId:s.houses[0].id})).toBe(false);advance(s,20);
-  expect(command(s,{type:'ability',kind:'boat',houseId:s.houses[0].id})).toBe(false);
- });
- it('jede Geräteart hat genau einen Ausbau und belastet Energie korrekt',()=>{
-  const s=running();command(s,{type:'build',slotId:SLOTS[0].id,kind:'pump'});s.energy=200;
-  expect(command(s,{type:'upgrade',slotId:SLOTS[0].id})).toBe(true);expect(s.energy).toBe(135);
-  expect(command(s,{type:'upgrade',slotId:SLOTS[0].id})).toBe(false);expect(s.devices[0].level).toBe(2);
- });
- it('Wasserwerfer verursacht keinen Stärkeschaden und stößt zurück',()=>{
-  const s=running();command(s,{type:'build',slotId:SLOTS[0].id,kind:'cannon'});advance(s,8);
-  expect(s.events.some(e=>e.type==='push')).toBe(true);expect(s.floods[0].strength).toBe(s.floods[0].maxStrength);
- });
- it('Nichtstun verliert früh; Schaden selbst erzeugt keinen Punktebonus',()=>{
-  const s=running();advance(s,180);expect(s.phase).toBe('lost');expect(s.time).toBeLessThan(180);expect(s.safeResidents).toBe(0);expect(s.score).toBe(0);
- });
- it('gleiche Budgets und Kaufroutine: kombinierte Abwehr rettet mehr als alle Monokulturen',()=>{
-  const pure=(['pump','freeze','cannon'] as const).map(kind=>scenario([kind]));const mixed=scenario(['pump','freeze','pump']);
-  expect(pure.map(x=>x.spent)).toEqual([300,300,300]);expect(mixed.spent).toBe(300);
-  expect(pure.map(x=>x.s.safeResidents)).toEqual([0,0,0]);expect(mixed.s.safeResidents).toBe(16);expect(mixed.s.phase).toBe('won');
-  expect(mixed.s.completedWaves).toHaveLength(5);expect(mixed.s.time).toBeLessThanOrEqual(MAX_TIME);expect(HOUSES).toHaveLength(6);
- });
- it('identische Eingaben erzeugen identische Endzustände',()=>{
-  expect(scenario(['pump','freeze','pump'])).toEqual(scenario(['pump','freeze','pump']));
- });
- it('verändert nach Rundenende weder Zeit noch Wertung',()=>{
-  const s=running();advance(s,180);const snapshot=structuredClone(s);advance(s,180);step(s);expect(s).toEqual(snapshot);
- });
+const stored = (s: GameState) => s.nodes.reduce((a, n) => a + n.volume, 0);
+const node = (s: GameState, id: string) => s.nodes.find(n => n.id === id)!;
+
+describe('Wassernetz und Flut', () => {
+  it('besitzt sechs Gemeinden, drei Rückhalteräume, vier Wehre und vier Dammstellen', () => {
+    expect(SCENARIO.version).toBe(3);
+    expect(SCENARIO.nodes.filter(n => n.kind === 'town')).toHaveLength(6);
+    expect(SCENARIO.nodes.filter(n => n.kind === 'basin')).toHaveLength(3);
+    expect(SCENARIO.links.filter(n => n.kind === 'gate')).toHaveLength(4);
+    expect(SCENARIO.sites).toHaveLength(4);
+    for (const l of SCENARIO.links) {
+      expect(SCENARIO.nodes.some(n => n.id === l.from)).toBe(true);
+      expect(SCENARIO.nodes.some(n => n.id === l.to)).toBe(true);
+    }
+  });
+  it('bewahrt die Wasserbilanz über eine volle Runde mit Wehren und Dammöffnung', () => {
+    const s = running();
+    command(s, { type: 'gate', id: 'g1', opening: 1 });
+    command(s, { type: 'build', id: 'd3' });
+    for (let t = 0; t < 180; t++) {
+      if (t === 45) command(s, { type: 'gate', id: 'g1', opening: 0 });
+      if (t === 60) command(s, { type: 'breach', id: 'd2' });
+      if (t === 80) command(s, { type: 'gate', id: 'g4', opening: 1 });
+      advance(s, 1);
+      expect(Math.abs(stored(s) - s.initialVolume - s.totalIn + s.totalOut)).toBeLessThan(1e-7);
+      expect(s.nodes.every(n => Number.isFinite(n.volume) && n.volume >= -1e-10)).toBe(true);
+    }
+    expect(s.phase).toBe('finished');
+    expect(s.totalOut).toBeGreaterThan(0);
+  });
+  it('öffnet nach Stellzeit und senkt den Pegel vor dem Abzweig', () => {
+    const closed = running(), open = running();
+    command(open, { type: 'gate', id: 'g1', opening: 1 });
+    advance(open, 1);
+    expect(open.gates[0].opening).toBe(0);
+    expect(command(open, { type: 'gate', id: 'g1', opening: .5 })).toBe(false);
+    advance(open, 29); advance(closed, 30);
+    expect(open.gates[0].opening).toBe(1);
+    expect(node(open, 'b1').volume).toBeGreaterThan(node(closed, 'b1').volume);
+    expect(node(open, 'r2').depth).toBeLessThan(node(closed, 'r2').depth);
+  });
+  it('lässt einen vollen Rückhalteraum überlaufen und Wasser bei umgekehrtem Gefälle zurückfließen', () => {
+    const s = running(), b = node(s, 'b1');
+    b.volume = 90 * 1.75 * 6;
+    b.depth = 6;
+    s.initialVolume = stored(s);
+    command(s, { type: 'gate', id: 'g1', opening: 1 });
+    advance(s, 2);
+    expect(s.flows.g1).toBeLessThan(0);
+    expect(s.flows['spill-b1']).toBeGreaterThan(0);
+    expect(node(s, 'korneuburg').volume).toBeGreaterThan(0);
+    expect(Math.abs(stored(s) - s.initialVolume - s.totalIn + s.totalOut)).toBeLessThan(1e-7);
+  });
+  it('lässt zusätzliches Speichervolumen später überlaufen, ohne Wasser zu löschen', () => {
+    const extra = running(), normal = running();
+    normal.preparations = [];
+    for (const s of [extra, normal]) {
+      node(s, 'b1').volume = 300;
+      s.initialVolume = stored(s);
+      step(s);
+    }
+    expect(node(extra, 'b1').depth).toBeLessThan(node(normal, 'b1').depth);
+    expect(normal.flows['spill-b1']).toBeGreaterThan(extra.flows['spill-b1']);
+    expect(Math.abs(stored(extra) - extra.initialVolume - extra.totalIn + extra.totalOut)).toBeLessThan(1e-7);
+  });
+  it('kündigt die zweite Spitze vor ihrem Scheitel an', () => {
+    const s = running(); advance(s, 70);
+    expect(s.events.some(e => e.type === 'warning' && e.message.includes('Zweite'))).toBe(true);
+    expect(inflowAt(112)).toBeGreaterThan(inflowAt(70));
+    expect(inflowAt(180)).toBeLessThan(inflowAt(112));
+  });
+  it('erzeugt identische Zustände bei unterschiedlich portionierter Zeit', () => {
+    const a = running(), b = running();
+    command(a, { type: 'gate', id: 'g4', opening: .5 });
+    command(b, { type: 'gate', id: 'g4', opening: .5 });
+    advance(a, 60);
+    for (let i = 0; i < 600; i++) advance(b, .1);
+    expect(b).toEqual(a);
+    expect(() => step(a, .1)).toThrow();
+    expect(() => advance(a, -1)).toThrow();
+    expect(() => advance(a, Infinity)).toThrow();
+    expect(FIXED_DT).toBe(1 / 30);
+  });
+  it('startet nach Neustart mit identischem Zustand und ohne alten Teilzeitschritt', () => {
+    const restarted = running();
+    advance(restarted, .017);
+    command(restarted, { type: 'reset' });
+    const fresh = createGame();
+    for (const state of [restarted, fresh]) {
+      for (const targetId of ['b1', 'b2', 'b3']) command(state, { type: 'prepare', preparation: { kind: 'capacity', targetId } });
+      command(state, { type: 'start' });
+      command(state, { type: 'team', index: 0, townId: 'tulln' });
+    }
+    advance(restarted, 17.25);
+    for (let i = 0; i < 69; i++) advance(fresh, .25);
+    expect(restarted).toEqual(fresh);
+  });
+});
+
+describe('Rettung und Wertung', () => {
+  it('evakuiert schrittweise und behält gerettete Menschen nach Umverteilung', () => {
+    const s = running(); command(s, { type: 'team', index: 0, townId: 'tulln' });
+    advance(s, 10); const saved = node(s, 'tulln').rescued;
+    expect(saved).toBeCloseTo(18);
+    command(s, { type: 'team', index: 0, townId: 'korneuburg' });
+    advance(s, 10);
+    expect(node(s, 'tulln').rescued).toBe(saved);
+    expect(node(s, 'korneuburg').rescued).toBeCloseTo(18);
+    expect(command(s, { type: 'team', index: 2, townId: 'tulln' })).toBe(false);
+    expect(command(s, { type: 'team', index: 0, townId: 'r1' })).toBe(false);
+  });
+  it('beschleunigt vorbereitete Evakuierung und überschreitet nie die Bevölkerung', () => {
+    const s = createGame();
+    for (const targetId of ['tulln', 'korneuburg', 'wien-nord']) command(s, { type: 'prepare', preparation: { kind: 'evacuation', targetId } });
+    command(s, { type: 'start' });
+    command(s, { type: 'team', index: 0, townId: 'tulln' });
+    command(s, { type: 'team', index: 1, townId: 'tulln' });
+    advance(s, 10); expect(node(s, 'tulln').rescued).toBeCloseTo(64);
+    advance(s, 20); expect(node(s, 'tulln').rescued).toBe(90);
+    expect(s.events.filter(e => e.type === 'rescue' && e.message.includes('vollständig'))).toHaveLength(1);
+  });
+  it('verursacht dauerhaften tiefen- und zeitabhängigen Sachschaden', () => {
+    const shallow = running(), deep = running();
+    node(shallow, 'tulln').volume = 55 * .3;
+    node(deep, 'tulln').volume = 55 * .9;
+    advance(shallow, 5); advance(deep, 5);
+    expect(node(deep, 'tulln').damage).toBeGreaterThan(node(shallow, 'tulln').damage);
+    expect(node(shallow, 'tulln').exposed).toBe(true);
+    const damage = node(shallow, 'tulln').damage;
+    node(shallow, 'tulln').volume = 0; advance(shallow, 1);
+    expect(node(shallow, 'tulln').damage).toBe(damage);
+    expect(node(shallow, 'tulln').exposed).toBe(true);
+  });
+  it('zählt sichere Einwohner nur einmal und priorisiert Menschen vor allen Sachwerten', () => {
+    const s = running();
+    const town = node(s, 'tulln'); town.exposed = true; town.rescued = 45;
+    const r = getResult(s);
+    expect(r.safe).toBe(565); expect(r.inNeed).toBe(45); expect(r.rescued).toBe(45);
+    const propertyPerfect = r.score;
+    town.rescued = 46;
+    for (const n of s.nodes) n.damage = 1;
+    expect(getResult(s).score).toBeGreaterThan(propertyPerfect);
+  });
+  it('friert das Ergebnis nach 180 Sekunden ein', () => {
+    const s = running(); advance(s, 180); const snapshot = structuredClone(s);
+    advance(s, 300); expect(s).toEqual(snapshot);
+    expect(command(s, { type: 'breach', id: 'd1' })).toBe(false);
+    expect(s.result).toEqual(snapshot.result);
+  });
 });

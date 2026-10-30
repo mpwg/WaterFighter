@@ -1,50 +1,60 @@
 import { advance, command, createGame } from '../src/core/game';
-import { DEVICES, MAX_TIME, SLOTS } from '../src/core/arena';
-import type { AbilityKind, DeviceKind, GameState } from '../src/core/types';
+import type { Command, GameState } from '../src/core/types';
 
-const plans: { name: string; kinds: DeviceKind[]; rescueAfterBreach?: boolean }[] = [
-  { name: 'Nichtstun', kinds: [] },
-  { name: 'Pumpe only', kinds: ['pump'] },
-  { name: 'Freeze only', kinds: ['freeze'] },
-  { name: 'Cannon only', kinds: ['cannon'] },
-  { name: 'Pumpe/Freeze/Pumpe', kinds: ['pump', 'freeze', 'pump'] },
-  { name: 'Pumpe/Freeze/Cannon', kinds: ['pump', 'freeze', 'cannon'] },
-  { name: 'Pumpe/Freeze/Cannon + Rettung', kinds: ['pump', 'freeze', 'cannon'], rescueAfterBreach: true },
+type Strategy = { name: string; interventions: (state: GameState) => Command[] };
+
+const preparation = [
+  { kind: 'capacity', targetId: 'b1' },
+  { kind: 'capacity', targetId: 'b2' },
+  { kind: 'capacity', targetId: 'b3' },
+] as const;
+const at = (time: number, state: GameState, commands: Command[]) => Math.abs(state.time - time) < 1e-6 ? commands : [];
+
+const strategies: Strategy[] = [
+  { name: 'Ohne Eingriff', interventions: () => [] },
+  { name: 'Alle Wehre offen', interventions: s => at(0, s, s.gates.map(g => ({ type: 'gate', id: g.id, opening: 1 } as const))) },
+  { name: 'Alle Wehre geschlossen', interventions: s => at(0, s, s.gates.map(g => ({ type: 'gate', id: g.id, opening: 0 } as const))) },
+  {
+    name: 'Rettung Tulln + Korneuburg',
+    interventions: s => at(0, s, [
+      { type: 'team', index: 0, townId: 'tulln' },
+      { type: 'team', index: 1, townId: 'korneuburg' },
+    ]),
+  },
+  {
+    name: 'Dammöffnung Wien Nord bei 52 s',
+    interventions: s => at(52, s, [{ type: 'breach', id: 'd3' }]),
+  },
+  {
+    name: 'Gezielte Rettung + Öffnung bei 88 s',
+    interventions: s => [
+      ...at(0, s, [
+        { type: 'team', index: 0, townId: 'wien-nord' },
+        { type: 'team', index: 1, townId: 'wien-zentrum' },
+      ]),
+      ...at(88, s, [{ type: 'breach', id: 'd4' }]),
+    ],
+  },
 ];
 
-type Result = { name: string; time: number; energy: number; spent: number; bought: number; safe: number; score: number; phase: string; waves: number };
-
-function rescueOneThreatened(state: GameState) {
-  if (state.cooldowns.boat > state.time) return;
-  const house = state.houses.find(item => item.threatened && !item.evacuated && item.evacuationAt === null && item.health > 0);
-  if (house) command(state, { type: 'ability', kind: 'boat' as AbilityKind, houseId: house.id });
-}
-
-function play(plan: typeof plans[number]): Result {
-  const state = createGame();
-  command(state, { type: 'start' });
-  let spent = 0;
-  let second = 0;
-  while (state.phase === 'running' && state.time < MAX_TIME) {
-    // Each integer second, inspect slots in fixed order and buy the first affordable planned item.
-    for (let slotIndex = 0; slotIndex < SLOTS.length; slotIndex++) {
-      const slot = SLOTS[slotIndex];
-      if (state.devices.some(device => device.slotId === slot.id)) continue;
-      if (!plan.kinds.length) break;
-      const kind = plan.kinds[slotIndex % plan.kinds.length];
-      if (command(state, { type: 'build', slotId: slot.id, kind })) spent += DEVICES[kind].cost;
-    }
-    if (plan.rescueAfterBreach) rescueOneThreatened(state);
-    advance(state, Math.min(1, MAX_TIME - state.time));
-    second++;
-    if (second > MAX_TIME + 1) throw new Error(`Zeitbudget überschritten: ${plan.name}`);
+function run(strategy: Strategy) {
+  const s = createGame();
+  for (const p of preparation) command(s, { type: 'prepare', preparation: p });
+  command(s, { type: 'start' });
+  while (s.phase === 'running') {
+    for (const c of strategy.interventions(s)) command(s, c);
+    advance(s, 1);
   }
-  return { name: plan.name, time: state.time, energy: state.energy, spent, bought: state.devices.length, safe: state.safeResidents, score: state.score, phase: state.phase, waves: state.completedWaves.length };
+  const stored = s.nodes.reduce((sum, n) => sum + n.volume, 0);
+  const massError = Math.abs(stored - s.initialVolume - s.totalIn + s.totalOut);
+  return {
+    strategy: strategy.name,
+    safe: s.result!.safe,
+    rescued: s.result!.rescued,
+    inNeed: s.result!.inNeed,
+    damage: Number(s.result!.damage.toFixed(3)),
+    massError: Number(massError.toExponential(3)),
+  };
 }
 
-const results = plans.map(play);
-console.log('| Strategie | Zeit (s) | Restenergie | Ausgaben | Geräte | Sicher (von 24) | Punkte | Wellen | Ende |');
-console.log('|---|---:|---:|---:|---:|---:|---:|---:|---|');
-for (const row of results) {
-  console.log(`| ${row.name} | ${row.time.toFixed(2)} | ${row.energy.toFixed(1)} | ${row.spent} | ${row.bought} | ${row.safe} | ${row.score} | ${row.waves}/5 | ${row.phase} |`);
-}
+console.table(strategies.map(run));

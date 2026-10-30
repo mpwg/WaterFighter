@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Auf Ansichten bis 360 × 500 CSS-Pixel öffnet ein direkter Hilfeknopf die vorhandene Spielanleitung neben der Quellenleiste. Produktionsbuild, 72 Vitest-Tests, zwei Python-Tests und acht [gezielte Chromium-Prüfungen](browser-pruefung.md#direkter-hilfezugang-auf-sehr-kleinen-ansichten) bestanden. Eine vollständige Browsersuite, menschliche Verständlichkeit und echte Geräte bleiben gesondert zu prüfen.
+
 Die Rückstandsmeldung ist nun auch im Kartenmodus bei ausgeblendetem Menü sichtbar; eine Kartenabfrage erscheint nach dem Aufholen wieder oder kann die Meldung durch eine neue Abfrage ersetzen. Produktionsbuild, 72 Vitest-Tests und [alle 98 Chromium-Fälle](browser-pruefung.md#rückstandsmeldung-bei-ausgeblendetem-kartenmenü) auf Anwendungscode `853cc90` bestanden. Echte Geräte und menschliche Bedienung bleiben offen.
 
 Die [Firefox-Prüfung der Rückstandsmeldung](browser-pruefung.md#firefox-prüfung-der-rückstandsmeldung) bestätigte auch Wiederherstellung und Vorrang einer neuen Kartenabfrage; der Rückstand war testseitig gesetzt. Sie umfasste alle drei Werkzeuge, aber keine vollständige Runde.

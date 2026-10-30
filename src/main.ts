@@ -17,6 +17,10 @@ app.innerHTML = `<canvas aria-label="Kartenansicht des Wiener Szenarioentwurfs">
 const canvas=app.querySelector('canvas')!;
 const boundaryLegend=document.createElement('div');boundaryLegend.className='boundary-legend';boundaryLegend.innerHTML='<span class="inflow-key">↑ Zufluss</span> · <span class="outflow-key">↗ offener Modellrand</span>';
 app.querySelector('footer .credits')!.after(boundaryLegend);
+const help=app.querySelector<HTMLDetailsElement>('footer .help')!;help.id='game-help';
+const compactHelp=document.createElement('button');compactHelp.id='compact-help';compactHelp.textContent='Hilfe';compactHelp.setAttribute('aria-controls',help.id);compactHelp.setAttribute('aria-expanded','false');app.append(compactHelp);
+compactHelp.onclick=()=>{help.open=!help.open;if(help.open)help.querySelector('summary')!.scrollIntoView({block:'start'});else app.querySelector('footer')!.scrollTop=0;};
+help.addEventListener('toggle',()=>compactHelp.setAttribute('aria-expanded',String(help.open)));
 const damageSummary=document.createElement('div');damageSummary.className='damage-summary';damageSummary.setAttribute('aria-label','Aktuelle Schäden');
 damageSummary.innerHTML='<strong id="damage-total">Schaden – / –</strong><span id="damage-breakdown">Flut – · Abriss –</span><span id="compact-status" hidden>– · Budget – · Lädt</span>';
 app.querySelector('.topbar h1')!.after(damageSummary);

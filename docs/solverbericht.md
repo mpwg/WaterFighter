@@ -325,3 +325,16 @@ Ein ergänzender Screenshot desselben emulierten Hochformatversuchs bei maximale
 Mit `bun tools/inspect-backwater-readout.mjs --close --mobile --offsets` wurden im selben eingesetzten Zustand um die beiden automatisch gewählten Treffpunkte zusätzlich je acht simulierte Berührungen um jeweils 3 oder 5 CSS-Pixel entlang der Bildschirmachsen verschoben. Beim ersten Punkt lieferten zwei der acht versetzten Berührungen denselben Wasserstand; beim zweiten waren es sechs. Einzelne vertikale Abweichungen um 5 Pixel wählten eine Zelle auf der anderen Dammseite oder eine benachbarte Zelle. Die Beispiele gelten nur für diese beiden programmgesteuert gewählten Punkte und diese Kameraperspektive; sie sind kein statistischer Fingertest, zeigen aber, dass die größere Ansicht die präzise Auswahl nicht allgemein garantiert.
 
 Die maximal mögliche Vergrößerung wurde anschließend erneut erhöht; Strömungsmarker werden bei besonders naher Ansicht entsprechend kleiner skaliert. Im gleichen eingesetzten Zustand und mit den normalen Zoom-Schaltflächen lagen die beiden automatisch gewählten Punkte nun bei 320 × 480 CSS-Pixeln rund 27,2 Pixel und bei 1200 × 800 rund 45,3 Pixel auseinander. Bei den acht um 3 oder 5 Pixel versetzten Touch-Berührungen je Punkt lieferten drei beziehungsweise acht denselben Wasserstand. Diese Einzelbeobachtung ersetzt keinen menschlichen Fingertest; insbesondere ist die Karte in der Nahansicht nur ausschnittsweise sichtbar.
+
+## Räumliche Verfeinerung einer analytischen Dammbruchwelle
+
+Am 30. Oktober 2026 wurde der Solver auf macOS 27.2 arm64 mit Bun 1.4.4 gegen die analytische Ritter-Lösung für einen eindimensionalen Dammbruch in ein trockenes Bett geprüft. Das synthetische Feld ist 200 m lang, links 1 m tief und rechts trocken; nach 3 s ist die Welle noch weit von den geschlossenen Enden entfernt. Die Querbreite beträgt eine Zelle mit reflektierenden Rändern, Reibung und Zufluss sind ausgeschaltet. Die numerischen Zellmittel werden mit über jede Zelle gemittelten analytischen Tiefen verglichen (16 Mittelpunktstichproben pro Zelle). Der integrierte absolute Tiefenfehler über die Länge ergibt:
+
+| Zellweite | CFL-Schritte | Tiefenfehler (m²) |
+| ---: | ---: | ---: |
+| 2 m | 23 | 1,4922 |
+| 1 m | 50 | 1,1700 |
+| 0,5 m | 106 | 0,8498 |
+| 0,25 m | 227 | 0,5727 |
+
+`tests/dam-break-convergence.test.ts` verlangt bei jeder Verfeinerung einen mindestens 10 % kleineren Fehler und bei 0,25 m weniger als 0,65 m². `bun run build` und `bun run test` bestanden auf dem aktuellen Stand mit 73 Tests. Die Werte belegen Konvergenz für diesen idealisierten trockenen Dammbruch; sie belegen keine räumliche Konvergenz des Wiener Szenarios mit Gebäuden, Bruchkanten und Randzufluss und keine reale Hochwasservorhersage.

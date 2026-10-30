@@ -26,7 +26,7 @@ Für eine beobachtete Runde auf einem zweiten Gerät beschreibt [Spieltest ohne 
 
 Das Spiel setzt aktuelle stabile Versionen von Safari, Chrome oder Firefox mit WebGL2 voraus. Ältere Browser werden nicht gesondert unterstützt; Safari und echte Mobilgeräte sind noch nicht abgenommen.
 
-Auf dem aktuellen Mac bestanden Build und 72 Modelltests sowie ein automatisierter Safari-Lauf mit vollständiger Runde. Für den Safari-WebDriver muss „Entfernte Automationen und externe Agenten erlauben“ aktiviert sein; Safari wird für den Test durch den WebDriver gestartet. Mobile Tests werden auf Nutzerwunsch vorläufig ausgelassen. Einzelheiten und offene Kriterien stehen in [status.md](docs/status.md).
+Auf dem aktuellen Mac bestanden Build und 73 Modelltests sowie ein automatisierter Safari-Lauf mit vollständiger Runde. Die Modelltests umfassen eine [Konvergenzprüfung gegen eine analytische Dammbruchwelle](docs/solverbericht.md#räumliche-verfeinerung-einer-analytischen-dammbruchwelle). Für den Safari-WebDriver muss „Entfernte Automationen und externe Agenten erlauben“ aktiviert sein; Safari wird für den Test durch den WebDriver gestartet. Mobile Tests werden auf Nutzerwunsch vorläufig ausgelassen. Einzelheiten und offene Kriterien stehen in [status.md](docs/status.md).
 
 Die Typprüfung verwendet ES2025-Bibliothekstypen und prüft auch die TypeScript-Diagnoseprogramme und Konfigurationsdateien. Vite erzeugt den Produktionsbuild mit `esnext` für aktuelle Browser. Das TypeScript-Ziel allein legt das Vite-Ausgabeziel nicht fest; Bibliothekstypen ersetzen keine Prüfung der tatsächlich verfügbaren Browser-APIs.
 

@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Eine neue [räumliche Konvergenzprüfung](solverbericht.md#räumliche-verfeinerung-einer-analytischen-dammbruchwelle) vergleicht eine synthetische Dammbruchwelle mit der analytischen Ritter-Lösung: Der integrierte Tiefenfehler sinkt bei vier Zellweiten von 1,4922 auf 0,5727 m². Produktionsbuild und alle 73 Vitest-Tests bestanden auf macOS 27.2. Dies belegt nicht die räumliche Konvergenz oder reale Plausibilität des Wiener Szenarios.
+
 Safari 27.2 auf macOS 27.2 bestand [automatisierte Desktopläufe](browser-pruefung.md#safari-272-und-drei-chromium-runden-auf-macos) mit allen Werkzeugen, einer vollständigen unbehandelten 2×-Runde und Neustart nach dem Ergebnis. Drei vollständige Chromium-Runden mit allen Werkzeugen und zwei Neustarts bestanden ebenfalls. Feste Testkoordinaten und unvollständige Speicherbeobachtung begrenzen diese Nachweise; der menschliche Spieltest bleibt offen. Mobile Tests sind auf Nutzerwunsch ausgesetzt.
 
 Der Safari-Prüfablauf liegt als `tools/observe-safari.mjs` im Repository; auf Safari 27.2 bestanden sowohl seine Werkzeug- und Budgetprüfung als auch die vollständige 2×-Runde mit Ergebnisneustart. Zehn gezielte Chromium-Desktopfälle für Lade-, Grafik- und Workerfehler bestanden ebenfalls. Einzelheiten und Grenzen stehen in der [Browserprüfung](browser-pruefung.md#safari-272-und-drei-chromium-runden-auf-macos).

@@ -34,6 +34,7 @@ let world:World|undefined, scenario:Scenario|undefined, round=0, running=false, 
 const pendingPresentation=new Map<string,{round:number;confirmedAt:number;confirmedRunning:boolean;confirmedSpeed:1|2;confirmedVisible:boolean;revision?:number;scheduled?:boolean}>();
 let mode:Mode='camera', modeRevision=0, first:{x:number;y:number}|undefined, draft:Action|undefined, previewId='', serial=0, awaiting=false;
 let confirmationTimer:ReturnType<typeof setTimeout>|undefined;
+let backlogActive=false, backlogMessageVisible=false;
 const resultPanel=app.querySelector<HTMLElement>('#result')!, resultTitle=app.querySelector<HTMLElement>('#result-title')!, resultDetails=app.querySelector<HTMLElement>('#result-details')!;
 app.querySelector<HTMLButtonElement>('#again')!.onclick=()=>{if(round)worker?.postMessage({type:'reset',round});};
 const preview=app.querySelector<HTMLDivElement>('#preview')!,previewText=app.querySelector<HTMLElement>('#preview-text')!,confirm=app.querySelector<HTMLButtonElement>('#confirm')!,cancel=app.querySelector<HTMLButtonElement>('#cancel')!,budgetLabel=app.querySelector<HTMLElement>('#budget')!;
@@ -41,7 +42,7 @@ function syncToolHint(){
   toolHint.textContent=message.textContent;
   toolHint.hidden=!gamePanel.hidden||mode==='camera'||!preview.hidden||finished||fatalError||!toolHint.textContent;
 }
-function setMessage(text:string){if(confirmationTimer!==undefined){clearTimeout(confirmationTimer);confirmationTimer=undefined;}message.textContent=text;syncToolHint();}
+function setMessage(text:string){if(confirmationTimer!==undefined){clearTimeout(confirmationTimer);confirmationTimer=undefined;}backlogMessageVisible=false;message.textContent=text;syncToolHint();}
 function setAwaiting(value:boolean) {awaiting=value;cancel.disabled=value;for(const button of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) button.disabled=value||fatalError;}
 function clearDraft() {first=undefined;draft=undefined;previewId='';setAwaiting(false);preview.hidden=true;confirm.disabled=true;world?.showPreview();syncToolHint();}
 function chooseMode(next:Mode) { mode=next;modeRevision++;inspection.hidden=true;inspection.textContent='';clearDraft(); for(const b of app.querySelectorAll<HTMLButtonElement>('[data-mode]')) b.setAttribute('aria-pressed',String(b.dataset.mode===mode)); setMessage(mode==='camera'?'Karte verschieben und zoomen.':mode==='demolish'?'Gebäude auf der Karte antippen.':'Start und Ende auf der Karte antippen.'); }
@@ -90,7 +91,7 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
   if(isReady(data) && !fatalError) {
     if(data.round<=round)return;
     if(data.round!==round+1 || data.scenarioId!==scenario?.id)throw new Error('Ungültige Rundenfolge');
-    round=data.round; pendingPresentation.clear(); running=false; finished=false; speed=1; chooseMode('camera'); world?.resetView(); resultPanel.hidden=true; run.textContent='Simulation starten'; speedButton.textContent='1×';
+    round=data.round; pendingPresentation.clear(); running=false; finished=false; backlogActive=false; speed=1; chooseMode('camera'); world?.resetView(); resultPanel.hidden=true; run.textContent='Simulation starten'; speedButton.textContent='1×';
     damageTotal.textContent=`Schaden 0 / ${scenario?.parameters.damageTarget.toLocaleString('de-AT')??'–'}`;damageBreakdown.textContent='Flut 0 · Abriss 0';
     run.disabled=false; reset.disabled=false; speedButton.disabled=false;
     setMessage('Wiener Szenario geladen. Die Wasserberechnung ist bereit.'); stateLabel.textContent='Vorbereitung'; timeLabel.textContent='00:00';compactStatus.textContent=`${timeLabel.textContent} · Budget ${budgetLabel.textContent} · ${stateLabel.textContent}`;
@@ -110,7 +111,15 @@ if(worker) worker.onmessage=(event:MessageEvent<Response>)=>{
           window.dispatchEvent(new CustomEvent('waterfighter:action-displayed',{detail:{id,round,confirmedAt:pending.confirmedAt,confirmedRunning:pending.confirmedRunning,confirmedSpeed:pending.confirmedSpeed,confirmedVisible:pending.confirmedVisible,presentedAt,latencyMs:presentedAt-pending.confirmedAt}}));
         });
       }
-      if(data.backlog>2) setMessage(`Simulation holt ${data.backlog.toFixed(1)} s Rückstand auf.`);
+      const catchingUp=data.running && !finished && data.backlog>2;
+      if(catchingUp && (!backlogActive || backlogMessageVisible)) {
+        const text=`Simulation holt ${data.backlog.toFixed(1)} s Rückstand auf.`;
+        if(message.textContent!==text)setMessage(text);
+        backlogMessageVisible=true;
+      } else if(!catchingUp && backlogMessageVisible) {
+        setMessage(mode==='camera'?'Karte verschieben und zoomen.':mode==='demolish'?'Gebäude auf der Karte antippen.':first?'Endpunkt auf der Karte antippen.':'Start und Ende auf der Karte antippen.');
+      }
+      backlogActive=catchingUp;
     }
     worker?.postMessage({type:'recycle',round:data.round,buffer:data.buffer},[data.buffer]);
   } else if(data.type==='action-result' && data.round===round) {

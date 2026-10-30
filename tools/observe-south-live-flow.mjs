@@ -3,8 +3,10 @@ import {readFileSync,writeFileSync} from 'node:fs';
 import {chromium} from '@playwright/test';
 import {damPath,trenchPath} from '../src/simulation/path.ts';
 const scenario=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
-if(scenario.version!=='1.4-draft')throw Error('Szenarioversion stimmt nicht');
-const steps=JSON.parse(readFileSync('tests/fixtures/review-strategies.json','utf8')).strategies['south-divert'];
+const fixture=JSON.parse(readFileSync('tests/fixtures/review-strategies.json','utf8'));
+if(scenario.version!==fixture.scenario)throw Error('Szenarioversion stimmt nicht');
+const delayed=process.argv.includes('--after-flood');
+const steps=fixture.strategies['south-divert'];
 const segments=steps.filter(step=>step.kind==='dam').map(step=>[step.start,step.end]);
 const browser=await chromium.launch({executablePath:process.env.WATERFIGHTER_CHROME||undefined});
 const page=await browser.newPage({viewport:{width:1600,height:1000}}),errors=[];
@@ -22,20 +24,39 @@ try {
  async function confirm(label,index,cost){await page.locator('#confirm').waitFor({state:'visible'});await page.waitForFunction(()=>!document.querySelector('#confirm').disabled);const text=await page.locator('#preview-text').textContent(),actual=await page.evaluate(()=>window.__southAction),step=steps[index];const expected=step.kind==='dam'?{kind:'dam',faces:damPath(step.start,step.end,200)}:{kind:'trench',cells:trenchPath(step.start,step.end,200)};if(JSON.stringify(actual)!==JSON.stringify(expected)||!text?.replace(/\s/g,' ').includes(`Kosten: ${cost}`))throw Error(`Abweichende Vorschau ${label}: ${text}`);await page.locator('#confirm').click();await page.waitForFunction(()=>document.querySelector('#preview').hidden);console.log(label,text);}
  await page.locator('[data-mode=dam]').click();
  for(const [i,segment] of segments.entries()){for(const [x,y] of segment){const p=await point(x,y);await page.mouse.click(p.x,p.y);}await confirm(`Damm ${i+1}`,i,[400,720,640][i]);}
+ let start,pausedAt=null;
+ if(delayed){
+  await page.locator('#speed').click();start=Date.now();await page.locator('#run').click();
+  await page.waitForFunction(()=>{const [m,s]=document.querySelector('#time').textContent.split(':').map(Number);return m*60+s>=150;},null,{timeout:180000});
+  await page.getByRole('button',{name:'Pause'}).click();await page.waitForFunction(()=>document.querySelector('#state').textContent==='Pausiert');pausedAt=await page.locator('#time').textContent();
+ }
  await page.locator('[data-mode=trench]').click();await page.locator('#panel-toggle').click();
- for(const [x,y] of [[0,46],[47,26]]){const p=await point(x,y,true);await page.mouse.click(p.x,p.y);}await confirm('Graben',3,1700);
+ if(delayed){
+  const points=JSON.parse(readFileSync('tests/fixtures/south-screen-points.json','utf8'));
+  if(points.scenario!==scenario.version)throw Error('Bildschirmkoordinaten passen nicht');
+  const expected=trenchPath(steps[3].start,steps[3].end,200),offsets=[[0,0],[0,-1],[0,1],[-1,0],[1,0],[0,-2],[0,2],[-2,0],[2,0],[0,-4],[0,4],[-4,0],[4,0]];
+  async function attempt(a,b){await page.evaluate(()=>{window.__southAction=undefined;});await page.mouse.click(points.trench[0].x+a[0],points.trench[0].y+a[1]);await page.mouse.click(points.trench[1].x+b[0],points.trench[1].y+b[1]);await page.waitForFunction(()=>window.__southAction?.kind==='trench');return page.evaluate(()=>window.__southAction.cells);}
+  async function discard(){await page.locator('#cancel').click();await page.waitForFunction(()=>document.querySelector('#preview').hidden);}
+  let first=null,matched=false;
+  for(const a of offsets){const cells=await attempt(a,[0,0]);if(cells[0]===expected[0])first=a;await discard();if(first)break;}
+  if(!first)throw Error('Grabenstart nicht getroffen');
+  for(const b of offsets){const cells=await attempt(first,b);if(JSON.stringify(cells)===JSON.stringify(expected)){matched=true;break;}await discard();}
+  if(!matched)throw Error('Grabenende nicht getroffen');
+ } else for(const [x,y] of [[0,46],[47,26]]){const p=await point(x,y,true);await page.mouse.click(p.x,p.y);}
+ await confirm('Graben',3,1700);
+ if(delayed&&await page.locator('#time').textContent()!==pausedAt)throw Error('Zeit lief während der Pause weiter');
  await page.locator('#panel-toggle').click();await page.waitForFunction(()=>document.querySelector('#budget').textContent.replace(/\s/g,'')==='6540');
  await page.evaluate(async()=>{const {world}=await import(document.querySelector('script[src*="/src/main.ts"]').src);world.zoom=180;world.camera.target.set(-304,0,-256);world.resize();});
- await page.locator('#panel-toggle').click();await page.locator('#panel-toggle').waitFor({state:'visible'});
- // Use the visible panel to start before hiding it again; camera focus is diagnostic only.
- await page.locator('#panel-toggle').click();await page.locator('#speed').click();const start=Date.now();await page.locator('#run').click();await page.locator('#panel-toggle').click();
+ // The camera focus is test-only; the actions still use the UI and worker.
+ if(!delayed){await page.locator('#speed').click();start=Date.now();}
+ await page.locator('#run').click();await page.locator('#panel-toggle').click();
  const samples=[];
- for(const target of [120,180,240]){
+ for(const target of delayed?[180,240]:[120,180,240]){
   await page.waitForFunction(target=>{const [m,s]=document.querySelector('#time').textContent.split(':').map(Number);return m*60+s>=target;},target,{timeout:240000});
   const sample=await page.evaluate(async()=>{const {world}=await import(document.querySelector('script[src*="/src/main.ts"]').src),regular=Math.ceil(world.width/12)*Math.ceil(world.height/12);const values=world.flowSamples.slice(regular);return {time:document.querySelector('#time').textContent,count:values.length,moving:values.filter(v=>Math.hypot(v.vx,v.vy)>=0.01).length,maxSpeed:Math.max(0,...values.map(v=>Math.hypot(v.vx,v.vy)))};});
-  await page.screenshot({path:`/tmp/waterfighter-south-live-${target}.png`});samples.push(sample);console.log('Messpunkt',JSON.stringify(sample));
+  await page.screenshot({path:`/tmp/waterfighter-south-${delayed?'delayed-':''}live-${target}.png`});samples.push(sample);console.log('Messpunkt',JSON.stringify(sample));
  }
  await page.waitForFunction(()=>!document.querySelector('#result').hidden,null,{timeout:240000});
- const report={scenario:scenario.version,browser:browser.version(),wallSeconds:(Date.now()-start)/1000,budget:await page.locator('#budget').textContent(),title:await page.locator('#result-title').textContent(),result:await page.locator('#result-details').textContent(),samples,errors};
- writeFileSync('/tmp/waterfighter-south-live.json',JSON.stringify(report,null,2));if(errors.length||samples.some(s=>!s.count)||report.title!=='Schadensziel erreicht')throw Error(`Prüfung unvollständig: ${JSON.stringify(report)}`);console.log(JSON.stringify(report,null,2));
+ const report={scenario:scenario.version,browser:browser.version(),pausedAt,wallSeconds:(Date.now()-start)/1000,budget:await page.locator('#budget').textContent(),title:await page.locator('#result-title').textContent(),result:await page.locator('#result-details').textContent(),samples,errors};
+ writeFileSync(delayed?'/tmp/waterfighter-south-delayed-live.json':'/tmp/waterfighter-south-live.json',JSON.stringify(report,null,2));if(errors.length||samples.some(s=>!s.count)||report.title!=='Schadensziel erreicht')throw Error(`Prüfung unvollständig: ${JSON.stringify(report)}`);console.log(JSON.stringify(report,null,2));
 } finally {await browser.close();}

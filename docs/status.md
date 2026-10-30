@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Ein [Markierungs- und Sichtvergleich des späten südlichen Grabens](review-gebaeudevergleich.md#modellierter-wasserweg-nach-spätem-südlichem-grabeneingriff-auf-15) auf `1.5-draft` verfolgt einen kleinen Zuflussanteil nach Grabenbau bei 150 s bis zum Westrand; die gleich getaktete Kontrolle zeigt dort keinen solchen Austritt. Eine instrumentierte Live-Runde zeigt Strömungsproben, aber keine durchgehend leicht erkennbare Trasse. Reale Folgen außerhalb der Karte und menschliche Verständlichkeit bleiben offen.
+
 Ein [zeitlich abgestimmter Kontrollvergleich](review-gebaeudevergleich.md#südlicher-graben-eingriffszeit-auf-15) auf `1.5-draft` zeigt den südlichen Graben bei den geprüften Zeitpunkten bis 230 s wirtschaftlich; ab 235 s übersteigen seine Kosten die Schadensminderung. Bei 150 s waren sechs Grabenzellen bereits benetzt, ohne sofortige Volumenänderung beim Bau. Das sind diskrete Modellläufe, keine kontinuierliche Grenzzeit oder menschliche Bedienungsabnahme.
 
 Die [Safari-Desktopprüfung des kleinen Abrissziels](browser-pruefung.md#safari-beinahetreffer-auf-15) bestätigte einen eindeutigen Beinahetreffer, Markierung und Verwerfen ohne Budgetänderung. Die Position wurde testseitig projiziert; menschliche Auffindbarkeit und die auf Nutzerwunsch ausgesetzten mobilen Prüfungen bleiben offen.

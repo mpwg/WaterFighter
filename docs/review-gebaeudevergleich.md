@@ -451,3 +451,16 @@ Auf Szenario `1.5-draft` wurden mit `bun tools/compare-south-timing.ts control Z
 | 270 s | 19.287,45 | 19.091,70 | −1.504,25 | 20 |
 
 Alle gezeigten Runden bleiben unter dem Ziel von 50.000. Bei jedem Grabenbau betrug die gemessene sofortige Volumenänderung null; alle 26 relativen Bilanzfehler lagen unter 0,1 %. Bei 150 s waren bereits 83,55 Gesamtschaden verbucht; im [Produktionsbrowser](#dach-korrigiertes-szenario-15-abrisssuche-und-laufender-eingriff) wurde dieselbe Trasse bei 02:30 in Pause gebaut und das Ziel erreicht. Für die geprüften diskreten Zeitpunkte ist der Eingriff bis 230 s wirtschaftlich, ab 235 s nicht mehr. Das ist keine nachgewiesene kontinuierliche Grenzzeit, keine Aussage über andere Platzierungen und keine reale Hochwasservorhersage. Die Position wurde nicht unabhängig menschlich gefunden; die mobile Prüfung bleibt ausgesetzt.
+
+### Modellierter Wasserweg nach spätem südlichem Grabeneingriff auf 1.5
+
+Für dieselben drei Dämme, die südliche Trasse und einen Bauzeitpunkt von 150 s wurde der Zuflussanteil auf `1.5-draft` mit `bun tools/trace-northern-route.ts trench --dams=3 --tip=-2 --route=0,46,47,26 --entry=30,47 --stay-on-route --trace-inflow --at=150` verfolgt; `control` statt `trench` liefert die gleich getaktete Kontrolle. Die [vollständigen Ergebnisse](south-trace-1.5.json) beziehen sich auf Szenario-SHA-256 `f27c6082e7dee7444d20439bd94f14203abe04de412dde2ebedb9cfde7cebdd0`.
+
+| Fall | Markierter Eintritt in den gewählten Trassenbereich | Geordneter Austritt am Westrand | Gesamtschaden | Budgetrest |
+| --- | ---: | ---: | ---: | ---: |
+| Kontrolle ohne Graben | 10.953,18 m³ | 0 m³ | 19.287,45 | 8.240 |
+| Graben bei 150 s | 13.105,49 m³ | 0,847 m³, Zeile 46 | 13.460,45 | 6.540 |
+
+Die Markierung stammt ausschließlich aus dem Szenariozufluss und wird in jeder Zelle numerisch gemischt. Sie muss nach dem definierten Eintritt die angegebenen Querschnitte in Reihenfolge passieren und auf der Trasse bleiben; die Kontrolle verwendet dieselbe gedachte Trasse ohne Aushub. Markiertes Wasser kann nach Verlassen erneut eintreten, sodass Eintrittssummen keine einmaligen Wasserteilchen zählen. Die Markierungsbilanzreste betrugen `5,15 × 10⁻⁸` beziehungsweise `−4,21 × 10⁻⁷` m³; die Wasserbilanzfehler lagen unter 0,1 %. Der erfasste Austritt ist ein sehr kleiner Modellanteil und erklärt nicht allein die Schadensminderung. Die Rechnung belegt weder einen realen Abfluss noch Folgen außerhalb der Karte.
+
+Eine ergänzende Live-Sichtprobe mit `bun tools/observe-south-live-flow.mjs --after-flood` nutzte den Entwicklungsbrowser Chromium 156.0.8078.4 und projizierte Testkoordinaten. Der Graben wurde in Pause bei 02:30 bestätigt; die Kamera wurde testseitig auf die Trasse eingestellt. Bei 03:00 waren 17 von 34 abgetasteten Graben-Strömungsstellen über der Geschwindigkeitsschwelle, bei 04:00 waren es 27; die jeweils höchste abgetastete Geschwindigkeit lag bei 4,04 beziehungsweise 2,30 m/s. Die Bilder bei [03:00](suedgraben-1.5-spaet-180.png) und [04:00](suedgraben-1.5-spaet-240.png) zeigen die Kartenüberlagerung und Ausschnitte der Strömungsmarker; Gebäude, Wasser und Perspektive erschweren die Verfolgung der gesamten Trasse. Die Runde erreichte 13.446 Schaden und 6.540 Budgetrest. Die Proben und die künstlich fokussierte Kamera belegen keine durchgehende menschliche Erkennbarkeit oder Bedienung.

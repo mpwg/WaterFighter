@@ -11,6 +11,12 @@ describe('Bauaktionen und Schäden',()=>{
     const before=g.budget,volume=g.solver.volume();
     expect(g.preview(near)).toMatchObject({ok:true,nearBoundaryGap:true});
     expect(g.budget).toBe(before);expect(g.solver.volume()).toBe(volume);
+    const separate=new Game(scenario),preview=separate.preview(near);
+    expect(separate.apply('near-edge',near)).toEqual(preview);
+    expect(separate.budget).toBe(before-2*scenario.parameters.damCostPerCell);
+    expect(separate.apply('near-edge',near)).toEqual(preview);
+    expect(separate.budget).toBe(before-2*scenario.parameters.damCostPerCell);
+    expect(separate.solver.volume()).toBe(volume);
     const reachesEdge={kind:'dam' as const,faces:damPath([2,0],[2,3],5)};
     expect(g.preview(reachesEdge)).not.toHaveProperty('nearBoundaryGap');
     expect(g.apply('extension',{kind:'dam',faces:damPath([2,0],[2,1],5)}).ok).toBe(true);

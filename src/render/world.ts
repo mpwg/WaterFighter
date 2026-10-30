@@ -29,6 +29,19 @@ import type { Action, BuildingStatus, Face } from '../simulation/game';
 
 const INITIAL_ALPHA=-Math.PI/4, INITIAL_BETA=Math.PI/3, INITIAL_RADIUS=1500;
 
+/** Schematic width makes the selected face line readable in the overview. */
+function damRibbon(scene:Scene, lines:Vector3[][], width:number, color:Color3, name:string):Mesh {
+  const positions:number[]=[],indices:number[]=[];
+  for(const [a,b] of lines){
+    const dx=b.x-a.x,dz=b.z-a.z,length=Math.hypot(dx,dz),ox=-dz/length*width/2,oz=dx/length*width/2,n=positions.length/3;
+    positions.push(a.x+ox,a.y,a.z+oz,a.x-ox,a.y,a.z-oz,b.x+ox,b.y,b.z+oz,b.x-ox,b.y,b.z-oz);
+    indices.push(n,n+1,n+2,n+1,n+3,n+2);
+  }
+  const mesh=new Mesh(name,scene),data=new VertexData();data.positions=positions;data.indices=indices;data.applyToMesh(mesh);
+  const material=new StandardMaterial(`${name}-material`,scene);material.emissiveColor=color;material.disableLighting=true;material.backFaceCulling=false;
+  mesh.material=material;mesh.isPickable=false;mesh.renderingGroupId=2;mesh.alwaysSelectAsActiveMesh=true;return mesh;
+}
+
 /** Render only; simulation state is owned by the worker. */
 export class World {
   readonly engine: Engine;
@@ -51,7 +64,8 @@ export class World {
   private previewMesh?: LinesMesh;
   private previewStart?: {x:number;y:number};
   private previewTrenchCells:number[] = [];
-  private damMesh?: LinesMesh;
+  private damMesh?: Mesh;
+  private previewDamMesh?: Mesh;
   private trenchMesh?: Mesh;
   private trenchRouteMesh?: Mesh;
   private trenchRoutePositions?: Float32Array;
@@ -182,9 +196,9 @@ export class World {
     for(const b of buildings) {const mesh=this.buildingMeshes.get(b.id); if(mesh) mesh.setEnabled(!b.demolished);}
     const signature=JSON.stringify(dams);
     if(signature!==this.damSignature) {
-      this.damSignature=signature; this.damMesh?.dispose();
+      this.damSignature=signature; this.damMesh?.dispose(false,true);this.damMesh=undefined;
       const lines=dams.map(([key,crest])=>{const [axis,raw]=key.split(':'),index=Number(raw); return this.facePoints({axis:axis as 'x'|'y',index},crest+0.5);});
-      if(lines.length) {this.damMesh=CreateLineSystem('confirmed-dams',{lines},this.scene);this.damMesh.color=new Color3(0.75,0.29,0.12);this.damMesh.isPickable=false;}
+      if(lines.length)this.damMesh=damRibbon(this.scene,lines,this.cell*1.5,new Color3(0.85,0.28,0.08),'confirmed-dams');
     }
   }
   private updateTrenches(cells:number[]):void {
@@ -306,7 +320,7 @@ export class World {
     return surface+1.5;
   }
   showPreview(action?:Action):void {
-    this.previewMesh?.dispose(); this.previewMesh=undefined;this.previewStart=undefined;this.previewTrenchCells=[];
+    this.previewMesh?.dispose(); this.previewMesh=undefined;this.previewDamMesh?.dispose(false,true);this.previewDamMesh=undefined;this.previewStart=undefined;this.previewTrenchCells=[];
     for(const m of this.scene.meshes) if(m.metadata?.buildingId) m.renderOverlay=false;
     if(!action)return;
     if(action.kind==='demolish') {
@@ -328,8 +342,12 @@ export class World {
       return;
     }
     let lines:Vector3[][]=[];
-    if(action.kind==='dam') lines=action.faces.map(face=>this.facePoints(face,damCrest(face,this.width,this.height,this.bed,this.scenario.parameters.damHeight)+0.5));
-    else for(const [a,b] of trenchRouteSegments(action.cells,this.width)){
+    if(action.kind==='dam') {
+      lines=action.faces.map(face=>this.facePoints(face,damCrest(face,this.width,this.height,this.bed,this.scenario.parameters.damHeight)+0.5));
+      if(lines.length)this.previewDamMesh=damRibbon(this.scene,lines,this.cell*1.5,new Color3(1,0.5,0.06),'preview-dam');
+      return;
+    }
+    for(const [a,b] of trenchRouteSegments(action.cells,this.width)){
       const point=(i:number)=>{const x=i%this.width,y=Math.floor(i/this.width),east=y*this.width+Math.min(x+1,this.width-1),south=Math.min(y+1,this.height-1)*this.width+x;return new Vector3((x+.5)*this.cell-this.width*this.cell/2,(this.bed[east]+this.currentDepth[east]+this.bed[south]+this.currentDepth[south])/2+1.5,(y+.5)*this.cell-this.height*this.cell/2);};
       const first=point(a),last=point(b);if(a===b){first.x-=this.cell*.25;last.x+=this.cell*.25;}
       const dx=last.x-first.x,dz=last.z-first.z,length=Math.hypot(dx,dz);

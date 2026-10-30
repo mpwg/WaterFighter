@@ -2,7 +2,7 @@
 
 WaterFighter ist ein browserbasierter Prototyp eines Hochwasserschutzspiels in einem realen Wiener Donauviertel. Er umfasst das Szenario, drei Bauwerkzeuge, eine Flutrunde und die Ergebnisanzeige. Die Szenario- und Geräteabnahme ist noch unvollständig. Die Gebäudeschadensberechnung neben Gräben wurde korrigiert; ältere dokumentierte Graben-Schadenswerte sind historisch. Die Anwendung ist keine Hochwasserprognose.
 
-Die laufende Übergabeversion kann vom jüngeren Quellstand abweichen; der Quellstand enthält erste tolerante Anschlüsse für Damm- und Grabenenden. Die Arcade-Platzierung ist noch nicht vollständig abgenommen.
+Die laufende Übergabeversion kann vom jüngeren Quellstand abweichen; der Quellstand enthält erste tolerante Anschlüsse für Damm- und Grabenenden sowie schematisch breitere Dammbänder. Die Arcade-Platzierung ist noch nicht vollständig abgenommen.
 
 Der [aktuelle Prototyp-Zwischenstand](docs/prototyp-status.md) enthält Startanleitung, vergleichbare Referenzrunden, eine kurze Kriterienmatrix und das zurückgestellte Feintuning.
 

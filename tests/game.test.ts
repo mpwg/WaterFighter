@@ -1,7 +1,7 @@
 import { describe,expect,it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { Game } from '../src/simulation/game';
-import { arcadeDamPath, damPath, trenchPath } from '../src/simulation/path';
+import { arcadeDamPath, arcadeTrenchPath, damPath, trenchPath } from '../src/simulation/path';
 const base=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
 const scenario={...base,grid:{...base.grid,width:5,height:5,cellSize:4},terrain:Array(25).fill(0),bed:Array(25).fill(0),initialDepth:Array(25).fill(0),waterMask:Array(25).fill(0),surveyCrests:[],parameters:{...base.parameters,inflowCells:[0],inflowCurve:[[0,0],[300,0]],outflowEdges:[]},buildings:[{id:'house',area:16,height:8,heightEstimated:true,polygon:{outer:[[8,8],[12,8],[12,12],[8,12],[8,8]],holes:[]}}]};
 
@@ -107,6 +107,20 @@ describe('Hydraulische Wirkung der Werkzeuge',()=>{
     const downstream=(g:Game)=>g.solver.h.reduce((sum,v,i)=>sum+(i%w>=5?v:0),0);
     expect(downstream(closed)).toBeLessThan(1e-8);expect(downstream(gap)).toBeGreaterThan(0.1);
     expect(Math.abs(closed.solver.volume()-initial)/initial).toBeLessThan(0.001);
+  });
+  it('erhöht den Abfluss durch einen automatisch verbundenen Grabenrand',()=>{
+    const w=12,h=5,bed=Array(w*h).fill(1);
+    const cfg={...scenario,grid:{...scenario.grid,width:w,height:h},bed,terrain:bed,initialDepth:Array.from({length:w*h},(_,i)=>i%w>=5?0.5:0),waterMask:Array(w*h).fill(0),buildings:[],parameters:{...scenario.parameters,outflowEdges:['left' as const],trenchDepth:0.8}};
+    const connected=new Game(cfg),short=new Game(cfg),initial=connected.solver.volume();
+    const cells=arcadeTrenchPath([1,2],[6,2],w,h,[],cfg.parameters.outflowEdges);
+    expect(cells).toEqual(trenchPath([0,2],[6,2],w));
+    const preview=connected.preview({kind:'trench',cells});expect(preview.ok).toBe(true);
+    expect(connected.apply('connected',{kind:'trench',cells})).toEqual(preview);
+    expect(connected.solver.volume()).toBe(initial);
+    expect(short.apply('short',{kind:'trench',cells:trenchPath([1,2],[6,2],w)}).ok).toBe(true);
+    connected.solver.advance(15);short.solver.advance(15);
+    expect(connected.solver.outflow).toBeGreaterThan(short.solver.outflow*2);
+    expect(Math.abs(connected.solver.volume()+connected.solver.outflow-initial)/initial).toBeLessThan(0.001);
   });
   it('leitet durch einen Graben Wasser über eine künstliche Bodenschwelle',()=>{
     const w=12,h=5,bed=Array.from({length:w*h},(_,i)=>i%w>=5&&i%w<=6?0.65:0);

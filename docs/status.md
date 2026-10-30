@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+**Hydraulischer Grabenanschluss:** Ein synthetischer Vergleich führt einen Graben automatisch bis zum offenen Rand; nach 15 s fließen dort etwa 40,49 m³ ab gegenüber 11,10 m³ bei ansonsten gleichem Graben, der eine Zelle vor dem Rand endet. Der kurze Graben lässt bei diesem Wasserstand ebenfalls Abfluss über das Gelände zu; der Anschluss erhöht ihn im Test. Vorschau und Bestätigung stimmen überein, das Bauvolumen bleibt erhalten und die Bilanz liegt unter 0,1 %. 92 Tests und Typprüfung bestanden. Der Versuch belegt keine reale Ableitung oder allgemeine Wirkung jeder Trasse.
+
 **Hydraulischer Anschlussnachweis:** Ein synthetischer Regel- und Solververgleich schließt einen Damm durch automatische Verbindung einer Rasterlücke. Hinter dem verbundenen Damm bleibt die getestete Fläche während 15 s trocken; bei ansonsten gleichem Damm mit offener Lücke fließt Wasser hindurch. Vorschau und Bestätigung stimmen überein, beim Bau bleibt das Volumen erhalten, und der Bilanzfehler liegt unter 0,1 %. Das belegt diesen kontrollierten Fall, nicht jede Gelände- oder Spielsituation. 91 Tests und Typprüfung bestanden.
 
 **Seitlicher Dammanschluss im Quellstand:** Nahe Enden können auch an einen Zwischenpunkt eines bestehenden Damms anschließen. Der lokale Worker prüft weiterhin den tatsächlichen Verlauf und berechnet nur neue Kanten. Ein Desktopbrowsertest bestätigte Vorschau, Hinweis und Budget bei einem seitlichen Anschluss; 90 Tests und Typprüfung bestanden. Die beiden Übergabebuilds bleiben unverändert.

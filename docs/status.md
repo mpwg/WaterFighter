@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Die [Datenlizenz-Bestandsaufnahme](datenlizenz-pruefung.md) bezieht sich nun auf `1.5-draft`. Der lokale Produktionsbuild von `b41de50` wurde erneut unter einem Unterpfad mit Chromium geprüft; das heruntergeladene Szenariopaket stimmt entpackt mit der Quelldatei überein. Die rechtliche Einordnung der kombinierten Daten und die dauerhafte Bereitstellung bleiben offen.
+
 Die [Einzelpunkt-Abweichungen auf 1.5](review-gebaeudevergleich.md#platzierungsabweichungen-der-beiden-gräben-auf-15) zeigen eine starke Empfindlichkeit des südlichen Grabens: Drei gültige Varianten führen zu erheblich höherem Schaden. Der nördliche Referenzgraben bleibt bei sechs von sieben gültigen Einzelabweichungen nach Kosten wirtschaftlich; die siebente bleibt unter dem Schadensziel, ist aber nicht wirtschaftlich. Eine verschobene südliche Trasse mit Gebäudehindernis wurde im Desktopbrowser verständlich und ohne Kosten abgelehnt. Menschliche Platzierung bleibt offen.
 
 Die [Safari-Liveprüfung der dunklen Grabenpfeile](browser-pruefung.md#dunkle-grabenpfeile-in-safari) erreichte mit spätem Eingriff das Ziel; zu zwei Zeitpunkten waren bewegte Strömungsstellen und der erwartete Farbpuffer nachweisbar. Die Kamera und Auswahl wurden testseitig gesteuert. Der Verlauf bleibt teilweise verdeckt; menschliche Verständlichkeit und mobile Prüfungen sind offen.

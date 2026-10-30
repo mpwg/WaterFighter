@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+**Aktueller isolierter Build:** Auf Anwendungscode `2cb4233` bestanden `bun run typecheck` und `bun x vite build --outDir /private/tmp/waterfighter-current-check --emptyOutDir`. Die laufenden Übergabebuilds wurden dabei nicht überschrieben. Vite meldet weiterhin einen JavaScript-Chunk über 500 kB.
+
 **Sofortiger Folgeanschluss:** Nach einer erfolgreichen Worker-Bestätigung berücksichtigt die nächste Vorschau den bestätigten Damm oder Graben bereits vor dem zugehörigen Snapshot. Ein Desktopbrowsertest verzögerte den ersten Aktionssnapshot künstlich um fünf Sekunden und bestätigte dennoch die korrekte seitliche Anschlussvorschau. 92 Tests und Typprüfung bestanden. Die laufenden Übergabebuilds wurden nicht überschrieben.
 
 **Anschluss bei laufender und pausierter Flut:** Zwei gezielte Chromium-Desktopfälle im Entwicklungsserver bauten einen Damm vor der Flut und bestätigten anschließend einen automatisch seitlich angeschlossenen Damm bei laufender Uhr beziehungsweise in Pause. Vorschau, Hinweis, tatsächlicher Verlauf und Budget stimmten; in Pause blieb die Uhr stehen. Menschliche Bedienbarkeit bleibt offen.

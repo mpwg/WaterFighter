@@ -20,7 +20,7 @@ export function processTreeRss(rootPid=process.pid) {
   } catch {return null;}
 }
 
-/** Group process-tree RSS and proportional set size by Chromium process role. */
+/** Group process-tree RSS, proportional set size and private resident pages by Chromium role. */
 export function processTreeMemoryByRole(rootPid=process.pid) {
   try {
     const processes=new Map();
@@ -32,9 +32,14 @@ export function processTreeMemoryByRole(rootPid=process.pid) {
         const command=readFileSync(`/proc/${name}/cmdline`,'utf8');
         const type=command.match(/(?:^|[\s\0])--type=([^\s\0]+)/)?.[1];
         const role=type || (command.split(/[\s\0]/)[0]?.includes('chrome')?'browser':'other');
-        let pss=null;
-        try {const value=readFileSync(`/proc/${name}/smaps_rollup`,'utf8').match(/^Pss:\s+(\d+)\s+kB/m);if(value)pss=Number(value[1])*1024;} catch { /* Not all systems expose smaps_rollup. */ }
-        processes.set(Number(name),{parent:Number(fields[1]),rss:rss?Number(rss[1])*1024:0,pss,role});
+        let pss=null,privateRss=null;
+        try {
+          const rollup=readFileSync(`/proc/${name}/smaps_rollup`,'utf8');
+          const value=rollup.match(/^Pss:\s+(\d+)\s+kB/m),clean=rollup.match(/^Private_Clean:\s+(\d+)\s+kB/m),dirty=rollup.match(/^Private_Dirty:\s+(\d+)\s+kB/m);
+          if(value)pss=Number(value[1])*1024;
+          if(clean&&dirty)privateRss=(Number(clean[1])+Number(dirty[1]))*1024;
+        } catch { /* Not all systems expose smaps_rollup. */ }
+        processes.set(Number(name),{parent:Number(fields[1]),rss:rss?Number(rss[1])*1024:0,pss,privateRss,role});
       } catch { /* Process may exit while being inspected. */ }
     }
     if(!processes.has(rootPid))return null;
@@ -43,9 +48,10 @@ export function processTreeMemoryByRole(rootPid=process.pid) {
     const roles={};
     for(const pid of included) {
       const p=processes.get(pid);if(!p)continue;
-      const group=roles[p.role]??={processes:0,rss:0,pss:0,missingPss:0};
+      const group=roles[p.role]??={processes:0,rss:0,pss:0,missingPss:0,privateRss:0,missingPrivateRss:0};
       group.processes++;group.rss+=p.rss;
       if(p.pss===null)group.missingPss++;else group.pss+=p.pss;
+      if(p.privateRss===null)group.missingPrivateRss++;else group.privateRss+=p.privateRss;
     }
     return roles;
   } catch {return null;}

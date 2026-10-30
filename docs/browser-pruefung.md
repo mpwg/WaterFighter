@@ -761,3 +761,17 @@ Parallel liefen mit `bun tools/observe-three-rounds.mjs --actions` drei vollstä
 Ein erneuter Safari-27.2-Lauf mit gleicher temporärer Adaption ergänzte die Prüfung von „Neue Runde“ nach dem Ergebnis. Die unbehandelte 2×-Runde endete nach 150,749 s bei 05:00 mit 138.835 Schaden. Danach verschwand die Ergebnisanzeige; Zeit `00:00`, Zustand „Vorbereitung“, Budget 10.000 und „Flut 0 · Abriss 0“ wurden per DOM abgefragt. Wasser, Gelände und Gebäude wurden bei diesem Neustart nicht separat visuell geprüft; die automatisierte Wiederholung ersetzt keine menschliche Abnahme.
 
 Der Ablauf ist nun in `tools/observe-safari.mjs` festgehalten. Auf demselben Mac bestand die eingecheckte Fassung den Werkzeug- und Neustartteil erneut; sie prüft zusätzlich, ob das bestätigte Budget mit der Vorschau übereinstimmt. Auch `WATERFIGHTER_SAFARI_FULL=1 bun tools/observe-safari.mjs` bestand auf Commit `1a0574d`: Die vollständige 2×-Runde endete nach 150,857 s mit 138.835 Schaden; der Ergebnisneustart setzte Zeit, Budget und Schäden zurück. Zum Wiederholen in getrennten Terminals `bun run preview` und `safaridriver -p 4445` starten, danach den genannten Befehl ausführen; ohne die Umgebungsvariable läuft nur der kurze Werkzeugtest. Safari muss für Automation eingerichtet und gegebenenfalls zuvor beendet sein. Der Lauf verwendet feste Desktop-Mauskoordinaten.
+
+## Drei Desktop-Runden mit RSS-Stichproben auf macOS
+
+Am 30. Oktober 2026 lief `bun tools/observe-three-rounds.mjs --actions` mit Chromium 156.0.8078.4 auf macOS 27.2 arm64 und Anwendungscode `ff7e58c`. Jede der drei 2×-Runden enthielt nach Flutbeginn eine Pause, je einen bestätigten Graben, Damm und Abriss sowie Fortsetzen; zwei Neustarts setzten die angezeigten Werte zurück. Die Gesamtschäden betrugen 217.068, 217.069 und 217.069 bei jeweils 526 Budgetrest. Die festen Testmaßnahmen verfehlten das Ziel und dienen der Stabilitätsprüfung.
+
+Die ergänzte macOS-Variante von `processTreeRss` summiert die von `ps` gemeldeten RSS-Werte des Testprozesses und seiner Kindprozesse; die Stichprobe umfasst auch den kurzlebigen `ps`-Prozess. Jeweils vor und nach einer Runde wurden bei sechs Prozessen folgende Summen gemessen (dezimal in MB):
+
+| Runde | Vorher | Nachher | JavaScript-Heap vorher / nachher |
+| ---: | ---: | ---: | ---: |
+| 1 | 691,0 MB | 839,0 MB | 32,5 / 40,2 MB |
+| 2 | 844,7 MB | 762,3 MB | 45,5 / 41,2 MB |
+| 3 | 768,7 MB | 768,2 MB | 46,2 / 58,1 MB |
+
+Die Gesamtsumme nach Runde 3 lag unter jener nach Runde 1; die drei Endwerte zeigen keine monotone Zunahme. RSS zählt gemeinsam genutzte Seiten möglicherweise mehrfach, enthält nicht zuverlässig alle Grafikzuweisungen und misst weder privaten Speicher noch außerhalb des Prozessbaums laufende Dienste. Die wenigen Stichproben beweisen weder Leckfreiheit noch langfristige Speicherstabilität. Die Funktion wurde zusätzlich mit einem laufenden Kindprozess und einer nicht existierenden Prozesskennung auf diesem Mac geprüft; für Linux bleibt die bestehende `/proc`-Messung erhalten.

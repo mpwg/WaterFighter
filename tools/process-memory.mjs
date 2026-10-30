@@ -1,10 +1,18 @@
 import { readdirSync,readFileSync } from 'node:fs';
-/** Aggregate Linux VmRSS for this test runner and its process descendants.
+import { execFileSync } from 'node:child_process';
+/** Aggregate resident memory for this test runner and its process descendants.
  * Shared pages may be counted more than once; GPU allocations are not complete. */
 export function processTreeRss(rootPid=process.pid) {
   try {
     const processes=new Map();
-    for(const name of readdirSync('/proc')) {
+    if(process.platform==='darwin') {
+      // macOS ps reports RSS in KiB. This is not proportional or private memory.
+      const rows=execFileSync('/bin/ps',['-axo','pid=,ppid=,rss='],{encoding:'utf8'});
+      for(const row of rows.split('\n')) {
+        const match=row.match(/^\s*(\d+)\s+(\d+)\s+(\d+)\s*$/);
+        if(match)processes.set(Number(match[1]),{parent:Number(match[2]),rss:Number(match[3])*1024});
+      }
+    } else for(const name of readdirSync('/proc')) {
       if(!/^\d+$/.test(name))continue;
       try {
         const stat=readFileSync(`/proc/${name}/stat`,'utf8'),fields=stat.slice(stat.lastIndexOf(')')+2).split(' ');

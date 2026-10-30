@@ -1,0 +1,14 @@
+export type DeviceKind = 'pump' | 'freeze' | 'cannon';
+export type AbilityKind = 'cushion' | 'boat';
+export type Vec2 = { x: number; z: number };
+export type Route = { id: string; name: string; points: Vec2[]; length: number };
+export type Slot = { id: string; position: Vec2; routeId: string; progress: number };
+export type HouseSpec = { id: string; name: string; position: Vec2; routeId: string; progress: number; residents: number };
+export type House = HouseSpec & { health: number; evacuated: boolean; shieldUntil: number; evacuationAt: number | null; contact: number; threatened: boolean; damageIn: number | null };
+export type Device = { slotId: string; kind: DeviceKind; level: 1 | 2; nextFire: number };
+export type Flood = { id: string; waveId: number; routeId: string; progress: number; strength: number; maxStrength: number; speed: number; length: number; frozenUntil: number; frozenFactor?: number; pushedAt: number; spawnedAt: number };
+export type WaveSpec = { id: number; name: string; at: number; warningAt: number; spawns: { delay: number; routeId: string; strength: number; speed: number; length: number }[] };
+export type GameEvent = { id: number; time: number; type: 'spawn' | 'warning' | 'build' | 'upgrade' | 'pump' | 'freeze' | 'push' | 'damage' | 'lost' | 'shield' | 'rescue-start' | 'rescue' | 'defeated' | 'wave-clear' | 'finish'; targetId?: string; position?: Vec2; message?: string };
+export type GameState = { time: number; tick: number; phase: 'ready' | 'running' | 'paused' | 'won' | 'lost'; energy: number; score: number; houses: House[]; devices: Device[]; floods: Flood[]; cooldowns: Record<AbilityKind, number>; events: GameEvent[]; completedWaves: number[]; warnedWaves: number[]; spawned: string[]; safeResidents: number; totalResidents: number; nextEventId: number; lastError: string | null };
+export type Command = { type: 'start' | 'pause' | 'resume' | 'reset' } | { type: 'build'; slotId: string; kind: DeviceKind } | { type: 'upgrade'; slotId: string } | { type: 'ability'; kind: AbilityKind; houseId: string };
+export type DeviceSpec = { name: string; description: string; cost: number; upgradeCost: number; range: number; upgradedRange: number; interval: number; power: number; upgradedPower: number; color: string };

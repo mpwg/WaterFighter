@@ -1,86 +1,57 @@
-# WaterFighter
+# WaterFighter: Flutwehr
 
-WaterFighter ist ein browserbasierter Prototyp eines Hochwasserschutzspiels in einem realen Wiener Donauviertel. Er umfasst das Szenario, drei Bauwerkzeuge, eine Flutrunde und die Ergebnisanzeige. Die Szenario- und Geräteabnahme ist noch unvollständig. Die Gebäudeschadensberechnung neben Gräben wurde korrigiert; ältere dokumentierte Graben-Schadenswerte sind historisch. Die Anwendung ist keine Hochwasserprognose.
+Ein Browser-Arcade-Spiel über eine kleine Stadt und große Wasserzüge: Baue deine Flutwehr in einem Spielzeug-Wien, kombiniere drei Geräte und rette bedrohte Bewohner. Eine Runde hat fünf deterministische Wellen und dauert höchstens drei Minuten.
 
-Der aktuelle Quellstand enthält breite, hydraulisch wirksame Dämme und Gräben sowie tolerante Anschlüsse. Die menschliche Spielabnahme ist noch offen.
+## Starten
 
-Der [aktuelle Prototyp-Zwischenstand](docs/prototyp-status.md) enthält Startanleitung, vergleichbare Referenzrunden, eine kurze Kriterienmatrix und das zurückgestellte Feintuning.
-
-Der Szenarioentwurf `1.6-draft` entfernt elf OSM-Dachflächen einschließlich einer Multipolygonrelation aus der geschlossenen Gebäude- und Sperrenmodellierung. Die numerischen und Browsernachweise für frühere Szenarioversionen sind historisch; die erneute Prüfung auf 1.6 läuft. Ein [kleiner wirtschaftlicher Abriss](docs/review-gebaeudevergleich.md#korrektur-der-dachrelation-auf-16) ist in einer automatisierten Runde geprüft. Ein [größeres Gebäude](docs/review-gebaeudevergleich.md#größerer-abriss-ohne-vorbereitete-dämme) ist ohne die getesteten Dämme numerisch wirtschaftlich abzureißen, erreicht allein aber nicht das Schadensziel. Menschliches Auffinden bleibt ungeprüft. Kleine Gebäude lassen sich bei eindeutigem Beinahetreffer auswählen; ein Kreuz markiert die Vorschau.
-
-## In VS Code selbst starten
-
-1. In VS Code den Ordner `/Users/mat/code/WaterFighter` öffnen und über **Terminal → Neues Terminal** das integrierte Terminal öffnen.
-2. Die Abhängigkeiten installieren und den Entwicklungsserver starten:
-
-   ```sh
-   bun install --frozen-lockfile
-   bun run dev
-   ```
-
-3. Die im Terminal angezeigte lokale Adresse im Browser öffnen. Zum Beenden im Terminal **Strg+C** drücken.
-
-Voraussetzung ist Bun; auf diesem Mac liegt es unter `/opt/homebrew/bin/bun` (Version 1.4.4). Falls `bun` im VS-Code-Terminal nicht gefunden wird, für dieses Terminal `export PATH="/opt/homebrew/bin:$PATH"` ausführen und die Befehle wiederholen. Zum Spielen ist keine Browser-Testinstallation nötig. Der Entwicklungsserver lädt den aktuellen Quellstand und das mitgelieferte Szenario; temporäre Prüfbauten oder bereits laufende Vorschauprozesse sind nicht erforderlich.
-
-## Einrichtung und Prüfung
-
-Voraussetzung: [Bun 1.4.4](https://bun.com/docs/installation) im PATH; TypeScript 7 und Babylon.js 9.33.1 werden über die Lockdatei installiert; für Browserprüfungen zusätzlich ein von Playwright unterstützter Browser mit seinen Systembibliotheken.
-
-Falls Bun bereits unter `~/.bun/bin/bun` installiert ist, aber `bun` nicht gefunden wird, ergänzt `export PATH="$HOME/.bun/bin:$PATH"` den Suchpfad für die aktuelle Shell.
+Voraussetzung: Bun 1.4.4. Die Abhängigkeiten werden aus `bun.lock` installiert.
 
 ```sh
 bun install --frozen-lockfile
 bun run dev
-bun run typecheck
-bun run test
-python3 tools/test-breakline-faces.py
-bun run build
-bun run test:browser
 ```
 
-Diagnoseprogramme lassen sich direkt ausführen, beispielsweise `bun tools/check-scenario-balance.ts` oder `bun tools/verify-static-subpath.mjs`. Der [isolierte Quellen-Neuaufbau](docs/geodaten-voruntersuchung.md#unabhängiger-neuaufbau-mit-erneut-bezogenen-quellen), der [Rastervergleich](docs/solverbericht.md#rasterverfeinerung-des-unbehandelten-wiener-szenarios) und der [Safari-Prüfablauf](docs/browser-pruefung.md#safari-272-und-drei-chromium-runden-auf-macos) beschreiben weitere Prüfungen und ihre Grenzen. Die Projektbefehle verwenden Bun auch für Werkzeuge mit Node-Shebang.
+Öffne die im Terminal angezeigte lokale Adresse (normalerweise `http://127.0.0.1:5173`). Für den Produktionsbuild:
 
-Die erneut bezogenen Geodaten liegen auf diesem Rechner zusätzlich als geprüftes, nicht versioniertes Archiv unter `raw-data/`; es enthält nicht die fehlenden historischen OSM-Rohbytes und ersetzt keine unabhängige Sicherung. Erstellung und Wiederaufbau sind in der verlinkten Voruntersuchung beschrieben.
+```sh
+bun run build
+bun run preview
+```
 
-Der Entwicklungsserver nennt seine lokale Adresse. `bun run preview` liefert den zuvor erzeugten Produktionsbuild lokal aus. Der Build stellt das vorläufige Szenario komprimiert bereit; die Anwendung entpackt es im aktuellen Browser und verwendet einen pausierbaren Solver im Worker; Straßen- und Weglinien dienen der Orientierung auf dem Gelände. Das Menü lässt sich für eine freie Kartenansicht aus- und wieder einblenden; bei ausgeblendetem Menü bleiben Zeit, Budget, Rundenzustand und Schäden in der Kopfzeile sichtbar; Werkzeughinweise erscheinen über der Karte. Nach einer Bestätigung erscheint nach kurzer Zeit wieder der Hinweis für die nächste Auswahl; eine neue Auswahl behält ihren eigenen Hinweis. Die Karte lässt sich in allen Werkzeugmodi ziehen und mit + / − zoomen; ein gewählter Startpunkt bleibt beim Verschieben erhalten. Im Kartenmodus zeigt Antippen Wassertiefe oder Gebäudeschaden; für Damm oder Graben Start und Ende wählen, beim Abriss ein Gebäude auswählen und anschließend die Vorschau bestätigen. Ein weiterer Kartentipp verwirft die unbestätigte Vorschau und beginnt eine neue Auswahl. Die Geodaten-Voruntersuchung mit Python und Rasterio/GDAL ist in [geodaten-voruntersuchung.md](docs/geodaten-voruntersuchung.md) beschrieben; ein vorläufiges Szenariopaket liegt bei; seine Eignung und Vollständigkeit sind noch nicht abgenommen. Eine öffentliche Veröffentlichung ist nicht beauftragt.
+Es gibt keinen Serverdienst, keine Konten, keine Persistenz und keine externen Laufzeitassets.
 
-Für eine beobachtete Runde beschreibt [Spieltest ohne Testkoordinaten](docs/spieltest.md) die lokale Bereitstellung und den Beobachtungsablauf. Derzeit ist keine unabhängige Testperson verfügbar; diese Spielabnahme steht noch aus.
+## Spielen
 
-Das Spiel setzt aktuelle stabile Versionen von Safari, Chrome oder Firefox mit WebGL2 voraus. Ältere Browser werden nicht gesondert unterstützt; Safari und echte Mobilgeräte sind noch nicht abgenommen.
+1. Starte den Einsatz und klicke einen gelben Bauplatz an. Die Auswahl eines Geräts baut es sofort. Die Startenergie reicht für zwei Geräte.
+2. **Wirbelpumpen** reduzieren die Flutstärke. **Gefriergeräte** bremsen. **Wasserwerfer** schieben die vorderste Welle zurück. Geräte wirken entlang ihrer zugeordneten Route; ausgewählte Bauplätze zeigen den wirksamen Streckenabschnitt. Jedes Gerät lässt sich genau einmal verbessern.
+3. Kombiniere Geräte. Energie wächst um zwei Einheiten pro Sekunde, eine abgeschlossene Welle liefert weitere 35. Energie ist auf 250 begrenzt.
+4. Wähle ein Haus und nutze **Luftkissen** für sechs Sekunden Schutz (20 Sekunden Abklingzeit) oder ein **Rettungsboot** für eine zweisekündige Evakuierung eines bedrohten Hauses (25 Sekunden Abklingzeit). Alternativ zuerst die Fähigkeit, danach das Haus auswählen.
+5. Bei anhaltendem Kontakt nehmen Häuser alle zwei Sekunden Schaden. Nach drei Treffern ist ein Haus verloren. Evakuierte Bewohner bleiben sicher, auch wenn das Gebäude später zerstört wird.
 
-Auf dem aktuellen Mac bestanden isolierter Build und 96 automatisierte Tests sowie gezielte Chromium-Desktopfälle für `1.6-draft`. [Vollständige automatisierte Desktoprunden vor der jüngsten Schadenskorrektur](docs/browser-pruefung.md#desktopbrowser-auf-szenario-16) bestanden in Safari, Google Chrome und Firefox; Firefox protokollierte Zugriffsfehler. Mobile Tests werden auf Nutzerwunsch vorläufig ausgelassen. Einzelheiten und offene Kriterien stehen in [status.md](docs/status.md).
+Nach der Schlussflut beziehungsweise bei 180 Sekunden sind mindestens zwölf von 24 sicheren Bewohnern nötig. Bewohner gelten als sicher, wenn sie evakuiert wurden oder ihr Haus noch steht. Vollständiger Bewohnerverlust beendet die Runde vorzeitig. Erhaltene Häuser und früh abgewehrte Wasserzüge geben Punkte; Hausschaden gibt keine Punkte.
 
-Die Typprüfung verwendet ES2025-Bibliothekstypen und prüft auch die TypeScript-Diagnoseprogramme und Konfigurationsdateien. Vite erzeugt den Produktionsbuild mit `esnext` für aktuelle Browser. Das TypeScript-Ziel allein legt das Vite-Ausgabeziel nicht fest; Bibliothekstypen ersetzen keine Prüfung der tatsächlich verfügbaren Browser-APIs.
+Die Leertaste oder „Pause“ unterbricht das Spiel; ein unsichtbarer Tab pausiert automatisch. Geräte und Rettungen sind während der Pause gesperrt. „Neustart“ setzt die Runde zurück. Ton und Kamerawackeln lassen sich getrennt abschalten. Desktop-Bedienung steht im Vordergrund; Touch und mobile Geräte sind nicht abgenommen.
 
-Bei einem nicht behebbaren Grafik-, Lade- oder Workerfehler wird das Menü geöffnet und bietet einen Knopf zum Neuladen der Seite; dabei beginnt eine neue Runde.
+## Prüfen
 
-Auf sehr kleinen Ansichten öffnet der Knopf „Hilfe“ neben der Quellenleiste die vorhandene Spielanleitung; die Anleitung lässt sich in der Leiste scrollen.
+```sh
+bun run test
+bun run test:browser
+bun tools/compare-rounds.ts
+```
 
-Wenn die laufende Berechnung mehr als zwei Sekunden Rückstand hat, erscheint ein Hinweis, auch im Kartenmodus bei ausgeblendetem Menü. Nach dem Aufholen oder Pausieren verschwindet er; neuere Bedienhinweise bleiben erhalten. Eine vorübergehend verdeckte Kartenabfrage erscheint danach wieder. Die [Prüfbelege](docs/browser-pruefung.md#rückstandsmeldung-bei-ausgeblendetem-kartenmenü) unterscheiden automatisierte Tests von der noch offenen Geräte- und Spielabnahme.
+Die Browserprüfung baut zuerst die aktuelle Produktion und startet sie auf einem exklusiven Port 4187. Sie benötigt den Playwright-Chromium-Browser (`bunx playwright install chromium`). Ein bestehender Server wird nicht wiederverwendet. Für einen vorhandenen kompatiblen Chromium-Browser lässt sich `WATERFIGHTER_CHROME` auf dessen ausführbare Datei setzen.
 
-Die Kopfzeile zeigt laufend Gesamtschaden, Ziel sowie Flut- und Abrissverluste, auch bei ausgeblendetem Menü. Gebäude werden nach Zustand eingefärbt; im Kartenmodus zeigt Antippen zusätzlich Zustand, Schaden und Wassertiefe am Gebäuderand als Text. Bei Wasser nennt die Kartenabfrage Tiefe und Wasserspiegel über Wiener Null; bei ausgeblendetem Menü erscheint sie mit dem Zeitpunkt der Abfrage. So lassen sich Wasserstände auf beiden Seiten eines Damms vergleichen.
+`?test=1` aktiviert ausschließlich für lokale Browserprüfungen eine steuerbare Testoberfläche. Die automatisierte Zeitbeschleunigung prüft Regeln und UI, keine drei Minuten Echtzeitperformance oder menschlichen Spielspaß.
 
-Bestätigte breite Dämme erscheinen als orange Bänder und bestätigte Gräben als braune Geländeflächen. Ein schematisches goldgelbes Band zeigt den Grabenverlauf auch über Wasser und Gebäuden; es ist eine Kartenüberlagerung. Schräge Gräben folgen rasterverbunden der Verbindung zwischen den beiden gewählten Punkten; die Vorschau zeigt den tatsächlichen Verlauf.
+## Aufbau und Stand
 
-Helle Strömungspfeile zeigen die berechnete Richtung nahe der jeweils abgetasteten Wasserzelle. Entlang bestätigter Gräben sind die Pfeile dunkelblau, wenn dort genügend Wasser und Strömung vorhanden sind. Die Größe der regulären Pfeile passt sich begrenzt dem Zoom an; schmale Grabenmarker können trotz der Farbe in der Übersicht schwer erkennbar sein. Eine [Safari-Sichtprobe](docs/browser-pruefung.md#dunkle-grabenpfeile-in-safari) dokumentiert die Darstellung und ihre Grenzen.
+- `src/core/`: Arena, feste Zeitschritte von 1/30 Sekunde, Regeln, Commands und Events; unabhängig von Darstellung und Eingabe.
+- `src/render/`: Babylon-Arena, Wasserzüge, Geräte- und Rettungseffekte.
+- `src/main.ts`: Eingabe, UI, Audio und Laufzeitschleife.
+- `tests/`: Kern- und Browserprüfungen.
+- [Freigegebener Auftrag](docs/arcade-auftrag.md), [Vergleichsrunden](docs/vergleichsrunden.md), [aktueller Status und Kriterienmatrix](docs/status.md).
 
-Blaue Pfeile kennzeichnen die Zuflussbereiche; violette Pfeile markieren offene Modellränder, über die Wasser den Ausschnitt verlassen kann. Die Pfeile sind schematisch und keine Aussage über eine sichere reale Ableitung.
+Der frühere Geodaten-/Solver-Prototyp ist aus diesem Branch entfernt. Die unveränderte Git-Referenz `prototype/v1` (`baf0b198732377907eab29eb45869d6da7d5b1cd`) enthält seinen vollständigen historischen Stand; frühere Abnahmeaussagen gelten ausschließlich dort.
 
-Der Szenarioentwurf `1.6-draft` verwendet einen offenen westlichen Modellrand und 3 m Grabentiefe als Spielannahmen. Wasser außerhalb des Ausschnitts wird nicht weiter simuliert. Die numerischen Referenzstrategien stehen in `tests/fixtures/review-strategies.json` und lassen sich mit `bun tools/reference-strategies.ts baseline --wide` und entsprechend `shield`, `land-divert`, `south-control` oder `south-divert` mit `--wide` nachvollziehen. [Zeitvergleich](docs/review-gebaeudevergleich.md#südlicher-graben-eingriffszeit-auf-15), [Wegdiagnose](docs/review-gebaeudevergleich.md#modellierter-wasserweg-nach-spätem-südlichem-grabeneingriff-auf-15) und [Platzierungsabweichungen](docs/review-gebaeudevergleich.md#platzierungsabweichungen-der-beiden-gräben-auf-15) zeigen Nutzen und Empfindlichkeit; frühere Gebäudevergleiche beziehen sich auf `1.4-draft`. Schräge Damm- und Grabenverläufe folgen einer verbundenen Rasterlinie; menschliche Platzierung bleibt offen.
-
-Gräben dürfen an bereits ausgehobene Zellen anschließen. Die Vorschau nennt die wiederverwendeten Zellen; Kosten und Vertiefung betreffen nur neue Zellen. Eine vollständig vorhandene Strecke wird abgelehnt.
-
-Wenn eine Bauvorschau nicht zulässig ist, erklärt sie den Grund, etwa einen Kartenrand, einen bereits vorhandenen Damm oder ein Gebäude im geplanten Graben. Eine zulässige Dammvorschau weist außerdem auf Kanten hin, die durch ein Gebäude bereits gesperrt sind und dort derzeit keine zusätzliche Sperre bewirken.
-
-Bei Damm und Graben markiert ein Kreuz den ersten gewählten Punkt. Die Grabenvorschau weist zusätzlich darauf hin, wenn der geplante Verlauf modellierte Geländekanten absenkt und dadurch den Wasserverlauf verändern kann.
-
-## Dokumentation
-
-- [Spielplan](docs/spielplan.md): Produktziel und Spielregeln.
-- [Umsetzungsplan](docs/umsetzungsplan.md): Architektur, Arbeitspakete und Abnahmekriterien.
-- [Status und Kriterienmatrix](docs/status.md): Fortschritt und tatsächliche Nachweise.
-- [Browser- und Stabilitätsprüfung](docs/browser-pruefung.md): ausgeführte Browserläufe und ihre Grenzen.
-- [Spieltest ohne Testkoordinaten](docs/spieltest.md): Ablauf und Beobachtungsbogen für die noch offene Prüfung mit einer Person.
-- [Mobil-Messverfahren](docs/mobil-messung.md): Vorbereitung der noch ausstehenden Geräteabnahme.
-- [Goal-Auftrag](docs/goal-auftrag.md): Implementierungsauftrag.
-- [Historischer 3D-Enginevergleich](docs/archiv/enginevergleich-3d.md): früherer Ansatz, keine Architekturvorgabe.
+Menschliche Spielspaßabnahme, Touch, Safari und echte mobile Geräte bleiben ausdrücklich offen. Es gibt keinen Release, keine Kampagne und keinen Multiplayer.

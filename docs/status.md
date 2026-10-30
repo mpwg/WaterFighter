@@ -6,6 +6,8 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
+Ein [zeitlich abgestimmter Kontrollvergleich](review-gebaeudevergleich.md#südlicher-graben-eingriffszeit-auf-15) auf `1.5-draft` zeigt den südlichen Graben bei den geprüften Zeitpunkten bis 230 s wirtschaftlich; ab 235 s übersteigen seine Kosten die Schadensminderung. Bei 150 s waren sechs Grabenzellen bereits benetzt, ohne sofortige Volumenänderung beim Bau. Das sind diskrete Modellläufe, keine kontinuierliche Grenzzeit oder menschliche Bedienungsabnahme.
+
 Die [Safari-Desktopprüfung des kleinen Abrissziels](browser-pruefung.md#safari-beinahetreffer-auf-15) bestätigte einen eindeutigen Beinahetreffer, Markierung und Verwerfen ohne Budgetänderung. Die Position wurde testseitig projiziert; menschliche Auffindbarkeit und die auf Nutzerwunsch ausgesetzten mobilen Prüfungen bleiben offen.
 
 Eine [Auswahlhilfe für kleine Abrissziele](browser-pruefung.md#auswahlhilfe-für-kleine-abrissziele) erlaubt eindeutige Beinahetreffer und markiert das gewählte kleine Gebäude in der Vorschau. Produktionsbuild, 76 Vitest-Tests und gezielte Chromium-Desktopprüfungen bestanden; eine vollständige Runde mit spätem Graben erreichte das Ziel und der kurze Safari-Werkzeuglauf bestand. Die menschliche Auffindbarkeit bleibt offen; mobile Tests sind ausgesetzt.

@@ -432,3 +432,22 @@ Der Entwicklungsbrowser Chromium 156.0.8078.4 wählte den Kandidaten bei 1600 ×
 Für die Suche wurden die Kennungen aus dem Szenario auf das verfügbare Budget gefiltert und die Kandidaten mit `bun tools/evaluate-demolition.ts baseline <ID> 0` beziehungsweise `bun tools/evaluate-demolition.ts shield <ID> 180` berechnet. Kontrollen lauten `bun tools/evaluate-demolition.ts baseline control 0` und `bun tools/evaluate-demolition.ts shield control 180`; die Kontrollen zum Zeitpunkt 180 s treffen dieselbe Zeitschrittgrenze wie die Aktionen. Vier unabhängige Prozesse liefen parallel. Die Suche deckt einzelne Gebäude in genau diesen zwei Ausgangslagen und Zeitpunkten ab, keine Kombinationen oder alle denkbaren Strategien.
 
 Eine vollständige Produktionsrunde in Chromium 156 auf macOS 27.2 verwendete `bun tools/observe-south-production.mjs --after-flood`: Drei Dämme wurden vor Beginn gebaut, der südliche Graben in Pause bei 02:30 bestätigt. Der Lauf erreichte bei 05:00 das Ziel mit 13.445 Schaden und 6.540 Budgetrest; nach Neustart standen Zeit und Schaden auf null und das Budget auf 10.000. Die Auswahl nutzte Testkoordinaten und eine instrumentierte Suche nach dem exakten Endpunkt. Menschliche Platzierung und der vollständige reale Wasserweg bleiben offen.
+
+### Südlicher Graben: Eingriffszeit auf 1.5
+
+Auf Szenario `1.5-draft` wurden mit `bun tools/compare-south-timing.ts control ZEIT` und `bun tools/compare-south-timing.ts trench ZEIT` dieselben drei vorbereiteten Dämme und der südliche Referenzgraben verglichen. Beide Läufe halten bei der jeweiligen Zeit für eine identische Zeitschrittgrenze an; nur die Grabenvariante verändert dort das Gelände. Der Graben kostet 1.700, das Restbudget beträgt 6.540. Die Einsparung unten zieht diese zusätzlichen Werkzeugkosten vom Unterschied der Gesamtschäden ab. Die [vollständigen 26 Ergebnisse](south-timing-1.5.json) enthalten auch Wasserbilanz, Budget und Zeitpunkt.
+
+| Grabenbau bei | Schaden Kontrolle | Schaden mit Graben | Einsparung nach Kosten | Bereits benetzte Grabenzellen ≥ 0,05 m |
+| ---: | ---: | ---: | ---: | ---: |
+| 0 s | 19.287,45 | 13.716,19 | 3.871,26 | 0 |
+| 120 s | 19.287,45 | 13.588,60 | 3.998,85 | 5 |
+| 150 s | 19.287,45 | 13.460,45 | 4.127,00 | 6 |
+| 180 s | 19.287,45 | 10.048,08 | 7.539,38 | 26 |
+| 210 s | 19.287,45 | 14.681,32 | 2.906,13 | 28 |
+| 225 s | 19.287,45 | 17.045,51 | 541,94 | 28 |
+| 230 s | 19.287,45 | 17.472,57 | 114,88 | 28 |
+| 235 s | 19.287,45 | 17.798,54 | −211,09 | 27 |
+| 240 s | 19.287,45 | 18.056,95 | −469,50 | 27 |
+| 270 s | 19.287,45 | 19.091,70 | −1.504,25 | 20 |
+
+Alle gezeigten Runden bleiben unter dem Ziel von 50.000. Bei jedem Grabenbau betrug die gemessene sofortige Volumenänderung null; alle 26 relativen Bilanzfehler lagen unter 0,1 %. Bei 150 s waren bereits 83,55 Gesamtschaden verbucht; im [Produktionsbrowser](#dach-korrigiertes-szenario-15-abrisssuche-und-laufender-eingriff) wurde dieselbe Trasse bei 02:30 in Pause gebaut und das Ziel erreicht. Für die geprüften diskreten Zeitpunkte ist der Eingriff bis 230 s wirtschaftlich, ab 235 s nicht mehr. Das ist keine nachgewiesene kontinuierliche Grenzzeit, keine Aussage über andere Platzierungen und keine reale Hochwasservorhersage. Die Position wurde nicht unabhängig menschlich gefunden; die mobile Prüfung bleibt ausgesetzt.

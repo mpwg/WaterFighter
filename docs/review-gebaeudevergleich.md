@@ -39,6 +39,21 @@ Die zwei Dämme auf der Eintrittsseite senken den Schaden an `w491428570-0` und 
 
 Die Änderungen sind Ergebnisse des Gegenversuchs im Spielmodell: Der räumlich markierte Wasseranteil ist im folgenden Abschnitt beschrieben, erklärt aber nicht allein die gesamte Schadensänderung. Die Werte sind weder eine reale Schutzprognose noch ein Nachweis, dass eine Person die Maßnahmen ohne Testkoordinaten findet.
 
+### Zeitlicher Vergleich der Gebäudebelastung
+
+`bun tools/compare-reference-exposure.ts` berechnete am 30. Oktober 2026 auf Szenario `1.4-draft` die vier Fälle `north-control`, `land-divert`, `south-control` und `south-divert` bis 300 s. Die Maßnahmen wurden vor Flutbeginn gesetzt. Die Diagnose tastet nach dem jeweils ersten Solver-Schritt zum angegebenen Zeitpunkt ab, ohne zusätzliche Schrittgrenzen einzuführen; die tatsächlichen Zeiten weichen in diesen Stichproben um höchstens 0,08 s ab. Die Randtiefe ist die im Spielmodell für den Gebäudeschaden herangezogene maximale Wassertiefe benachbarter Zellen.
+
+| Vergleich und Gebäude | Etwa 180 s: Randtiefe / Schaden | Etwa 210 s: Randtiefe / Schaden | Etwa 240 s: Randtiefe / Schaden | 300 s: Randtiefe / Schaden |
+| --- | ---: | ---: | ---: | ---: |
+| Nordkontrolle, `w316294474-0` | 0,98 m / 841,74 | 1,20 m / 3.603,91 | 0,99 m / 6.365,31 | 0,80 m / 11.056,00 |
+| Nordgraben, `w316294474-0` | 0 m / 0 | 0 m / 0 | 0 m / 0 | 0 m / 0 |
+| Südkontrolle, `r9350494-0` | 0 m / 0 | 0,04 m / 131,70 | 0,12 m / 5.075,53 | 0,11 m / 17.088,41 |
+| Südgraben, `r9350494-0` | 0 m / 0 | 0 m / 0 | 0 m / 0 | 0 m / 0 |
+| Südkontrolle, `w491428570-0` | 0 m / 0 | 0 m / 0 | 0 m / 0 | 0 m / 0 |
+| Südgraben, `w491428570-0` | 0 m / 0 | 0 m / 0 | 0,24 m / 451,76 | 0,15 m / 5.531,00 |
+
+Im Vergleich mit denselben Dämmen zeigt das nördliche Gebäude in den Stichproben der Grabenrunde eine auf 0,00 m gerundete Randtiefe; im südlichen Vergleich zeigt sich die Schadensverlagerung zeitlich zwischen den beiden Gebäuden. Die Stichproben sind keine ununterbrochene Sichtprüfung; auf zwei Dezimalstellen gerundete Tiefen können sehr kleine Werte verbergen. Die vier Endergebnisse reproduzieren die Referenzvergleiche, die relativen Wasserbilanzfehler liegen unter 1,50 × 10⁻¹³. Zwischen den nördlichen und südlichen Fällen unterscheiden sich die Dammführungen; nur Kontrolle und Grabenfall innerhalb derselben Strategie sind direkt vergleichbar. Die Ergebnisse belegen keine reale Schutzwirkung oder alleinige hydraulische Ursache.
+
 ### Markierter Landgraben mit direkten Dämmen
 
 Auf Anwendungscode `f291cc9` vergleichen `bun tools/trace-review-diversion.ts dam3 --ordered` und `dam3trench --ordered` die drei direkten Dämme mit und ohne den Landgraben `(0,4) → (25,4)`. Die Diagnose markiert unmarkiertes Wasser beim Eintritt über die Nord- und Südkanten der Grabenzeile. Fünf Stufen zählen anschließend die westwärts in Reihenfolge überquerten Querschnitte bei x = 20, 15, 10 und 5 sowie den Austritt am Westrand. Zwischen den Querschnitten kann sich die Markierung auch außerhalb der Grabenzeile bewegen.

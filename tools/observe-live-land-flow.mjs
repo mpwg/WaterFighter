@@ -1,6 +1,7 @@
 /** Live worker round with a test-only camera focus on a confirmed land trench. */
 import {readFileSync,writeFileSync} from 'node:fs';
 import {chromium} from '@playwright/test';
+const motionCheck=process.argv.includes('--motion-check');
 const scenario=JSON.parse(readFileSync('public/scenarios/brigittenau-v1.json','utf8'));
 if(scenario.version!=='1.4-draft')throw Error('Szenarioversion stimmt nicht');
 const segments=JSON.parse(readFileSync('tests/fixtures/strategy.json','utf8')).segments.slice(0,3);
@@ -26,13 +27,32 @@ try {
  await page.locator('#panel-toggle').click();await page.locator('#panel-toggle').waitFor({state:'visible'});
  // Use the visible panel to start before hiding it again; camera focus is diagnostic only.
  await page.locator('#panel-toggle').click();await page.locator('#speed').click();const start=Date.now();await page.locator('#run').click();await page.locator('#panel-toggle').click();
- const samples=[];
+ const samples=[];let motion=null;
  for(const target of [120,180,240]){
   await page.waitForFunction(target=>{const [m,s]=document.querySelector('#time').textContent.split(':').map(Number);return m*60+s>=target;},target,{timeout:240000});
   const sample=await page.evaluate(async()=>{const {world}=await import(document.querySelector('script[src*="/src/main.ts"]').src),regular=Math.ceil(world.width/12)*Math.ceil(world.height/12);const values=world.flowSamples.slice(regular);return {time:document.querySelector('#time').textContent,count:values.length,moving:values.filter(v=>Math.hypot(v.vx,v.vy)>=0.01).length,maxSpeed:Math.max(0,...values.map(v=>Math.hypot(v.vx,v.vy)))};});
   await page.screenshot({path:`/tmp/waterfighter-live-land-${target}.png`});samples.push(sample);console.log('Messpunkt',JSON.stringify(sample));
+  if(motionCheck&&target===180){
+   const positions=()=>page.evaluate(async()=>{
+    const {world}=await import(document.querySelector('script[src*="/src/main.ts"]').src);
+    await new Promise(resolve=>world.scene.onAfterRenderObservable.addOnce(resolve));
+    const regular=Math.ceil(world.width/12)*Math.ceil(world.height/12),count=world.flowSamples.length-regular;
+    return Array.from({length:count},(_,i)=>{const o=(regular+i)*18;return [world.flowPositions[o],world.flowPositions[o+2]];});
+   });
+   const difference=(a,b)=>Math.max(...a.map((p,i)=>Math.hypot(p[0]-b[i][0],p[1]-b[i][1])));
+   const runningA=await positions();await page.waitForTimeout(700);const runningB=await positions();
+   const runningDelta=difference(runningA,runningB);
+   await page.locator('#panel-toggle').click();await page.getByRole('button',{name:'Pause'}).click();
+   await page.waitForFunction(()=>document.querySelector('#state').textContent==='Pausiert');
+   const pausedAt=await page.locator('#time').textContent();await page.waitForTimeout(500);
+   const pausedA=await positions();await page.waitForTimeout(700);const pausedB=await positions();
+   const pausedDelta=difference(pausedA,pausedB);
+   if(runningDelta<0.01||pausedDelta!==0||await page.locator('#time').textContent()!==pausedAt)throw Error(`Markerprüfung fehlgeschlagen: ${runningDelta}, ${pausedDelta}`);
+   motion={markers:runningA.length,runningDelta,pausedDelta,pausedAt};console.log('Markerprüfung',JSON.stringify(motion));
+   await page.getByRole('button',{name:'Fortsetzen'}).click();await page.waitForFunction(()=>document.querySelector('#state').textContent==='Läuft');await page.locator('#panel-toggle').click();
+  }
  }
  await page.waitForFunction(()=>!document.querySelector('#result').hidden,null,{timeout:240000});
- const report={scenario:scenario.version,browser:browser.version(),wallSeconds:(Date.now()-start)/1000,budget:await page.locator('#budget').textContent(),title:await page.locator('#result-title').textContent(),result:await page.locator('#result-details').textContent(),samples,errors};
- writeFileSync('/tmp/waterfighter-live-land.json',JSON.stringify(report,null,2));if(errors.length||samples.some(s=>!s.count)||report.title!=='Schadensziel erreicht')throw Error(`Prüfung unvollständig: ${JSON.stringify(report)}`);console.log(JSON.stringify(report,null,2));
+ const report={scenario:scenario.version,browser:browser.version(),wallSeconds:(Date.now()-start)/1000,budget:await page.locator('#budget').textContent(),title:await page.locator('#result-title').textContent(),result:await page.locator('#result-details').textContent(),samples,motion,errors};
+ writeFileSync(motionCheck?'/tmp/waterfighter-live-land-motion.json':'/tmp/waterfighter-live-land.json',JSON.stringify(report,null,2));if(errors.length||samples.some(s=>!s.count)||report.title!=='Schadensziel erreicht')throw Error(`Prüfung unvollständig: ${JSON.stringify(report)}`);console.log(JSON.stringify(report,null,2));
 } finally {await browser.close();}

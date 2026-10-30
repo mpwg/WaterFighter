@@ -6,7 +6,7 @@ Stand: 30. Oktober 2026.
 
 ## Aktueller Stand
 
-Auf Ansichten bis 600 × 500 CSS-Pixel öffnet ein direkter Hilfeknopf die vorhandene Spielanleitung. Produktionsbuild und sechs [gezielte Chromium-Prüfungen](browser-pruefung.md#direkter-hilfezugang-auf-sehr-kleinen-ansichten) für Hoch- und Querformat bestanden. Auf dem vorherigen Anwendungscode `64f1f17` bestanden 72 Vitest-Tests, zwei Python-Tests und alle 99 Chromium-Fälle. Eine vollständige Suite für die Querformatergänzung, menschliche Verständlichkeit und echte Geräte bleiben gesondert zu prüfen.
+Auf Ansichten bis 600 × 500 CSS-Pixel öffnet ein direkter Hilfeknopf die vorhandene Spielanleitung. Im schmalen Querformat wird die geöffnete Anleitung zum Lesen verbreitert; die Maßnahmenvorschau bleibt darüber bedienbar. Produktionsbuild und [gezielte Chromium-Prüfungen](browser-pruefung.md#direkter-hilfezugang-auf-sehr-kleinen-ansichten) für Hoch- und Querformat bestanden. Auf dem vorherigen Anwendungscode `64f1f17` bestanden 72 Vitest-Tests, zwei Python-Tests und alle 99 Chromium-Fälle. Eine vollständige Suite für die Querformatergänzung, menschliche Verständlichkeit und echte Geräte bleiben gesondert zu prüfen.
 
 Die Rückstandsmeldung ist nun auch im Kartenmodus bei ausgeblendetem Menü sichtbar; eine Kartenabfrage erscheint nach dem Aufholen wieder oder kann die Meldung durch eine neue Abfrage ersetzen. Produktionsbuild, 72 Vitest-Tests und [alle 98 Chromium-Fälle](browser-pruefung.md#rückstandsmeldung-bei-ausgeblendetem-kartenmenü) auf Anwendungscode `853cc90` bestanden. Echte Geräte und menschliche Bedienung bleiben offen.
 

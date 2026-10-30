@@ -25,7 +25,7 @@ try {
     phase=`Werkzeug ${mode}`;
     await click(`[data-mode="${mode}"]`);
     if(mode==='demolish') {
-      for(const [x,y] of [[560,245],[410,225],[450,230],[600,210],[515,220],[675,225]]) {
+      for(const [x,y] of [[620,320],[680,330],[750,320],[550,370],[620,365],[770,375],[520,390],[830,355],[560,245],[410,225],[450,230],[600,210],[515,220],[675,225]]) {
         await pointer(x,y);await new Promise(r=>setTimeout(r,300));
         const state=await script('return {visible:!document.querySelector("#preview").hidden,enabled:!document.querySelector("#confirm").disabled};');
         if(state.visible && state.enabled)break;

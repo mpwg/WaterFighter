@@ -13,7 +13,7 @@ const page=await browser.newPage({viewport:{width:1200,height:800}});const error
 let phase='Laden';
 page.on('pageerror',e=>errors.push(`pageerror (${phase}): ${e.message}`));page.on('crash',()=>errors.push(`Browserseite abgestürzt (${phase})`));page.on('close',()=>errors.push(`Browserseite geschlossen (${phase})`));browser.on('disconnected',()=>errors.push(`Browserverbindung beendet (${phase})`));
 const report={version:null,browser:browser.version(),close,withActions,rounds:[],errors};
-const save=()=>writeFileSync(withActions?'/tmp/waterfighter-action-rounds.json':close?'/tmp/waterfighter-close-rounds.json':'/tmp/waterfighter-three-rounds.json',JSON.stringify(report,null,2));
+const save=()=>writeFileSync(process.env.WATERFIGHTER_ROUNDS_OUTPUT??(withActions?'/tmp/waterfighter-action-rounds.json':close?'/tmp/waterfighter-close-rounds.json':'/tmp/waterfighter-three-rounds.json'),JSON.stringify(report,null,2));
 try {
   await page.goto(process.env.WATERFIGHTER_URL??'http://127.0.0.1:4173/');await page.waitForFunction(()=>!document.querySelector('#run').disabled);
   report.version=await page.evaluate(async()=>{const r=await fetch('./scenarios/brigittenau-v1.json.bin');if(!r.ok||!r.body)throw Error('Szenario fehlt');return (await new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).json()).version;});

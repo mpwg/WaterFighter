@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { SCENARIO } from '../src/core/arena';
 import { advance, command, createGame, FIXED_DT, getResult, inflowAt, step } from '../src/core/game';
 import type { GameState } from '../src/core/types';
+import { getPreview } from '../src/render/preview';
 
 function running(): GameState {
   const s = createGame();
@@ -79,6 +80,20 @@ describe('Wassernetz und Flut', () => {
     expect(s.events.some(e => e.type === 'warning' && e.message.includes('Zweite'))).toBe(true);
     expect(inflowAt(112)).toBeGreaterThan(inflowAt(70));
     expect(inflowAt(180)).toBeLessThan(inflowAt(112));
+  });
+  it('beschreibt die Dammöffnung auch bei Rückfluss ohne sichere Flutbehauptung', () => {
+    for (const [seconds, receiver, direction] of [[0, null, 0], [30, 'tulln', 1], [170, 'r1', -1]] as const) {
+      const s = running();
+      advance(s, seconds);
+      expect(getPreview(s, { kind: 'site', id: 'd1' })?.receiverId).toBe(receiver);
+      expect(command(s, { type: 'breach', id: 'd1' })).toBe(true);
+      const event = s.events.at(-1)!;
+      expect(event.type).toBe('breach');
+      expect(event.message).toContain('dauerhaft geöffnet');
+      expect(event.message).not.toMatch(/flutet|wird zum Flutraum/i);
+      step(s);
+      expect(Math.sign(s.flows['site-d1'])).toBe(direction);
+    }
   });
   it('erzeugt identische Zustände bei unterschiedlich portionierter Zeit', () => {
     const a = running(), b = running();

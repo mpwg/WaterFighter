@@ -88,7 +88,7 @@ export function command(s: GameState, c: Command): boolean {
       emit(s, 'build', `${spec.name}: Notdamm wird gebaut.`, site.id);
     } else {
       site.breached = true; site.built = false;
-      emit(s, 'breach', `${spec.name} geöffnet. ${specs.get(spec.receiverId)!.name} wird zum Flutraum.`, site.id);
+      emit(s, 'breach', `${spec.name} dauerhaft geöffnet.`, site.id);
     }
   } else if (c.type === 'team') {
     if (!Number.isInteger(c.index) || c.index < 0 || c.index > 1 || (c.townId !== null && specs.get(c.townId)?.kind !== 'town')) return fail('Ungültiges Rettungsziel.');

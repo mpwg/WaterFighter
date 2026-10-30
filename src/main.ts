@@ -293,9 +293,10 @@ function selectedPanel(): string {
       <div class="danger-area">
         <span class="eyebrow">IRREVERSIBLER EINGRIFF</span>
         <p>
-          Öffnung flutet
-          <strong>${escapeHTML(nodeSpec(site.receiverId).name)}</strong>. Zum
-          Bestätigen 0,9 s gedrückt halten.
+          Die Öffnung gibt den Schutz von
+          <strong>${escapeHTML(nodeSpec(site.receiverId).name)}</strong>
+          dauerhaft auf. Wasser kann je nach Pegel in beide Richtungen fließen.
+          Zum Bestätigen 0,9 s gedrückt halten.
         </p>
         <button
           class="breach"
@@ -490,37 +491,41 @@ function refresh(force = false): void {
     x = String(12 + Math.min(180, state.time) * 2.1);
   cursor.setAttribute("x1", x);
   cursor.setAttribute("x2", x);
-  const messages = [...state.events]
+  const warningMessages = [...state.events]
     .reverse()
     .filter((e) => ["warning", "flood", "breach", "finish"].includes(e.type))
     .slice(0, 3);
+  const logMessages = [...state.events]
+    .reverse()
+    .filter((e) => ["warning", "flood", "breach", "finish", "rescue", "build"].includes(e.type))
+    .slice(0, 5);
   if (
     transientError &&
     (state.time - transientError.time >= 3 ||
-      (messages[0]?.id ?? 0) > transientError.eventId)
+      (warningMessages[0]?.id ?? 0) > transientError.eventId)
   )
     transientError = null;
   const latestWarning =
     transientError?.message ??
-    messages[0]?.message ??
+    warningMessages[0]?.message ??
     "Prognose beachten und drei Maßnahmen wählen.";
   if ($("latest-warning").textContent !== latestWarning)
     $("latest-warning").textContent = latestWarning;
-  const eventKey = `${state.lastError ?? ""}:${messages.map((e) => e.id).join(",")}`;
+  const eventKey = `${state.lastError ?? ""}:${logMessages.map((e) => e.id).join(",")}`;
   if (force || lastEvents !== eventKey) {
     lastEvents = eventKey;
     $("events").innerHTML =
       (state.lastError
         ? `<div class="event error">${escapeHTML(state.lastError)}</div>`
         : "") +
-      (messages.length
-        ? messages
+      (logMessages.length
+        ? logMessages
             .map(
               (e) =>
                 `<div class="event"><time>${time(e.time)}</time><span>${escapeHTML(e.message)}</span></div>`,
             )
             .join("")
-        : '<p class="small">Noch keine Warnungen. Beobachte die Prognose.</p>');
+        : '<p class="small">Noch keine Meldungen. Beobachte die Prognose.</p>');
   }
   document.querySelectorAll<HTMLButtonElement>("[data-select]").forEach((b) => {
     b.disabled = state.phase === "paused";

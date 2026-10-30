@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { writeFileSync } from 'node:fs';
 import os from 'node:os';
 
-type State = { phase: string; time: number; preparations: unknown[]; gates: { id: string; opening: number; target: number }[]; sites: { id: string; built: boolean; breached: boolean; buildingUntil: number | null }[]; teams: (string | null)[]; events: { type: string; time: number; message: string }[]; result: { safe: number; inNeed: number; damage: number } | null };
+type State = { phase: string; time: number; preparations: unknown[]; gates: { id: string; opening: number; target: number }[]; sites: { id: string; built: boolean; breached: boolean; buildingUntil: number | null }[]; teams: (string | null)[]; events: { type: string; time: number; message: string }[]; flows: Record<string, number>; result: { safe: number; inNeed: number; damage: number } | null };
 const state = (page: Page) => page.evaluate(() => (window as any).__waterfighter.state() as State);
 const advance = (page: Page, seconds: number) => page.evaluate(s => (window as any).__waterfighter.advance(s), seconds);
 const command = (page: Page, c: unknown) => page.evaluate(c => (window as any).__waterfighter.command(c), c);
@@ -136,8 +136,44 @@ test('Warnung verdrängt ungültigen Wehrbefehl bei 70 s; Fehler läuft nach 3 s
   await advance(page, 0.5);
   await expect(page.getByTestId('latest-warning')).toContainText('Zweite Flutspitze');
   expect(await command(page, { type: 'gate', id: 'unbekannt', opening: 1 })).toBe(false);
+  await expect(page.getByTestId('latest-warning')).toContainText('Unbekanntes Wehr');
   await advance(page, 3.1);
   await expect(page.getByTestId('latest-warning')).toContainText('Zweite Flutspitze');
+});
+
+test('Dammwarnung benennt dauerhaften Schutzverlust auch beim Rückfluss', async ({ page }) => {
+  await page.goto('/?test=1');
+  for (const id of ['b1', 'b2', 'b3']) expect(await command(page, { type: 'prepare', preparation: { kind: 'capacity', targetId: id } })).toBe(true);
+  expect(await command(page, { type: 'start' })).toBe(true);
+  await advance(page, 170);
+  await page.getByTestId('select-d1').click();
+  const warning = page.locator('.danger-area p');
+  await expect(warning).toContainText('Tulln');
+  await expect(warning).toContainText('dauerhaft');
+  await expect(warning).toContainText('beide Richtungen');
+  await expect(warning).not.toContainText('Öffnung flutet');
+  expect(await command(page, { type: 'breach', id: 'd1' })).toBe(true);
+  await advance(page, 1 / 30);
+  const s = await state(page);
+  expect(s.flows['site-d1']).toBeLessThan(0);
+  expect(s.events.find(e => e.type === 'breach')?.message).not.toMatch(/flutet|wird zum Flutraum/i);
+  await expect(page.getByTestId('latest-warning')).not.toContainText('wird zum Flutraum');
+});
+
+test('Rettungs- und Bauabschluss erscheinen im Protokoll, Flutwarnung bleibt fest', async ({ page }) => {
+  await page.goto('/?test=1'); await prepare(page);
+  await page.getByTestId('select-d2').click();
+  await page.getByTestId('build-d2').click();
+  await advance(page, 3.1);
+  await expect(page.locator('#events')).toContainText('Notdamm fertig');
+  await page.getByTestId('select-tulln').click();
+  await page.getByTestId('team-1').click();
+  await advance(page, 30);
+  const s = await state(page);
+  expect(s.events.some(e => e.type === 'rescue' && e.message.includes('vollständig evakuiert'))).toBe(true);
+  await expect(page.locator('#events')).toContainText('vollständig evakuiert');
+  const newestFixed = [...s.events].reverse().find(e => ['warning', 'flood', 'breach', 'finish'].includes(e.type))!;
+  await expect(page.getByTestId('latest-warning')).toHaveText(newestFixed.message);
 });
 
 test('echte RAF-Zeit, Kartenansicht und natürlicher Tabwechselversuch', async ({ page, context, browser }) => {

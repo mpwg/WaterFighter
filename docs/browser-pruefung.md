@@ -655,3 +655,9 @@ Am 30. Oktober 2026 wurde die Rückmeldung nach einer bestätigten Maßnahme so 
 Am 30. Oktober 2026 bestanden auf einem isolierten Git-Archiv von `2c5506c` der Produktionsbuild mit Typprüfung und alle 93 Playwright-Chromium-Fälle. Die Suite lief mit einem Worker und `--timeout=90000` in 7,2 Minuten auf Google Chrome 156.0.8078.73 unter Linux mit Softwaregrafik. Der isolierte Testserver verwendete Port 4396; die verwendete separate Abhängigkeitsinstallation entsprach der Lockdatei. Der Build meldete die bestehende Größenwarnung für einen JavaScript-Chunk.
 
 Der Durchgang umfasst die beiden neuen Rückmeldungsfälle, Werkzeugaktionen, Kartenbedienung, emulierten Touch und Neustarts. Echte Geräte, tatsächliches Safari und menschliche Bedienung sind damit nicht abgenommen; die Laufzeit ist keine Geräteleistungsmessung.
+
+### Produktionsrunde nach der Bestätigungsrückmeldung
+
+Am 30. Oktober 2026 spielte `bun tools/observe-land-production.mjs --after-flood` auf dem isolierten Produktionsbuild `2c5506c` mit Szenario `1.4-draft` in Chrome 156.0.8078.73 unter Linux und Softwaregrafik. Drei Dämme wurden in der Vorbereitung bestätigt; bei 02:31 wurde pausiert und der nördliche Landgraben bestätigt. Die Worker-Vorschau wurde testseitig mitgelesen; die Auswahl nutzte feste Bildschirmkoordinaten und eine kleine Endpunktkorrektur. Die Uhr blieb während der Pause stehen.
+
+Nach 156,682 s einschließlich Bedienung erreichte die 2×-Runde mit 1.405 Flutschaden, keinem Abrissverlust und 7.510 Budgetrest das Ziel. Seitenfehler wurden nicht protokolliert; der Neustart setzte Zeit, Budget und Schaden zurück. Der automatisierte Lauf belegt keine menschliche Platzierung oder echte Geräteabnahme.

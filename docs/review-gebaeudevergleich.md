@@ -10,6 +10,20 @@ Mit `bun tools/compare-south-placement.ts end 1 0 --hybrid=reference-tail --cut-
 
 Nach der Korrektur ergeben die Referenz und die drei zuvor besonders auffälligen zulässigen Einzelverschiebungen bei Eingriff nach 150 s 2.626,32 beziehungsweise 2.635,68, 2.647,33 und 2.654,84 Schaden. Die Budgets sind 6.540 beziehungsweise 6.565, 6.515 und 6.565; die Bilanzfehler liegen unter 0,1 %. Das erklärt den zuvor beobachteten extremen Ausschlag in diesen Fällen, beweist aber keine allgemeine Platzierungsrobustheit oder menschliche Verständlichkeit.
 
+### Alle Einzelverschiebungen nach der Korrektur
+
+Die acht Einzelverschiebungen des Referenzgrabens wurden mit `bun tools/compare-south-placement.ts start|end DX DY` erneut auf `1.6-draft` bei 150 s nach drei vorbereiteten Dämmen geprüft. Alle fünf zulässigen Varianten erreichten das Schadensziel:
+
+| Verschiebung | Schaden | Budgetrest |
+| --- | ---: | ---: |
+| Start `(0,46)` → `(1,46)` | 2.635,68 | 6.565 |
+| Ende `(47,26)` → `(48,26)` | 2.647,33 | 6.515 |
+| Ende `(47,26)` → `(46,26)` | 2.498,23 | 6.565 |
+| Ende `(47,26)` → `(47,27)` | 2.654,84 | 6.565 |
+| Ende `(47,26)` → `(47,25)` | 2.492,44 | 6.515 |
+
+Die Verschiebung des Starts nach `(-1,46)` liegt außerhalb der Karte; die Starts `(0,47)` und `(0,45)` führen jeweils durch ein Gebäude und wurden kostenfrei abgelehnt. Alle zulässigen Eingriffe erhielten das vorhandene Wasservolumen; die relativen Bilanzfehler lagen unter 0,1 %. Die gleich getaktete Referenz ergibt 2.626,32 Schaden bei 6.540 Budgetrest, die Dammkontrolle ohne Graben 9.025,76. Damit sind die fünf untersuchten Varianten auch nach Kosten gegenüber dieser Kontrolle vorteilhaft. Der Vergleich belegt keine beliebige andere Platzierung, Eingriffszeit oder menschliche Bedienbarkeit.
+
 ## Platzierung und Sichtbarkeit auf 1.6 (historische Schadensberechnung)
 
 Die drei in 1.5 besonders nachteiligen Einzelverschiebungen des südlichen Grabens wurden auf `1.6-draft` mit `bun tools/compare-south-placement.ts start 1 0`, `end 1 0` und `end 0 1` bei 150 s wiederholt. Die unverschobene Referenz ergibt 6.341,85 Schaden; die drei zulässigen Varianten ergeben 192.702,70, 191.226,99 und 190.037,30. Das erste Grabenende liegt dabei eine Zelle vor dem offenen westlichen Modellrand; die übrigen Varianten erreichen den Rand, ändern aber den Verlauf am anderen Ende. Alle Bilanzfehler liegen unter 0,1 %.

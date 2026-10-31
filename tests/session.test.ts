@@ -5,8 +5,8 @@ describe("worker session", () => {
     const s = new Session();
     s.command(1, { type: "pause" });
     const points = [
-      { x: 20, y: 130 },
-      { x: 25, y: 130 },
+      { x: 100, y: 150 },
+      { x: 105, y: 150 },
     ];
     const before = s.snapshot();
     const p = s.preview({ type: "barrier", points });

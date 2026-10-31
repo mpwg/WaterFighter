@@ -31,6 +31,7 @@ import {
   roofGeometry,
 } from "./geometry";
 import { createPointerTrack } from "./input";
+import { gatePose } from "./gate";
 export type Quality = "low" | "high";
 export interface ScenePick {
   point: Point;
@@ -551,16 +552,17 @@ export function createLandscape(
     }
     for (const gate of terrain.gates) {
       const gx = (gate.x + 0.5) * size,
-        gz = (gate.y + 1) * size;
+        gz = (gate.y + 1) * size,
+        pose = gatePose(gate, terrain.heights[gate.a], false);
       const m = box(
         "relief gate " + gate.id,
         gx,
         gz,
         7 * size,
         0.5,
-        gate.sill - 0.25,
+        pose.height,
         material("gate steel", [0.28, 0.34, 0.32]),
-        0.25,
+        pose.bottom,
       );
       m.metadata = { gateId: gate.id };
       m.isPickable = true;
@@ -792,7 +794,13 @@ export function createLandscape(
     }
     for (const gate of snapshot.gates) {
       const m = gates.get(gate.id);
-      if (m) m.position.y = gate.open ? 3.6 : 1.125;
+      const definition = terrain.gates.find((candidate) => candidate.id === gate.id);
+      if (m && definition)
+        m.position.y = gatePose(
+          definition,
+          terrain.heights[definition.a],
+          gate.open,
+        ).centerY;
     }
     const keys = new Set(snapshot.barriers.map((b) => b.key));
     for (const [key, m] of barriers)

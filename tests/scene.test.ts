@@ -109,6 +109,8 @@ it("orients the hydraulic surface upward for Babylon left-handed face culling an
 });
 
 import { roofGeometry } from "../src/scene/geometry";
+import { gatePose } from "../src/scene/gate";
+import { readFileSync } from "node:fs";
 it("faces roof gables outward and pitched slopes toward the sky", () => {
   const g = roofGeometry(10, 12, 3),
     normals: number[] = [];
@@ -129,6 +131,26 @@ it("shares water corners without filling a dry or obstructed neighbor", () => {
   expect(g.positions).toHaveLength(18);
   t.obstacles[11] = 1;
   expect(cellGeometry(t, d).indices).toHaveLength(6);
+});
+it("keeps the closed gate on its control-cell base and raises it to the sill", () => {
+  const terrain = createTerrain(256, 192),
+    gate = terrain.gates[0],
+    base = terrain.heights[gate.a],
+    closed = gatePose(gate, base, false),
+    opened = gatePose(gate, base, true);
+  expect(closed.bottom).toBeCloseTo(base);
+  expect(closed.top).toBeCloseTo(gate.sill);
+  expect(opened.bottom).toBeGreaterThanOrEqual(gate.sill);
+
+  const changedSill = { ...gate, sill: gate.sill + 0.47 },
+    changedClosed = gatePose(changedSill, base, false),
+    changedOpen = gatePose(changedSill, base, true);
+  expect(changedClosed.bottom).toBeCloseTo(base);
+  expect(changedClosed.top).toBeCloseTo(changedSill.sill);
+  expect(changedOpen.bottom).toBeGreaterThanOrEqual(changedSill.sill);
+
+  const sceneSource = readFileSync(new URL("../src/scene/index.ts", import.meta.url), "utf8");
+  expect(sceneSource.match(/gatePose\(/g)).toHaveLength(2);
 });
 it("does not average a sharp hydraulic jump into a sloping water sheet", () => {
   const t = createTerrain(8, 8);

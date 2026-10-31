@@ -23,9 +23,23 @@ export function createTerrain(width=256,height=192):Terrain {
   }
   const gx=Math.floor(width*.7),gy=Math.round(bank(gx));
   const edges=[];
+  // On narrow maps the bank can move several rows within the gate width.
+  // Join it to a horizontal control section with continuous retaining shoulders.
+  const fitControl=Math.max(Math.abs(bank(gx-3)-gy),Math.abs(bank(gx+3)-gy))>3;
+  if(fitControl)for(const x of [gx-4,gx+4])if(x>=0&&x<width){
+    for(let y=Math.max(0,Math.floor(Math.min(bank(x)-2,gy-1)));y<=Math.min(height-1,Math.ceil(Math.max(bank(x)+2,gy+2)));y++){
+      t.heights[y*width+x]=2.35;t.river[y*width+x]=0;
+    }
+  }
   // A seven-cell culvert through the curved embankment, bounded by intact shoulders.
   for(let x=Math.max(0,gx-3);x<=Math.min(width-1,gx+3);x++){
-    for(let y=Math.max(0,Math.floor(bank(x))-3);y<=Math.min(height-1,Math.ceil(bank(x))+3);y++)t.heights[y*width+x]=.25;
+    const start=fitControl?Math.min(Math.floor(bank(x))-3,gy-2):Math.floor(bank(x))-3;
+    const end=fitControl?Math.max(Math.ceil(bank(x))+3,gy+2):Math.ceil(bank(x))+3;
+    for(let y=Math.max(0,start);y<=Math.min(height-1,end);y++){
+      t.heights[y*width+x]=.25;
+      // Downstream culvert cells exchange only through the controlled section.
+      if(fitControl&&y>gy)t.river[y*width+x]=0;
+    }
     edges.push({a:gy*width+x,b:(gy+1)*width+x});
   }
   t.gates.push({id:0,a:gy*width+gx,b:(gy+1)*width+gx,x:gx,y:gy,sill:2.35,edges});

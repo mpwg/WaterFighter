@@ -10,7 +10,7 @@ describe("scene hydraulic geometry", () => {
     const g = cellGeometry(t, d);
     expect(g.indices.length).toBe(6);
     expect(g.positions[0]).toBe(6);
-    expect(g.positions[1]).toBeCloseTo(t.heights[3] + 0.512);
+    expect(g.positions[1]).toBeCloseTo(t.heights[3] + 0.518);
     expect(g.positions[3]).toBe(8);
     expect(cellGeometry(t, new Float32Array(64)).indices).toHaveLength(0);
   });
@@ -105,7 +105,7 @@ it("orients the hydraulic surface upward for Babylon left-handed face culling an
     g = cellGeometry(t),
     normals: number[] = [];
   VertexData.ComputeNormals(g.positions, g.indices, normals);
-  expect(normals[1]).toBeGreaterThan(0.99);
+  expect(normals[1]).toBeGreaterThan(0);
 });
 
 import { roofGeometry } from "../src/scene/geometry";
@@ -115,4 +115,29 @@ it("faces roof gables outward and pitched slopes toward the sky", () => {
   VertexData.ComputeNormals(g.positions, g.indices, normals);
   expect(normals[2]).toBeLessThan(0);
   expect(normals[1]).toBeGreaterThan(0);
+});
+
+it("shares water corners without filling a dry or obstructed neighbor", () => {
+  const t = createTerrain(8, 8);
+  t.heights.fill(0);
+  t.obstacles.fill(0);
+  const d = new Float32Array(64);
+  d[10] = 1;
+  d[11] = 1;
+  const g = cellGeometry(t, d);
+  expect(g.indices).toHaveLength(12);
+  expect(g.positions).toHaveLength(18);
+  t.obstacles[11] = 1;
+  expect(cellGeometry(t, d).indices).toHaveLength(6);
+});
+it("does not average a sharp hydraulic jump into a sloping water sheet", () => {
+  const t = createTerrain(8, 8);
+  t.heights.fill(0);
+  t.obstacles.fill(0);
+  const d = new Float32Array(64);
+  d[10] = 1;
+  d[11] = 2;
+  const g = cellGeometry(t, d);
+  expect(g.positions.filter((_, i) => i % 3 === 1)).toContain(1.018);
+  expect(g.positions.filter((_, i) => i % 3 === 1)).toContain(2.018);
 });

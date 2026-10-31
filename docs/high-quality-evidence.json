@@ -20,25 +20,25 @@
       "fixedStep": 0.03333333333333333,
       "snapshotHz": 10,
       "samples": 1000,
-      "coreP95Ms": 1.899999976158142
+      "coreP95Ms": 1.800000011920929
     }
   },
   "state": {
     "time": 360,
     "results": {
       "rescued": 0,
-      "totalPeople": 140,
-      "safePeople": 98,
-      "threatenedPeople": 42,
-      "damagedBuildings": 7,
-      "meanDamage": 0.09751621886313244
+      "totalPeople": 135,
+      "safePeople": 119,
+      "threatenedPeople": 16,
+      "damagedBuildings": 4,
+      "meanDamage": 0.05266969995156349
     },
     "accounting": {
-      "initial": 29515.459299323342,
-      "inflow": 108764.02964120753,
-      "outflow": 83873.24465325942,
-      "volume": 54406.24428739056,
-      "error": 1.1910742614418268e-7
+      "initial": 22675.205465389834,
+      "inflow": 72047.63493808071,
+      "outflow": 67213.09067275879,
+      "volume": 27509.74973074208,
+      "error": 3.032619133591652e-8
     }
   },
   "pageErrors": [],

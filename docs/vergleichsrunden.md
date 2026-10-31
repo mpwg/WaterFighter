@@ -1,21 +1,19 @@
 # Modellinterner Strategievergleich
 
-`bun tools/compare-strategies.ts` führt drei vollständige 360-Sekunden-Runden auf derselben deterministischen 256×192-Karte aus. Zeit, Anfangszustand und Zufluss bleiben identisch. Keine Runde rettet Häuser: Die Messung isoliert ausschließlich Wasser und Sachschaden.
+Aktualisiert am 31. Oktober 2026 für die organische 256×192-Karte mit 34 Häusern und 135 Personen. `bun tools/compare-strategies.ts` führt drei vollständige 360-Sekunden-Runden mit identischem Anfangszustand und Zufluss aus, jeweils in 10800 Aufrufen zu 1/30s. Keine Runde rettet Menschen: Die Messung isoliert Wasser und Sachschaden.
 
 - **no-action:** keinerlei Eingriff.
-- **barrier:** 18 Abschnitte entlang `(170,72) → (188,72)`, unterhalb des Schützkanals. Der Befehl muss vom echten Kern angenommen werden.
-- **gate:** Schütz 0 ab Beginn geschlossen.
+- **barrier:** elf vom echten Kern akzeptierte Abschnitte entlang `(174,61) → (185,61)`, unterhalb des Schützkanals.
+- **gate:** Schütz 0 ab Beginn geschlossen. Die genaue Öffnung liegt an Vertex-y57, von x176 bis x183.
 
-[JSON-Rohdaten](strategy-evidence.json) enthalten bei 180 und 360 Sekunden Wasserstandfläche (>2 cm), Gesamtvolumen, mittleren Schaden, beschädigte Häuser, höchsten Hauspegel und Bilanzfehler. Ein Eingriff kann lokal helfen und Wasser anderswo verlagern. Die Ergebnisse gelten nur für dieses stilisierte Modell und belegen weder reale Schutzwirkung noch eine Hochwasserprognose.
+[JSON-Rohdaten](strategy-evidence.json) enthalten bei 180 und 360 Sekunden die nasse Fläche (>2cm), Gesamtvolumen, mittleren Schaden, beschädigte Häuser, höchsten Hauspegel und Bilanzfehler.
 
-Die früheren HQ100-Varianten gehörten zum entfernten V3-Kern und sind keine Vergleichsdaten des aktuellen Spiels.
-
-Gemessener Stand (30. Oktober 2026):
-
-| Strategie | Material übrig | Nasse Zellen bei 360 s | Mittlerer Schaden bei 360 s | Beschädigte Häuser |
+| Strategie | Material übrig | Nasse Zellen bei 360s | Mittlerer Schaden bei 360s | Beschädigte Häuser |
 | --- | ---: | ---: | ---: | ---: |
-| Keine Aktion | 900 | 24198 | 0.0975162 | 7 |
-| 18 Sandsackabschnitte | 864 | 23999 | 0.0914444 | 7 |
-| Schütz geschlossen | 900 | 23586 | 0.0862523 | 7 |
+| Keine Aktion | 900 | 10879 | 0.0526697 | 4 |
+| Elf Sandsackabschnitte | 878 | 10551 | 0.0485182 | 3 |
+| Schütz geschlossen | 900 | 10467 | 0.0430877 | 2 |
 
-Beide Maßnahmen reduzieren modellintern die nasse Fläche und den mittleren Schaden; sie vermeiden in diesem Szenario keine zusätzlichen beschädigten Häuser. Der höchste Hauspegel bleibt praktisch unverändert bei 0.6689 m. Der größte erfasste absolute Bilanzfehler liegt bei rund 1.28e-7 m³. Diese begrenzten Unterschiede sind keine Garantie für eine erfolgreiche Gesamtstrategie.
+Beide Maßnahmen reduzieren in diesem Szenario nasse Fläche, mittleren Schaden und die Zahl beschädigter Häuser. Der höchste Hauspegel bleibt bei rund 1.79235m, da andere Häuser weiterhin exponiert sind. Der größte absolute Bilanzfehler über alle erfassten Zwischen- und Endwerte beträgt rund 3.84e-8m³.
+
+Ein Eingriff kann lokal helfen und Wasser anderswo verlagern. Die Zahlen gelten ausschließlich für dieses stilisierte Modell; sie belegen weder reale Schutzwirkung noch eine Hochwasserprognose. Der feste 1/30-Aufrufplan hier kann geringfügig andere Werte als ein einzelner `stepGame(...,360)`-Kalibrierungsaufruf liefern. Historische Zahlen zur früheren Rasterkarte vom 30. Oktober und ältere HQ100/V3-Varianten gelten nicht für die aktuelle Geometrie.

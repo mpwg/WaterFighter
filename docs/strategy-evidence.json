@@ -1,5 +1,5 @@
 {
-  "scenario": "stylized deterministic 256x192; identical initial state and forcing; no rescues",
+  "scenario": "organic calibrated 256x192, 2026-10-31; identical initial state and forcing; no rescues",
   "rows": [
     {
       "strategy": "no-action",
@@ -8,46 +8,46 @@
       "checkpoints": [
         {
           "time": 179.99999999999235,
-          "wetCells": 19695,
-          "waterVolume": 132399.16117830755,
-          "meanDamage": 0.00023713858469771184,
-          "damagedBuildings": 0,
-          "peakHouseDepth": 0.1905696396739299,
-          "balanceError": 1.2738746590912342e-7
+          "wetCells": 11357,
+          "waterVolume": 92743.54538226583,
+          "meanDamage": 0.029682407372713777,
+          "damagedBuildings": 1,
+          "peakHouseDepth": 1.7482193982583099,
+          "balanceError": 3.837340045720339e-8
         },
         {
           "time": 360,
-          "wetCells": 24198,
-          "waterVolume": 54406.24428739056,
-          "meanDamage": 0.09751621886313244,
-          "damagedBuildings": 7,
-          "peakHouseDepth": 0.6688886289734406,
-          "balanceError": 1.1910742614418268e-7
+          "wetCells": 10879,
+          "waterVolume": 27509.74973074208,
+          "meanDamage": 0.05266969995156349,
+          "damagedBuildings": 4,
+          "peakHouseDepth": 1.7923535030953903,
+          "balanceError": 3.032619133591652e-8
         }
       ]
     },
     {
       "strategy": "barrier",
-      "resources": 864,
-      "barriers": 18,
+      "resources": 878,
+      "barriers": 11,
       "checkpoints": [
         {
           "time": 179.99999999999235,
-          "wetCells": 19539,
-          "waterVolume": 132391.99370146624,
-          "meanDamage": 0.0001568873493460212,
-          "damagedBuildings": 0,
-          "peakHouseDepth": 0.1905696396739299,
-          "balanceError": 1.23007339425385e-7
+          "wetCells": 10948,
+          "waterVolume": 92610.91905699496,
+          "meanDamage": 0.029898615907598097,
+          "damagedBuildings": 2,
+          "peakHouseDepth": 1.7482193982583099,
+          "balanceError": 2.472370397299528e-8
         },
         {
           "time": 360,
-          "wetCells": 23999,
-          "waterVolume": 54233.96110738771,
-          "meanDamage": 0.09144439052127885,
-          "damagedBuildings": 7,
-          "peakHouseDepth": 0.6688886289777217,
-          "balanceError": 1.0494841262698174e-7
+          "wetCells": 10551,
+          "waterVolume": 27136.144968115026,
+          "meanDamage": 0.04851820808526128,
+          "damagedBuildings": 3,
+          "peakHouseDepth": 1.7923535030953903,
+          "balanceError": 1.8742866814136505e-8
         }
       ]
     },
@@ -58,21 +58,21 @@
       "checkpoints": [
         {
           "time": 179.99999999999235,
-          "wetCells": 19118,
-          "waterVolume": 132331.24952023546,
-          "meanDamage": 0.00015688734953485872,
-          "damagedBuildings": 0,
-          "peakHouseDepth": 0.19056963967393292,
-          "balanceError": 1.1599331628531218e-7
+          "wetCells": 11153,
+          "waterVolume": 92561.46258474753,
+          "meanDamage": 0.029249042084460577,
+          "damagedBuildings": 1,
+          "peakHouseDepth": 1.7482193982583099,
+          "balanceError": 2.3559550754725933e-8
         },
         {
           "time": 360,
-          "wetCells": 23586,
-          "waterVolume": 53754.81213769847,
-          "meanDamage": 0.08625234393685369,
-          "damagedBuildings": 7,
-          "peakHouseDepth": 0.6688886291238465,
-          "balanceError": 1.0734947863966227e-7
+          "wetCells": 10467,
+          "waterVolume": 27176.29500278894,
+          "meanDamage": 0.04308768577525373,
+          "damagedBuildings": 2,
+          "peakHouseDepth": 1.7923535030953903,
+          "balanceError": 3.0486262403428555e-8
         }
       ]
     }

@@ -38,3 +38,10 @@ Ableitung fürs Spiel: erkennbare Uferzone und Wege, Bäume mit unterschiedliche
 - Anfang und Scheitel müssen unterschiedliche Bedrohung zeigen: überflutete Wege, umspülte Häuser und veränderte Uferlinie.
 - Bewegte Chrome-Aufnahme prüfen: gerichtete Strömung und lokal begründete Turbulenz, keine uniforme diagonale Streifentextur.
 - Aus Tulln und Rossatz abgeleitetes spielbares Donauszenario; keine Behauptung eines vermessenen Tullner Ortsausschnitts oder einer Hochwasserprognose.
+
+## Lokal gebündelte Fototexturen (CC0)
+
+- [Poly Haven: Roof Tiles](https://polyhaven.com/a/roof_tiles), Stephan Seeliger, CC0: `public/textures/roof_tiles_diff.jpg`, Original-Diffuse-JPEG 1k, 1.1 MB.
+- [Poly Haven: Leafy Grass](https://polyhaven.com/a/leafy_grass), CC0: `public/textures/leafy_grass_diff.jpg`, Original-Diffuse-JPEG 1k, 1.2 MB.
+
+Heruntergeladen am 31. Oktober 2026 aus den Dateilisten der Poly-Haven-API; ausschließlich lokale Auslieferung, keine Laufzeitanfragen an Poly Haven. [Lizenz](https://polyhaven.com/license): CC0. Die Referenzfotos oben bleiben reine Vorlagen und sind keine Spieltexturen.

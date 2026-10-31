@@ -69,7 +69,7 @@ button:hover:enabled {
 }
 .masthead h1 {
   font:
-    900 clamp(33px, 4.35vw, 64px) / 0.9 Georgia,
+    900 clamp(33px, 4.35vw, 64px) / 1.12 Georgia,
     "V4 Serif",
     serif;
   letter-spacing: -0.055em;
@@ -206,6 +206,9 @@ canvas {
 }
 .water-key {
   background: #81502c;
+}
+.damage-key {
+  background: #b2512e;
 }
 .barrier-key {
   background: var(--ink);
@@ -625,5 +628,56 @@ footer a {
 @media (prefers-reduced-motion: reduce) {
   * {
     scroll-behavior: auto !important;
+  }
+}
+@media (max-height: 850px) and (min-width: 900px) {
+  .map-column {
+    width: min(100%, calc(100vh - 265px));
+  }
+  .toolstrip {
+    padding-top: 12px;
+  }
+  .tool-intro {
+    font-size: 15px;
+    line-height: 1.2;
+    margin: 5px 0 9px;
+  }
+  .target-panel {
+    padding-top: 8px;
+    margin-top: 10px;
+  }
+  .target-panel h2 {
+    font-size: 22px;
+    margin: 7px 0;
+  }
+  .target-panel p {
+    font-size: 10px;
+    line-height: 1.35;
+    margin: 6px 0;
+  }
+  .cost {
+    padding: 7px 0;
+  }
+  #confirm {
+    padding: 9px;
+  }
+  .cancel {
+    padding: 6px;
+  }
+  #notice {
+    margin-top: 8px;
+    min-height: 22px;
+  }
+  .district-note {
+    line-height: 1.35;
+    padding-top: 6px;
+  }
+  .toolstrip:has(#confirm) .district-note {
+    display: none;
+  }
+}
+@media (min-width: 1400px) and (min-height: 851px) {
+  .map-column {
+    width: min(100%, calc(100vh - 312px));
   }
 }

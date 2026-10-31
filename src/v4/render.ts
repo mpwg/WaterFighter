@@ -225,6 +225,19 @@ export class MapRenderer {
         );
         ctx.fill();
       }
+    // Flood damage is persistent building state, separate from water currently outside it.
+    for (let index = 0; index < this.map.buildings.length; index++) {
+      const building = this.map.buildings[index];
+      const damage = snapshot.buildingDamage[index];
+      if (damage <= 0 || snapshot.demolished.includes(building.id)) continue;
+      const ratio = Math.min(1, damage / building.value);
+      ctx.fillStyle = `rgba(178, 81, 46, ${Math.min(0.64, 0.16 + Math.sqrt(ratio) * 0.65)})`;
+      this.cells(ctx, building);
+      geometry(ctx, building);
+      ctx.strokeStyle = "#b2512e";
+      ctx.lineWidth = 0.65;
+      ctx.stroke();
+    }
     // Source ticks occupy the real boundary cells; no painted flood extent.
     ctx.fillStyle = ORANGE;
     for (const i of this.map.sourceCells)

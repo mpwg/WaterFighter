@@ -681,3 +681,13 @@ footer a {
     width: min(100%, calc(100vh - 312px));
   }
 }
+/* A selected building adds costs and two controls; keep the map and attribution visible. */
+@media (min-width: 900px) {
+  .toolstrip:has(#confirm) .district-note,
+  .toolstrip:has(#confirm) .tool-intro {
+    display: none;
+  }
+  .toolstrip:has(#confirm) .tool-heading {
+    margin-bottom: 16px;
+  }
+}

@@ -13,8 +13,8 @@ export function validateMap(value: unknown): V4Map {
   for (const b of map.buildings) {
     if (!Number.isFinite(b.value) || b.value <= 0) throw new Error('Ungültiger Gebäudewert');
     for (const cell of b.cells) {
-    if (!Number.isInteger(cell) || cell < 0 || cell >= size) throw new Error('Ungültige Gebäudezelle');
-    occupied.add(cell);
+      if (!Number.isInteger(cell) || cell < 0 || cell >= size) throw new Error('Ungültige Gebäudezelle');
+      occupied.add(cell);
     }
   }
   for (const cell of map.sourceCells) {
@@ -26,8 +26,8 @@ export function validateMap(value: unknown): V4Map {
   for (const s of map.barrierSegments) {
     if (!Number.isFinite(s.crestHeight) || s.crestHeight <= 0) throw new Error('Ungültige Barrierenhöhe');
     for (const [a,b] of s.faces) {
-    if (!(a >= 0 && b < size && (b - a === map.width || (b-a === 1 && Math.floor(a/map.width)===Math.floor(b/map.width))))
-      || occupied.has(a) || occupied.has(b)) throw new Error('Ungültige Barrierenkante');
+      if (!(a >= 0 && b < size && (b - a === map.width || (b-a === 1 && Math.floor(a/map.width)===Math.floor(b/map.width))))
+        || occupied.has(a) || occupied.has(b)) throw new Error('Ungültige Barrierenkante');
     }
   }
   return map;

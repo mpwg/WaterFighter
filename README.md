@@ -1,24 +1,25 @@
-# WaterFighter · Tullner Donauauen
+# WaterFighter · Wien geht unter
 
-Ein sechsminütiges Desktop-Hochwasserspiel mit einer WebGPU-Landschaft und einem deterministischen Wasserkern. Ziehe freie Sandsacklinien, rette Menschen durch Hausklicks und bediene den Flussschütz. Die Landschaft verbindet einen breiten Flussbogen, gewachsene Straßen, 34 Häuser mit variierenden Grundrissen und bewaldete Hänge. Reale [Bildvorlagen](docs/visual-references.md) und lokal gebündelte CC0-Fototexturen begründen die Gestaltung; sie bleibt eine spielerische Annäherung, keine vermessene Darstellung von Tulln und keine Hochwasserprognose.
+Ein 90-Sekunden-Spiel auf einer amtlichen Karte rund um Vorgartenstraße/Ennsgasse in der Leopoldstadt. Setze Straßenbarrieren oder öffne durch bestätigten Gebäudeabriss einen Weg für das Wasser. Bewahre möglichst viele der 100.000 Punkte. Dammbruch, Wasserverlauf, Gebäudewerte und Viertelrollen sind Spielfiktion; das Spiel ist keine Hochwasserprognose.
 
-Voraussetzung: Bun 1.4.4 und ein Browser mit WebGPU.
+Voraussetzung: Bun 1.4.4 und ein aktueller Browser mit Canvas2D und Web Workers. Alle Karten- und Schriftdateien werden lokal geladen; WebGPU ist nicht erforderlich.
 
 ```sh
 bun install --frozen-lockfile
 bun run dev
 bun run test
+bun run typecheck
 bun run build
 bun run test:browser
-bun tools/compare-strategies.ts
+bun tools/v4-compare.ts
 ```
 
-Die Browserprüfung startet den Produktionsbuild exklusiv auf Port 4187. `WATERFIGHTER_CHROME` wählt eine vorhandene Chrome-Datei. `WATERFIGHTER_SOFTWARE_GPU=1` aktiviert die dokumentierten SwiftShader/Vulkan-Flags für funktionale Headless-Tests. Software-Rendering belegt keine Hardware-GPU-Leistung. Der Browserlauf enthält eine vollständige echte 360-Sekunden-Runde und dauert entsprechend länger.
+`dev` gibt die lokale URL aus. Die Browserprüfung baut das Spiel und startet den Produktionsserver exklusiv auf Port 4187. `WATERFIGHTER_CHROME` kann eine installierte Chrome-Datei auswählen. Der Test enthält eine vollständige echte 90-Sekunden-Runde und dauert insgesamt etwa zwei Minuten. Das Spiel benötigt eine Bereitstellung im URL-Wurzelpfad, da Karte und Schriften über `/v4/…` geladen werden.
 
-Die Runde startet nach dem Laden. Die ersten 45 Sekunden bleiben ruhig. Werkzeug **Sandsäcke** (1) zeichnet per linker Maustaste freie Linien auf trockenem Boden; Materialkosten werden am Cursor geprüft. **Entfernen** (2) entfernt Linien und erstattet unbegonnenes Material vollständig, begonnenes teilweise. **Retten** (3) startet durch Hausklick eine sechssekündige Rettung; mehrere Häuser sind gleichzeitig möglich. Kleine Markierungen über den Häusern zeigen Restzeit und Fortschritt; ein Häkchen bedeutet gerettet. **Schütz** (4) schaltet den Durchlass. Rechts ziehen verschiebt die Kamera, das Mausrad zoomt, **Übersicht** setzt die Kamera zurück. Escape bricht eine Linie ab.
+Die Karte bleibt vollständig sichtbar. **Runde starten** beginnt die Uhr. **Barriere** (1): über eine Straßenquerung fahren, exakte Linie prüfen und klicken; ein weiterer Klick entfernt sie ohne Erstattung. Drei Ladungen, alle 15 Spielsekunden eine neue, maximal drei. Barrieren haben endliche Höhe und können überströmt werden. **Abriss** (2): Gebäude anklicken, den angezeigten Punktverlust prüfen und separat bestätigen. Zwei Ladungen, eine neue bei 45 Sekunden, maximal zwei. Jeder Abriss kostet den verbleibenden Gebäudewert plus 250 Punkte; derselbe Abriss kann nicht wiederholt werden. Escape verwirft die Auswahl.
 
-**Pause** hält Wasser und Rettungen an; neue Rettungen starten erst nach Weiter; neue Sandsäcke werden mit reservierten Kosten geplant und nach Weiter gebaut. **Neustart** setzt Zeit und Material zurück. Qualität Hoch/Niedrig kann während der Runde gewechselt werden. Nach sechs Minuten erscheint die Bilanz.
+**Pause** hält Uhr, Nachschub und Aktionen an; **Fortsetzen** setzt manuell fort. Leertaste auf dem Seitenhintergrund schaltet Pause um. Ein versteckter Tab pausiert; sichtbar werden startet die Runde nicht automatisch. **Neu starten** setzt Zeit, Schaden, Eingriffe und Vorrat zurück und wartet auf einen neuen Start. Nach 90 Sekunden zeigt die Bilanz Flut- und Abrissschaden getrennt; auch negative Punkte sind möglich. **Ton an/aus** schaltet die kurzen Eingriffssignale.
 
-`src/flood/` enthält den 256×192-Wasserkern mit festen 1/30-Sekunden-Schritten, `src/worker.ts` besitzt die laufende Simulation, `src/scene/` rendert Babylon.js WebGPU. `?test=1` stellt eine eingefrorene Test-API bereit; `?test=1&realtime=1` beobachtet echte Zeit. Normale URLs besitzen diese API nicht. Compiler und Schriftdateien werden lokal gebündelt.
+Der frische V4-Code liegt ausschließlich unter `src/v4/`: Canvas2D-Oberfläche, isolierter Simulationsworker und deterministischer Kern. `?test=1` bietet eine explizite Testbrücke und friert die autonome Uhr ein; die normale URL besitzt diese Brücke nicht. Die frühere Tulln-/WebGPU-Laufzeit wurde entfernt; ältere Dokumente, Bilder und Messdaten sind historische Artefakte.
 
-[Abnahme und Grenzen](docs/status.md), [Strategiedaten](docs/strategy-evidence.json) und [historische Echtzeitmessdaten](docs/browser-evidence.json) dokumentieren Prüfungen. Die Echtzeitmessung stammt von der früheren Geometrie; aktuelle [Anfangsaufnahme](docs/tulln-realistic-initial.png), [Scheitelaufnahme](docs/tulln-realistic-crest.png) und [bewegte Aufnahme](docs/tulln-realistic-accelerated.webm) zeigen die neue Landschaft in ausdrücklich beschleunigter Testzeit. Safari, physische GPUs, reale Mobilgeräte und menschlicher Spielspaß wurden nicht abgenommen.
+[Datengrundlage, Quellen und Spielfiktion](docs/v4-data.md), [aktueller Prüfstand und offene Abnahme](docs/status.md), [V4-Strategievergleich](docs/v4-strategy-evidence.json), [echte 90-Sekunden-Browsermessung](docs/v4-browser-evidence.json). Automatisierte Prüfungen ersetzen keine menschliche Spielspaßbewertung, echten Geräte oder fachliche Hochwasservalidierung.

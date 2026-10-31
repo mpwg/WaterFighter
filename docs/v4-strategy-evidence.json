@@ -1,0 +1,106 @@
+{
+  "scope": "CPU solver and fictional game model only; no hydraulic or human strategy validation",
+  "command": "bun tools/v4-compare.ts",
+  "roundSeconds": 90,
+  "runs": [
+    {
+      "name": "no-actions",
+      "actions": [],
+      "solverMs": 5394.118383,
+      "points": 86742.2484252705,
+      "floodDamage": 13257.7515747295,
+      "demolitionDamage": 0,
+      "wetCells": 8728,
+      "maximumDepth": 2.668180465698242,
+      "audit": {
+        "volume": 26491.29522846672,
+        "inflow": 48887.3158765093,
+        "outflow": 22396.020648042544,
+        "initialVolume": 0,
+        "balanceError": -4.001776687800884e-11
+      }
+    },
+    {
+      "name": "harmful-barrier",
+      "actions": [
+        {
+          "at": 0,
+          "command": {
+            "type": "placeBarrier",
+            "segmentId": "barrier-122"
+          }
+        }
+      ],
+      "solverMs": 5274.575300999999,
+      "points": 86385.75011104785,
+      "floodDamage": 13614.249888952145,
+      "demolitionDamage": 0,
+      "wetCells": 9169,
+      "maximumDepth": 2.6792948246002197,
+      "audit": {
+        "volume": 27430.768582104767,
+        "inflow": 48629.914665019416,
+        "outflow": 21199.146082914198,
+        "initialVolume": 0,
+        "balanceError": -4.511093720793724e-10
+      }
+    },
+    {
+      "name": "protective-barrier-only",
+      "actions": [
+        {
+          "at": 0,
+          "command": {
+            "type": "placeBarrier",
+            "segmentId": "barrier-14"
+          }
+        }
+      ],
+      "solverMs": 5192.815533000001,
+      "points": 89520.48836904405,
+      "floodDamage": 10479.511630955947,
+      "demolitionDamage": 0,
+      "wetCells": 8040,
+      "maximumDepth": 2.663936138153076,
+      "audit": {
+        "volume": 24727.894475961148,
+        "inflow": 47848.30038018534,
+        "outflow": 23120.40590422424,
+        "initialVolume": 0,
+        "balanceError": 4.729372449219227e-11
+      }
+    },
+    {
+      "name": "deliberate-barrier-and-opening",
+      "actions": [
+        {
+          "at": 0,
+          "command": {
+            "type": "placeBarrier",
+            "segmentId": "barrier-14"
+          }
+        },
+        {
+          "at": 45,
+          "command": {
+            "type": "demolish",
+            "buildingId": "geb-5354281"
+          }
+        }
+      ],
+      "solverMs": 5182.862519999999,
+      "points": 89857.92177859753,
+      "floodDamage": 9711.509986967687,
+      "demolitionDamage": 430.5682344347739,
+      "wetCells": 7817,
+      "maximumDepth": 2.6249136924743652,
+      "audit": {
+        "volume": 23644.547453550313,
+        "inflow": 48790.10042764681,
+        "outflow": 25145.552974096372,
+        "initialVolume": 0,
+        "balanceError": -1.2369127944111824e-10
+      }
+    }
+  ]
+}

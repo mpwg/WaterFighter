@@ -1,0 +1,12 @@
+{
+  "mode": "normal URL; no bridge or synthetic clock",
+  "browserName": "chromium",
+  "browserVersion": "156.0.8078.4",
+  "elapsedMs": 90504.38996500001,
+  "remaining": "0s",
+  "points": "86 742",
+  "floodDamage": "−13 258",
+  "demolitionDamage": "−0",
+  "errors": [],
+  "limits": "Headless Chromium only; no physical device, natural tab switch or human playability evidence"
+}

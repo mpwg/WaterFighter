@@ -105,3 +105,34 @@ export function barrierAllowed(
     (s) => placed.has(s.id) && s.faces.some(([a, b]) => faces.has(`${a}:${b}`)),
   );
 }
+
+/** Visibility can change while fonts/map are loading, before a Worker session exists. */
+export class StartupVisibility {
+  private initialized = false;
+  private pendingHidden = false;
+  hidden(): boolean {
+    if (!this.initialized) {
+      this.pendingHidden = true;
+      return false;
+    }
+    return true;
+  }
+  ready(documentHidden: boolean): boolean {
+    this.initialized = true;
+    const shouldPause = this.pendingHidden || documentHidden;
+    this.pendingHidden = false;
+    return shouldPause;
+  }
+}
+export function barrierAvailable(
+  map: V4Map,
+  snapshot: Pick<GameSnapshot, "phase" | "barrierCharges" | "barriers">,
+  segmentId: string | null,
+): boolean {
+  return (
+    segmentId !== null &&
+    snapshot.phase === "running" &&
+    snapshot.barrierCharges > 0 &&
+    barrierAllowed(map, segmentId, new Set(snapshot.barriers))
+  );
+}

@@ -1,7 +1,13 @@
 import "./style.css";
 import { GameAudio } from "./audio";
 import { MapRenderer } from "./render";
-import { barrierAllowed, barrierAt, buildingAt, mapPosition } from "./protocol";
+import {
+  StartupVisibility,
+  barrierAvailable,
+  barrierAt,
+  buildingAt,
+  mapPosition,
+} from "./protocol";
 import type { Reply, Request } from "./protocol";
 import type { ViewState } from "./render";
 import type {
@@ -62,6 +68,7 @@ const pending = new Map<
   number,
   { resolve: (reply: Reply) => void; reject: (error: Error) => void }
 >();
+const startupVisibility = new StartupVisibility();
 const worker = new Worker(new URL("./worker.ts", import.meta.url), {
   type: "module",
 });
@@ -109,6 +116,9 @@ worker.onmessage = (event: MessageEvent<Reply>) => {
     map = reply.map;
     renderer = new MapRenderer(canvas, map);
     $("loading").hidden = true;
+    if (startupVisibility.ready(document.hidden)) {
+      void request({ type: "hidden" }).catch((e) => fail(String(e)));
+    }
   }
   const previous = snapshot;
   snapshot = reply.snapshot;
@@ -173,6 +183,7 @@ function setControls() {
 }
 function update() {
   if (!snapshot || !map) return;
+  refreshBarrierValidity();
   $("time").innerHTML = `${Math.ceil(90 - snapshot.time)}<span>s</span>`;
   $("points").textContent = number(snapshot.points);
   $("flood").textContent = loss(snapshot.floodDamage);
@@ -240,7 +251,7 @@ function targetPanel() {
     targetKey = key;
     if (b) {
       $("target").innerHTML =
-        '<span class="eyebrow">GEBÄUDE AUSGEWÄHLT</span><h2 id="building-name"></h2><p id="building-zone"></p><div class="cost"><span>ABRISSSCHADEN</span><strong id="cost"></strong></div><p>Aktueller Restwert + 250 Punkte. Öffnet exakt die markierten Rasterzellen.</p><button id="confirm">Abriss bestätigen</button><button class="cancel" id="cancel">Auswahl verwerfen</button>';
+        '<span class="eyebrow">GEBÄUDE AUSGEWÄHLT</span><h2 id="building-name"></h2><p id="building-zone"></p><div class="cost"><span>ABRISSSCHADEN</span><strong id="cost"></strong></div><p>Aktueller Restwert + 250 Punkte. Öffnet einen Durchgang für das Wasser.</p><button id="confirm">Abriss bestätigen</button><button class="cancel" id="cancel">Auswahl verwerfen</button>';
       $("building-name").textContent = b.name || b.id;
       $("building-zone").textContent =
         b.zone === "protected"
@@ -391,6 +402,12 @@ function pick(event: PointerEvent | MouseEvent): Point | null {
       )
     : null;
 }
+function refreshBarrierValidity() {
+  view.valid =
+    !!map &&
+    !!snapshot &&
+    barrierAvailable(map, snapshot, view.hoverBarrier?.id ?? null);
+}
 function hover(point: Point | null) {
   if (!map || !snapshot) return;
   view.hoverBarrier =
@@ -399,11 +416,7 @@ function hover(point: Point | null) {
       : null;
   view.hoverBuilding =
     point && view.tool === "demolition" ? buildingAt(map, point) : null;
-  view.valid =
-    !!view.hoverBarrier &&
-    snapshot.phase === "running" &&
-    snapshot.barrierCharges > 0 &&
-    barrierAllowed(map, view.hoverBarrier.id, new Set(snapshot.barriers));
+  refreshBarrierValidity();
   targetPanel();
 }
 canvas.addEventListener("pointermove", (event) => hover(pick(event)));
@@ -455,7 +468,9 @@ document.addEventListener("visibilitychange", () => {
     view.hoverBarrier = null;
     view.hoverBuilding = null;
     targetKey = "";
-    void request({ type: "hidden" }).catch((e) => fail(String(e)));
+    if (startupVisibility.hidden()) {
+      void request({ type: "hidden" }).catch((e) => fail(String(e)));
+    }
   }
 });
 let lastDraw = 0;

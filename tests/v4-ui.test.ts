@@ -5,6 +5,8 @@ import {
   barrierAt,
   barrierAllowed,
   mapPosition,
+  StartupVisibility,
+  barrierAvailable,
 } from "../src/v4/protocol";
 import { WorkerSession } from "../src/v4/worker";
 import type { V4Map } from "../src/v4/types";
@@ -79,5 +81,36 @@ describe("V4 Worker session clock", () => {
     session.command({ type: "reset" }, 1000);
     expect(session.snapshot().phase).toBe("ready");
     expect(session.snapshot().time).toBe(0);
+  });
+});
+
+describe("V4 loading visibility and snapshot validity", () => {
+  it("remembers hidden before readiness without sending a premature request", () => {
+    const visibility = new StartupVisibility();
+    expect(visibility.hidden()).toBe(false);
+    expect(visibility.hidden()).toBe(false);
+    expect(visibility.ready(false)).toBe(true);
+    expect(visibility.hidden()).toBe(true);
+  });
+  it("checks initial document visibility at readiness", () => {
+    expect(new StartupVisibility().ready(true)).toBe(true);
+    expect(new StartupVisibility().ready(false)).toBe(false);
+  });
+  it("refreshes a stationary barrier ghost from recharge snapshots", () => {
+    const segment = map.barrierSegments[14];
+    const state = {
+      phase: "running" as const,
+      barrierCharges: 0,
+      barriers: [] as string[],
+    };
+    expect(barrierAvailable(map, state, segment.id)).toBe(false);
+    state.barrierCharges = 1;
+    expect(barrierAvailable(map, state, segment.id)).toBe(true);
+    expect(
+      barrierAvailable(map, { ...state, phase: "paused" }, segment.id),
+    ).toBe(false);
+    expect(
+      barrierAvailable(map, { ...state, barriers: [segment.id] }, segment.id),
+    ).toBe(false);
   });
 });

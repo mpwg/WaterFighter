@@ -31,6 +31,8 @@ export interface Terrain {
   obstacles: Uint8Array;
   river: Uint8Array;
   buildings: Building[];
+  roads?: Uint8Array;
+  riverCenterline?: {x:number; y:number; halfWidth:number; dx:number; dy:number}[];
   gates: Gate[]
 }
 export interface Accounting {

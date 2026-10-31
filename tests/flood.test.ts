@@ -66,7 +66,7 @@ it('blocks below a sill and overtops above it without changing the floor',()=>{
   stepSimulation(s,.1,false);expect(s.depths[28]).toBe(0);s.depths[27]=2;const volume=waterVolume(s);stepSimulation(s,.1,false);expect(s.depths[28]).toBeGreaterThan(0);expect(waterVolume(s)).toBeCloseTo(volume,10);expect(t.heights[27]).toBe(0);
 });
 it('uses a bounded relief channel with a gate spanning its width',()=>{
-  const t=createTerrain();const gate=t.gates[0];expect(gate.edges!.length).toBeGreaterThan(3);for(const e of gate.edges!)expect(t.heights[e.a]).toBeLessThan(.5);expect(t.heights[gate.a-6]).toBeGreaterThan(1);
+  const t=createTerrain();const gate=t.gates[0];expect(gate.edges!.length).toBeGreaterThan(3);for(const e of gate.edges!)expect(t.heights[e.a]).toBeLessThan(.5);for(const x of [gate.x-6,gate.x+6])expect(Math.max(...Array.from({length:13},(_,j)=>t.heights[(gate.y+j-6)*t.width+x]))).toBeGreaterThan(2);
 });
 it('revalidates paused reservations and refunds flooded construction on resume',()=>{
   const g=createGame();commandGame(g,{
@@ -115,9 +115,9 @@ it('stages barrier sill height without lifting water or terrain',()=>{
   });stepGame(g,.5);const b=[...g.barriers.values()][0];expect(b.progress).toBeCloseTo(.25);expect(g.simulation.sillY[b.a]-Math.max(z[b.a],z[b.b])).toBeCloseTo(.275);expect(g.terrain.heights).toEqual(z);
 });
 it('exposes waterfront homes while a closed gate measurably reduces damage',()=>{
-  const open=createGame(),closed=createGame();commandGame(closed,{
+  const open=createGame(),closed=createGame(),protectedGame=createGame();const gate=protectedGame.terrain.gates[0];expect(commandGame(protectedGame,{type:'barrier',points:[{x:gate.x-5,y:gate.y+5},{x:gate.x+6,y:gate.y+5}]}).ok).toBe(true);commandGame(closed,{
     type:'gate',gateId:0,open:false
-  });stepGame(open,360);stepGame(closed,360);const a=snapshotGame(open).results,b=snapshotGame(closed).results;expect(a.damagedBuildings).toBeGreaterThanOrEqual(4);expect(b.meanDamage).toBeLessThan(a.meanDamage);expect(Math.abs(open.simulation.accounting.error)).toBeLessThan(1e-5);
+  });stepGame(open,360);stepGame(closed,360);stepGame(protectedGame,360);const a=snapshotGame(open).results,b=snapshotGame(closed).results;expect(a.damagedBuildings).toBeGreaterThanOrEqual(4);expect(b.meanDamage).toBeLessThan(a.meanDamage);expect(a.safePeople).toBeGreaterThan(0);expect(a.threatenedPeople).toBeGreaterThan(0);expect(snapshotGame(protectedGame).results.meanDamage).toBeLessThan(a.meanDamage);expect(Math.abs(open.simulation.accounting.error)).toBeLessThan(1e-5);
 },60000);
 it('reports never exposed residents separately from rescued residents',()=>{const g=createGame();const result=snapshotGame(g).results;expect(result.safePeople).toBe(result.totalPeople);expect(result.threatenedPeople).toBe(0);});
 it('seals a closed vertex-coordinate square against hydraulic leakage',()=>{
